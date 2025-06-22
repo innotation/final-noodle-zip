@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <springProperty name="SLACK_WEBHOOK_URL" source="logging.slack.webhook-url"/>
+  <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+    <webhookUri>${SLACK_WEBHOOK_URL}</webhookUri>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%-5level: [%date{yyyy-MM-dd HH:mm:ss}] [%logger:%line] - %msg%n</pattern>
+    </layout>
+    <username>Testing-Logback</username>
+    <iconEmoji>:hammer_and_wrench:</iconEmoji>
+    <colorCoding>true</colorCoding>
+  </appender>
+  <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="SLACK"/>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ERROR</level>
+    </filter>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="ASYNC_SLACK"/>
+  </root>
+</configuration>
