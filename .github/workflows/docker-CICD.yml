@@ -55,5 +55,7 @@ jobs:
             -e PROD_DB_URL=${{ secrets.PROD_DB_URL }} \
             -e PROD_DB_USERNAME=${{ secrets.PROD_DB_USERNAME }} \
             -e PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
+            -e PROD_REDIS_DB_USERNAME=${{ secrets.PROD_REDIS_DB_USERNAME }} \
+            -e PROD_REDIS_DB_PASSWORD=${{ secrets.PROD_REDIS_DB_PASSWORD }} \
             --name ${{ vars.APP_NAME }} \
             ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
