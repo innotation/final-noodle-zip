@@ -1,0 +1,61 @@
+name: CI/CD via Docker Image
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+    
+    
+jobs:
+  # 1. CI 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+      - name: Set Up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Grant permession for gradlew
+        run: chmod +x ./gradlew
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+      - name: Docker build and publish
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }} ./
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
+   # 2. CD
+  deploy:
+    needs: bulid
+    runs-on: ubuntu-latest
+    steps:
+      - name: NCP SSH Login and Docker Image pull and run
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USERNAME }}
+          password: ${{ secrets.NCP_PASSWORD }}
+          key: ${{ secrets.NCP_KEY }}
+          port: ${{ secrets.NCP_PORT }}
+          script: |
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker stop ${{ vars.APP_NAME }}
+            docker rm -f ${{ vars.APP_NAME }}
+            docker image rm -f ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
+            docker run -d -p 8080:8080 \
+            -e SPRING_PROFILES_ACTIVE=prod \
+            -e PROD_DB_URL=${{ secrets.PROD_DB_URL }} \
+            -e PROD_DB_USERNAME=${{ secrets.PROD_DB_USERNAME }} \
+            -e PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
+            -e PROD_REDIS_DB_USERNAME=${{ secrets.PROD_REDIS_DB_USERNAME }} \
+            -e PROD_REDIS_DB_PASSWORD=${{ secrets.PROD_REDIS_DB_PASSWORD }} \
+            --name ${{ vars.APP_NAME }} \
+            ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
