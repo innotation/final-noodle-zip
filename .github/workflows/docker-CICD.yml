@@ -34,7 +34,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
    # 2. CD
   deploy:
-    needs: bulid
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: NCP SSH Login and Docker Image pull and run
