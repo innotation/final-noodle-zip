@@ -57,5 +57,6 @@ jobs:
             -e PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
             -e PROD_REDIS_DB_USERNAME=${{ secrets.PROD_REDIS_DB_USERNAME }} \
             -e PROD_REDIS_DB_PASSWORD=${{ secrets.PROD_REDIS_DB_PASSWORD }} \
+            -e SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}
             --name ${{ vars.APP_NAME }} \
             ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
