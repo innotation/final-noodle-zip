@@ -7,4 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class UserController {
     @GetMapping("/login")
     public void loginPage(){}
+
+    @GetMapping("/signup")
+    public void signupPage(){}
 }
