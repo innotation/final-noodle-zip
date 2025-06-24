@@ -47,6 +47,7 @@ public class User {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_type")
     private UserType userType;
 

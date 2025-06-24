@@ -3,7 +3,6 @@ package noodlezip.config.security;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,26 +31,19 @@ public class SecurityConfig {
                     .anyRequest().authenticated();
         });
 
-        // 로그인 처리 설정 ( 인증 설정)
-
-//        http.formLogin(Customizer.withDefaults());
-
-
         // 로그인 처리 설정( 인증 설정 ) => custom
         http.formLogin(form -> {
             form.loginPage("/login") // custom loginPage URL
                     .loginProcessingUrl("/login") // login Process URL(POST)
                     .usernameParameter("userId") // 파라미터중 인증처리 사용 아이디
                     .passwordParameter("userPwd") // 파라미터중 인증처리 사용 비밀번호
-//                    .defaultSuccessUrl("/", true) // redirect URL, 성공시 새 JSESSIONID가 cookie에 저장
                     .successHandler((req, resp, auth) -> {
                         if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
-                            resp.sendRedirect("/admin/main");
+                            resp.sendRedirect("/admin/main"); // 응답 -> /admin/main
                         } else {
-                            resp.sendRedirect("/user/main");
+                            resp.sendRedirect("/user/main"); // 응답 -> /admin/main
                         }
                     })
-//                    .failureUrl("/login?error"); // 실패시 Redirect URL 지정
                     .failureHandler((req, resp, exce) -> {
                         log.info("exception : {}", exce.getMessage());
                         resp.sendRedirect("/login?error");
