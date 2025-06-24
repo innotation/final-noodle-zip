@@ -27,7 +27,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return true; // 계정 정지 관련 설정, 이후에 정지 기능 구현 이후 수정 예정
     }
 
     @Override
@@ -37,6 +37,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
+        // 이메일 인증시 활성화
         return user.getIsEmailVerified();
     }
 
