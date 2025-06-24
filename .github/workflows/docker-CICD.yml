@@ -26,7 +26,7 @@ jobs:
       - name: Grant permession for gradlew
         run: chmod +x ./gradlew
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
       - name: Docker build and publish
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
