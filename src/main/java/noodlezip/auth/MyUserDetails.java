@@ -50,6 +50,6 @@ public class MyUserDetails implements UserDetails {
     // 로그인 ID
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return user.getLoginId();
     }
 }
