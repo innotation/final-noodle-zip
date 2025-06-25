@@ -1,7 +1,10 @@
 package noodlezip.badge.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import noodlezip.badge.entity.common.BaseTimeEntity;
 
 @AllArgsConstructor
@@ -32,9 +35,18 @@ public class Badge extends BaseTimeEntity {
     private BadgeExtraOption badgeExtraOption;
 
     @Column(name = "active_status", nullable = false, length = 30)
-    private String activeStatus;
+    private Boolean isActive;
 
     @Column(name = "badge_image_url", length = 500)
     private String badgeImageUrl;
+
+
+    public boolean isOverCompletionValue(int currentValue) {
+        return badgePolicy.isOverCompletionValue(currentValue);
+    }
+
+    public Long getNextLevelBadgeId() {
+        return badgePolicy.getNextBadgeId();
+    }
 
 }
