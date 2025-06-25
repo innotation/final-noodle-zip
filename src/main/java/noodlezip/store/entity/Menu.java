@@ -13,7 +13,7 @@ import lombok.*;
 @ToString
 @Entity
 @Table(name = "tbl_menu")
-public class TblMenu {
+public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id", nullable = false)

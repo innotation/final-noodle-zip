@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TblStore {
+public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
