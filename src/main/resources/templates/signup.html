@@ -173,25 +173,27 @@
                         <h6>개인정보</h6>
                         <form th:action="@{/signup}" th:object="${user}" method="post">
                             <div class="form-group">
-                                <input class="form-control" placeholder="아이디">
+                                <input class="form-control" placeholder="아이디" name="loginId">
                                 <i class="icon_profile"></i>
                             </div>
                             <div class="form-group add_bottom_15">
-                                <input class="form-control" placeholder="비밀번호" id="password_sign"
-                                       name="password_sign">
+                                <input class="form-control" placeholder="비밀번호" id="password_sign" name="password">
                                 <i class="icon_lock"></i>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="이름">
+                                <input class="form-control" placeholder="이름" name="userName">
                                 <i class="icon_pencil"></i>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="이메일주소">
+                                <input class="form-control" placeholder="이메일주소" name="email">
                                 <i class="icon_mail"></i>
                             </div>
-
                             <div class="form-group">
-                                <input class="form-control" placeholder="생년월일 8자리">
+                                <input class="form-control" placeholder="전화번호" name="phone">
+                                <i class="icon_phone"></i>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="생년월일 8자리" name="birth">
                                 <i class="icon_calendar"></i>
                             </div>
                             <div class="form-group">
