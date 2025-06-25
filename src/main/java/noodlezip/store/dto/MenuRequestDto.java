@@ -16,4 +16,5 @@ public class MenuRequestDto {
 
     private Integer ramenCategoryId; // tbl_ramen_category 참조
     private Integer ramenSoupId;     // tbl_ramen_soup 참조
+
 }

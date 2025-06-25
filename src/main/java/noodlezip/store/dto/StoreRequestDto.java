@@ -27,4 +27,6 @@ public class StoreRequestDto {
 
     private List<MenuRequestDto> menus; // 메뉴 리스트 포함
     private List<StoreScheduleRequestDto> weekSchedule;  // 요일별 영업시간
+
+    // userId는 서버에서 받아와서 Entity에 매핑해야함
 }
