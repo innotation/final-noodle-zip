@@ -25,7 +25,7 @@ public class SecurityConfig {
 
         // URL 접근 제어( 인가 설정 )
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/", "/signup", "/login", "/images/**", "css/**", "img/**", "static/js/**", "assets/**").permitAll()
+            auth.requestMatchers("/", "/signup", "/login", "/images/**", "css/**", "img/**", "js/**", "assets/**").permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("USER")
                     .anyRequest().authenticated();

@@ -1,13 +1,13 @@
-package noodlezip.users.service;
+package noodlezip.user.service;
 
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import noodlezip.auth.MyUserDetails;
-import noodlezip.users.entity.User;
-import noodlezip.users.entity.UserType;
-import noodlezip.users.repository.UserRepository;
+import noodlezip.user.entity.User;
+import noodlezip.user.entity.UserType;
+import noodlezip.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
-package noodlezip.users.service;
+package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.auth.MyUserDetails;
-import noodlezip.users.entity.User;
-import noodlezip.users.repository.UserRepository;
+import noodlezip.user.entity.User;
+import noodlezip.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

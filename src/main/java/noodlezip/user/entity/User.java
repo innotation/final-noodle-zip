@@ -1,4 +1,4 @@
-package noodlezip.users.entity;
+package noodlezip.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

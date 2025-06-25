@@ -12,12 +12,15 @@
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
     <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="img/apple-touch-icon-144x144-precomposed.png">
 
     <!-- GOOGLE WEB FONT -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
 
     <!-- BASE CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -110,8 +113,10 @@
                             <ul>
                                 <li><a href="grid-listing-filterscol-map-openstreetmap.html">List with map</a></li>
                                 <li><a href="listing-map-openstreetmap.html">List side map</a></li>
-                                <li><a href="grid-listing-filterscol-full-width-openstreetmap.html">List full width</a></li>
-                                <li><a href="grid-listing-filterscol-full-masonry-openstreetmap.html">List Masonry Filter</a></li>
+                                <li><a href="grid-listing-filterscol-full-width-openstreetmap.html">List full width</a>
+                                </li>
+                                <li><a href="grid-listing-filterscol-full-masonry-openstreetmap.html">List Masonry
+                                    Filter</a></li>
                             </ul>
                         </li>
                         <li><a href="submit-restaurant.html">Submit Restaurant</a></li>
@@ -165,20 +170,38 @@
                         <a href="#0" class="social_bt facebook">Sign up with Facebook</a>
                         <a href="#0" class="social_bt google">Sign up with Google</a>
                         <div class="divider"><span>Or</span></div>
-                        <h6>Personal details</h6>
-                        <div class="form-group">
-                            <input class="form-control" placeholder="First and Last Name">
-                            <i class="icon_pencil"></i>
-                        </div>
-                        <div class="form-group">
-                            <input class="form-control" placeholder="Email Address">
-                            <i class="icon_mail"></i>
-                        </div>
-                        <div class="form-group add_bottom_15">
-                            <input class="form-control" placeholder="Password" id="password_sign" name="password_sign">
-                            <i class="icon_lock"></i>
-                        </div>
-                        <a href="confirm.html" class="btn_1 full-width mb_5">Sign up Now</a>
+                        <h6>개인정보</h6>
+                        <form th:action="@{/signup}" th:object="${user}" method="post">
+                            <div class="form-group">
+                                <input class="form-control" placeholder="아이디">
+                                <i class="icon_profile"></i>
+                            </div>
+                            <div class="form-group add_bottom_15">
+                                <input class="form-control" placeholder="비밀번호" id="password_sign"
+                                       name="password_sign">
+                                <i class="icon_lock"></i>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="이름">
+                                <i class="icon_pencil"></i>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="이메일주소">
+                                <i class="icon_mail"></i>
+                            </div>
+
+                            <div class="form-group">
+                                <input class="form-control" placeholder="생년월일 8자리">
+                                <i class="icon_calendar"></i>
+                            </div>
+                            <div class="form-group">
+                                <select name="gender" id="gender" class="form-control">
+                                    <option value="M">남</option>
+                                    <option value="F">여</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn_1 full-width mb_5">회원가입</button>
+                        </form>
                     </div>
                 </div>
                 <!-- /box_booking -->
@@ -237,7 +260,8 @@
                         <div id="message-newsletter"></div>
                         <form method="post" action="assets/newsletter.php" name="newsletter_form" id="newsletter_form">
                             <div class="form-group">
-                                <input type="email" name="email_newsletter" id="email_newsletter" class="form-control" placeholder="Your email">
+                                <input type="email" name="email_newsletter" id="email_newsletter" class="form-control"
+                                       placeholder="Your email">
                                 <button type="submit" id="submit-newsletter"><i class="arrow_carrot-right"></i></button>
                             </div>
                         </form>
@@ -278,7 +302,8 @@
                             </select>
                         </div>
                     </li>
-                    <li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="img/cards_all.svg" alt="" width="198" height="30" class="lazy"></li>
+                    <li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+                             data-src="img/cards_all.svg" alt="" width="198" height="30" class="lazy"></li>
                 </ul>
             </div>
             <div class="col-lg-6">
@@ -336,7 +361,8 @@
                     <input type="email" class="form-control" name="email_forgot" id="email_forgot">
                     <i class="icon_mail_alt"></i>
                 </div>
-                <p>You will receive an email containing a link allowing you to reset your password to a new preferred one.</p>
+                <p>You will receive an email containing a link allowing you to reset your password to a new preferred
+                    one.</p>
                 <div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
             </div>
         </div>

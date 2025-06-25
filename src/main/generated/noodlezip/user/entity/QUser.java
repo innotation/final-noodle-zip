@@ -1,4 +1,4 @@
-package noodlezip.users.entity;
+package noodlezip.user.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QUser extends EntityPathBase<User> {
 
-    private static final long serialVersionUID = -381800780L;
+    private static final long serialVersionUID = -987526545L;
 
     public static final QUser user = new QUser("user");
 

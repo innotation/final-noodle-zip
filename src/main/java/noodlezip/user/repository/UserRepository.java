@@ -1,6 +1,6 @@
-package noodlezip.users.repository;
+package noodlezip.user.repository;
 
-import noodlezip.users.entity.User;
+import noodlezip.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
