@@ -23,15 +23,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registUser(UserDto user) {
 
-//        User newUser = modelMapper.map(user, User.class);
-        User newUser = new User();
-        newUser.setLoginId(user.getLoginId());
+        User newUser = modelMapper.map(user, User.class);
         newUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        newUser.setUserName(user.getUserName());
-        newUser.setBirth(user.getBirth());
-        newUser.setEmail(user.getEmail());
-        newUser.setPhone(user.getPhone());
-        newUser.setGender(user.getGender());
         newUser.setUserType(UserType.NORMAL);
         newUser.setActiveStatus(ActiveStatus.ACTIVE);
         newUser.setIsEmailVerified(false);

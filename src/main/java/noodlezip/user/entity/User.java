@@ -52,6 +52,7 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_type")
     private UserType userType;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "active_status")
     private ActiveStatus activeStatus;
 
