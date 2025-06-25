@@ -1,8 +1,6 @@
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import noodlezip.store.dto.WeekScheduleDto;
+package noodlezip.store.dto;
+
+import lombok.*;
 
 import java.util.List;
 
@@ -10,17 +8,23 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class StoreRequestDto {
+
     private String storeName;
     private String address;
     private String phone;
-    private Boolean isLocalCard;
-    private Boolean isChildAllowed;
-    private String hasParking;
-    private String operationStatus;
-    private String ownerComment;
-    private String storeMainImageUrl;
-    private Double xAxis;
-    private Double yAxis;
-    private List<WeekScheduleDto> weekSchedules;
+
+    private Boolean isLocalCard;      // 지역카드 가능 여부
+    private Boolean isChildAllowed;   // 유아동반 가능 여부
+    private String hasParking;        // 무료/유료/불가
+
+    private String ownerComment;      // 사장님 한 줄 소개
+    private String storeMainImageUrl; // 대표 이미지 URL
+
+    private Double xAxis; // 위도
+    private Double yAxis; // 경도
+
+    private List<MenuRequestDto> menus; // 메뉴 리스트 포함
+    private List<StoreScheduleRequestDto> weekSchedule;  // 요일별 영업시간
 }
