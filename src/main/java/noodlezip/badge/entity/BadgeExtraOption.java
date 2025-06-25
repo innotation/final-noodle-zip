@@ -1,11 +1,10 @@
 package noodlezip.badge.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import noodlezip.badge.entity.temp.TempRamenCategory;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,10 +13,11 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class BadgeExtraOption {
 
-    @Column(name = "region_sido", length = 30)
-    private String regionSido;
+    @Column(name = "store_sido_legal_code")
+    private Integer storeSidoLegalCode;
 
-    @Column(name = "ramen_category", length = 50)
-    private String ramenCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ramen_category_id")
+    private TempRamenCategory ramenCategory;
 
 }
