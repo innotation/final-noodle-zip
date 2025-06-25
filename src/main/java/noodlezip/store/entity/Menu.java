@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import noodlezip.ramen.entity.Category;
 
 @Builder
 @AllArgsConstructor
@@ -48,4 +49,7 @@ public class Menu {
     @Column(name = "ramen_soup_id", nullable = false)
     private Integer ramenSoupId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ramen_category_id", insertable = false, updatable = false)
+    private Category category;
 }
