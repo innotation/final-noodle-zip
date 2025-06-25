@@ -2,7 +2,9 @@ package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.user.dto.UserDto;
+import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;
+import noodlezip.user.entity.UserType;
 import noodlezip.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,7 +23,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registUser(UserDto user) {
 
-        User newUser = modelMapper.map(user, User.class);
+//        User newUser = modelMapper.map(user, User.class);
+        User newUser = new User();
+        newUser.setLoginId(user.getLoginId());
+        newUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        newUser.setUserName(user.getUserName());
+        newUser.setBirth(user.getBirth());
+        newUser.setEmail(user.getEmail());
+        newUser.setPhone(user.getPhone());
+        newUser.setGender(user.getGender());
+        newUser.setUserType(UserType.NORMAL);
+        newUser.setActiveStatus(ActiveStatus.ACTIVE);
+        newUser.setIsEmailVerified(false);
 
+        userRepository.save(newUser);
     }
 }

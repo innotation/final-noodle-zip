@@ -19,11 +19,14 @@ public class QUser extends EntityPathBase<User> {
 
     public static final QUser user = new QUser("user");
 
-    public final StringPath activeStatus = createString("activeStatus");
+    public final noodlezip.common.entity.QBaseTimeEntity _super = new noodlezip.common.entity.QBaseTimeEntity(this);
+
+    public final EnumPath<ActiveStatus> activeStatus = createEnum("activeStatus", ActiveStatus.class);
 
     public final StringPath birth = createString("birth");
 
-    public final DateTimePath<java.util.Date> createdAt = createDateTime("createdAt", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
     public final StringPath email = createString("email");
 
@@ -43,7 +46,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath profileImageUrl = createString("profileImageUrl");
 
-    public final DateTimePath<java.util.Date> updatedAt = createDateTime("updatedAt", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final StringPath userName = createString("userName");
 

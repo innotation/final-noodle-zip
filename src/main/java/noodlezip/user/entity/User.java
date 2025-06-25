@@ -2,6 +2,7 @@ package noodlezip.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import noodlezip.common.entity.BaseTimeEntity;
 
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @ToString
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,14 +53,8 @@ public class User {
     private UserType userType;
 
     @Column(name = "active_status")
-    private String activeStatus;
+    private ActiveStatus activeStatus;
 
     @Column(name = "is_email_verified")
     private Boolean isEmailVerified;
-
-    @Column(name = "created_at")
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    private Date updatedAt;
 }
