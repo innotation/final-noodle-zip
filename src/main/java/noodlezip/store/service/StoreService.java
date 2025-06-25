@@ -1,71 +1,66 @@
 package noodlezip.store.service;
 
 import lombok.RequiredArgsConstructor;
-import noodlezip.store.dto.StoreRequestDto;
-import noodlezip.store.dto.WeekScheduleDto;
-import noodlezip.store.entity.Store;
-import noodlezip.store.entity.StoreWeekSchedule;
-import noodlezip.store.entity.StoreWeekScheduleId;
-import noodlezip.store.repository.StoreRepository;
-import noodlezip.store.repository.StoreWeekScheduleRepository;
+import noodlezip.store.dto.*;
+import noodlezip.store.entity.*;
+import noodlezip.store.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final StoreWeekScheduleRepository storeWeekScheduleRepository;
+    private final StoreScheduleRepository scheduleRepository;
+    private final MenuRepository menuRepository;
 
     @Transactional
-    public Store saveStore(StoreRequestDto dto) {
-        // 1️⃣ Store Entity 생성 및 데이터 세팅
-        Store store = new Store();
-        store.setStoreName(dto.getStoreName());
-        store.setAddress(dto.getAddress());
-        store.setPhone(dto.getPhone());
-        store.setIsLocalCard(dto.getIsLocalCard());
-        store.setIsChildAllowed(dto.getIsChildAllowed());
-        store.setHasParking(dto.getHasParking());
-        store.setOperationStatus(dto.getOperationStatus());
-        store.setOwnerComment(dto.getOwnerComment());
-        store.setStoreMainImageUrl(dto.getStoreMainImageUrl());
-        store.setXAxis(dto.getXAxis());
-        store.setYAxis(dto.getYAxis());
-        store.setCreatedAt(LocalDateTime.now());
-        store.setUpdatedAt(LocalDateTime.now());
+    public Long registerStore(StoreRequestDto dto) {
+        TblStore store = TblStore.builder()
+                .storeName(dto.getStoreName())
+                .address(dto.getAddress())
+                .phone(dto.getPhone())
+                .isLocalCard(dto.getIsLocalCard())
+                .isChildAllowed(dto.getIsChildAllowed())
+                .hasParking(dto.getHasParking())
+                .ownerComment(dto.getOwnerComment())
+                .storeMainImageUrl(dto.getStoreMainImageUrl())
+                .xAxis(dto.getXAxis())
+                .yAxis(dto.getYAxis())
+                .build();
 
-        // 2️⃣ 먼저 store 저장 → storeId 획득
-        Store savedStore = storeRepository.save(store);
+        TblStore savedStore = storeRepository.save(store);
 
-        // 3️⃣ 요일별 스케줄 생성 후 저장
-        List<StoreWeekSchedule> scheduleList = new ArrayList<>();
+        // 요일별 영업시간 저장
+        List<TblStoreSchedule> schedules = dto.getWeekSchedule().stream()
+                .map(s -> TblStoreSchedule.builder()
+                        .storeId(savedStore.getId())
+                        .dayOfWeek(s.getDayOfWeek())
+                        .openingAt(s.getOpeningAt())
+                        .closingAt(s.getClosingAt())
+                        .isClosedDay(s.getIsClosedDay())
+                        .build())
+                .collect(Collectors.toList());
+        scheduleRepository.saveAll(schedules);
 
-        for (WeekScheduleDto weekDto : dto.getWeekSchedules()) {
-            StoreWeekSchedule schedule = new StoreWeekSchedule();
+        // 메뉴 저장
+        List<TblMenu> menus = dto.getMenus().stream()
+                .map(m -> TblMenu.builder()
+                        .storeId(savedStore.getId())
+                        .menuName(m.getMenuName())
+                        .price(m.getPrice())
+                        .menuDescription(m.getMenuDescription())
+                        .menuImageUrl(m.getMenuImageUrl())
+                        .ramenCategoryId(m.getRamenCategoryId())
+                        .ramenSoupId(m.getRamenSoupId())
+                        .build())
+                .collect(Collectors.toList());
+        menuRepository.saveAll(menus);
 
-            // 복합키 생성
-            StoreWeekScheduleId scheduleId = new StoreWeekScheduleId();
-            scheduleId.setStoreId(savedStore.getStoreId());
-            scheduleId.setDayOfWeek(weekDto.getDayOfWeek());
-
-            schedule.setId(scheduleId);
-            schedule.setOpeningAt(weekDto.getOpeningAt());
-            schedule.setClosingAt(weekDto.getClosingAt());
-            schedule.setIsClosedDay(weekDto.getIsClosedDay());
-            schedule.setStore(savedStore);
-
-            scheduleList.add(schedule);
-        }
-
-        // 저장
-        storeWeekScheduleRepository.saveAll(scheduleList);
-
-        return savedStore;
+        return savedStore.getId();
     }
 }
