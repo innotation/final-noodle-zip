@@ -39,7 +39,7 @@ Author URI: http://themeforest.net/user/Ansonika/
 @font-face {
   font-family: Glyphter;
   src: url(icon_fonts/font/Glyphter.eot);
-  src: url(icon_fonts/font/Glyphter.eot?#iefix) format("embedded-opentype"), url(icon_fonts/font/Glyphter.woff) format("woff"), url(icon_fonts/font/Glyphter.ttf) format("truetype"), url(icon_fonts/font/Glyphter.svg#Glyphter) format("svg");
+  src: url(icon_fonts/font/Glyphter.eot?#ie fix) format("embedded-opentype"), url(icon_fonts/font/Glyphter.woff) format("woff"), url(icon_fonts/font/Glyphter.ttf) format("truetype"), url(icon_fonts/font/Glyphter.svg#Glyphter) format("svg");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
