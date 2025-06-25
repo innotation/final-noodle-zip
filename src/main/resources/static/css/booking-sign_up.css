@@ -10,40 +10,49 @@
     box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
+
 .box_booking_2 .head, .sign_up .head {
     text-align: center;
     padding: 23px 20px 18px 20px;
     background-color: #589442;
     color: #fff;
 }
+
 .box_booking_2 .head h3, .sign_up .head h3 {
     font-size: 24px;
     font-size: 1.5rem;
     margin: 0;
     color: #fff;
 }
+
 .box_booking_2 .head small, .sign_up .head small {
     display: block;
 }
+
 .box_booking_2 .head a, .sign_up .head a {
     color: #fff;
     text-decoration: underline;
 }
+
 .box_booking_2 .main, .sign_up .main {
     padding: 25px;
 }
+
 .box_booking_2 .main ul, .sign_up .main ul {
     list-style: none;
     padding: 0;
 }
+
 .box_booking_2 .main ul li, .sign_up .main ul li {
     font-weight: 500;
     margin-bottom: 5px;
 }
+
 .box_booking_2 .main ul li span, .sign_up .main ul li span {
     float: right;
     font-weight: 400;
 }
+
 .box_booking_2 .main ul li.total, .sign_up .main ul li.total {
     font-size: 16px;
     font-size: 1rem;
@@ -51,12 +60,15 @@
     color: #e74747;
     text-transform: uppercase;
 }
+
 .box_booking_2 .main ul li.total span, .sign_up .main ul li.total span {
     font-weight: 600;
 }
+
 .box_booking_2 .form-group input, .sign_up .form-group input {
     padding-right: 40px;
 }
+
 .box_booking_2 .form-group i, .sign_up .form-group i {
     font-size: 16px;
     font-size: 1rem;
@@ -69,6 +81,7 @@
     display: block;
     font-weight: 400 !important;
 }
+
 .box_booking_2 .form-group i.icon_mail, .sign_up .form-group i.icon_mail {
     top: 10px;
 }
@@ -77,13 +90,16 @@
     text-align: left;
     padding: 15px 20px 12px 25px;
 }
+
 .box_booking_2.style_2 .head h3 {
     font-size: 21px;
     font-size: 1.3125rem;
 }
+
 .box_booking_2.style_2 .main {
     padding: 20px 25px 10px 25px;
 }
+
 .box_booking_2.style_2 .form-group input {
     padding-right: 10px;
 }
@@ -97,15 +113,18 @@
     -ms-border-radius: 3px;
     border-radius: 3px;
 }
+
 .payment_select label {
     font-size: 16px;
     display: inline-block;
     margin-bottom: 0;
 }
+
 .payment_select i {
     float: right;
     font-size: 24px;
 }
+
 .payment_select#paypal {
     background: #f0f0f0 url(../img/paypal_2.svg) center right no-repeat;
 }
@@ -123,6 +142,7 @@
         stroke-dashoffset: 0;
     }
 }
+
 @-ms-keyframes checkmark {
     0% {
         stroke-dashoffset: 50px;
@@ -131,6 +151,7 @@
         stroke-dashoffset: 0;
     }
 }
+
 @keyframes checkmark {
     0% {
         stroke-dashoffset: 50px;
@@ -139,6 +160,7 @@
         stroke-dashoffset: 0;
     }
 }
+
 @-webkit-keyframes checkmark-circle {
     0% {
         stroke-dashoffset: 240px;
@@ -147,6 +169,7 @@
         stroke-dashoffset: 480px;
     }
 }
+
 @-ms-keyframes checkmark-circle {
     0% {
         stroke-dashoffset: 240px;
@@ -155,6 +178,7 @@
         stroke-dashoffset: 480px;
     }
 }
+
 @keyframes checkmark-circle {
     0% {
         stroke-dashoffset: 240px;
@@ -163,6 +187,7 @@
         stroke-dashoffset: 480px;
     }
 }
+
 .inlinesvg .svg svg {
     display: inline;
 }
