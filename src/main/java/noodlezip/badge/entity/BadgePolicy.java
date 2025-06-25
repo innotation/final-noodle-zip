@@ -32,4 +32,9 @@ public class BadgePolicy {
     @Column(name = "event_end_at")
     private LocalDateTime eventEndAt;
 
+
+    public boolean isOverCompletionValue(int currentValue) {
+        return completionValue <= currentValue;
+    }
+
 }
