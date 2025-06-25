@@ -1,5 +1,9 @@
 package noodlezip.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import noodlezip.user.entity.User;
 import noodlezip.user.service.UserService;
@@ -13,6 +17,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Tag(name = "유저 관리", description = "사용자 관련 API")
 public class UserController {
 
     private final UserService userService;
@@ -23,7 +28,12 @@ public class UserController {
     @GetMapping("/signup")
     public void signupPage(){}
 
+
     @PostMapping("/signup")
+    @Operation(summary = "회원 가입", description = "회원 가입 기능")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200")
+    })
     public String signup(@ModelAttribute User user){
         Map<String, String> map = userService.registUser(user);
         return "redirect:/";
