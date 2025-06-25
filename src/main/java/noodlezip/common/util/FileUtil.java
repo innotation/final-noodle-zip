@@ -1,4 +1,4 @@
-package noodlezip.util;
+package noodlezip.common.util;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;

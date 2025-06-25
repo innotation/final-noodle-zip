@@ -1,4 +1,4 @@
-package noodlezip.util;
+package noodlezip.common.util;
 
 
 import noodlezip.exception.CustomException;

@@ -1,8 +1,10 @@
 package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +16,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ModelMapper modelMapper;
 
     @Override
-    public Map<String, String> registUser(User user) {
+    public void registUser(UserDto user) {
 
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        User newUser = modelMapper.map(user, User.class);
 
-        String msg = null;
-        String path = null;
-
-
-        return Map.of();
     }
 }

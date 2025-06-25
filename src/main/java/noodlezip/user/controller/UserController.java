@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.User;
 import noodlezip.user.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +36,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200")
     })
-    public String signup(@ModelAttribute User user){
-        Map<String, String> map = userService.registUser(user);
+    public String signup(@Validated @ModelAttribute UserDto user){
+        userService.registUser(user);
         return "redirect:/";
     }
 }
