@@ -18,8 +18,9 @@ public class StoreController {
 
     @Operation(summary = "매장 등록", description = "신규 매장을 등록합니다.")
     @PostMapping
-    public ResponseEntity<Long> registerStore(@RequestBody StoreRequestDto dto) {
+    public ResponseEntity<Long> registerStore(@ModelAttribute StoreRequestDto dto) {
         Long storeId = storeService.registerStore(dto);
         return ResponseEntity.ok(storeId);
     }
+
 }
