@@ -1,31 +1,23 @@
 <div th:fragment="mainHeader">
 
-<header class="header clearfix element_to_stick">
-  <div class="container">
-    <div id="logo">
-      <a th:href="@{/}">
-        <img th:src="@{/img/logo.svg}" width="140" height="35" alt="" class="logo_normal">
-        <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
-      </a>
-    </div>
-    <!-- /top_menu -->
-    <nav class="main-menu">
-      <div id="header_menu">
-        <a th:href="@{/}"><img th:src="@{/img/logo.svg}" width="140" height="35" alt=""></a>
+  <header class="header clearfix element_to_stick">
+    <div class="container">
+      <div id="logo">
+        <a th:href="@{/}">
+          <img th:src="@{/img/logo.svg}" width="140" height="35" alt="" class="logo_normal">
+          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
+        </a>
       </div>
-      <ul>
-        <li class="submenu">
-          <a th:href="검색페이지">검색페이지</a>
-        </li>
-        <li class="submenu">
-          <a th:href="커뮤니티페이지">커뮤니티</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</header>
+      <nav class="main-menu">
+        <ul>
+          <li><a th:href="@{검색페이지}">검색페이지</a></li>
+          <li><a th:href="@{커뮤니티페이지}">커뮤니티페이지</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 </div>
-<!-- /header -->
+  <!-- /header -->
 
 
-<!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용 <link th:include="fragements/mainHeader.html"/>  구문 삽입해서 사용-->
+<!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용 <link th:include="fragements/mainHeader.html"/>  구문 삽입해서 사용 -->
