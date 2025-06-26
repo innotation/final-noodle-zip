@@ -3,6 +3,7 @@ package noodlezip.store.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
+import noodlezip.store.entity.Store;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -44,5 +45,28 @@ public class StoreDto implements Serializable {
     @NotNull
     Instant createdAt;
     Instant updatedAt;
-    Integer bCode;
+    Integer storeLegalCode;
+
+    // Store -> StoreDto
+    public static StoreDto toDto(Store store) {
+        return new StoreDto(
+                store.getId(),
+                store.getUserId(),
+                store.getStoreName(),
+                store.getAddress(),
+                store.getPhone(),
+                store.getIsLocalCard(),
+                store.getIsChildAllowed(),
+                store.getHasParking(),
+                store.getOperationStatus(),
+                store.getOwnerComment(),
+                store.getStoreMainImageUrl(),
+                store.getXAxis(),
+                store.getYAxis(),
+                store.getCreatedAt(),
+                store.getUpdatedAt(),
+                store.getStoreLegalCode()
+        );
+    }
+
 }

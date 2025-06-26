@@ -80,7 +80,7 @@ public class Store {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @Column(name = "b_code")
-    private Integer bCode;
+    @Column(name = "store_legal_code")
+    private Integer storeLegalCode;
 
 }
