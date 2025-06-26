@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200")
     })
-    public String signup(@Validated @ModelAttribute UserDto user, BindingResult bindingResult, Model model) {
+    public String signup(@Validated @ModelAttribute UserDto user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             // 모든 에러 메세지 다 담음
@@ -59,6 +60,7 @@ public class UserController {
             return "signup";
         }
         else {
+            redirectAttributes.addFlashAttribute("message", "success");
             userService.registUser(user);
             return "redirect:/";
         }

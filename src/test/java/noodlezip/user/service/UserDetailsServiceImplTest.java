@@ -4,7 +4,7 @@ package noodlezip.user.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import noodlezip.auth.MyUserDetails;
+import noodlezip.common.auth.MyUserDetails;
 import noodlezip.user.entity.User;
 import noodlezip.user.entity.UserType;
 import noodlezip.user.repository.UserRepository;

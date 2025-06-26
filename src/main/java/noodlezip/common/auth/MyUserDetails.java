@@ -1,4 +1,4 @@
-package noodlezip.auth;
+package noodlezip.common.auth;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.user.entity.User;

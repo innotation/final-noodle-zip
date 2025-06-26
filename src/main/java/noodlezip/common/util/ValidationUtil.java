@@ -1,9 +1,6 @@
 package noodlezip.common.util;
 
 
-import noodlezip.exception.CustomException;
-import noodlezip.exception.ErrorCode;
-
 public class ValidationUtil {
 
     /*
@@ -11,10 +8,10 @@ public class ValidationUtil {
      */
     public static void requireNonBlank(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
-            throw new CustomException(
-                    ErrorCode.INVALID_INPUT,
-                    fieldName + "은(는) 필수 입력 항목입니다."
-            );
+//            throw new CustomException(
+//                    ErrorCode.INVALID_INPUT,
+//                    fieldName + "은(는) 필수 입력 항목입니다."
+//            );
         }
     }
 
@@ -23,10 +20,10 @@ public class ValidationUtil {
      */
     public static void requireNonNull(Object value, String fieldName) {
         if (value == null) {
-            throw new CustomException(
-                    ErrorCode.INVALID_INPUT,
-                    fieldName + "이(가) 비어 있을 수 없습니다."
-            );
+//            throw new CustomException(
+//                    ErrorCode.INVALID_INPUT,
+//                    fieldName + "이(가) 비어 있을 수 없습니다."
+//            );
         }
     }
 
@@ -35,10 +32,10 @@ public class ValidationUtil {
      */
     public static void requireMinLength(String value, int minLength, String fieldName) {
         if (value == null || value.length() < minLength) {
-            throw new CustomException(
-                    ErrorCode.INVALID_INPUT,
-                    fieldName + "은(는) 최소 " + minLength + "자 이상이어야 합니다."
-            );
+//            throw new CustomException(
+//                    ErrorCode.INVALID_INPUT,
+//                    fieldName + "은(는) 최소 " + minLength + "자 이상이어야 합니다."
+//            );
         }
     }
 
@@ -47,10 +44,10 @@ public class ValidationUtil {
      */
     public static void requireMin(int value, int min, String fieldName) {
         if (value < min) {
-            throw new CustomException(
-                    ErrorCode.INVALID_INPUT,
-                    fieldName + "은(는) 최소값 " + min + " 이상이어야 합니다."
-            );
+//            throw new CustomException(
+//                    ErrorCode.INVALID_INPUT,
+//                    fieldName + "은(는) 최소값 " + min + " 이상이어야 합니다."
+//            );
         }
     }
 }
