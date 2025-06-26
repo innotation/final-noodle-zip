@@ -2,7 +2,7 @@ package noodlezip.badge.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import noodlezip.badge.constants.InitBadgeCurrentValue;
+import noodlezip.badge.constants.BadgeStrategyType;
 import noodlezip.badge.constants.PostStatusType;
 import noodlezip.badge.entity.common.BaseTimeEntity;
 
@@ -23,7 +23,7 @@ public class UserBadge extends BaseTimeEntity {
     @Column(name = "user_badge_id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false) //User엔티티 필요
     private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,6 +32,9 @@ public class UserBadge extends BaseTimeEntity {
 
     @Column(name = "current_value", nullable = false)
     private Integer currentValue;
+
+    @Column(name = "accumulative_value")
+    private Integer accumulativeValue;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status", nullable = false, length = 30)
@@ -42,18 +45,30 @@ public class UserBadge extends BaseTimeEntity {
 
 
     public void updateCurrentValueByOne() {
-        currentValue++;
+        if (!isOverCompletionValue()) {
+            currentValue++;
+        }
+    }
+
+    public void updateAccumulativeValueByOne() {
+        accumulativeValue++;
+    }
+
+    public void obtain() {
+        obtainedAt = LocalDateTime.now();
     }
 
     public boolean isOverCompletionValue() {
         return badge.isOverCompletionValue(currentValue);
     }
 
-    public UserBadge getNextUserDefaultBadge() {
+    public boolean isUnableUpdateNextBadge() {
+        return badge.hasNothingNextBadge() || obtainedAt != null;
+    }
+
+
+    public UserBadge getNextLevelUserDefaultBadge(BadgeStrategyType strategy) {
         Long nextLevelBadgeId = badge.getNextLevelBadgeId();
-        if (nextLevelBadgeId == null) {
-            return null;
-        }
 
         Badge newLevelBadge = Badge.builder()
                 .id(nextLevelBadgeId)
@@ -61,8 +76,9 @@ public class UserBadge extends BaseTimeEntity {
         return UserBadge.builder()
                 .userId(userId)
                 .badge(newLevelBadge)
-                .currentValue(InitBadgeCurrentValue.NEXT_LEVEL.getValue())
+                .currentValue(strategy.getInitCurrentValueForNextLevel())
                 .postStatus(PostStatusType.VISIBLE)
+                .accumulativeValue(accumulativeValue + 1)
                 .build();
     }
 
