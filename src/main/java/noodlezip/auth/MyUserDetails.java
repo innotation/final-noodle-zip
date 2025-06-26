@@ -1,5 +1,6 @@
 package noodlezip.auth;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import noodlezip.users.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+@Getter
 @RequiredArgsConstructor
 public class MyUserDetails implements UserDetails {
 
@@ -52,4 +54,6 @@ public class MyUserDetails implements UserDetails {
     public String getUsername() {
         return user.getLoginId();
     }
+
+
 }
