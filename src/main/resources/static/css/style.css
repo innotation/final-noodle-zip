@@ -39,7 +39,11 @@ Author URI: http://themeforest.net/user/Ansonika/
 @font-face {
   font-family: Glyphter;
   src: url(icon_fonts/font/Glyphter.eot);
+<<<<<<< HEAD
   src: url(icon_fonts/font/Glyphter.eot?#iefix) format("embedded-opentype"), url(icon_fonts/font/Glyphter.woff) format("woff"), url(icon_fonts/font/Glyphter.ttf) format("truetype"), url(icon_fonts/font/Glyphter.svg#Glyphter) format("svg");
+=======
+  src: url(icon_fonts/font/Glyphter.eot?#ie fix) format("embedded-opentype"), url(icon_fonts/font/Glyphter.woff) format("woff"), url(icon_fonts/font/Glyphter.ttf) format("truetype"), url(icon_fonts/font/Glyphter.svg#Glyphter) format("svg");
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -1770,6 +1774,47 @@ header {
     padding: 10px 15px;
   }
 }
+<<<<<<< HEAD
+=======
+header .container {
+  height: 70px; /* 또는 64px, 너가 원하는 높이 */
+  position: relative;
+}
+.search-bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.search-bar .search-trigger {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 250px;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.search-bar i {
+  font-size: 1.2rem;
+  color: #888;
+  margin-left: 8px;
+}
+
+
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
 header.header .logo_sticky {
   display: none;
 }
@@ -1848,6 +1893,10 @@ header.sticky a.open_close, .header_in a.open_close {
 
 #logo {
   float: left;
+<<<<<<< HEAD
+=======
+  margin-top: 15px;
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
 }
 @media (max-width: 991px) {
   #logo {
@@ -1866,7 +1915,11 @@ header.sticky a.open_close, .header_in a.open_close {
 .main-menu {
   position: relative;
   z-index: 9;
+<<<<<<< HEAD
   top: 10px;
+=======
+  top: 20px;
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
   float: right;
   -moz-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
@@ -1890,9 +1943,14 @@ header.sticky a.open_close, .header_in a.open_close {
 /*First level styles */
 .main-menu > ul > li > a {
   color: #fff;
+<<<<<<< HEAD
   padding: 0 8px 10px  8px;
   font-size: 14px;
   font-size: 0.875rem;
+=======
+  padding: 0 8px 0 8px;
+  font-size: 16px;
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
   font-weight: 500;
 }
 .main-menu > ul > li:hover > a {
@@ -2207,7 +2265,11 @@ header.sticky .main-menu > ul > li:hover > a, header.header_in .main-menu > ul >
 ul#top_menu {
   float: right;
   margin: 0 0 0 10px;
+<<<<<<< HEAD
   padding: 0;
+=======
+  padding: 13px;
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
   list-style: none;
   font-size: 13px;
   font-size: 0.8125rem;
@@ -2244,7 +2306,11 @@ ul#top_menu li a:hover {
   color: #fff;
   opacity: 0.7;
 }
+<<<<<<< HEAD
 ul#top_menu li a.login, ul#top_menu li a.wishlist_bt_top {
+=======
+ul#top_menu li a.login {
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
   display: block;
   width: 22px;
   height: 23px;
@@ -2256,12 +2322,32 @@ ul#top_menu li a.login, ul#top_menu li a.wishlist_bt_top {
   -ms-transition: opacity 0.5s ease;
   transition: opacity 0.5s ease;
 }
+<<<<<<< HEAD
+=======
+ul#top_menu li a.sign_up {
+  display: block;
+  width: 50px;
+  height: 23px;
+  position: relative;
+  top: 12px;
+  -moz-transition: opacity 0.5s ease;
+  -o-transition: opacity 0.5s ease;
+  -webkit-transition: opacity 0.5s ease;
+  -ms-transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease;
+}
+
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
 @media (max-width: 991px) {
   ul#top_menu li a.login, ul#top_menu li a.wishlist_bt_top {
     top: 2px;
   }
 }
+<<<<<<< HEAD
 ul#top_menu li a.login:before, ul#top_menu li a.wishlist_bt_top:before {
+=======
+ul#top_menu li a.login:before {
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
   font-family: 'Glyphter';
   font-size: 21px;
   font-size: 1.3125rem;
@@ -2272,16 +2358,23 @@ ul#top_menu li a.login:before, ul#top_menu li a.wishlist_bt_top:before {
   font-weight: normal;
   line-height: 1;
 }
+<<<<<<< HEAD
 .sticky ul#top_menu li a.login:before, .sticky ul#top_menu li a.wishlist_bt_top:before {
+=======
+.sticky ul#top_menu li a.login:before, .sticky  ul#top_menu li a.sign_up {
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
   color: #444;
 }
 ul#top_menu li a.wishlist_bt_top {
   text-indent: -9999px;
   overflow: hidden;
 }
+<<<<<<< HEAD
 ul#top_menu li a.wishlist_bt_top:before {
   content: '\0043';
 }
+=======
+>>>>>>> 15766f78f3804a1d9bb42d64ce9a7964937ff25f
 ul#top_menu li a.login {
   text-indent: -9999px;
   overflow: hidden;
