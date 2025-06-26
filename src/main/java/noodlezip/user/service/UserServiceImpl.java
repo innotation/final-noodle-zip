@@ -1,14 +1,17 @@
 package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.exception.CustomException;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;
 import noodlezip.user.entity.UserType;
 import noodlezip.user.repository.UserRepository;
+import noodlezip.user.status.UserErrorStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -23,12 +26,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registUser(UserDto user) {
 
-//        if (userRepository.findByLoginId(user.getLoginId()).isPresent()) {
-//            throw new UserWrongFormatException("이미 사용 중인 아이디입니다.");
-//        }
-//        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
-//            throw new UserWrongFormatException("이미 사용 중인 이메일입니다.");
-//        }
+        userRepository.findByLoginId(user.getLoginId()).ifPresent((existingUser) -> {
+                throw new CustomException(UserErrorStatus._ALREADY_EXIST_LOGIN_ID);
+        });
+
+        userRepository.findByEmail(user.getEmail()).ifPresent((existingUser) -> {
+            throw new CustomException(UserErrorStatus._ALREADY_EXIST_EMAIL);
+        });
 
         User newUser = modelMapper.map(user, User.class);
         newUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -37,5 +41,18 @@ public class UserServiceImpl implements UserService {
         newUser.setIsEmailVerified(false);
 
         userRepository.save(newUser);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isLoginIdDuplicated(String loginId) {
+        // Optional.isPresent()는 결과가 존재하면 true, 없으면 false
+        return userRepository.findByLoginId(loginId).isPresent();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isEmailDuplicated(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 }

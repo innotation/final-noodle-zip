@@ -26,7 +26,7 @@ public enum UserErrorStatus implements BaseErrorCode {
     _INVALID_GENDER_VALUE(HttpStatus.BAD_REQUEST, "USER-014", "유효하지 않은 성별 값입니다."),
     _REGISTRATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "USER-015", "회원가입 처리 중 알 수 없는 오류가 발생했습니다. 다시 시도해주세요."),
     _USER_INACTIVE(HttpStatus.FORBIDDEN, "USER-016", "사용자 계정이 비활성화 상태입니다.");
-    
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

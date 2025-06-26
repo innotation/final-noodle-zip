@@ -21,6 +21,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Optional;
+
 @ExtendWith(MockitoExtension.class) // Mockito를 JUnit 5에서 사용하기 위한 설정
 class UserDetailsServiceImplTest {
 
@@ -49,7 +51,7 @@ class UserDetailsServiceImplTest {
     @Test
     void testLoadUserByUsername_Success() {
         // Given: userRepository.findByLoginId("testUser01") 호출 시 testUser 객체를 반환하도록 설정
-        when(userRepository.findByLoginId("testUser01")).thenReturn(testUser);
+        when(userRepository.findByLoginId("testUser01")).thenReturn(Optional.of(testUser));
 
         // When: loadUserByUsername 메서드 호출
         UserDetails userDetails = userDetailsService.loadUserByUsername("testUser01");
