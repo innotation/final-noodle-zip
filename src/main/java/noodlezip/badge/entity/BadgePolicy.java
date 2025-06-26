@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -26,15 +24,13 @@ public class BadgePolicy {
     @Column(name = "next_badge_id")
     private Long nextBadgeId;
 
-    @Column(name = "event_start_at")
-    private LocalDateTime eventStartAt;
-
-    @Column(name = "event_end_at")
-    private LocalDateTime eventEndAt;
-
 
     public boolean isOverCompletionValue(int currentValue) {
         return completionValue <= currentValue;
+    }
+
+    public boolean hasNothingNextBadge() {
+        return nextBadgeId == null;
     }
 
 }
