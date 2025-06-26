@@ -279,34 +279,69 @@
 		<!-- regist.html용 Spring 연동 폼 -->
 		<form method="post" action="/api/stores" enctype="multipart/form-data" id="register">
 			<div class="card mb-4">
-				<div class="card-header">가게 등록 폼</div>
+				<h2 class="form_title">가게 등록</h2>
 				<div class="card-body">
 
 					<!-- ① 이미지 업로드 -->
-					<div class="form-group mb-3">
-						<label class="form-label">대표 이미지 <small class="text-muted">(1장)</small></label>
-						<div id="store-image-dropzone" class="border rounded p-4 text-center text-secondary">
-							Drop files here to upload
-						</div>
-						<input type="file" name="storeMainImage" accept="image/*" class="form-control mt-2" required>
+					<div id="image-upload-area" style="border: 2px dashed #ccc; padding: 40px 30px 30px 30px; text-align: center; cursor: pointer;">
+						<p style="margin-top: 12px;">Drop files here to upload</p>
+						<input type="file" id="image-input" name="storeImage" accept="image/*" style="display: none;" />
+						<img id="preview-image" src="" style="max-width: 100%; display: none; margin-top: 10px;" />
 					</div>
+
+					<script>
+						const uploadArea = document.getElementById('image-upload-area');
+						const imageInput = document.getElementById('image-input');
+						const previewImage = document.getElementById('preview-image');
+
+						uploadArea.addEventListener('click', () => imageInput.click());
+
+						uploadArea.addEventListener('dragover', (e) => {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#007bff';
+						});
+
+						uploadArea.addEventListener('dragleave', () => {
+							uploadArea.style.borderColor = '#ccc';
+						});
+
+						uploadArea.addEventListener('drop', (e) => {
+							e.preventDefault();
+							uploadArea.style.borderColor = '#ccc';
+							const file = e.dataTransfer.files[0];
+							if (file) {
+								imageInput.files = e.dataTransfer.files;
+								previewImage.src = URL.createObjectURL(file);
+								previewImage.style.display = 'block';
+							}
+						});
+
+						imageInput.addEventListener('change', () => {
+							const file = imageInput.files[0];
+							if (file) {
+								previewImage.src = URL.createObjectURL(file);
+								previewImage.style.display = 'block';
+							}
+						});
+					</script>
 
 					<!-- ② 가게명 / ③ 도로명 주소 API -->
 					<div class="row mb-3">
-						<div class="col-md-6">
+						<div class="col-md-6 position-relative">
 							<input type="text" name="storeName" class="form-control" placeholder="가게명" required>
 						</div>
 						<div class="col-md-6 position-relative">
 							<input type="text" name="address" id="address-api" class="form-control" placeholder="도로명 주소 검색" autocomplete="off" required>
-							<i class="bi bi-search position-absolute" style="top:12px; right:12px;"></i>
+							<i class="bi bi-search position-absolute search-icon"></i>
 							<!-- 주소 검색 결과는 JS로 동적으로 .suggestions 안에 채울 것 -->
 							<ul class="list-group position-absolute w-100 mt-1 suggestions" style="z-index:1000;"></ul>
 						</div>
 					</div>
 
 					<!-- ④ 전화번호 -->
-					<div class="form-group mb-4">
-						<input type="tel" name="phone" class="form-control" placeholder="전화번호" required>
+					<div class="form-group mb-3">
+						<label for="phone">전화번호</label>
+						<input type="text" id="phone" name="phoneNumber" class="form-control" placeholder="010-1234-5678" maxlength="13" />
 					</div>
 
 					<!-- ⑤ 요일별 영업시간 -->
@@ -384,12 +419,25 @@
 						</div>
 					</div>
 
-					<!-- ⑥ 부가 정보: 라디오 · 체크박스 -->
+					<!-- ⑥ 지역카드, 유아 동반, 주차 : 라디오 · 체크박스 -->
 					<div class="mb-4">
-						<label class="form-label">부가 정보</label>
 						<div class="form-check">
-							<input class="form-check-input" type="checkbox" name="isLocalCard" value="true" id="localCard">
-							<label class="form-check-label" for="localCard">지역카드 사용 가능</label>
+							<label>
+								<input type="checkbox" id="regionCardCheck" name="regionCardAvailable" />
+								지역카드 사용 가능
+							</label>
+
+							<!-- 지역카드 API 응답 혹은 추가 설명 칸 -->
+							<div id="region-card-info" style="display:none; margin-top: 8px;">
+								<p style="color: gray;">지역카드 정보를 불러오는 중이거나, 연결될 API 공간입니다.</p>
+							</div>
+
+							<script>
+								document.getElementById('regionCardCheck').addEventListener('change', function () {
+									const infoBox = document.getElementById('region-card-info');
+									infoBox.style.display = this.checked ? 'block' : 'none';
+								});
+							</script>
 						</div>
 						<div class="form-check">
 							<input class="form-check-input" type="checkbox" name="isChildAllowed" value="true" id="childAllowed">
@@ -413,103 +461,194 @@
 					</div>
 
 					<!-- ⑦ 사장님 한 줄 소개 -->
-					<div class="mb-4">
-						<textarea name="ownerComment" class="form-control" rows="2" placeholder="사장님 한 줄 소개 (공휴일/주말 구분 입력 가능)"></textarea>
+					<div class="form-group mb-4">
+						<label for="owner-intro">사장님 한 줄 소개</label>
+						<textarea id="owner-intro" name="ownerIntroduction" class="form-control" placeholder="주말/공휴일 영업여부, 영업시간 & 유료 주차인 경우 (1시간 2,000원) 적어주세요 ~" rows="4"></textarea>
 					</div>
 
-					<!-- (스크롤 ↓) 메뉴 등록 섹션 -->
 					<hr>
 					<h6 class="mb-3">메뉴 등록</h6>
 					<div id="menu-items">
-						<div class="menu-item card mb-3">
-							<div class="card-body">
-								<div class="row g-2 align-items-center">
-									<!-- 메뉴 유형 라디오 -->
-									<div class="col-auto">
-										<div class="form-check">
-											<input class="form-check-input" type="radio" name="menus[0].type" id="menuType0" value="RAMEN" checked>
-											<label class="form-check-label" for="menuType0">라멘</label>
-										</div>
-										<div class="form-check">
-											<input class="form-check-input" type="radio" name="menus[0].type" value="GENERAL" id="menuType0g">
-											<label class="form-check-label" for="menuType0g">일반</label>
-										</div>
-									</div>
-									<!-- 이미지 업로드 -->
-									<div class="col-md-3">
-										<label class="form-label">이미지</label>
-										<input type="file" name="menus[0].menuImage" accept="image/*" class="form-control form-control-sm">
-									</div>
-									<!-- 메뉴명 / 가격 -->
-									<div class="col-md-4">
+						<div class="menu-item row align-items-center mb-4">
+							<!-- 이미지 업로드 -->
+							<div class="col-md-4">
+								<div class="menu-image-upload" style="border: 2px dashed #ccc; padding: 30px 20px; text-align: center; cursor: pointer; height: 180px;">
+									<p style="margin-top: 10px;">Drop files here to upload</p>
+									<input type="file" name="menus[0].menuImage" class="menu-image-input" accept="image/*" style="display: none;" />
+									<img class="menu-preview-image" src="" style="max-width: 100%; max-height: 120px; display: none; margin-top: 10px;" />
+								</div>
+							</div>
+
+							<!-- 메뉴 정보 -->
+							<div class="col-md-8">
+								<div class="row">
+									<!-- 메뉴명 -->
+									<div class="col-md-6 mb-2">
 										<input type="text" name="menus[0].menuName" class="form-control form-control-sm" placeholder="메뉴명" required>
 									</div>
-									<div class="col-md-2">
-										<input type="number" name="menus[0].price" class="form-control form-control-sm" placeholder="가격" required>
+
+									<!-- 가격 -->
+									<div class="col-md-6 mb-2">
+										<div class="input-group">
+											<input type="number" name="menus[0].price" class="form-control form-control-sm price-input" placeholder="가격" min="0" step="500" required>
+											<span class="input-group-text">원</span>
+										</div>
 									</div>
-									<!-- 설명 -->
-									<div class="col-12">
-										<input type="text" name="menus[0].menuDescription" class="form-control form-control-sm" placeholder="설명">
-									</div>
-									<!-- 태그(라멘 종류, 육수, 기본토핑) -->
-									<div class="col-12">
-										<select multiple class="form-control form-control-sm" name="menus[0].tags">
-											<option value="tonkotsu">돈코츠</option>
-											<option value="shio">시오</option>
-											<option value="miso">미소</option>
-											<!-- etc -->
+
+									<!-- 카테고리 드롭다운 -->
+									<div class="col-md-6 mb-2">
+										<select name="menus[0].category" class="form-select form-select-sm">
+											<option disabled selected>카테고리 선택</option>
+											<option value="기본">기본</option>
+											<option value="사이드">사이드</option>
+											<option value="세트">세트</option>
+											<option value="토핑">토핑</option>
 										</select>
 									</div>
-									<!-- 토핑 추가 입력 -->
-									<div class="col-10">
-										<input type="text" name="menus[0].extraToppings" class="form-control form-control-sm" placeholder="추가 토핑 입력">
+
+									<!-- 메뉴 설명 -->
+									<div class="col-md-6 mb-2">
+										<textarea name="menus[0].description" class="form-control form-control-sm" placeholder="메뉴 설명" rows="2"></textarea>
 									</div>
-									<div class="col-2 text-end">
-										<button type="button" class="btn btn-sm btn-outline-danger remove-menu">–</button>
+
+									<!-- 예쁜 토핑 선택 UI (체크박스 형태) -->
+									<div class="col-md-12 mb-2">
+										<label class="form-label d-block">기본 토핑 선택</label>
+										<div class="d-flex flex-wrap gap-2 topping-tags" data-menu-index="0">
+											<span class="topping-tag" data-value="계란">계란</span>
+											<span class="topping-tag" data-value="차슈">차슈</span>
+											<span class="topping-tag" data-value="김">김</span>
+											<span class="topping-tag" data-value="숙주">숙주</span>
+											<span class="topping-tag" data-value="면추가">면추가</span>
+										</div>
+										<input type="hidden" name="menus[0].defaultToppings" value="">
+									</div>
+
+									<!-- 추가 토핑 입력 -->
+									<div class="col-md-12 mb-2">
+										<input type="text" name="menus[0].extraTopping" class="form-control form-control-sm" placeholder="이 가게만의 추가 토핑 (예: 매운 멘마)">
+									</div>
+
+									<!-- 삭제 버튼 -->
+									<div class="col-12 text-end">
+										<button type="button" class="btn btn-sm btn-outline-danger remove-menu">삭제</button>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 					<button type="button" id="add-menu" class="btn btn-sm btn-outline-primary mb-4">+ 메뉴 추가</button>
-
-					<!-- 메뉴 동적 추가 js 코드 -->
-					<script>
-						let menuIndex = 1;
-						document.getElementById('add-menu').addEventListener('click', function () {
-							const menuList = document.getElementById('menu-items');
-							const template = document.querySelector('.menu-item');
-							const clone = template.cloneNode(true);
-							clone.querySelectorAll('input, select, textarea').forEach(input => {
-								if (input.name) input.name = input.name.replace(/\d+/, menuIndex);
-								if (input.id) {
-									const newId = input.id.replace(/\d+/, menuIndex);
-									const label = clone.querySelector(`label[for="${input.id}"]`);
-									input.id = newId;
-									if (label) label.setAttribute("for", newId);
-								}
-								if (input.type === 'radio' || input.type === 'checkbox') {
-									input.checked = false;
-								} else {
-									input.value = '';
-								}
-							});
-							clone.querySelector('.remove-menu').addEventListener('click', () => clone.remove());
-							menuList.appendChild(clone);
-							menuIndex++;
-						});
-
-						document.querySelectorAll('.remove-menu').forEach(button => {
-							button.addEventListener('click', () => button.closest('.menu-item').remove());
-						});
-					</script>
 
 					<!-- 제출 버튼 -->
 					<div class="text-center">
 						<button type="submit" class="btn btn-success btn-lg">등록하기</button>
 					</div>
 
-				</div>
+						<script>
+							let menuIndex = 1;
+
+							const menuList = document.getElementById('menu-items');
+							const template = document.querySelector('.menu-item');
+							const addButton = document.getElementById('add-menu');
+
+							// 메뉴 추가
+							addButton.addEventListener('click', () => {
+								const clone = template.cloneNode(true);
+
+								// name/index 정리
+								clone.querySelectorAll('input, select, textarea').forEach(input => {
+									if (input.name) input.name = input.name.replace(/\d+/, menuIndex);
+									if (input.id) {
+										const newId = input.id.replace(/\d+/, menuIndex);
+										const label = clone.querySelector(`label[for="${input.id}"]`);
+										input.id = newId;
+										if (label) label.setAttribute("for", newId);
+									}
+									if (input.type === 'radio' || input.type === 'checkbox') {
+										input.checked = false;
+									} else {
+										input.value = '';
+									}
+								});
+
+								setupMenuImageUpload(clone);
+								setupToppingTags(clone);
+								updateRemoveMenuButtons(clone);
+
+								// 버튼 앞에 삽입
+								menuList.insertBefore(clone, addButton);
+
+								menuIndex++;
+							});
+
+							// 삭제 버튼 제한
+							function updateRemoveMenuButtons(context = document) {
+								context.querySelectorAll('.remove-menu').forEach(button => {
+									button.onclick = () => {
+										const allMenus = document.querySelectorAll('.menu-item');
+										if (allMenus.length > 1) {
+											button.closest('.menu-item').remove();
+										} else {
+											alert("최소 한 개의 메뉴는 등록되어 있어야 합니다.");
+										}
+									};
+								});
+							}
+
+							// 이미지 업로드
+							function setupMenuImageUpload(area) {
+								const uploadArea = area.querySelector('.menu-image-upload');
+								const input = uploadArea.querySelector('.menu-image-input');
+								const preview = uploadArea.querySelector('.menu-preview-image');
+
+								uploadArea.addEventListener('click', () => input.click());
+								uploadArea.addEventListener('dragover', e => {
+									e.preventDefault();
+									uploadArea.style.borderColor = '#007bff';
+								});
+								uploadArea.addEventListener('dragleave', () => {
+									uploadArea.style.borderColor = '#ccc';
+								});
+								uploadArea.addEventListener('drop', e => {
+									e.preventDefault();
+									uploadArea.style.borderColor = '#ccc';
+									const file = e.dataTransfer.files[0];
+									if (file) {
+										input.files = e.dataTransfer.files;
+										preview.src = URL.createObjectURL(file);
+										preview.style.display = 'block';
+									}
+								});
+								input.addEventListener('change', () => {
+									const file = input.files[0];
+									if (file) {
+										preview.src = URL.createObjectURL(file);
+										preview.style.display = 'block';
+									}
+								});
+							}
+
+							// 토핑 태그
+							function setupToppingTags(wrapper) {
+								const tagContainer = wrapper.querySelector('.topping-tags');
+								const hiddenInput = wrapper.querySelector('input[name$=".defaultToppings"]');
+
+								tagContainer.querySelectorAll('.topping-tag').forEach(tag => {
+									tag.addEventListener('click', () => {
+										tag.classList.toggle('selected');
+										const selected = [...tagContainer.querySelectorAll('.topping-tag.selected')]
+												.map(el => el.dataset.value);
+										hiddenInput.value = selected.join(',');
+									});
+								});
+							}
+
+							// 최초 메뉴에 세팅
+							setupMenuImageUpload(template);
+							setupToppingTags(template);
+							updateRemoveMenuButtons(template);
+						</script>
+
+					</div>
 			</div>
 		</form>
 		</div>
@@ -678,6 +817,20 @@
     <script src="/js/common_scripts.min.js"></script>
     <script src="/js/common_func.js"></script>
     <script src="/assets/validate.js"></script>
+
+	<script>
+		const phoneInput = document.getElementById('phone');
+		phoneInput.addEventListener('input', function (e) {
+			let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+			if (value.length < 4) {
+				e.target.value = value;
+			} else if (value.length < 8) {
+				e.target.value = value.slice(0, 3) + '-' + value.slice(3);
+			} else {
+				e.target.value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+			}
+		});
+	</script>
 
 </body>
 </html>
