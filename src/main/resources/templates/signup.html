@@ -173,34 +173,41 @@
                         <h6>개인정보</h6>
                         <form th:action="@{/signup}" th:object="${user}" method="post">
                             <div class="form-group">
-                                <input class="form-control" placeholder="아이디" name="loginId">
+                                <input class="form-control" placeholder="아이디" name="loginId" th:field="*{loginId}">
                                 <i class="icon_profile"></i>
+                                <div class="text-danger" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
                             </div>
                             <div class="form-group add_bottom_15">
-                                <input class="form-control" placeholder="비밀번호" id="password_sign" name="password">
+                                <input class="form-control" placeholder="비밀번호" id="password_sign" name="password" th:field="*{password}">
                                 <i class="icon_lock"></i>
+                                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="이름" name="userName">
+                                <input class="form-control" placeholder="이름" name="userName" th:field="*{userName}">
                                 <i class="icon_pencil"></i>
+                                <div class="text-danger" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="이메일주소" name="email">
+                                <input class="form-control" placeholder="이메일주소" name="email" th:field="*{email}">
                                 <i class="icon_mail"></i>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="전화번호" name="phone">
+                                <input class="form-control" placeholder="전화번호" name="phone" th:field="*{phone}">
                                 <i class="icon_phone"></i>
+                                <div class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="생년월일 8자리" name="birth">
+                                <input class="form-control" placeholder="생년월일 8자리" name="birth" th:field="*{birth}">
                                 <i class="icon_calendar"></i>
+                                <div class="text-danger" th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}"></div>
                             </div>
                             <div class="form-group">
-                                <select name="gender" id="gender" class="form-control">
+                                <select name="gender" id="gender" class="form-control" th:field="*{gender}">
                                     <option value="M">남</option>
                                     <option value="F">여</option>
                                 </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
                             </div>
                             <button type="submit" class="btn_1 full-width mb_5">회원가입</button>
                         </form>
@@ -377,6 +384,20 @@
 <script src="js/common_scripts.min.js"></script>
 <script src="js/common_func.js"></script>
 <script src="assets/validate.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // 유효성 검사 오류 메시지
+    const validationError = /*[[${validationError}]]*/ null;
+    if (validationError) {
+        alert(validationError);
+    }
 
+    // 전역 오류 메시지 (서비스 로직 예외 등)
+    const globalErrorMessage = /*[[${globalErrorMessage}]]*/ null;
+    if (globalErrorMessage) {
+        alert(globalErrorMessage);
+    }
+    /*]]>*/
+</script>
 </body>
 </html>

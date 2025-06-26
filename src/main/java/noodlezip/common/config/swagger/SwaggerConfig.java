@@ -1,4 +1,4 @@
-package noodlezip.config.swagger;
+package noodlezip.common.config.swagger;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

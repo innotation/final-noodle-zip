@@ -23,6 +23,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registUser(UserDto user) {
 
+//        if (userRepository.findByLoginId(user.getLoginId()).isPresent()) {
+//            throw new UserWrongFormatException("이미 사용 중인 아이디입니다.");
+//        }
+//        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
+//            throw new UserWrongFormatException("이미 사용 중인 이메일입니다.");
+//        }
+
         User newUser = modelMapper.map(user, User.class);
         newUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         newUser.setUserType(UserType.NORMAL);

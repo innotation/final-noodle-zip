@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,11 +24,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         User user = userRepository.findByLoginId(username);
 
-        if (user == null) {
-            throw new UsernameNotFoundException("Name is Not Found: " + username);
-        }
-
-        log.info("Loading user {} from database", username);
         return new MyUserDetails(user);
     }
 }
