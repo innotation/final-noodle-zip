@@ -34,7 +34,7 @@ public class Badge extends BaseTimeEntity {
     @Embedded
     private BadgeExtraOption badgeExtraOption;
 
-    @Column(name = "active_status", nullable = false, length = 30)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
     @Column(name = "badge_image_url", length = 500)
@@ -47,6 +47,10 @@ public class Badge extends BaseTimeEntity {
 
     public Long getNextLevelBadgeId() {
         return badgePolicy.getNextBadgeId();
+    }
+
+    public boolean hasNothingNextBadge() {
+        return badgePolicy.hasNothingNextBadge();
     }
 
 }
