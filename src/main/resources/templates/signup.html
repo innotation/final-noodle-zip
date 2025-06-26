@@ -190,9 +190,9 @@
                             <div class="form-group">
                                 <div class="duplicate-check-wrapper">
                                     <input class="form-control" placeholder="아이디" id="loginId" name="loginId" th:field="*{loginId}">
-                                    <button type="button" class="btn btn-sm btn-primary" id="checkLoginIdBtn">중복 확인</button>
+                                    <button type="button" class="btn_1" id="checkLoginIdBtn">중복 확인</button>
                                 </div>
-                                <i class="icon_profile"></i>
+<!--                                <i class="icon_profile"></i>-->
                                 <div class="text-danger validation-message" id="loginIdError" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
                                 <div class="text-success validation-message" id="loginIdCheckMessage"></div>
                             </div>
@@ -210,9 +210,9 @@
                             <div class="form-group">
                                 <div class="duplicate-check-wrapper">
                                     <input class="form-control" placeholder="이메일주소" id="email" name="email" th:field="*{email}">
-                                    <button type="button" class="btn btn-sm btn-primary" id="checkEmailBtn">중복 확인</button>
+                                    <button type="button" class="btn_1" id="checkEmailBtn">중복 확인</button>
                                 </div>
-                                <i class="icon_mail"></i>
+<!--                                <i class="icon_mail"></i>-->
                                 <div class="text-danger validation-message" id="emailError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                 <div class="text-success validation-message" id="emailCheckMessage"></div>
                             </div>
