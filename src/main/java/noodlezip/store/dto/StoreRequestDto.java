@@ -25,7 +25,7 @@ public class StoreRequestDto {
     private Double xAxis; // 위도
     private Double yAxis; // 경도
 
-    private List<MenuRequestDto> menus; // 메뉴 리스트 포함
+    private List<MenuRequestDto> menus; // 메뉴 리스트 포함(메뉴 엔티티로 매핑)
     private List<StoreScheduleRequestDto> weekSchedule;  // 요일별 영업시간
 
     // userId는 서버에서 받아와서 Entity에 매핑해야함
