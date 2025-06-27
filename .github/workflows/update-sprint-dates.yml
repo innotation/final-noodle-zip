@@ -43,25 +43,47 @@ jobs:
                     id
                     fields(first: 20) {
                       nodes {
-                        # ProjectV2FieldCommon은 id와 name을 가집니다.
-                        ... on ProjectV2FieldCommon {
-                          id
-                          name
-                        }
-                        # ProjectV2Field는 일반 필드
+                        # 'ProjectV2FieldCommon' 대신, ProjectV2FieldConfiguration 유니온의 가능한 멤버들을 명시합니다.
+                        # ProjectV2FieldCommon은 ProjectV2Field, ProjectV2IterationField 등에 포함될 수 있습니다.
                         ... on ProjectV2Field {
                           id
                           name
+                          dataType
                         }
-                        # ProjectV2SingleSelectField는 단일 선택 필드 (Status와 같은)
+                        ... on ProjectV2IterationField {
+                          id
+                          name
+                          dataType
+                          # Iteration 필드는 추가적인 구성 정보를 가질 수 있습니다.
+                          configuration {
+                            iterations {
+                              id
+                              startDate
+                              duration
+                              title
+                            }
+                          }
+                        }
                         ... on ProjectV2SingleSelectField {
                           id
                           name
-                          options { # 단일 선택 필드의 경우 옵션 정보도 함께 가져올 수 있습니다.
+                          dataType
+                          options {
                             id
                             name
                           }
                         }
+                        # 만약 프로젝트에 숫자(Number) 필드가 있다면, 아래도 추가할 수 있습니다.
+                        # ... on ProjectV2NumberField {
+                        #   id
+                        #   name
+                        #   dataType
+                        # }
+                        # GitHub ProjectV2에 String 필드(텍스트 필드)가 있다면 아래도 추가할 수 있습니다.
+                        # ... on ProjectV2FieldCommon { # 이 타입은 다른 특정 타입들이 아닐 때의 공통 속성 조회용
+                        #   id
+                        #   name
+                        # }
                       }
                     }
                     items(first: 100) {
@@ -69,27 +91,43 @@ jobs:
                         id
                         fieldValues(first: 20) {
                           nodes {
+                            # 날짜 필드 값
                             ... on ProjectV2ItemFieldDateValue {
                               date
                               field {
                                 name
+                                # 필드 ID도 함께 가져오면 디버깅에 유용합니다.
+                                # 여기서도 필드 타입별로 명시적으로 선택할 수 있습니다.
+                                ... on ProjectV2Field { id }
+                                ... on ProjectV2IterationField { id }
+                                ... on ProjectV2SingleSelectField { id }
                               }
                             }
-                            # 단일 선택 필드 값도 여기에 추가
+                            # 단일 선택 필드 값
                             ... on ProjectV2ItemFieldSingleSelectValue {
                               name
                               field {
                                 name
+                                ... on ProjectV2Field { id }
+                                ... on ProjectV2SingleSelectField { id }
                               }
                             }
-                            # 다른 필드 타입이 있다면 여기에 추가
+                            # 텍스트 필드 값
                             ... on ProjectV2ItemFieldTextValue {
                                 text
                                 field {
                                     name
+                                    ... on ProjectV2Field { id }
                                 }
                             }
-                            # 필요한 다른 필드 타입들을 여기에 추가
+                            # 숫자 필드 값 (있다면)
+                            # ... on ProjectV2ItemFieldNumberValue {
+                            #   number
+                            #   field {
+                            #     name
+                            #     ... on ProjectV2Field { id }
+                            #   }
+                            # }
                           }
                         }
                         content {
@@ -98,8 +136,14 @@ jobs:
                             title
                             state
                           }
+                          # 만약 Project에 Pull Request도 포함된다면 아래를 추가해야 합니다.
+                          # ... on PullRequest {
+                          #   number
+                          #   title
+                          #   state
+                          # }
                         }
-                        # Status 필드 값을 직접 가져오는 부분은 유지
+                        # Status 필드 값을 직접 가져오는 부분은 유지 (이 부분이 안정적입니다)
                         status: fieldValueByName(name: "${statusFieldName}") {
                           ... on ProjectV2ItemFieldSingleSelectValue {
                             name
@@ -122,7 +166,8 @@ jobs:
             const endField = fields.find(f => f.name === endDateField);
 
             if (!startField || !endField) {
-              throw new Error("Start Date 또는 End Date 필드를 찾을 수 없습니다. 필드 이름이 정확한지 확인해주세요.");
+              // 오류 메시지를 더 구체적으로 변경
+              throw new Error(`필드 '${startDateField}' 또는 '${endDateField}'를 찾을 수 없습니다. 프로젝트 설정의 필드 이름을 다시 확인해주세요.`);
             }
 
             for (const item of items) {
@@ -135,9 +180,10 @@ jobs:
               let hasStart = false;
               let hasEnd = false;
 
-              for (const f of item.fieldValues.nodes) {
-                if (f.field?.name === startDateField && f.date) hasStart = true;
-                if (f.field?.name === endDateField && f.date) hasEnd = true;
+              // 기존 필드 값들을 확인합니다.
+              for (const fv of item.fieldValues.nodes) {
+                if (fv.field?.name === startDateField && fv.date) hasStart = true;
+                if (fv.field?.name === endDateField && fv.date) hasEnd = true;
               }
 
               // 시작일 설정
