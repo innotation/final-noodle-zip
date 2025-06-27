@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
 
     @Override
+    @Transactional
     public void registUser(UserDto user) {
 
         userRepository.findByLoginId(user.getLoginId()).ifPresent((existingUser) -> {
@@ -46,7 +47,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public boolean isLoginIdDuplicated(String loginId) {
-        // Optional.isPresent()는 결과가 존재하면 true, 없으면 false
         return userRepository.findByLoginId(loginId).isPresent();
     }
 
