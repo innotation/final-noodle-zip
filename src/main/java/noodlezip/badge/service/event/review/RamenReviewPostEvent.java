@@ -32,12 +32,24 @@ public class RamenReviewPostEvent implements BadgeEventReader<RamenReviewBadgeDt
     }
 
     private void processRamenCategory(Long userId, int ramenCategoryId) {
-
+        /**
+         * 찾아오는 로직만 다른거지
+         * 레벨업을 시키는 방식은 똑같다.
+         */
     }
 
     public int getRegalCode(Long storeId) {
         return Region.getRegionByCode(11111).getCode();
     }
+
+    /**
+     * 1. 배지 찾아오기
+     * 2. 초기 배지 생성 필요 확인하기 + 생성하기 - 초기 배지 생성 모듈화 가능
+     * 3. value 업데이트하기 - 전략에 따라서      - 전략에 따른 value 업데이트 모듈화 가능
+     * 4. 끝났는지 확인하기      - 모듈화 가능
+     * 4.
+     */
+
 
 
 }

@@ -71,9 +71,10 @@ public class UserBadge extends BaseTimeEntity {
     }
 
 
+    //만엑에 레벨이 끝나고 새로운 레벨이 들어왔을때
     public UserBadge getNextLevelUserDefaultBadge(BadgeStrategyType strategy) {
         Long nextLevelBadgeId = badge.getNextLevelBadgeId();
-        Integer updatedAccumulativeValue = accumulativeValue == null ? null : accumulativeValue + 1;
+        Integer updatedAccumulativeValue = accumulativeValue == null ? null : accumulativeValue; //얘를
 
         Badge newLevelBadge = Badge.builder()
                 .id(nextLevelBadgeId) //저장만하명 될텐데 실제 사용하기에는 문젱ㅆ을수도
