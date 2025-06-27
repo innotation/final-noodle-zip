@@ -8,6 +8,10 @@ on:
 jobs:
   update-dates:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      repository-projects: write
+      pull-requests: write
 
     steps:
       - name: Update Sprint Dates in GitHub Project
