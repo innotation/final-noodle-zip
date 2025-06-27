@@ -12,7 +12,7 @@ public class AllCommunityPostCountBadge {
     private final LevelDirectUpdateProcessor directUpdateProcessor;
 
     public void process(Long userId) {
-        directUpdateProcessor.process(userId, LevelBadgeCategoryType.ALL_COMMENT_POST_COUNT_BADGE);
+        directUpdateProcessor.process(userId, LevelBadgeCategoryType.ALL_COMMUNITY_POST_COUNT_BADGE);
     }
 
 }
