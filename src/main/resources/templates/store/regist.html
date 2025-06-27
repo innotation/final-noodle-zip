@@ -277,7 +277,7 @@
 		<!-- /container -->
 
 		<!-- regist.html용 Spring 연동 폼 -->
-		<form method="post" action="/api/stores" enctype="multipart/form-data" id="register">
+		<form method="post" action="/store/regist" enctype="multipart/form-data" id="register">
 			<div class="card mb-4">
 				<h2 class="form_title">가게 등록</h2>
 				<div class="card-body">
@@ -331,17 +331,41 @@
 							<input type="text" name="storeName" class="form-control" placeholder="가게명" required>
 						</div>
 						<div class="col-md-6 position-relative">
-							<input type="text" name="address" id="address-api" class="form-control" placeholder="도로명 주소 검색" autocomplete="off" required>
-							<i class="bi bi-search position-absolute search-icon"></i>
-							<!-- 주소 검색 결과는 JS로 동적으로 .suggestions 안에 채울 것 -->
-							<ul class="list-group position-absolute w-100 mt-1 suggestions" style="z-index:1000;"></ul>
-						</div>
+							<!-- 주소 입력 영역 -->
+							<div class="address-group">
+								<!-- 도로명 주소 -->
+								<input
+										type="text"
+										id="address-api"
+										name="address"
+										class="form-control"
+										placeholder="도로명 주소"
+										readonly
+								/>
+
+								<!-- 우편번호 (hidden) -->
+								<input type="hidden" id="zipcode" name="zipcode" />
+
+								<!-- 상세주소 -->
+								<input
+										type="text"
+										id="detailAddress"
+										name="detailAddress"
+										class="form-control mt-2"
+										placeholder="상세 주소 입력"
+								/>
+
+								<!-- 주소 검색 버튼 -->
+								<button type="button" class="btn btn-primary mt-2" id="searchAddressBtn">
+									주소 검색
+								</button>
+							</div>
 					</div>
 
 					<!-- ④ 전화번호 -->
 					<div class="form-group mb-3">
 						<label for="phone">전화번호</label>
-						<input type="text" id="phone" name="phoneNumber" class="form-control" placeholder="010-1234-5678" maxlength="13" />
+						<input type="text" id="phone" name="phone" class="form-control" placeholder="010-1234-5678" maxlength="13" />
 					</div>
 
 					<!-- ⑤ 요일별 영업시간 -->
@@ -423,7 +447,7 @@
 					<div class="mb-4">
 						<div class="form-check">
 							<label>
-								<input type="checkbox" id="regionCardCheck" name="regionCardAvailable" />
+								<input type="checkbox" name="isLocalCard" name="localCardAvailable" />
 								지역카드 사용 가능
 							</label>
 
@@ -463,7 +487,7 @@
 					<!-- ⑦ 사장님 한 줄 소개 -->
 					<div class="form-group mb-4">
 						<label for="owner-intro">사장님 한 줄 소개</label>
-						<textarea id="owner-intro" name="ownerIntroduction" class="form-control" placeholder="주말/공휴일 영업여부, 영업시간 & 유료 주차인 경우 (1시간 2,000원) 적어주세요 ~" rows="4"></textarea>
+						<textarea id="owner-intro" name="ownerComment" class="form-control" placeholder="주말/공휴일 영업여부, 영업시간 & 유료 주차인 경우 (1시간 2,000원) 적어주세요 ~" rows="4"></textarea>
 					</div>
 
 					<hr>
@@ -521,7 +545,7 @@
 											<span class="topping-tag" data-value="숙주">숙주</span>
 											<span class="topping-tag" data-value="면추가">면추가</span>
 										</div>
-										<input type="hidden" name="menus[0].defaultToppings" value="">
+										<input type="hidden" name="menus[0].defaultToppingIds" value="1,3,5">
 									</div>
 
 									<!-- 추가 토핑 입력 -->
@@ -818,6 +842,30 @@
     <script src="/js/common_func.js"></script>
     <script src="/assets/validate.js"></script>
 
+	<!-- 카카오 다음 우편번호 API 스크립트 -->
+	<script
+			src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"
+			charset="utf-8"
+	></script>
+
+	<script>
+		document.getElementById("searchAddressBtn").addEventListener("click", function () {
+			new daum.Postcode({
+				oncomplete: function (data) {
+					// 도로명 주소 자동 입력
+					document.getElementById("address-api").value = data.roadAddress;
+
+					// 우편번호 자동 입력
+					document.getElementById("zipcode").value = data.zonecode;
+
+					// 상세주소 입력 필드에 포커스 이동
+					document.getElementById("detailAddress").focus();
+				},
+			}).open();
+		});
+	</script>
+
+	<!-- 전화번호 입력할 때 하이픈 넣기 -->
 	<script>
 		const phoneInput = document.getElementById('phone');
 		phoneInput.addEventListener('input', function (e) {
