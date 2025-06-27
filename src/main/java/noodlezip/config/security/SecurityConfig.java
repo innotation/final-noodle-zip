@@ -25,10 +25,10 @@ public class SecurityConfig {
 
         // URL 접근 제어( 인가 설정 )
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/",  "/login", "/signup", "/img/**", "/images/**").permitAll()
+            auth.requestMatchers("/",  "/login", "/signup", "/img/**", "/images/**", "/admin/**", "/admin_section/**").permitAll()
                     .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
                     .requestMatchers("/fragments/**").permitAll()
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                    //.requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("USER")
                     .anyRequest().authenticated();
         });
