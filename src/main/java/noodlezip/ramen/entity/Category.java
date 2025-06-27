@@ -24,10 +24,9 @@ public class Category {
     @Column(name = "category_name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)

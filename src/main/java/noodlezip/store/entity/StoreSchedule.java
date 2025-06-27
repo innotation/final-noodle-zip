@@ -16,20 +16,15 @@ public class StoreSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 복합키를 피하고 싶다면 이 필드 필요, 아니면 생략 가능
+    private Long id;
 
-    @Column(name = "store_id", nullable = false)
     private Long storeId;
 
-    @Column(name = "day_of_week", nullable = false)
     private String dayOfWeek;
 
-    @Column(name = "opening_at", nullable = false)
     private LocalDateTime openingAt;
 
-    @Column(name = "closing_at", nullable = false)
     private LocalDateTime closingAt;
 
-    @Column(name = "is_closed_day", nullable = false)
     private Boolean isClosedDay;
 }
