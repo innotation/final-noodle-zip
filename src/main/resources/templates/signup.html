@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
+    <meta name="author" content="Ansonika">
+    <title>Foogra - Discover & Book the best restaurants at the best price</title>
+
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="img/apple-touch-icon-144x144-precomposed.png">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <link href="css/booking-sign_up.css" rel="stylesheet">
+
+    <link href="css/custom.css" rel="stylesheet">
+
+    <style>
+        /* 중복확인 버튼 스타일 */
+        .duplicate-check-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* input과 버튼 사이 간격 */
+        }
+        .duplicate-check-wrapper .form-control {
+            flex-grow: 1; /* input이 최대한 공간을 차지하도록 */
+        }
+        .duplicate-check-wrapper button {
+            flex-shrink: 0; /* 버튼 크기가 줄어들지 않도록 */
+        }
+        .validation-message {
+            font-size: 0.875em;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        .text-success {
+            color: #28a745 !important; /* Bootstrap success green */
+        }
+        .text-danger {
+            color: #dc3545 !important; /* Bootstrap danger red */
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header_in clearfix">
+    <div class="container">
+        <div id="logo">
+            <a href="index.html">
+                <img src="img/logo_sticky.svg" width="140" height="35" alt="">
+            </a>
+        </div>
+        <ul id="top_menu">
+            <li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
+            <li><a href="wishlist.html" class="wishlist_bt_top" title="Your wishlist">Your wishlist</a></li>
+        </ul>
+        <a href="#0" class="open_close">
+            <i class="icon_menu"></i><span>Menu</span>
+        </a>
+        <nav class="main-menu">
+            <div id="header_menu">
+                <a href="#0" class="open_close">
+                    <i class="icon_close"></i><span>Menu</span>
+                </a>
+                <a href="index.html"><img src="img/logo.svg" width="140" height="35" alt=""></a>
+            </div>
+            <ul>
+                <li class="submenu">
+                    <a href="#0" class="show-submenu">Home</a>
+                    <ul>
+                        <li><a href="index.html">Default</a></li>
+                        <li class="third-level"><a href="#0">Sliders - Parallax <strong>New!</strong></a>
+                            <ul>
+                                <li><a href="index-16.html">Kenburns slider <strong>New!</strong></a></li>
+                                <li><a href="index-8.html">Revolution Slider 1</a></li>
+                                <li><a href="index-9.html">Revolution Slider 2</a></li>
+                                <li><a href="index-3.html">Owl Carousel</a></li>
+                                <li><a href="index-10.html">Parallax Youtube</a></li>
+                                <li><a href="index-11.html">Parallax Vimeo</a></li>
+                                <li><a href="index-12.html">Parallax Mp4 Video</a></li>
+                                <li><a href="index-13.html">Parallax Video Fullscreen</a></li>
+                                <li><a href="index-14.html">Parallax Image</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="index-15.html">Text Rotator</a></li>
+                        <li><a href="index-5.html">Address Autocomplete</a></li>
+                        <li><a href="index-6.html">Search Version 2</a></li>
+                        <li><a href="index-7.html">Delivery/Takeaway version</a></li>
+                        <li><a href="modal-advertise.html">Modal Advertise</a></li>
+                        <li><a href="modal-newsletter.html">Modal Newsletter</a></li>
+                        <li><a href="index-2.html">Video Bg Fallback Mobile</a></li>
+                        <li><a href="index-4.html">GDPR Cookie Bar EU Law</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#0" class="show-submenu">Listing</a>
+                    <ul>
+                        <li class="third-level"><a href="#0">List pages</a>
+                            <ul>
+                                <li><a href="grid-listing-filterscol.html">List default</a></li>
+                                <li><a href="grid-listing-filterscol-map.html">List with map</a></li>
+                                <li><a href="listing-map.html">List side map</a></li>
+                                <li><a href="grid-listing-filterscol-full-width.html">List full width</a></li>
+                                <li><a href="grid-listing-filterscol-full-masonry.html">List Masonry Filter</a></li>
+                                <li><a href="grid-listing-filterscol-delivery.html">List Delivery/Takeaway</a></li>
+                            </ul>
+                        </li>
+                        <li class="third-level"><a href="#0">Detail pages</a>
+                            <ul>
+                                <li><a href="detail-restaurant.html">Detail page 1</a></li>
+                                <li><a href="detail-restaurant-2.html">Detail page 2</a></li>
+                                <li><a href="detail-restaurant-3.html">Mobile Fixed Booking</a></li>
+                                <li><a href="detail-restaurant-delivery.html">Delivery/Takeaway</a></li>
+                                <li><a href="detail-restaurant-4.html">Detail Menu Thumbs</a></li>
+                                <li><a href="detail-restaurant-5.html">Detail Contact Form</a></li>
+                            </ul>
+                        </li>
+                        <li class="third-level"><a href="#0">OpenStreetMap</a>
+                            <ul>
+                                <li><a href="grid-listing-filterscol-map-openstreetmap.html">List with map</a></li>
+                                <li><a href="listing-map-openstreetmap.html">List side map</a></li>
+                                <li><a href="grid-listing-filterscol-full-width-openstreetmap.html">List full width</a>
+                                </li>
+                                <li><a href="grid-listing-filterscol-full-masonry-openstreetmap.html">List Masonry
+                                    Filter</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="submit-restaurant.html">Submit Restaurant</a></li>
+                        <li><a href="submit-rider.html">Submit Rider</a></li>
+                        <li><a href="wishlist.html">Wishlist</a></li>
+                        <li><a href="booking.html">Booking</a></li>
+                        <li><a href="confirm.html">Confirm Booking</a></li>
+                        <li><a href="confirm-delivery.html">Confirm Order</a></li>
+                        <li><a href="booking-delivery-2.html">Order Delivery/Takeaway</a></li>
+                        <li><a href="booking-delivery.html">Order Delivery/Takeaway 2</a></li>
+                        <li><a href="admin_section/index.html" target="_blank">Admin Section</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#0" class="show-submenu">Other Pages</a>
+                    <ul>
+                        <li><a href="404.html">404 Error</a></li>
+                        <li><a href="help.html">Help and Faq</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="leave-review.html">Leave a review</a></li>
+                        <li><a href="user-logged-1.html">User Logged 1</a></li>
+                        <li><a href="user-logged-2.html">User Logged 2</a></li>
+                        <li><a href="contacts.html">Contacts</a></li>
+                        <li><a href="coming_soon/index.html">Coming Soon</a></li>
+                        <li><a href="account.html">Sign Up</a></li>
+                        <li><a href="icon-pack-1.html">Icon Pack 1</a></li>
+                        <li><a href="icon-pack-2.html">Icon Pack 2</a></li>
+                    </ul>
+                </li>
+                <li><a href="submit-restaurant.html">Submit</a></li>
+                <li><a href="#0">Buy this template</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="bg_gray pattern">
+
+    <div class="container margin_60_40">
+        <div class="row justify-content-center">
+            <div class="col-lg-4">
+                <div class="sign_up">
+                    <div class="head">
+                        <div class="title">
+                            <h3>Sign Up</h3>
+                        </div>
+                    </div>
+                    <div class="main">
+                        <a href="#0" class="social_bt facebook">Sign up with Facebook</a>
+                        <a href="#0" class="social_bt google">Sign up with Google</a>
+                        <div class="divider"><span>Or</span></div>
+                        <h6>개인정보</h6>
+                        <form id="signupForm" th:action="@{/signup}" th:object="${user}" method="post">
+                            <div class="form-group">
+                                <div class="duplicate-check-wrapper">
+                                    <input class="form-control" placeholder="아이디" id="loginId" name="loginId" th:field="*{loginId}">
+                                    <button type="button" class="btn_1" id="checkLoginIdBtn">중복 확인</button>
+                                </div>
+<!--                                <i class="icon_profile"></i>-->
+                                <div class="text-danger validation-message" id="loginIdError" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
+                                <div class="text-success validation-message" id="loginIdCheckMessage"></div>
+                            </div>
+                            <div class="form-group add_bottom_15">
+                                <input class="form-control" placeholder="비밀번호" id="password_sign" name="password" th:field="*{password}">
+                                <i class="icon_lock"></i>
+                                <div class="text-danger validation-message" id="passwordError" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                <div class="text-success validation-message" id="passwordValidationMessage"></div>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="이름" id="userName" name="userName" th:field="*{userName}">
+                                <i class="icon_pencil"></i>
+                                <div class="text-danger validation-message" id="userNameError" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="duplicate-check-wrapper">
+                                    <input class="form-control" placeholder="이메일주소" id="email" name="email" th:field="*{email}">
+                                    <button type="button" class="btn_1" id="checkEmailBtn">중복 확인</button>
+                                </div>
+<!--                                <i class="icon_mail"></i>-->
+                                <div class="text-danger validation-message" id="emailError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                <div class="text-success validation-message" id="emailCheckMessage"></div>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="전화번호 (예: 010-1234-5678)" id="phone" name="phone" th:field="*{phone}">
+                                <i class="icon_phone"></i>
+                                <div class="text-danger validation-message" id="phoneError" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="생년월일 8자리 (예: 19900101)" id="birth" name="birth" th:field="*{birth}">
+                                <i class="icon_calendar"></i>
+                                <div class="text-danger validation-message" id="birthError" th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}"></div>
+                            </div>
+                            <div class="form-group">
+                                <select name="gender" id="gender" class="form-control" th:field="*{gender}">
+                                    <option value="">성별 선택</option> <option value="M">남</option>
+                                    <option value="F">여</option>
+                                </select>
+                                <div class="text-danger validation-message" id="genderError" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
+                            </div>
+                            <button type="submit" class="btn_1 full-width mb_5" id="signupBtn" disabled>회원가입</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_1">Quick Links</h3>
+                <div class="collapse dont-collapse-sm links" id="collapse_1">
+                    <ul>
+                        <li><a href="submit-rider.html">Become a Rider</a></li>
+                        <li><a href="submit-restaurant.html">Add your restaurant</a></li>
+                        <li><a href="help.html">Help</a></li>
+                        <li><a href="account.html">My account</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contacts.html">Contacts</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_2">Categories</h3>
+                <div class="collapse dont-collapse-sm links" id="collapse_2">
+                    <ul>
+                        <li><a href="grid-listing-filterscol.html">Top Categories</a></li>
+                        <li><a href="grid-listing-filterscol-full-masonry.html">Best Rated</a></li>
+                        <li><a href="grid-listing-filterscol-full-width.html">Best Price</a></li>
+                        <li><a href="grid-listing-filterscol-full-masonry.html">Latest Submissions</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_3">Contacts</h3>
+                <div class="collapse dont-collapse-sm contacts" id="collapse_3">
+                    <ul>
+                        <li><i class="icon_house_alt"></i>97845 Baker st. 567<br>Los Angeles - US</li>
+                        <li><i class="icon_mobile"></i>+94 423-23-221</li>
+                        <li><i class="icon_mail_alt"></i><a href="#0">info@domain.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_4">Keep in touch</h3>
+                <div class="collapse dont-collapse-sm" id="collapse_4">
+                    <div id="newsletter">
+                        <div id="message-newsletter"></div>
+                        <form method="post" action="assets/newsletter.php" name="newsletter_form" id="newsletter_form">
+                            <div class="form-group">
+                                <input type="email" name="email_newsletter" id="email_newsletter" class="form-control"
+                                       placeholder="Your email">
+                                <button type="submit" id="submit-newsletter"><i class="arrow_carrot-right"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="follow_us">
+                        <h5>Follow Us</h5>
+                        <ul>
+                            <li><a href="#0"><i class="bi bi-facebook"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-twitter-x"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-instagram"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-tiktok"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-whatsapp"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row add_bottom_25">
+            <div class="col-lg-6">
+                <ul class="footer-selector clearfix">
+                    <li>
+                        <div class="styled-select lang-selector">
+                            <select>
+                                <option value="English" selected>English</option>
+                                <option value="French">French</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="Russian">Russian</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="styled-select currency-selector">
+                            <select>
+                                <option value="US Dollars" selected>US Dollars</option>
+                                <option value="Euro">Euro</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+                             data-src="img/cards_all.svg" alt="" width="198" height="30" class="lazy"></li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <ul class="additional_links">
+                    <li><a href="#0">Terms and conditions</a></li>
+                    <li><a href="#0">Privacy</a></li>
+                    <li><span>© Foogra</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+<div id="toTop"></div><div class="layer"></div><div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
+    <div class="modal_header">
+        <h3>Sign In</h3>
+    </div>
+    <form>
+        <div class="sign-in-wrapper">
+            <a href="#0" class="social_bt facebook">Login with Facebook</a>
+            <a href="#0" class="social_bt google">Login with Google</a>
+            <div class="divider"><span>Or</span></div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" name="email" id="email">
+                <i class="icon_mail_alt"></i>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password" id="password" value="">
+                <i class="icon_lock_alt"></i>
+            </div>
+            <div class="clearfix add_bottom_15">
+                <div class="checkboxes float-start">
+                    <label class="container_check">Remember me
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Log In" class="btn_1 full-width mb_5">
+                Don’t have an account? <a href="account.html">Sign up</a>
+            </div>
+            <div id="forgot_pw">
+                <div class="form-group">
+                    <label>Please confirm login email below</label>
+                    <input type="email" class="form-control" name="email_forgot" id="email_forgot">
+                    <i class="icon_mail_alt"></i>
+                </div>
+                <p>You will receive an email containing a link allowing you to reset your password to a new preferred
+                    one.</p>
+                <div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="js/common_scripts.min.js"></script>
+<script src="js/common_func.js"></script>
+<script src="assets/validate.js"></script>
+
+<script>
+    // --- 회원가입 버튼 활성화를 위한 전역 상태 변수 ---
+    let isLoginIdChecked = false;
+    let isLoginIdAvailable = false; // 아이디 사용 가능 여부
+    let isEmailChecked = false;
+    let isEmailAvailable = false;   // 이메일 사용 가능 여부
+
+    // --- HTML 요소 캐싱 ---
+    const loginIdInput = document.getElementById('loginId');
+    const checkLoginIdBtn = document.getElementById('checkLoginIdBtn');
+    const loginIdCheckMessage = document.getElementById('loginIdCheckMessage');
+    const loginIdError = document.getElementById('loginIdError');
+
+    const emailInput = document.getElementById('email');
+    const checkEmailBtn = document.getElementById('checkEmailBtn');
+    const emailCheckMessage = document.getElementById('emailCheckMessage');
+    const emailError = document.getElementById('emailError');
+
+    const passwordInput = document.getElementById('password_sign');
+    const passwordValidationMessage = document.getElementById('passwordValidationMessage');
+    const passwordError = document.getElementById('passwordError');
+
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phoneError');
+
+    const birthInput = document.getElementById('birth');
+    const birthError = document.getElementById('birthError');
+
+    const genderSelect = document.getElementById('gender');
+    const genderError = document.getElementById('genderError');
+
+    const signupBtn = document.getElementById('signupBtn');
+
+    // --- 정규식 정의 (UserDto와 동일) ---
+    const passwordRegexp = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const emailRegexp = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    const phoneRegexp = /^\d{3}-\d{3,4}-\d{4}$/;
+    const birthRegexp = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|1[1-9]|2[1-9]|3[0-1])$/;
+
+
+    // --- 함수: 회원가입 버튼 활성화/비활성화 체크 ---
+    function checkSignupButtonStatus() {
+        // 모든 필드의 클라이언트 측 유효성 검사 통과 여부 확인 (필수 필드)
+        const isAllFieldsValid =
+            loginIdInput.value.trim() !== '' &&
+            passwordInput.value.trim() !== '' && passwordRegexp.test(passwordInput.value) &&
+            document.getElementById('userName').value.trim() !== '' &&
+            emailInput.value.trim() !== '' && emailRegexp.test(emailInput.value) &&
+            phoneInput.value.trim() !== '' && phoneRegexp.test(phoneInput.value) &&
+            birthInput.value.trim() !== '' && birthRegexp.test(birthInput.value) &&
+            genderSelect.value.trim() !== ''; // 성별이 선택되었는지 확인
+
+        // 아이디와 이메일 중복 검사가 모두 완료되었고 사용 가능해야 함
+        signupBtn.disabled = !(isLoginIdChecked && isLoginIdAvailable && isEmailChecked && isEmailAvailable && isAllFieldsValid);
+    }
+
+    // --- 함수: 메시지 표시 ---
+    function displayMessage(element, message, type) {
+        element.textContent = message;
+        element.className = 'validation-message'; // 기본 클래스 유지
+        if (type === 'success') {
+            element.classList.add('text-success');
+            element.classList.remove('text-danger');
+        } else if (type === 'error') {
+            element.classList.add('text-danger');
+            element.classList.remove('text-success');
+        } else {
+            element.classList.remove('text-success', 'text-danger');
+        }
+    }
+
+    // --- 이벤트 리스너: 아이디 중복 확인 버튼 클릭 ---
+    checkLoginIdBtn.addEventListener('click', async () => {
+        const loginId = loginIdInput.value.trim();
+
+        // 1차 클라이언트 유효성 검사 (필수 입력)
+        if (loginId === '') {
+            displayMessage(loginIdCheckMessage, '아이디를 입력해주세요.', 'error');
+            isLoginIdChecked = false;
+            isLoginIdAvailable = false;
+            checkSignupButtonStatus();
+            return;
+        }
+
+        // 서버에 Ajax 요청
+        try {
+            const response = await fetch(`/check-login-id?loginId=${encodeURIComponent(loginId)}`);
+            const result = await response.json(); // ApiResponse 객체를 받음
+
+            if (result.isSuccess) { // ApiResponse의 isSuccess 필드 확인
+                displayMessage(loginIdCheckMessage, result.message, 'success'); // 성공 메시지 사용
+                isLoginIdAvailable = true;
+            } else {
+                displayMessage(loginIdCheckMessage, result.message, 'error'); // 실패 메시지 사용
+                isLoginIdAvailable = false;
+            }
+            isLoginIdChecked = true; // 중복 확인 완료
+        } catch (error) {
+            console.error('아이디 중복 확인 중 오류:', error);
+            // HTTP 에러(4xx, 5xx)가 발생하면 이 catch 블록으로 들어오며,
+            // response.json() 파싱 자체에 실패할 수도 있습니다.
+            // 이 경우 백엔드의 에러 응답 구조를 확인하여 적절히 처리해야 합니다.
+            // 현재 백엔드에서는 CustomException을 던지고 있어, 이 경우 catch 블록에서 처리됩니다.
+            displayMessage(loginIdCheckMessage, '아이디 중복 확인 중 오류가 발생했습니다.', 'error');
+            isLoginIdChecked = false;
+            isLoginIdAvailable = false;
+        }
+        checkSignupButtonStatus();
+    });
+
+    // --- 이벤트 리스너: 이메일 중복 확인 버튼 클릭 ---
+    checkEmailBtn.addEventListener('click', async () => {
+        const email = emailInput.value.trim();
+
+        // 1차 클라이언트 유효성 검사 (필수 입력 및 형식)
+        if (email === '') {
+            displayMessage(emailCheckMessage, '이메일 주소를 입력해주세요.', 'error');
+            isEmailChecked = false;
+            isEmailAvailable = false;
+            checkSignupButtonStatus();
+            return;
+        }
+        if (!emailRegexp.test(email)) {
+            displayMessage(emailCheckMessage, '이메일 형식이 올바르지 않습니다.', 'error');
+            isEmailChecked = false;
+            isEmailAvailable = false;
+            checkSignupButtonStatus();
+            return;
+        }
+
+        // 서버에 Ajax 요청
+        try {
+            const response = await fetch(`/check-email?email=${encodeURIComponent(email)}`);
+            const result = await response.json(); // ApiResponse 객체를 받음
+
+            if (result.isSuccess) {
+                displayMessage(emailCheckMessage, result.message, 'success');
+                isEmailAvailable = true;
+            } else {
+                displayMessage(emailCheckMessage, result.message, 'error');
+                isEmailAvailable = false;
+            }
+            isEmailChecked = true;
+        } catch (error) {
+            console.error('이메일 중복 확인 중 오류:', error);
+            displayMessage(emailCheckMessage, '이메일 중복 확인 중 오류가 발생했습니다.', 'error');
+            isEmailChecked = false;
+            isEmailAvailable = false;
+        }
+        checkSignupButtonStatus();
+    });
+
+    // --- 이벤트 리스너: 입력 필드 변경 시 중복 확인 상태 초기화 ---
+    loginIdInput.addEventListener('input', () => {
+        isLoginIdChecked = false;
+        isLoginIdAvailable = false;
+        displayMessage(loginIdCheckMessage, '', ''); // 메시지 초기화
+        loginIdError.textContent = ''; // 백엔드 오류 메시지 초기화
+        checkSignupButtonStatus();
+    });
+
+    emailInput.addEventListener('input', () => {
+        isEmailChecked = false;
+        isEmailAvailable = false;
+        displayMessage(emailCheckMessage, '', ''); // 메시지 초기화
+        emailError.textContent = ''; // 백엔드 오류 메시지 초기화
+        checkSignupButtonStatus();
+    });
+
+    // --- 이벤트 리스너: 기타 필수 입력 필드 변경 시 회원가입 버튼 상태 업데이트 ---
+    // 비밀번호 유효성 검사
+    passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value.trim();
+        if (password === '') {
+            displayMessage(passwordValidationMessage, '비밀번호를 입력해주세요.', 'error');
+        } else if (!passwordRegexp.test(password)) {
+            displayMessage(passwordValidationMessage, '비밀번호는 최소 8자, 영문, 숫자, 특수문자를 포함해야 합니다.', 'error');
+        } else {
+            displayMessage(passwordValidationMessage, '사용 가능한 비밀번호입니다.', 'success');
+        }
+        passwordError.textContent = ''; // 백엔드 오류 메시지 초기화
+        checkSignupButtonStatus();
+    });
+
+    document.getElementById('userName').addEventListener('input', () => {
+        document.getElementById('userNameError').textContent = '';
+        checkSignupButtonStatus();
+    });
+    phoneInput.addEventListener('input', () => {
+        const phone = phoneInput.value.trim();
+        if (phone === '') {
+            displayMessage(phoneError, '휴대폰 번호를 입력해주세요.', 'error');
+        } else if (!phoneRegexp.test(phone)) {
+            displayMessage(phoneError, '휴대폰 번호는 012-3456-7890 형식으로 입력해주세요.', 'error');
+        } else {
+            displayMessage(phoneError, '', ''); // 유효하면 메시지 제거
+        }
+        phoneError.textContent = '';
+        checkSignupButtonStatus();
+    });
+    birthInput.addEventListener('input', () => {
+        const birth = birthInput.value.trim();
+        if (birth === '') {
+            displayMessage(birthError, '생년월일을 입력해주세요.', 'error');
+        } else if (!birthRegexp.test(birth)) {
+            displayMessage(birthError, '생년월일은 YYYYMMDD 8자리 형식으로 입력해주세요.', 'error');
+        } else {
+            displayMessage(birthError, '', ''); // 유효하면 메시지 제거
+        }
+        birthError.textContent = '';
+        checkSignupButtonStatus();
+    });
+    genderSelect.addEventListener('change', () => {
+        document.getElementById('genderError').textContent = '';
+        checkSignupButtonStatus();
+    });
+
+
+    // --- 초기 회원가입 버튼 비활성화 상태 설정 ---
+    document.addEventListener('DOMContentLoaded', () => {
+        checkSignupButtonStatus(); // 페이지 로드 시 버튼 상태 초기화
+
+        // Spring Controller에서 넘어온 에러 메시지를 alert으로 띄우기
+        /*<![CDATA[*/
+        const validationError = /*[[${validationError}]]*/ null;
+        if (validationError) {
+            alert(validationError);
+        }
+
+        const globalErrorMessage = /*[[${globalErrorMessage}]]*/ null;
+        if (globalErrorMessage) {
+            alert(globalErrorMessage);
+        }
+        /*]]>*/
+    });
+
+</script>
+</body>
+</html>
