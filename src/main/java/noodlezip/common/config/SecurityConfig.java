@@ -25,7 +25,10 @@ public class SecurityConfig {
 
         // URL 접근 제어( 인가 설정 )
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/", "/check-login-id", "/check-email", "/signup", "/login", "/images/**", "css/**", "img/**", "js/**", "assets/**", "/v3/api-docs/**","/swagger-ui/**").permitAll()
+            auth.requestMatchers("/", "/check-login-id", "/check-email", "/signup", "/login", "/images/**", "css/**", "img/**", "js/**", "assets/**", "/v3/api-docs/**","/swagger-ui/**").permitAll();
+            auth.requestMatchers("/",  "/login", "/signup", "/img/**", "/images/**").permitAll()
+                    .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
+                    .requestMatchers("/fragments/**").permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("USER")
                     .anyRequest().authenticated();
@@ -33,7 +36,7 @@ public class SecurityConfig {
 
         // 로그인 처리 설정( 인증 설정 ) => custom
         http.formLogin(form -> {
-            form.loginPage("/login") // custom loginPage URL
+            form.loginPage("/") // custom loginPage URL
                     .loginProcessingUrl("/login") // login Process URL(POST)
                     .usernameParameter("userId") // 파라미터중 인증처리 사용 아이디
                     .passwordParameter("userPwd") // 파라미터중 인증처리 사용 비밀번호
@@ -41,7 +44,7 @@ public class SecurityConfig {
                         if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
                             resp.sendRedirect("/admin/main"); // 응답 -> /admin/main
                         } else {
-                            resp.sendRedirect("/user/main"); // 응답 -> /admin/main
+                            resp.sendRedirect("/"); // 응답 -> /main
                         }
                     })
                     .failureHandler((req, resp, exce) -> {
