@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import noodlezip.badge.entity.temp.TempRamenCategory;
+import noodlezip.ramen.entity.Category;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +18,6 @@ public class BadgeExtraOption {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ramen_category_id")
-    private TempRamenCategory ramenCategory;
+    private Category ramenCategory;
 
 }
