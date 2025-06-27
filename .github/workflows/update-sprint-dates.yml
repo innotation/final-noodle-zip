@@ -1,0 +1,153 @@
+name: Update Sprint Dates
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # 10분마다 자동 실행
+  workflow_dispatch:        # 수동 실행도 가능
+
+jobs:
+  update-dates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update Sprint Dates in GitHub Project
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const projectNumber = 5;
+            const org = "20250123-SSG";
+            const statusFieldName = "Status";
+            const startDateField = "Start Date";
+            const endDateField = "End Date";
+
+            // 오늘 날짜를 한국 시간대(KST)로 가져오기
+            const todayInKST = new Date();
+            const formatter = new Intl.DateTimeFormat('fr-CA', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                timeZone: 'Asia/Seoul' // 한국 시간대 지정
+            });
+            const today = formatter.format(todayInKST).replace(/\//g, '-'); // "YYYY-MM-DD" 형식으로 변환
+
+            console.log(`오늘은 한국 시간으로 ${today} 입니다.`);
+
+            const gql = String.raw;
+
+            // 1. Get project ID and fields
+            const queryProject = gql`
+              query($org: String!) {
+                organization(login: $org) {
+                  projectV2(number: ${projectNumber}) {
+                    id
+                    fields(first: 20) {
+                      nodes {
+                        ... on ProjectV2FieldCommon {
+                          id
+                          name
+                        }
+                      }
+                    }
+                    items(first: 100) {
+                      nodes {
+                        id
+                        fieldValues(first: 20) {
+                          nodes {
+                            ... on ProjectV2ItemFieldDateValue {
+                              date
+                              field {
+                                name
+                              }
+                            }
+                          }
+                        }
+                        content {
+                          ... on Issue {
+                            number
+                            title
+                            state
+                          }
+                        }
+                        status: fieldValueByName(name: "${statusFieldName}") {
+                          ... on ProjectV2ItemFieldSingleSelectValue {
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+
+            const result = await github.graphql(queryProject, { org });
+            const project = result.organization.projectV2;
+            const projectId = project.id;
+            const fields = project.fields.nodes;
+            const items = project.items.nodes;
+
+            const startField = fields.find(f => f.name === startDateField);
+            const endField = fields.find(f => f.name === endDateField);
+
+            if (!startField || !endField) {
+              throw new Error("Start Date 또는 End Date 필드를 찾을 수 없습니다. 필드 이름이 정확한지 확인해주세요.");
+            }
+
+            for (const item of items) {
+              if (!item.content || !item.content.number) continue;
+
+              const issueNumber = item.content.number;
+              const status = item.status?.name || "";
+              const isClosed = item.content.state === "CLOSED";
+
+              let hasStart = false;
+              let hasEnd = false;
+
+              for (const f of item.fieldValues.nodes) {
+                if (f.field?.name === startDateField && f.date) hasStart = true;
+                if (f.field?.name === endDateField && f.date) hasEnd = true;
+              }
+
+              // 시작일 설정
+              if (status === "In Progress" && !hasStart) {
+                console.log(`⏱️ 이슈 #${issueNumber}에 시작일(${today})을 설정합니다.`);
+                await github.graphql(gql`
+                  mutation {
+                    updateProjectV2ItemFieldValue(
+                      input: {
+                        projectId: "${projectId}",
+                        itemId: "${item.id}",
+                        fieldId: "${startField.id}",
+                        value: { date: "${today}" }
+                      }
+                    ) {
+                      projectV2Item {
+                        id
+                      }
+                    }
+                  }
+                `);
+              }
+
+              // 종료일 설정
+              if ((status === "Done" || isClosed) && !hasEnd) {
+                console.log(`✅ 이슈 #${issueNumber}에 종료일(${today})을 설정합니다.`);
+                await github.graphql(gql`
+                  mutation {
+                    updateProjectV2ItemFieldValue(
+                      input: {
+                        projectId: "${projectId}",
+                        itemId: "${item.id}",
+                        fieldId: "${endField.id}",
+                        value: { date: "${today}" }
+                      }
+                    ) {
+                      projectV2Item {
+                        id
+                      }
+                    }
+                  }
+                `);
+              }
+            }
