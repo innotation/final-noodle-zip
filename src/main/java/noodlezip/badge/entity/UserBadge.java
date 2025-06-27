@@ -44,6 +44,18 @@ public class UserBadge extends BaseTimeEntity {
     private LocalDateTime obtainedAt;
 
 
+    public boolean isOverCompletionValue() {
+        return badge.isOverCompletionValue(currentValue);
+    }
+
+    public boolean isFinalBadgeAlreadyObtained() {
+        return obtainedAt != null && badge.hasNothingNextBadge();
+    }
+
+    public boolean isNextBadgeUpgradable() {
+        return isOverCompletionValue() && !badge.hasNothingNextBadge();
+    }
+
     public void updateCurrentValueByOne() {
         if (!isOverCompletionValue()) {
             currentValue++;
@@ -58,27 +70,20 @@ public class UserBadge extends BaseTimeEntity {
         obtainedAt = LocalDateTime.now();
     }
 
-    public boolean isOverCompletionValue() {
-        return badge.isOverCompletionValue(currentValue);
-    }
-
-    public boolean isUnableUpdateNextBadge() {
-        return badge.hasNothingNextBadge() || obtainedAt != null;
-    }
-
 
     public UserBadge getNextLevelUserDefaultBadge(BadgeStrategyType strategy) {
         Long nextLevelBadgeId = badge.getNextLevelBadgeId();
+        Integer updatedAccumulativeValue = accumulativeValue == null ? null : accumulativeValue + 1;
 
         Badge newLevelBadge = Badge.builder()
-                .id(nextLevelBadgeId)
+                .id(nextLevelBadgeId) //저장만하명 될텐데 실제 사용하기에는 문젱ㅆ을수도
                 .build();
         return UserBadge.builder()
                 .userId(userId)
                 .badge(newLevelBadge)
                 .currentValue(strategy.getInitCurrentValueForNextLevel())
                 .postStatus(PostStatusType.VISIBLE)
-                .accumulativeValue(accumulativeValue + 1)
+                .accumulativeValue(updatedAccumulativeValue)
                 .build();
     }
 
