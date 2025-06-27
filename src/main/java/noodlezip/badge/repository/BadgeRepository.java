@@ -18,6 +18,18 @@ public interface BadgeRepository extends JpaRepository<Badge, Long> {
             """)
     List<Badge> findMinLevelBadgeByBadgeCategoryId(Long badgeCategoryId, Pageable pageable);
 
-//    Optional<Badge> findTopByUserIdAndBadgeCategoryIdOrderByBadgeLevelDesc(Long badgeCategoryId);
+
+    @Query("""
+            select b
+            from Badge b
+            where b.badgeCategory.id =:badgeCategoryId
+            and b.badgeExtraOption.ramenCategory.id =:ramenCategoryId
+            order by b.badgePolicy.badgeLevel asc
+            """)
+    List<Badge> findMinLevelBadgeByBadgeCategoryIdAndRamenCategoryId(
+            Long badgeCategoryId,
+            int ramenCategoryId,
+            Pageable pageable
+    );
 
 }
