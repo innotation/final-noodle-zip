@@ -25,8 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
-    private final RedisRepository redisRepository;
-    private final MailService mailService;
+    private final EmailVerificationService emailVerificationService;
 
     @Override
     @Transactional
@@ -47,14 +46,10 @@ public class UserServiceImpl implements UserService {
         newUser.setIsEmailVerified(false);
 
         String email = newUser.getEmail();
-        // 이메일 전송
-        mailService.sendEMail(email, "test", "test email");
 
-        // 이메일, 코드 저장
-        redisRepository.setWithExpire(email, "code", 10L, TimeUnit.MINUTES);
-
+        // 이메일 서비스 호출(전송 및 인증코드 생성을 통해 redis 저장)
+        emailVerificationService.sendVerificationCode(email);
         userRepository.save(newUser);
-
     }
 
     @Override
