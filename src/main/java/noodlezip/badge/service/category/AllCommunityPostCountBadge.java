@@ -2,7 +2,7 @@ package noodlezip.badge.service.category;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.constants.LevelBadgeCategoryType;
-import noodlezip.badge.service.process.LevelDirectUpdateProcessor;
+import noodlezip.badge.service.process.level.LevelDirectUpdateProcessor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
