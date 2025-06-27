@@ -6,13 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserBadgeRepository extends JpaRepository<UserBadge, Long> {
 
     @Query("""
             select ub
             from UserBadge ub
-            left join fetch ub.badge b
+            join fetch ub.badge b
             where ub.userId = :userId
             and b.badgeCategory.id = :badgeCategoryId
             order by b.badgePolicy.badgeLevel desc
@@ -27,7 +28,7 @@ public interface UserBadgeRepository extends JpaRepository<UserBadge, Long> {
     @Query("""
             select ub
             from UserBadge ub
-            left join fetch ub.badge b
+            join fetch ub.badge b
             where ub.userId = :userId
             and b.badgeCategory.id = :badgeCategoryId
             and b.badgeExtraOption.storeSidoLegalCode = :legalCode
