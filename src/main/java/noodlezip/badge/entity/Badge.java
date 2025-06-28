@@ -14,7 +14,13 @@ import noodlezip.common.entity.BaseTimeEntity;
 @Builder
 
 @Entity
-@Table(name = "tbl_badge")
+@Table(name = "tbl_badge",
+        indexes = {
+                @Index(name = "idx_badge_category_level", columnList = "badge_category_id, badge_level"),
+                @Index(name = "idx_badge_category_ramen_level", columnList = "badge_category_id, ramen_category_id, badge_level"),
+                @Index(name = "idx_badge_category_sido_level", columnList = "badge_category_id, store_sido_legal_code, badge_level")
+        }
+)
 public class Badge extends BaseTimeEntity {
 
     @Id
@@ -34,9 +40,9 @@ public class Badge extends BaseTimeEntity {
 
     @Embedded
     private BadgeExtraOption badgeExtraOption;
-
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+//
+//    @Column(name = "is_active", nullable = false)
+//    private Boolean isActive;
 
     @Column(name = "badge_image_url", length = 500)
     private String badgeImageUrl;
