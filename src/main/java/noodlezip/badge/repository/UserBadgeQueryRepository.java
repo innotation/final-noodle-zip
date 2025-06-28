@@ -12,4 +12,8 @@ public interface UserBadgeQueryRepository {
                                                         long badgeCategoryId,
                                                         int ramenCategoryId);
 
+    Optional<UserBadge> findSidoRegionLevelUserBadge(long userId,
+                                                     long badgeCategoryId,
+                                                     int sidoRegionCode);
+
 }

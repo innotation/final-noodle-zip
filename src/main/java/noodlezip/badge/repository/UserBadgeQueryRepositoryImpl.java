@@ -57,4 +57,27 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
         );
     }
 
+    @Override
+    public Optional<UserBadge> findSidoRegionLevelUserBadge(long userId,
+                                                            long badgeCategoryId,
+                                                            int sidoRegionCode
+    ) {
+        QUserBadge userBadge = QUserBadge.userBadge;
+        QBadge badge = QBadge.badge;
+
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(userBadge)
+                        .join(userBadge.badge, badge).fetchJoin()
+                        .where(
+                                userBadge.userId.eq(userId),
+                                badge.badgeCategory.id.eq(badgeCategoryId),
+                                badge.badgeExtraOption.storeSidoLegalCode.eq(sidoRegionCode)
+                        )
+                        .orderBy(badge.badgePolicy.badgeLevel.desc())
+                        .limit(1)
+                        .fetchOne()
+        );
+    }
+
 }
