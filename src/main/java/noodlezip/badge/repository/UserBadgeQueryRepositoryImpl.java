@@ -55,7 +55,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                         .orderBy(badge.badgePolicy.badgeLevel.desc())
                         .limit(1)
                         .fetchOne()
-        );Refactor : Badge JPA Repository QueryDSL Repository 인터페이스 상속
+        );
     }
 
 }
