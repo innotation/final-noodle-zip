@@ -25,12 +25,21 @@ public enum BadgeErrorStatus implements BaseErrorCode {
 
     @Override
     public ErrorReasonDto getReason() {
-        return null;
+        return ErrorReasonDto.builder()
+                .isSuccess(false)
+                .code(code)
+                .message(message)
+                .build();
     }
 
     @Override
     public ErrorReasonDto getReasonHttpStatus() {
-        return null;
+        return ErrorReasonDto.builder()
+                .isSuccess(false)
+                .httpStatus(httpStatus)
+                .code(code)
+                .message(message)
+                .build();
     }
 
 }
