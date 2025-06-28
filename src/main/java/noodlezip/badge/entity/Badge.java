@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import noodlezip.badge.entity.common.BaseTimeEntity;
+import noodlezip.common.entity.BaseTimeEntity;
+
 
 @AllArgsConstructor
 @NoArgsConstructor

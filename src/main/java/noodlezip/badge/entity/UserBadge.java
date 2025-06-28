@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import noodlezip.badge.constants.BadgeStrategyType;
 import noodlezip.badge.constants.PostStatusType;
-import noodlezip.badge.entity.common.BaseTimeEntity;
-
+import noodlezip.common.entity.BaseTimeEntity;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -71,7 +70,6 @@ public class UserBadge extends BaseTimeEntity {
     }
 
 
-    //만엑에 레벨이 끝나고 새로운 레벨이 들어왔을때
     public UserBadge getNextLevelUserDefaultBadge(BadgeStrategyType strategy) {
         Long nextLevelBadgeId = badge.getNextLevelBadgeId();
         Integer updatedAccumulativeValue = accumulativeValue == null ? null : accumulativeValue; //얘를
