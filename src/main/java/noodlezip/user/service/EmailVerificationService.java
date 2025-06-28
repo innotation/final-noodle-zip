@@ -1,24 +1,25 @@
 package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import noodlezip.common.mail.MailService;
 import noodlezip.common.redis.RedisRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+
 public class EmailVerificationService {
 
     private final RedisRepository redisRepository;
     private final MailService mailService;
 
-    private String appBaseUrl="http://localhost:8080";
+    @Value("${app.base.url}")
+    private String appBaseUrl;
 
     public void sendVerificationCode(String email) {
         // 인증 코드 생성

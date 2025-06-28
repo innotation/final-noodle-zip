@@ -2,8 +2,6 @@ package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
-import noodlezip.common.mail.MailService;
-import noodlezip.common.redis.RedisRepository;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;
@@ -14,9 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
