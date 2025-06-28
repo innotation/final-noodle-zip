@@ -7,11 +7,12 @@ import noodlezip.badge.constants.PostStatusType;
 import noodlezip.badge.entity.Badge;
 import noodlezip.badge.entity.BadgeCategory;
 import noodlezip.badge.entity.UserBadge;
+import noodlezip.badge.exception.BadgeErrorStatus;
 import noodlezip.badge.repository.*;
 import noodlezip.badge.service.process.level.handler.LevelUpHandler;
 import noodlezip.badge.service.process.level.handler.ValueUpdateHandler;
+import noodlezip.common.exception.CustomException;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -25,7 +26,6 @@ public class LevelDirectUpdateProcessor {
     private final ValueUpdateHandler levelValueUpdateHandler;
     private final LevelUpHandler levelUpHandler;
 
-    @Transactional //todo 없애야됨
     public void process(Long userId, LevelBadgeCategoryType badgeCategoryType) {
         Long badgeCategoryId = badgeCategoryType.getDbPk();
         BadgeStrategyType badgeStrategy = getBadgeStrategyType(badgeCategoryId);
@@ -51,9 +51,9 @@ public class LevelDirectUpdateProcessor {
         }
     }
 
-
     private UserBadge getInitBadge(Long userId, Long badgeCategoryId, BadgeStrategyType badgeStrategy) {
-        Badge minLevelBAdge = badgeRepository.findInitLevelBadge(badgeCategoryId).get(); //todo 예외처리 -> 없을 경우
+        Badge minLevelBAdge = badgeRepository.findInitLevelBadge(badgeCategoryId)
+                .orElseThrow(() -> new CustomException(BadgeErrorStatus._NOT_FOUND_BADGE));
 
         return UserBadge.builder()
                 .userId(userId)
@@ -65,7 +65,9 @@ public class LevelDirectUpdateProcessor {
     }
 
     private BadgeStrategyType getBadgeStrategyType(Long badgeCategoryId) {
-        BadgeCategory badgeCategory = badgeCategoryRepository.findById(badgeCategoryId).orElse(null); //todo 예외처리 -> 없을 경우
+        BadgeCategory badgeCategory = badgeCategoryRepository.findById(badgeCategoryId)
+                .orElseThrow(() -> new CustomException(BadgeErrorStatus._NOT_FOUND_BADGE_CATEGORY));
+
         return badgeCategory.getBadgeStrategy();
     }
 
