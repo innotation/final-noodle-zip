@@ -10,4 +10,6 @@ public interface BadgeQueryRepository {
 
     Optional<Badge> findInitRamenCategoryLevelBadge(long badgeCategoryId, int ramenCategoryId);
 
+    Optional<Badge> findInitSidoRegionLevelBadge(long badgeCategoryId, int sidoRegionCode);
+
 }

@@ -45,4 +45,21 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
         );
     }
 
+    @Override
+    public Optional<Badge> findInitSidoRegionLevelBadge(long badgeCategoryId, int sidoRegionCode) {
+        QBadge badge = QBadge.badge;
+
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(badge)
+                        .where(
+                                badge.badgeCategory.id.eq(badgeCategoryId),
+                                badge.badgeExtraOption.storeSidoLegalCode.eq(sidoRegionCode)
+                        )
+                        .orderBy(badge.badgePolicy.badgeLevel.asc())
+                        .limit(1)
+                        .fetchOne()
+        );
+    }
+
 }
