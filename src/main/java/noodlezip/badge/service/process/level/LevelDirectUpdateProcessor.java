@@ -30,6 +30,9 @@ public class LevelDirectUpdateProcessor {
     @Transactional
     public void process(Long userId, LevelBadgeCategoryType badgeCategoryType) {
         Long badgeCategoryId = badgeCategoryType.getDbPk();
+        if (!badgeCategoryRepository.existsByIdAndIsActiveTrue(badgeCategoryId)) {
+            return;
+        }
         BadgeStrategyType badgeStrategy = getBadgeStrategyType(badgeCategoryId);
         Optional<UserBadge> nowUserBadge = userBadgeRepository.findUserLevelBadge(userId, badgeCategoryId);
 

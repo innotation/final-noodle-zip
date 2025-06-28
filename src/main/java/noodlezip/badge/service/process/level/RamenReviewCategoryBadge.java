@@ -26,6 +26,7 @@ public class RamenReviewCategoryBadge {
 
     private final static int invalidRamenCategoryId = 7; //기타
 
+    private final BadgeCategoryRepository badgeCategoryRepository;
     private final BadgeRepository badgeRepository;
     private final UserBadgeRepository userBadgeRepository;
     private final ValueUpdateHandler levelValueUpdateHandler;
@@ -37,6 +38,9 @@ public class RamenReviewCategoryBadge {
             return;
         }
         Long badgeCategoryId = LevelBadgeCategoryType.RAMEN_REVIEW_CATEGORY_BADGE.getDbPk();
+        if (!badgeCategoryRepository.existsByIdAndIsActiveTrue(badgeCategoryId)) {
+            return;
+        }
         BadgeStrategyType badgeStrategy = BadgeStrategyType.LEVEL_ACCUMULATIVE;
         Optional<UserBadge> nowUserBadge = userBadgeRepository.findRamenCategoryLevelUserBadge(
                 userId,
