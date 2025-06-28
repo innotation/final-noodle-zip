@@ -17,9 +17,11 @@ public enum BadgeStrategyType {
     private final Integer initCurrentValueForNextLevel;
 
 
-    BadgeStrategyType(boolean isAccumulative, Integer initAccumulativeValue,
+    BadgeStrategyType(boolean isAccumulative, 
+                      Integer initAccumulativeValue,
                       int initCurrentValue,
-                      Integer initNextLevelCurrentValue) {
+                      Integer initNextLevelCurrentValue
+    ) {
         this.isAccumulative = isAccumulative;
         this.initAccumulativeValue = initAccumulativeValue;
         this.initCurrentValue = initCurrentValue;
