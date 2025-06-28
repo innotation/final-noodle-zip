@@ -47,7 +47,7 @@ public class RamenReviewPostEvent implements BadgeEventReader<RamenReviewBadgeDt
         if (region == null) {
             return;
         }
-        int sidoRegionCode = region.getCode();
+
 
     }
 

@@ -17,7 +17,7 @@ public enum BadgeStrategyType {
     private final Integer initCurrentValueForNextLevel;
 
 
-    BadgeStrategyType(boolean isAccumulative, 
+    BadgeStrategyType(boolean isAccumulative,
                       Integer initAccumulativeValue,
                       int initCurrentValue,
                       Integer initNextLevelCurrentValue
