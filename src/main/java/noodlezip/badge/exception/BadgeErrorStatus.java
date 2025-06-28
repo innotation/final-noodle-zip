@@ -15,8 +15,7 @@ public enum BadgeErrorStatus implements BaseErrorCode {
     ),
     _NOT_FOUND_BADGE(HttpStatus.INTERNAL_SERVER_ERROR,
             "BADGE-002", "배지 생성에 실패하였습니다. 존재하지 않는 배지입니다."
-    )
-    ;
+    );
 
     private final HttpStatus httpStatus;
     private final String code;

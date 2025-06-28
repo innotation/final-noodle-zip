@@ -22,5 +22,4 @@ public class CommunityLikeEvent implements BadgeEventReader<EmptyInfoDto> {
         directUpdateProcessor.process(userId, LevelBadgeCategoryType.COMMUNITY_GET_LIKE_COUNT_BADGE);
     }
 
-
 }

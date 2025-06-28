@@ -4,7 +4,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.entity.Badge;
 import noodlezip.badge.entity.QBadge;
-import noodlezip.ramen.entity.QCategory;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

@@ -3,7 +3,6 @@ package noodlezip.badge.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.entity.QBadge;
-import noodlezip.badge.entity.QBadgeCategory;
 import noodlezip.badge.entity.QUserBadge;
 import noodlezip.badge.entity.UserBadge;
 import org.springframework.stereotype.Repository;

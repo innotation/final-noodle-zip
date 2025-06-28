@@ -16,6 +16,7 @@ public enum LevelBadgeCategoryType {
 
     private final Long dbPk;
 
+
     LevelBadgeCategoryType(Long dbPk) {
         this.dbPk = dbPk;
     }

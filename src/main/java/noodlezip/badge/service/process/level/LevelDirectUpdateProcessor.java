@@ -12,12 +12,13 @@ import noodlezip.badge.repository.*;
 import noodlezip.badge.service.process.level.handler.LevelUpHandler;
 import noodlezip.badge.service.process.level.handler.ValueUpdateHandler;
 import noodlezip.common.exception.CustomException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class LevelDirectUpdateProcessor {
 
     private final BadgeCategoryRepository badgeCategoryRepository;
@@ -26,6 +27,7 @@ public class LevelDirectUpdateProcessor {
     private final ValueUpdateHandler levelValueUpdateHandler;
     private final LevelUpHandler levelUpHandler;
 
+    @Transactional
     public void process(Long userId, LevelBadgeCategoryType badgeCategoryType) {
         Long badgeCategoryId = badgeCategoryType.getDbPk();
         BadgeStrategyType badgeStrategy = getBadgeStrategyType(badgeCategoryId);

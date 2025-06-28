@@ -19,6 +19,5 @@ public class BadgeExtraOption {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ramen_category_id")
     private Category ramenCategory;
-    //조회의 목적이 압도적으로많기 떄문에 그냥 LONG 타입으로 넣고 마이페이지 출력할때만 findbyid?
 
 }

@@ -2,6 +2,8 @@ package noodlezip.badge.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -12,8 +14,6 @@ import lombok.*;
 public class RamenReviewBadgeDto implements BadgeExtraOptionDto {
 
     private Long storeId;
-    /// 법정코드로 RamenReviewEvent 에서 계산
-
-    private int ramenCategoryId; ///라멘 pk를 받아서 조회해야될수도 있다.
+    private List<Long> menuIdList;
 
 }

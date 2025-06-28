@@ -15,10 +15,10 @@ public class RamenReviewLikeEvent implements BadgeEventReader<EmptyInfoDto> {
 
     @Override
     public void read(Long userId, EmptyInfoDto extraOption) {
-        processAllCommentPostCount(userId);
+        processReviewGetLikeCount(userId);
     }
 
-    public void processAllCommentPostCount(Long userId) {
+    public void processReviewGetLikeCount(Long userId) {
         directUpdateProcessor.process(userId, LevelBadgeCategoryType.REVIEW_GET_LIKE_COUNT_BADGE);
     }
 

@@ -22,5 +22,4 @@ public class CommentPostEvent implements BadgeEventReader<EmptyInfoDto> {
         directUpdateProcessor.process(userId, LevelBadgeCategoryType.ALL_COMMENT_POST_COUNT_BADGE);
     }
 
-
 }

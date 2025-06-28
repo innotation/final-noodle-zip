@@ -5,6 +5,7 @@ import lombok.*;
 import noodlezip.badge.constants.BadgeStrategyType;
 import noodlezip.badge.constants.PostStatusType;
 import noodlezip.common.entity.BaseTimeEntity;
+
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -75,7 +76,7 @@ public class UserBadge extends BaseTimeEntity {
         Integer updatedAccumulativeValue = accumulativeValue == null ? null : accumulativeValue; //얘를
 
         Badge newLevelBadge = Badge.builder()
-                .id(nextLevelBadgeId) //저장만하명 될텐데 실제 사용하기에는 문젱ㅆ을수도
+                .id(nextLevelBadgeId)
                 .build();
         return UserBadge.builder()
                 .userId(userId)
