@@ -2,6 +2,7 @@ package noodlezip.search.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
 import noodlezip.store.dto.StoreDto;
 import noodlezip.store.repository.StoreRepository;
@@ -20,4 +21,7 @@ public class SearchService {
         return storeRepository.findStoreOrderByDistance(lat, lng, pageable);
     }
 
+    public Page<SearchStoreDto> searchStoresByFilter(SearchFilterDto filter, Pageable pageable) {
+        return storeRepository.searchStoresByFilter(filter, pageable);
+    }
 }
