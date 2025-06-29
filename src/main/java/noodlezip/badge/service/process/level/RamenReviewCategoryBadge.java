@@ -13,11 +13,9 @@ import noodlezip.badge.repository.UserBadgeRepository;
 import noodlezip.badge.service.process.level.handler.LevelUpHandler;
 import noodlezip.badge.service.process.level.handler.ValueUpdateHandler;
 import noodlezip.common.exception.CustomException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor

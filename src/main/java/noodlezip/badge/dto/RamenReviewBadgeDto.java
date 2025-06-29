@@ -15,5 +15,6 @@ public class RamenReviewBadgeDto implements BadgeExtraOptionDto {
 
     private Long storeId;
     private List<Long> menuIdList;
+    /// 리뷰 대상을 강화하기 위해서는 그냥 review id를 받아야할수도 - 글자수, 사진이 있고 없고,
 
 }

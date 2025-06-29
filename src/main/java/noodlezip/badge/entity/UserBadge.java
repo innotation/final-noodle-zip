@@ -1,7 +1,10 @@
 package noodlezip.badge.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import noodlezip.badge.constants.BadgeStrategyType;
 import noodlezip.badge.constants.PostStatusType;
 import noodlezip.common.entity.BaseTimeEntity;
@@ -12,7 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Builder
-@ToString
 
 @Entity
 @Table(name = "tbl_user_badge")

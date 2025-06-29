@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import noodlezip.badge.constants.LevelBadgeCategoryType;
 import noodlezip.badge.constants.Region;
 import noodlezip.badge.dto.RamenReviewBadgeDto;
+import noodlezip.badge.service.event.BadgeEventReader;
 import noodlezip.badge.service.process.level.LevelDirectUpdateProcessor;
 import noodlezip.badge.service.process.level.RamenReviewCategoryBadge;
-import noodlezip.badge.service.event.BadgeEventReader;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreRepository;
 import org.springframework.stereotype.Component;
@@ -47,8 +47,6 @@ public class RamenReviewPostEvent implements BadgeEventReader<RamenReviewBadgeDt
         if (region == null) {
             return;
         }
-
-
     }
 
 }
