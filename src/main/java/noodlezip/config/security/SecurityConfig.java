@@ -30,6 +30,7 @@ public class SecurityConfig {
                     .requestMatchers("/fragments/**").permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("USER")
+                    .requestMatchers("/search/**").permitAll()
                     .anyRequest().authenticated();
         });
 
