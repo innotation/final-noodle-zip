@@ -40,9 +40,6 @@ public class Badge extends BaseTimeEntity {
 
     @Embedded
     private BadgeExtraOption badgeExtraOption;
-//
-//    @Column(name = "is_active", nullable = false)
-//    private Boolean isActive;
 
     @Column(name = "badge_image_url", length = 500)
     private String badgeImageUrl;
