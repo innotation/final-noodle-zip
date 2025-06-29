@@ -43,6 +43,7 @@ public class SearchController {
             lng = 126.9780;
         }
 
+        
         return searchService.getPageLocation(lat, lng, pageable);
     }
 
