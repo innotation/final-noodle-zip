@@ -6,9 +6,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.dto.ErrorReasonDto;
 import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.User;
+import noodlezip.user.service.EmailVerificationService;
 import noodlezip.user.service.UserService;
 import noodlezip.user.status.UserErrorStatus;
 import noodlezip.user.status.UserSuccessStatus;
@@ -33,6 +36,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private final EmailVerificationService emailVerificationService;
 
     @GetMapping("/login")
     public void loginPage() {
@@ -97,6 +101,67 @@ public class UserController {
             throw new CustomException(UserErrorStatus._ALREADY_EXIST_EMAIL);
         } else {
             return noodlezip.common.dto.ApiResponse.onSuccess(UserSuccessStatus._OK_EMAIL_NOT_DUPLICATE);
+        }
+    }
+
+    @GetMapping("/verify-email")
+    public String verifyEmail(@RequestParam("email") String email,
+                              @RequestParam("code") String code,
+                              Model model) {
+
+        // 유효성 검증
+        if (email == null || email.trim().isEmpty() || code == null || code.trim().isEmpty()) {
+            model.addAttribute("message", "이메일 또는 인증 코드가 누락되었습니다.");
+            model.addAttribute("status", "error");
+            return "/user/verification-result";
+        }
+        log.info("email: {}", email);
+        log.info("code: {}", code);
+
+        try {
+            userService.verifyUserEmail(email, code);
+            model.addAttribute("message", "이메일 인증이 성공적으로 완료되었습니다!");
+            model.addAttribute("status", "success");
+            log.info("이메일 인증 성공 - Email: {}", email);
+            return "redirect:/";
+        } catch (CustomException e) {
+            log.warn("이메일 인증 실패 - Email: {}, Code: {}, Status: {}", email, code, e.getErrorCode());
+
+            // 뷰에 실패 메시지와 에러 상태 전달
+            model.addAttribute("message", e.getMessage());
+            model.addAttribute("status", "failure");
+            model.addAttribute("errorCode", e.getErrorCode().getReason().getCode());
+            model.addAttribute("emailForResend", email);
+
+            // 에러 종류에 따른 분기 처리
+            if (e.getErrorCode() == UserErrorStatus._MISS_MATCH_AUTH_CODE) {
+                model.addAttribute("showResendButton", true); // 코드 불일치 시 재전송 버튼 표시 플래그
+            } else if (e.getErrorCode() == UserErrorStatus._EXPIRED_AUTH_CODE) {
+                model.addAttribute("showResendButton", true); // 만료 시에도 재전송 버튼 표시
+            }
+
+            return "/user/verification-result";
+        } catch (Exception e) {
+            log.error("이메일 인증 중 서버 오류 발생 - Email: {}", email, e);
+            model.addAttribute("message", "서버 오류로 인해 이메일 인증에 실패했습니다. 잠시 후 다시 시도해주세요.");
+            model.addAttribute("status", "error");
+            return "/user/verification-result";
+        }
+    }
+
+    @PostMapping("/send-verification-code")
+    public ResponseEntity<?> sendVerificationCode(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        if (email == null || email.trim().isEmpty()) {
+            throw new CustomException(UserErrorStatus._NOT_FOUND_USER);
+        }
+        try {
+            // 코드 재전송
+            emailVerificationService.sendVerificationCode(email);
+            return noodlezip.common.dto.ApiResponse.onSuccess(UserSuccessStatus._OK_EMAIL_RESEND);
+        } catch (Exception e) {
+            log.error("인증 코드 재전송 중 오류 발생 - Email: {}", email, e);
+            throw new CustomException(UserErrorStatus._UNAUTHORIZED_ACCESS);
         }
     }
 }
