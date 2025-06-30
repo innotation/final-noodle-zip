@@ -8,24 +8,29 @@ import noodlezip.ramen.entity.RamenSoup;
 import noodlezip.ramen.entity.RamenTopping;
 import noodlezip.ramen.entity.RamenToppingId;
 import noodlezip.ramen.service.RamenService;
-import noodlezip.ramen.repository.RamenToppingRepository;
 import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.dto.StoreRequestDto;
-import noodlezip.store.dto.StoreScheduleRequestDto;
 import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.Store;
 import noodlezip.store.entity.StoreWeekSchedule;
 import noodlezip.store.entity.StoreWeekScheduleId;
-import noodlezip.store.repository.MenuRepository;
+import noodlezip.store.repository.StoreMenuRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreScheduleRepository;
 import noodlezip.users.entity.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,19 +39,29 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final StoreScheduleRepository scheduleRepository;
-    private final MenuRepository menuRepository;
-    private final RamenToppingRepository ramenToppingRepository;
-
+    private final StoreMenuRepository menuRepository;
+    private final noodlezip.ramen.repository.RamenToppingRepository ramenToppingRepository;
     private final RamenService ramenService;
 
-    /* 가게 등록 (userId 포함) */
+    @Value("${upload.path}")
+    private String uploadDir;
+
+    @Value("${upload.url.prefix}")
+    private String urlPrefix;
+
     @Transactional
-    public Long registerStore(StoreRequestDto dto, Long userId) {
-        // user 엔티티 생성
+    public Long registerStore(StoreRequestDto dto, Long userId, MultipartFile storeMainImage) throws IOException {
+        // User 엔티티 세팅 (ID만)
         User user = new User();
         user.setId(userId);
 
-        // 가게 저장
+        // 이미지 업로드 처리
+        String imageUrl = null;
+        if (storeMainImage != null && !storeMainImage.isEmpty()) {
+            imageUrl = saveFile(storeMainImage);
+        }
+
+        // Store 엔티티 생성 및 저장
         Store store = Store.builder()
                 .storeName(dto.getStoreName())
                 .address(dto.getAddress())
@@ -55,9 +70,11 @@ public class StoreService {
                 .isChildAllowed(dto.getIsChildAllowed())
                 .hasParking(dto.getHasParking())
                 .ownerComment(dto.getOwnerComment())
-                .storeMainImageUrl(dto.getStoreMainImageUrl())
+                .storeMainImageUrl(imageUrl)
                 .xAxis(dto.getXAxis())
                 .yAxis(dto.getYAxis())
+                .approvalStatus(dto.getApprovalStatus())
+                .operationStatus(dto.getOperationStatus())
                 .user(user)
                 .build();
 
@@ -79,7 +96,6 @@ public class StoreService {
                         return schedule;
                     })
                     .collect(Collectors.toList());
-
             scheduleRepository.saveAll(schedules);
         }
 
@@ -105,7 +121,7 @@ public class StoreService {
                 Menu savedMenu = menuRepository.save(menu);
 
                 if (m.getDefaultToppingIds() != null) {
-                    for (Long toppingId : m.getDefaultToppingIds()) {
+                    m.getDefaultToppingIds().forEach(toppingId -> {
                         RamenToppingId toppingIdObj = new RamenToppingId();
                         toppingIdObj.setMenuId(savedMenu.getId());
                         toppingIdObj.setToppingId(toppingId);
@@ -114,7 +130,7 @@ public class StoreService {
                         ramenTopping.setId(toppingIdObj);
 
                         ramenToppingRepository.save(ramenTopping);
-                    }
+                    });
                 }
             }
         }
@@ -122,10 +138,25 @@ public class StoreService {
         return savedStore.getId();
     }
 
-    /* 테스트용 userId 없이 등록 (임시) */
-    @Transactional(readOnly = true)
-    public Long registerStore(StoreRequestDto dto) {
-        return registerStore(dto, 1L); // 임시: userId = 1
+    // 이미지 저장
+    private String saveFile(MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        String ext = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        String savedFilename = UUID.randomUUID().toString() + ext;
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(savedFilename);
+        file.transferTo(filePath.toFile());
+
+        return urlPrefix + savedFilename;
     }
 
     /* 라멘 카테고리 목록 조회 */
