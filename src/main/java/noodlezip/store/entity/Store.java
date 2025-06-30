@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import noodlezip.users.entity.User;
+import noodlezip.user.entity.User;
 
 import java.time.Instant;
 
