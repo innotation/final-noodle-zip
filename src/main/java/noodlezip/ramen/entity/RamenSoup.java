@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import noodlezip.store.entity.BaseEntity;
 
 import java.time.Instant;
 
@@ -12,22 +13,14 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "tbl_ramen_soup")
-public class RamenSoup {
+public class RamenSoup extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ramen_soup_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Size(max = 30)
     @NotNull
     @Column(name = "soup_name", nullable = false, length = 30)
     private String soupName;
-
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
 }
