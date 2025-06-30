@@ -292,11 +292,32 @@
 						<input type="hidden" name="operationStatus" value="BEFORE_OPEN" />
 					</div>
 
-					<!-- ② 가게명 / ③ 도로명 주소 API -->
+					<!-- ② 가게명 / ③ 도로명 주소 API / ④ 전화번호 -->
 					<div class="row mb-3">
+						<!-- 가게명 + 전화번호 -->
 						<div class="col-md-6 position-relative">
-							<input type="text" name="storeName" class="form-control" placeholder="가게명" required>
+							<!-- 가게명 -->
+							<input
+									type="text"
+									name="storeName"
+									class="form-control mb-3"
+									placeholder="가게명"
+									required
+							/>
+							<!-- ④ 전화번호 -->
+							<div class="form-group mb-0">
+								<label for="phone" style="font-weight: normal;">전화번호</label>
+								<input
+										type="text"
+										id="phone"
+										name="phone"
+										class="form-control"
+										placeholder="010-1234-5678"
+										maxlength="13"
+								/>
+							</div>
 						</div>
+
 						<div class="col-md-6 position-relative">
 							<!-- 주소 입력 영역 -->
 							<div class="address-group">
@@ -327,12 +348,7 @@
 									주소 검색
 								</button>
 							</div>
-					</div>
-
-					<!-- ④ 전화번호 -->
-					<div class="form-group mb-3">
-						<label for="phone">전화번호</label>
-						<input type="text" id="phone" name="phone" class="form-control" placeholder="010-1234-5678" maxlength="13" />
+						</div>
 					</div>
 
 					<!-- ⑤ 요일별 영업시간 -->
@@ -453,13 +469,37 @@
 						</div>
 					</div>
 
-					<!-- ⑦ 사장님 한 줄 소개 -->
-					<div class="form-group mb-4">
-						<label for="owner-intro">사장님 한 줄 소개</label>
-						<textarea id="owner-intro" name="ownerComment" class="form-control" placeholder="주말/공휴일 영업여부, 영업시간 & 유료 주차인 경우 (1시간 2,000원) 적어주세요 ~" rows="4"></textarea>
-					</div>
+						<!-- ⑦ 사장님 한 줄 소개 -->
+						<div class="form-group mb-4" style="position: relative;">
+							<label for="owner-intro" style="font-weight: bold; color: #2c3e50;">
+								사장님 한 줄 소개
+							</label>
+							<textarea
+									id="owner-intro"
+									name="ownerComment"
+									class="form-control"
+									placeholder="매장 소개를 적어주세요."
+									rows="4"
+							></textarea>
+							<div
+									style="
+							  position: absolute;
+							  top: 55px;
+							  left: 15px;
+							  color: #888;
+							  font-size: 0.9em;
+							  pointer-events: none;
+							  white-space: pre-line;
+							  line-height: 1;
+							  margin: 0;
+							"
+							>
+								• 주말/공휴일 영업 여부<br />
+								• 유료 주차(ex: 1시간당 2,000원) 안내
+							</div>
+						</div>
 
-					<hr>
+						<hr>
 					<h6 class="mb-3">메뉴 등록</h6>
 					<div id="menu-items">
 						<div class="menu-item row align-items-center mb-4">
