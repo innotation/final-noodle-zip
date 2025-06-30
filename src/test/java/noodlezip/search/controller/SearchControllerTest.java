@@ -1,6 +1,5 @@
 package noodlezip.search.controller;
 
-import noodlezip.store.repository.StoreRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,10 +27,11 @@ class SearchControllerTest {
         String page = "1";
         String size = "10";
 
-        // 예시 필터: 돈코츠, 소유, 계란
+        // 필터: 돈코츠, 소유, 계란, 강남구
         String ramenCategory = "돈코츠";
         String ramenSoup = "소유";
         String topping = "계란";
+        String region = "강남구";
 
         // when & then
         mockMvc.perform(get("/search/filter")
@@ -41,7 +41,8 @@ class SearchControllerTest {
                         .param("size", size)
                         .param("ramenCategory", ramenCategory)
                         .param("ramenSoup", ramenSoup)
-                        .param("topping", topping))
+                        .param("topping", topping)
+                        .param("region", region))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content.length()").value(lessThanOrEqualTo(10)))
