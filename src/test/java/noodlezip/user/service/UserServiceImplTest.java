@@ -35,6 +35,9 @@ class UserServiceImplTest {
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Mock
+    private EmailVerificationService emailVerificationService;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -72,21 +75,13 @@ class UserServiceImplTest {
     @DisplayName("회원 가입 테스트")
     void registUser() {
         // Given: userRepository.findByLoginId, findByEmail 중복 없음 가정
-        when(userRepository.findByLoginId(testUserDto.getLoginId())).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(testUserDto.getEmail())).thenReturn(Optional.empty());
-        User newUserEntity = User.builder()
-                .loginId(testUserDto.getLoginId())
-                .password(testUserDto.getPassword())
-
-                .email(testUserDto.getEmail())
-                .userName(testUserDto.getUserName())
-                .build();
-        when(modelMapper.map(any(UserDto.class), eq(User.class))).thenReturn(newUserEntity);
+        when(userRepository.findByLoginId(testUser.getLoginId())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.empty());
+        User newUserEntity = testUser;
         when(bCryptPasswordEncoder.encode(anyString())).thenReturn("encodedPassword");
-
         // When:
 
-        userService.registUser(testUserDto);
+        userService.registUser(testUser);
 
         // Then:
 
@@ -116,7 +111,7 @@ class UserServiceImplTest {
 
         // When & Then: registUser 호출 시 CustomException이 발생하는지 확인
         CustomException exception = assertThrows(CustomException.class, () -> {
-            userService.registUser(testUserDto);
+            userService.registUser(testUser);
         });
 
         // 예외의 상태 코드가 _ALREADY_EXIST_LOGIN_ID와 일치하는지 확인
@@ -141,7 +136,7 @@ class UserServiceImplTest {
 
         // When & Then: registUser 호출 시 CustomException이 발생하는지 확인
         CustomException exception = assertThrows(CustomException.class, () -> {
-            userService.registUser(testUserDto);
+            userService.registUser(testUser);
         });
 
         // 예외의 상태 코드가 _ALREADY_EXIST_EMAIL와 일치하는지 확인

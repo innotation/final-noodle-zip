@@ -6,23 +6,30 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.auth.MyUserDetails;
 import noodlezip.common.dto.ErrorReasonDto;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.validation.ValidationGroups;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.User;
 import noodlezip.user.service.EmailVerificationService;
 import noodlezip.user.service.UserService;
 import noodlezip.user.status.UserErrorStatus;
 import noodlezip.user.status.UserSuccessStatus;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
@@ -37,6 +44,8 @@ public class UserController {
 
     private final UserService userService;
     private final EmailVerificationService emailVerificationService;
+    private final UserDetailsService userDetailsService;
+    private final ModelMapper modelMapper;
 
     @GetMapping("/login")
     public void loginPage() {
@@ -53,7 +62,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200")
     })
-    public String signup(@Validated @ModelAttribute UserDto user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String signup(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute UserDto user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             // 모든 에러 메세지 다 담음
@@ -67,7 +76,8 @@ public class UserController {
             return "signup";
         } else {
             redirectAttributes.addFlashAttribute("message", "success");
-            userService.registUser(user);
+            User newUser = modelMapper.map(user, User.class);
+            userService.registUser(newUser);
             return "redirect:/";
         }
     }
@@ -164,4 +174,61 @@ public class UserController {
             throw new CustomException(UserErrorStatus._UNAUTHORIZED_ACCESS);
         }
     }
+
+    @GetMapping("/user/edit-profile")
+    public String editProfilePage(@AuthenticationPrincipal MyUserDetails userDetails, Model model) {
+
+        User loggedInUser = userDetails.getUser();
+
+        if (loggedInUser == null) {
+            log.error("User entity is null within MyUserDetails for loginId: {}", userDetails.getUsername());
+            return "redirect:/login";
+        }
+
+        UserDto userDto = modelMapper.map(loggedInUser, UserDto.class);
+
+        model.addAttribute("userProfile", userDto);
+
+        return "/user/edit-profile";
+    }
+
+    @PostMapping("user/profile/update")
+    public String updateProfile(
+            @Validated(ValidationGroups.OnUpdate.class) @ModelAttribute("userProfile") UserDto userDto,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal MyUserDetails userDetails,
+            @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile, // 프로필 이미지 파일
+            @RequestParam(value = "bannerImageFile", required = false) MultipartFile bannerImageFile,   // 배너 이미지 파일
+            RedirectAttributes redirectAttributes) {
+
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            // 유효성 검사 실패 시 에러 메시지 폼으로 다시 전달
+            log.error("validation error: {}", bindingResult.getAllErrors());
+            StringBuilder errorMessage = new StringBuilder();
+            bindingResult.getAllErrors().forEach(error -> {
+                errorMessage.append(error.getDefaultMessage()).append("\n");
+            });
+            redirectAttributes.addFlashAttribute("validationError", errorMessage.toString());
+            redirectAttributes.addFlashAttribute("userProfile", userDto); // 사용자가 입력한 값 유지
+            return "redirect:/user/edit-profile";
+        }
+
+        try {
+            Long userId = userDetails.getUser().getId();
+
+            userService.updateUser(userId, userDto, profileImageFile, bannerImageFile); // 서비스 호출
+            redirectAttributes.addFlashAttribute("successMessage", "프로필이 성공적으로 업데이트되었습니다!");
+        } catch (Exception e) {
+            log.error("프로필 업데이트 중 오류 발생: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "프로필 업데이트에 실패했습니다: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("userProfile", userDto); // 사용자가 입력한 값 유지
+        }
+
+        return "redirect:/user/edit-profile";
+    }
+
 }

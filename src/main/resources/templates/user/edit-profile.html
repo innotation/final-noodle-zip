@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="NoodleZip - 사용자 프로필을 수정합니다.">
+    <meta name="author" content="Your Name"> <title>NoodleZip - 사용자 프로필 수정</title>
+
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="/img/apple-touch-icon-144x144-precomposed.png">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <link href="/css/booking-sign_up.css" rel="stylesheet">
+
+    <link href="/css/custom.css" rel="stylesheet">
+
+    <style>
+        .validation-message {
+            font-size: 0.875em;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        .text-success {
+            color: #28a745 !important; /* Bootstrap success green */
+        }
+        .text-danger {
+            color: #dc3545 !important; /* Bootstrap danger red */
+        }
+        /* 이미지 미리보기 스타일 */
+        .image-preview-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px; /* 이미지와 입력 필드 사이 간격 */
+        }
+        .image-preview {
+            width: 80px; /* 미리보기 이미지 크기 조정 */
+            height: 80px;
+            border-radius: 50%; /* 프로필 이미지는 원형으로 */
+            object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+            border: 1px solid #ddd;
+            background-color: #f8f8f8;
+            flex-shrink: 0; /* 크기가 줄어들지 않도록 */
+        }
+        .banner-preview {
+            width: 150px; /* 배너 이미지 크기 조정 */
+            height: 80px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            background-color: #f8f8f8;
+            flex-shrink: 0;
+        }
+        .file-input-wrapper {
+            flex-grow: 1; /* 남은 공간을 차지하도록 */
+        }
+        .file-input-wrapper label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .file-input-wrapper input[type="file"] {
+            border: 1px solid #ced4da;
+            padding: .375rem .75rem;
+            border-radius: .25rem;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header_in clearfix">
+    <div class="container">
+        <div id="logo">
+            <a href="/">
+                <img src="/img/logo_sticky.svg" width="140" height="35" alt="">
+            </a>
+        </div>
+        <ul id="top_menu">
+            <li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
+            <li><a href="wishlist.html" class="wishlist_bt_top" title="Your wishlist">Your wishlist</a></li>
+        </ul>
+        <a href="#0" class="open_close">
+            <i class="icon_menu"></i><span>Menu</span>
+        </a>
+        <nav class="main-menu">
+            <div id="header_menu">
+                <a href="#0" class="open_close">
+                    <i class="icon_close"></i><span>Menu</span>
+                </a>
+                <a href="/"><img src="/img/logo.svg" width="140" height="35" alt=""></a>
+            </div>
+            <ul>
+                <li class="submenu">
+                    <a href="#0" class="show-submenu">Home</a>
+                    <ul>
+                        <li><a href="/">Default</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="bg_gray pattern">
+
+    <div class="container margin_60_40">
+        <div class="row justify-content-center">
+            <div class="col-lg-4">
+                <div class="sign_up">
+                    <div class="head">
+                        <div class="title">
+                            <h3>프로필 수정</h3>
+                        </div>
+                    </div>
+                    <div class="main">
+                        <h6>내 정보 수정</h6>
+                        <form id="profileUpdateForm" th:action="@{/user/profile/update}" th:object="${userProfile}" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input class="form-control" placeholder="이메일 주소" id="email" name="email" th:field="*{email}">
+                                <i class="icon_mail"></i>
+                                <div class="text-danger validation-message" id="emailError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <input class="form-control" placeholder="전화번호 (예: 010-1234-5678)" id="phone" name="phone" th:field="*{phone}">
+                                <i class="icon_phone"></i>
+                                <div class="text-danger validation-message" id="phoneError" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <input class="form-control" placeholder="생년월일 8자리 (예: 19900101)" id="birth" name="birth" th:field="*{birth}">
+                                <i class="icon_calendar"></i>
+                                <div class="text-danger validation-message" id="birthError" th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <select name="gender" id="gender" class="form-control" th:field="*{gender}">
+                                    <option value="">성별 선택</option>
+                                    <option value="M">남</option>
+                                    <option value="F">여</option>
+                                </select>
+                                <div class="text-danger validation-message" id="genderError" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profileImageFile">프로필 이미지</label>
+                                <div class="image-preview-container">
+                                    <img id="profileImagePreview" class="image-preview"
+                                         th:src="${userProfile.profileImageUrl != null and !userProfile.profileImageUrl.isEmpty() ? userProfile.profileImageUrl : '/img/avatar.jpg'}"
+                                         alt="프로필 이미지 미리보기">
+                                    <div class="file-input-wrapper">
+                                        <input type="file" id="profileImageFile" name="profileImageFile" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bannerImageFile">배너 이미지</label>
+                                <div class="image-preview-container">
+                                    <img id="bannerImagePreview" class="banner-preview"
+                                         th:src="${userProfile.profileBannerImageUrl != null and !userProfile.profileBannerImageUrl.isEmpty() ? userProfile.profileBannerImageUrl : '/img/avatar.jpg'}"
+                                         alt="배너 이미지 미리보기">
+                                    <div class="file-input-wrapper">
+                                        <input type="file" id="bannerImageFile" name="bannerImageFile" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn_1 full-width mb_5" id="updateProfileBtn">정보 수정</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_1">Quick Links</h3>
+                <div class="collapse dont-collapse-sm links" id="collapse_1">
+                    <ul>
+                        <li><a href="submit-rider.html">Become a Rider</a></li>
+                        <li><a href="submit-restaurant.html">Add your restaurant</a></li>
+                        <li><a href="help.html">Help</a></li>
+                        <li><a href="account.html">My account</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contacts.html">Contacts</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_2">Categories</h3>
+                <div class="collapse dont-collapse-sm links" id="collapse_2">
+                    <ul>
+                        <li><a href="grid-listing-filterscol.html">Top Categories</a></li>
+                        <li><a href="grid-listing-filterscol-full-masonry.html">Best Rated</a></li>
+                        <li><a href="grid-listing-filterscol-full-width.html">Best Price</a></li>
+                        <li><a href="grid-listing-filterscol-full-masonry.html">Latest Submissions</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_3">Contacts</h3>
+                <div class="collapse dont-collapse-sm contacts" id="collapse_3">
+                    <ul>
+                        <li><i class="icon_house_alt"></i>97845 Baker st. 567<br>Los Angeles - US</li>
+                        <li><i class="icon_mobile"></i>+94 423-23-221</li>
+                        <li><i class="icon_mail_alt"></i><a href="#0">info@domain.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h3 data-bs-target="#collapse_4">Keep in touch</h3>
+                <div class="collapse dont-collapse-sm" id="collapse_4">
+                    <div id="newsletter">
+                        <div id="message-newsletter"></div>
+                        <form method="post" action="assets/newsletter.php" name="newsletter_form" id="newsletter_form">
+                            <div class="form-group">
+                                <input type="email" name="email_newsletter" id="email_newsletter" class="form-control"
+                                       placeholder="Your email">
+                                <button type="submit" id="submit-newsletter"><i class="arrow_carrot-right"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="follow_us">
+                        <h5>Follow Us</h5>
+                        <ul>
+                            <li><a href="#0"><i class="bi bi-facebook"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-twitter-x"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-instagram"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-tiktok"></i></a></li>
+                            <li><a href="#0"><i class="bi bi-whatsapp"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row add_bottom_25">
+            <div class="col-lg-6">
+                <ul class="footer-selector clearfix">
+                    <li>
+                        <div class="styled-select lang-selector">
+                            <select>
+                                <option value="English" selected>English</option>
+                                <option value="French">French</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="Russian">Russian</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="styled-select currency-selector">
+                            <select>
+                                <option value="US Dollars" selected>US Dollars</option>
+                                <option value="Euro">Euro</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+                             data-src="/img/cards_all.svg" alt="" width="198" height="30" class="lazy"></li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <ul class="additional_links">
+                    <li><a href="#0">Terms and conditions</a></li>
+                    <li><a href="#0">Privacy</a></li>
+                    <li><span>© Foogra</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+<div id="toTop"></div><div class="layer"></div><div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
+    <div class="modal_header">
+        <h3>Sign In</h3>
+    </div>
+    <form>
+        <div class="sign-in-wrapper">
+            <a href="#0" class="social_bt facebook">Login with Facebook</a>
+            <a href="#0" class="social_bt google">Login with Google</a>
+            <div class="divider"><span>Or</span></div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" name="email" id="email">
+                <i class="icon_mail_alt"></i>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password" id="password" value="">
+                <i class="icon_lock_alt"></i>
+            </div>
+            <div class="clearfix add_bottom_15">
+                <div class="checkboxes float-start">
+                    <label class="container_check">Remember me
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Log In" class="btn_1 full-width mb_5">
+                Don’t have an account? <a href="account.html">Sign up</a>
+            </div>
+            <div id="forgot_pw">
+                <div class="form-group">
+                    <label>Please confirm login email below</label>
+                    <input type="email" class="form-control" name="email_forgot" id="email_forgot">
+                    <i class="icon_mail_alt"></i>
+                </div>
+                <p>You will receive an email containing a link allowing you to reset your password to a new preferred
+                    one.</p>
+                <div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
+
+<script>
+    // --- HTML 요소 캐싱 ---
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phoneError');
+
+    const birthInput = document.getElementById('birth');
+    const birthError = document.getElementById('birthError');
+
+    const genderSelect = document.getElementById('gender');
+    const genderError = document.getElementById('genderError');
+
+    const updateProfileBtn = document.getElementById('updateProfileBtn');
+
+    // --- 이미지 미리보기 요소들 ---
+    const profileImageFile = document.getElementById('profileImageFile');
+    const profileImagePreview = document.getElementById('profileImagePreview');
+    const bannerImageFile = document.getElementById('bannerImageFile');
+    const bannerImagePreview = document.getElementById('bannerImagePreview');
+
+    // --- 정규식 정의 (UserDto와 동일) ---
+    const emailRegexp = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    const phoneRegexp = /^\d{3}-\d{3,4}-\d{4}$/;
+    const birthRegexp = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|1[1-9]|2[1-9]|3[0-1])$/;
+
+
+    // --- 함수: 메시지 표시 ---
+    function displayMessage(element, message, type) {
+        element.textContent = message;
+        element.className = 'validation-message'; // 기본 클래스 유지
+        if (type === 'success') {
+            element.classList.add('text-success');
+            element.classList.remove('text-danger');
+        } else if (type === 'error') {
+            element.classList.add('text-danger');
+            element.classList.remove('text-success');
+        } else {
+            element.classList.remove('text-success', 'text-danger');
+        }
+    }
+
+    // --- 함수: 이미지 미리보기 로직 ---
+    function previewImage(inputElement, previewElement, defaultSrc) {
+        const file = inputElement.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewElement.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            // 파일 선택 취소 시 기본 이미지로 되돌리기 (원래 이미지나 플레이스홀더)
+            // 여기서는 Thymeleaf로 이미 초기값이 설정되어 있으므로, 단순히 변경 없음을 유지
+            // 또는 서버에서 받은 원래 URL로 되돌리는 로직을 추가할 수 있습니다.
+            // 아래는 원래 페이지 로드 시의 초기값을 유지하는 예시
+            previewElement.src = defaultSrc; // 기본값으로 돌아가도록 수정
+        }
+    }
+
+    // --- 함수: '정보 수정' 버튼 활성화/비활성화 체크 ---
+    function checkUpdateButtonStatus() {
+        // 모든 필수 필드의 클라이언트 측 유효성 검사 통과 여부 확인
+        // 이미지 파일은 required=false 이므로 포함하지 않음
+        const isAllFieldsValid =
+            emailInput.value.trim() !== '' && emailRegexp.test(emailInput.value) &&
+            phoneInput.value.trim() !== '' && phoneRegexp.test(phoneInput.value) &&
+            birthInput.value.trim() !== '' && birthRegexp.test(birthInput.value) &&
+            genderSelect.value.trim() !== '';
+
+        updateProfileBtn.disabled = !isAllFieldsValid;
+    }
+
+    // --- 이벤트 리스너: 입력 필드 유효성 검사 및 버튼 상태 업데이트 ---
+    emailInput.addEventListener('input', () => {
+        const email = emailInput.value.trim();
+        if (email === '') {
+            displayMessage(emailError, '이메일 주소를 입력해주세요.', 'error');
+        } else if (!emailRegexp.test(email)) {
+            displayMessage(emailError, '이메일 형식이 올바르지 않습니다.', 'error');
+        } else {
+            displayMessage(emailError, '', ''); // 유효하면 메시지 제거
+        }
+        checkUpdateButtonStatus();
+    });
+
+    phoneInput.addEventListener('input', () => {
+        const phone = phoneInput.value.trim();
+        if (phone === '') {
+            displayMessage(phoneError, '휴대폰 번호를 입력해주세요.', 'error');
+        } else if (!phoneRegexp.test(phone)) {
+            displayMessage(phoneError, '휴대폰 번호는 010-XXXX-XXXX 형식으로 입력해주세요.', 'error');
+        } else {
+            displayMessage(phoneError, '', '');
+        }
+        checkUpdateButtonStatus();
+    });
+
+    birthInput.addEventListener('input', () => {
+        const birth = birthInput.value.trim();
+        if (birth === '') {
+            displayMessage(birthError, '생년월일을 입력해주세요.', 'error');
+        } else if (!birthRegexp.test(birth)) {
+            displayMessage(birthError, '생년월일은 YYYYMMDD 8자리 형식으로 입력해주세요.', 'error');
+        } else {
+            displayMessage(birthError, '', ''); // 유효하면 메시지 제거
+        }
+        checkUpdateButtonStatus();
+    });
+
+    genderSelect.addEventListener('change', () => {
+        if (genderSelect.value.trim() === '') {
+            displayMessage(genderError, '성별을 선택해주세요.', 'error');
+        } else {
+            displayMessage(genderError, '', ''); // 유효하면 메시지 제거
+        }
+        checkUpdateButtonStatus();
+    });
+
+    // --- 이벤트 리스너: 이미지 파일 미리보기 ---
+    profileImageFile.addEventListener('change', () => {
+        // Thymeleaf로 설정된 초기 이미지 URL을 JavaScript 변수로 가져옵니다.
+        const defaultProfileImgSrc = profileImagePreview.getAttribute('th:src') || '/img/profile_placeholder.png';
+        previewImage(profileImageFile, profileImagePreview, defaultProfileImgSrc);
+    });
+
+    bannerImageFile.addEventListener('change', () => {
+        const defaultBannerImgSrc = bannerImagePreview.getAttribute('th:src') || '/img/banner_placeholder.png';
+        previewImage(bannerImageFile, bannerImagePreview, defaultBannerImgSrc);
+    });
+
+
+    // --- 초기 '정보 수정' 버튼 비활성화 상태 설정 및 메시지 처리 ---
+    document.addEventListener('DOMContentLoaded', () => {
+        checkUpdateButtonStatus(); // 페이지 로드 시 버튼 상태 초기화
+
+        // Spring Controller에서 넘어온 메시지를 alert으로 띄우기
+        /*<![CDATA[*/
+        const validationError = /*[[${validationError}]]*/ null;
+        if (validationError) {
+            alert("유효성 검사 실패:\n" + validationError);
+        }
+
+        const successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage) {
+            alert(successMessage);
+        }
+
+        const errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage) {
+            alert("오류 발생:\n" + errorMessage);
+        }
+        /*]]>*/
+
+        // 페이지 로드 시 이미지 미리보기 기본값 설정
+        // Thymeleaf는 이미 'th:src' 속성을 평가하여 'src' 속성을 만듭니다.
+        // 따라서 JavaScript에서는 'src' 속성을 직접 사용하면 됩니다.
+        profileImagePreview.src = profileImagePreview.src || '/img/profile_placeholder.png';
+        bannerImagePreview.src = bannerImagePreview.src || '/img/banner_placeholder.png';
+    });
+</script>
+</body>
+</html>

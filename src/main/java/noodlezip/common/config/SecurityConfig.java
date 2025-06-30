@@ -30,7 +30,7 @@ public class SecurityConfig {
                     .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
                     .requestMatchers("/fragments/**").permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                    .requestMatchers("/user/**").hasAnyAuthority("USER")
+                    .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
                     .anyRequest().authenticated();
         });
 
