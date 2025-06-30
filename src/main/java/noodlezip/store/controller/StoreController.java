@@ -1,15 +1,14 @@
 package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
-import noodlezip.ramen.dto.CategoryResponseDto;
-import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/store")
@@ -21,24 +20,15 @@ public class StoreController {
     // 등록 폼 페이지 진입
     @GetMapping("/regist")
     public String showRegistPage(Model model) {
-        // 라멘 카테고리와 토핑 목록을 가져옴
-        List<CategoryResponseDto> categories = storeService.getRamenCategories();
-        List<ToppingResponseDto> toppings = storeService.getRamenToppings();
-
-        model.addAttribute("categories", categories);
-        model.addAttribute("toppings", toppings);
-
-        return "store/regist"; // templates/store/regist.html
+        // 카테고리, 토핑 등 필요한 데이터 세팅 (생략 가능)
+        return "store/regist";
     }
 
-    // 등록 처리
     @PostMapping("/regist")
-    public String registerStore(@ModelAttribute StoreRequestDto dto) {
-        Long userId = 1L; // TODO: 실제 로그인 유저 ID로 변경 필요
-        Long storeId = storeService.registerStore(dto, userId);
-
-        // 등록 후 상세 페이지로 리다이렉트
+    public String registerStore(@ModelAttribute StoreRequestDto dto,
+                                @RequestParam("storeMainImage") MultipartFile storeMainImage) throws IOException {
+        Long userId = 1L; // TODO: 실제 로그인 유저 ID로 변경
+        Long storeId = storeService.registerStore(dto, userId, storeMainImage);
         return "redirect:/store/detail/" + storeId;
     }
-
 }
