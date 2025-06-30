@@ -62,6 +62,7 @@ public class FileUtil {
 
     public Map<String, String> fileupload(String folderName, MultipartFile file) {
         if (file.isEmpty()) {
+            // 나중에 예외처리해야됨
             log.warn("업로드 파일이 비어 있습니다. 폴더: {}", folderName);
             return new HashMap<>(); // 빈 Map 반환
         }
@@ -101,7 +102,7 @@ public class FileUtil {
             result.put("filePath", s3FolderPath); // 버킷 내 폴더 경로
             result.put("originalFilename", originalFilename);
             result.put("filesystemName", filesystemName);
-            result.put("fileUrl", fileUrl); // S3에서 접근 가능한 전체 URL
+            result.put("fileUrl", fileUrl); // S3에서 접근 가능한 전체 URL, 이 값으로 이미지 출력
             log.info("파일 업로드 성공: {}", fileUrl);
             return result;
 
