@@ -6,4 +6,5 @@ public interface UserService {
     void registUser(UserDto user);
     boolean isLoginIdDuplicated(String loginId);
     boolean isEmailDuplicated(String email);
+    void verifyUserEmail(String email, String code);
 }
