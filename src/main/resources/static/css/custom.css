@@ -3,18 +3,30 @@
 
 /*============================================================================================*/
 
+#opening-schedule label.fix_spacing {
+    display: block;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 4px;
+}
+
+/* row 안에서 수직 정렬 방지 */
 #opening-schedule .row {
-    align-items: flex-start !important;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
+    align-items: stretch !important; /* center → stretch */
 }
 
-#opening-schedule .form-group {
-    margin-bottom: 0.5rem;
-}
-
+/* select box 높이 조정 */
 #opening-schedule .form-control {
-    min-height: 38px;
+    min-height: 40px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    #opening-schedule .row {
+        flex-wrap: wrap !important;
+    }
 }
 
 .box_general.padding_bottom {
@@ -102,7 +114,18 @@ textarea#owner-intro {
     transition: background-color 0.2s;
 }
 .topping-tag.selected {
-    background-color: #ffc107;
+    background-color: #9344dd;
     color: white;
     font-weight: bold;
+}
+
+#searchAddressBtn {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+#searchAddressBtn:hover {
+    background-color: #e67e22;
 }
