@@ -74,10 +74,9 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
       `;
       list.appendChild(item);
-      console.log("이름" + store.storeName + " yAxis: " +  store.yaxis + " xAxis: " + store.xaxis)
       // 마커 생성
       const marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(store.yaxis, store.xaxis),
+        position: new naver.maps.LatLng(store.storeLat, store.storeLng),
         map: map,
         title: store.storeName
       });
