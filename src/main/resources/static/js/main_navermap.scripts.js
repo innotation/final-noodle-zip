@@ -22,16 +22,22 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
           renderStores(data.content);
-        })
-
+        }).catch(error => {
+        console.error('매장 검색 실패: ', error);
+        document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
+      });
     }, function () { // 위치 정보 실패
       // console.warn('위치 정보를 가져오지 못했습니다.');
       fetch(`${contextPath}search/stores?page=${page}&size=${size}`)
         .then(response => response.json())
         .then(data => {
           renderStores(data.content);
-          console.log(data.content);
+        })
+        .catch(error => {
+          console.error('매장 검색 실패: ', error);
+          document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
         });
+
     }
   );
 
@@ -43,7 +49,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // 기존 마커,인포 제거
     markers.forEach(marker => marker.setMap(null));
     markers.length = 0;
-    infoWindows.lenth = 0;
+    infoWindows.length = 0;
+
+    if (!stores || !stores.length === 0) {
+      list.innerHTML = `<p>검색 결과가 없습니다.</p>`;
+      return;
+    }
 
     stores.forEach((store, idx) => {
       // 리스트 생성
