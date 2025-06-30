@@ -29,7 +29,7 @@ public class SecurityConfig {
             auth.requestMatchers("/",  "/login", "/signup", "/img/**", "/images/**", "/admin/**", "/admin_section/**").permitAll()
                     .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
                     .requestMatchers("/fragments/**").permitAll()
-                    //.requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("USER")
                     .anyRequest().authenticated();
         });
