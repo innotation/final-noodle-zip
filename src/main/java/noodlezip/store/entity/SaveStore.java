@@ -13,7 +13,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "tbl_save_store")
-public class SaveStore {
+public class SaveStore extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "save_store_id", nullable = false)
@@ -42,11 +42,4 @@ public class SaveStore {
     @NotNull
     @Column(name = "y_axis", nullable = false)
     private Double yAxis;
-
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
 }

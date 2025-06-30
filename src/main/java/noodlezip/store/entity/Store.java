@@ -4,9 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import noodlezip.store.constant.ApprovalStatus;
+import noodlezip.store.constant.OperationStatus;
+import noodlezip.store.constant.ParkingType;
 import noodlezip.users.entity.User;
 
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +19,8 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Store {
+public class Store extends BaseEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", nullable = false)
@@ -47,15 +52,18 @@ public class Store {
     @Column(name = "is_child_allowed", nullable = false)
     private Boolean isChildAllowed = false;
 
-    @Size(max = 30)
-    @NotNull
+    // Enum 타입 3개 parking, operationstatus, approvalstatus
+    @Enumerated(EnumType.STRING)
     @Column(name = "has_parking", nullable = false, length = 30)
-    private String hasParking;
+    private ParkingType hasParking;
 
-    @Size(max = 30)
-    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "operation_status", nullable = false, length = 30)
-    private String operationStatus;
+    private OperationStatus operationStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", nullable = false, length = 30)
+    private ApprovalStatus approvalStatus;
 
     @Size(max = 300)
     @Column(name = "owner_comment", length = 300)
@@ -73,10 +81,19 @@ public class Store {
     @Column(name = "y_axis", nullable = false)
     private Double yAxis;
 
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    // 메뉴 리스트 (1:N)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus = new ArrayList<>();
 
-    @Column(name = "updated_at")
-    private Instant updatedAt;
+    // 추가 토핑 리스트 (1:N)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreExtraTopping> extraToppings = new ArrayList<>();
+
+    // 요일별 영업 시간 (1:N)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreWeekSchedule> weekSchedules = new ArrayList<>();
+
+    // 위치 정보 (1:1)
+    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private StoreLocation storeLocation;
 }
