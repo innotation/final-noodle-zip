@@ -86,6 +86,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
 
         BooleanBuilder builder = new BooleanBuilder();
 
+        // 운영중인 매장
+        builder.and(store.approvalStatus.eq("APPROVED"));
+
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
             builder.and(ramenCategory.name.in(filter.getRamenCategory()));
@@ -110,7 +113,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             BooleanBuilder toppingBuilder = new BooleanBuilder();
 
             // 기본 토핑 조건
-            toppingBuilder.or(topping.toppingName.in(filter.getTopping()));
+            toppingBuilder.or(topping.toppingName.in(filter.getTopping())
+                    .and(topping.isActive.isTrue())
+            );
 
             // 추가 토핑 조건
             toppingBuilder.or(
@@ -120,6 +125,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                             .where(
                                     storeExtraTopping.storeId.eq(store.id)
                                             .and(topping.toppingName.in(filter.getTopping()))
+                                            .and(topping.isActive.isTrue())
                             )
                             .exists()
             );
