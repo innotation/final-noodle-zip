@@ -7,6 +7,7 @@ import noodlezip.store.entity.Store;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * DTO for {@link noodlezip.store.entity.Store}
@@ -43,8 +44,8 @@ public class StoreDto implements Serializable {
     @NotNull
     Double yAxis;
     @NotNull
-    Instant createdAt;
-    Instant updatedAt;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
     Integer storeLegalCode;
 
     // Store -> StoreDto
@@ -61,8 +62,8 @@ public class StoreDto implements Serializable {
                 store.getOperationStatus(),
                 store.getOwnerComment(),
                 store.getStoreMainImageUrl(),
-                store.getXAxis(),
-                store.getYAxis(),
+                store.getStoreLat(),
+                store.getStoreLng(),
                 store.getCreatedAt(),
                 store.getUpdatedAt(),
                 store.getStoreLegalCode()

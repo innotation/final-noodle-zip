@@ -18,20 +18,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
       // fetch 요청
-      fetch(`${contextPath}search/stores?lat=${lat}&lng=${lng}&page=${page}&size=${size}`)
+      fetch(`${contextPath}search/filter?lat=${lat}&lng=${lng}&page=${page}&size=${size}`)
+        .then(response => response.json())
+        .then(data => {
+          renderStores(data.content);
+        }).catch(error => {
+        console.error('매장 검색 실패: ', error);
+        document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
+      });
+    }, function () { // 위치 정보 실패
+      // console.warn('위치 정보를 가져오지 못했습니다.');
+      fetch(`${contextPath}search/filter?page=${page}&size=${size}`)
         .then(response => response.json())
         .then(data => {
           renderStores(data.content);
         })
-
-    }, function () { // 위치 정보 실패
-      // console.warn('위치 정보를 가져오지 못했습니다.');
-      fetch(`${contextPath}search/stores?page=${page}&size=${size}`)
-        .then(response => response.json())
-        .then(data => {
-          renderStores(data.content);
-          console.log(data.content);
+        .catch(error => {
+          console.error('매장 검색 실패: ', error);
+          document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
         });
+
     }
   );
 
@@ -43,8 +49,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // 기존 마커,인포 제거
     markers.forEach(marker => marker.setMap(null));
     markers.length = 0;
-    infoWindows.lenth = 0;
+    infoWindows.length = 0;
+    console.log(stores);
 
+    // 검색된 매장이 없을 시
+    if (stores == null || stores.length === 0) {
+      const item = document.createElement('div');
+      item.classList.add('col-lg-12', 'col-sm-6');
+      item.innerHTML = `<p>검색 결과가 없습니다.</p>`;
+      list.appendChild(item);
+      return;
+    }
+
+    // 검색된 매장 존재 시
     stores.forEach((store, idx) => {
       // 리스트 생성
       const item = document.createElement('div');
@@ -74,10 +91,9 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
       `;
       list.appendChild(item);
-      console.log("이름" + store.storeName + " yAxis: " +  store.yaxis + " xAxis: " + store.xaxis)
       // 마커 생성
       const marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(store.yaxis, store.xaxis),
+        position: new naver.maps.LatLng(store.storeLat, store.storeLng),
         map: map,
         title: store.storeName
       });

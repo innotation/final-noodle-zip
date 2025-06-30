@@ -19,8 +19,8 @@ public class SearchStoreDto {
     private String hasParking;
     private String ownerComment;
     private String storeMainImageUrl;
-    private Double xAxis;
-    private Double yAxis;
+    private Double storeLat;
+    private Double storeLng;
     private Double distance;
 
 }

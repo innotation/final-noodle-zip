@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.time.Instant;
+import noodlezip.common.entity.BaseTimeEntity;
 
 @Builder
 @AllArgsConstructor
@@ -15,7 +14,7 @@ import java.time.Instant;
 @ToString
 @Entity
 @Table(name = "tbl_store")
-public class Store {
+public class Store extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", nullable = false)
@@ -41,11 +40,11 @@ public class Store {
 
     @NotNull
     @Column(name = "is_local_card", nullable = false)
-    private Boolean isLocalCard = false;
+    private Boolean isLocalCard;
 
     @NotNull
     @Column(name = "is_child_allowed", nullable = false)
-    private Boolean isChildAllowed = false;
+    private Boolean isChildAllowed;
 
     @Size(max = 30)
     @NotNull
@@ -66,21 +65,17 @@ public class Store {
     private String storeMainImageUrl;
 
     @NotNull
-    @Column(name = "x_axis", nullable = false)
-    private Double xAxis;
+    @Column(name = "store_lat", nullable = false)
+    private Double storeLat;
 
     @NotNull
-    @Column(name = "y_axis", nullable = false)
-    private Double yAxis;
-
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
+    @Column(name = "store_lng", nullable = false)
+    private Double storeLng;
 
     @Column(name = "store_legal_code")
     private Integer storeLegalCode;
+
+    @Column(name = "approval_status")
+    private String approvalStatus;
 
 }

@@ -8,10 +8,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.ramen.entity.QCategory;
-import noodlezip.ramen.entity.QRamenSoup;
-import noodlezip.ramen.entity.QRamenTopping;
-import noodlezip.ramen.entity.QStoreExtraTopping;
+import noodlezip.ramen.entity.*;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
 import noodlezip.store.entity.*;
@@ -36,7 +33,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         NumberExpression<Double> distanceExpr = Expressions.numberTemplate(
                 Double.class,
                 "ST_Distance_Sphere(point({0}, {1}), point({2}, {3}))",
-                lng, lat, store.xAxis, store.yAxis
+                lng, lat, store.storeLng, store.storeLat
         );
 
         List<SearchStoreDto> content = queryFactory
@@ -50,8 +47,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         store.hasParking,
                         store.ownerComment,
                         store.storeMainImageUrl,
-                        store.xAxis,
-                        store.yAxis,
+                        store.storeLat,
+                        store.storeLng,
                         distanceExpr.as("distance")
                 ))
                 .from(store)
@@ -84,10 +81,13 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         NumberExpression<Double> distanceExpr = Expressions.numberTemplate(
                 Double.class,
                 "ST_Distance_Sphere(point({0}, {1}), point({2}, {3}))",
-                filter.getLng(), filter.getLat(), store.xAxis, store.yAxis
+                filter.getLng(), filter.getLat(), store.storeLng, store.storeLat
         );
 
         BooleanBuilder builder = new BooleanBuilder();
+
+        // 운영중인 매장
+        builder.and(store.approvalStatus.eq("APPROVED"));
 
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
@@ -113,7 +113,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             BooleanBuilder toppingBuilder = new BooleanBuilder();
 
             // 기본 토핑 조건
-            toppingBuilder.or(topping.toppingName.in(filter.getTopping()));
+            toppingBuilder.or(topping.toppingName.in(filter.getTopping())
+                    .and(topping.isActive.isTrue())
+            );
 
             // 추가 토핑 조건
             toppingBuilder.or(
@@ -123,6 +125,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                             .where(
                                     storeExtraTopping.storeId.eq(store.id)
                                             .and(topping.toppingName.in(filter.getTopping()))
+                                            .and(topping.isActive.isTrue())
                             )
                             .exists()
             );
@@ -142,8 +145,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         store.hasParking,
                         store.ownerComment,
                         store.storeMainImageUrl,
-                        store.xAxis,
-                        store.yAxis,
+                        store.storeLat,
+                        store.storeLng,
                         distanceExpr.as("distance")
                 ))
                 .from(store)
