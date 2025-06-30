@@ -14,9 +14,9 @@ import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.Store;
 import noodlezip.store.entity.StoreWeekSchedule;
 import noodlezip.store.entity.StoreWeekScheduleId;
-import noodlezip.store.repository.StoreMenuRepository;
+import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreRepository;
-import noodlezip.store.repository.StoreScheduleRepository;
+import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.users.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,13 +33,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final StoreScheduleRepository scheduleRepository;
-    private final StoreMenuRepository menuRepository;
+    private final StoreWeekScheduleRepository scheduleRepository;
+    private final MenuRepository menuRepository;
+
     private final noodlezip.ramen.repository.RamenToppingRepository ramenToppingRepository;
     private final RamenService ramenService;
 

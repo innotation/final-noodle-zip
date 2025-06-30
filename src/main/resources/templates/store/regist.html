@@ -345,25 +345,92 @@
 						<div id="opening-schedule"></div>
 					</div>
 
-					<!-- ⑥ 지역카드, 유아 동반, 주차 : 라디오 · 체크박스 -->
-					<div class="mb-4">
-						<div class="form-check">
-							<label>
-								<input type="checkbox" name="isLocalCard" name="localCardAvailable" />
-								지역카드 사용 가능
-							</label>
+						<!-- 요일별 영업시간 UI -->
 
-							<!-- 지역카드 API 응답 혹은 추가 설명 칸 -->
-							<div id="region-card-info" style="display:none; margin-top: 8px;">
-								<p style="color: gray;">지역카드 정보를 불러오는 중이거나, 연결될 API 공간입니다.</p>
-							</div>
+						<!-- 반복: 요일 -->
+						<script>
+							const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+							const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+						</script>
 
-							<script>
-								document.getElementById('regionCardCheck').addEventListener('change', function () {
-									const infoBox = document.getElementById('region-card-info');
-									infoBox.style.display = this.checked ? 'block' : 'none';
-								});
-							</script>
+						<script>
+							for (let i = 0; i < days.length; i++) {
+								document.write(`
+									<div class="row mb-2 align-items-center">
+									  <div class="col-md-2">
+										<label class="fix_spacing">${dayLabels[i]}</label>
+										<input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}">
+										<input type="hidden" name="weekSchedule[${i}].isClosedDay" value="false" id="closed-day-${i}">
+									  </div>
+									  <div class="col-md-5">
+										<div class="form-group">
+										  <div class="styled-select">
+											<select class="form-control" name="weekSchedule[${i}].openingAt" onchange="checkClosed(${i})">
+											  <option value="">Opening Time</option>
+											  <option value="CLOSED">Closed</option>
+											  ${generateTimeOptions()}
+											</select>
+										  </div>
+										</div>
+									  </div>
+									  <div class="col-md-5">
+										<div class="form-group">
+										  <div class="styled-select">
+											<select class="form-control" name="weekSchedule[${i}].closingAt" onchange="checkClosed(${i})">
+											  <option value="">Closing Time</option>
+											  <option value="CLOSED">Closed</option>
+											  ${generateTimeOptions()}
+											</select>
+										  </div>
+										</div>
+									  </div>
+									</div>
+									`);
+							}
+
+							function generateTimeOptions() {
+								const options = [];
+								for (let h = 0; h < 24; h++) {
+									const hour = h % 12 === 0 ? 12 : h % 12;
+									const meridian = h < 12 ? "AM" : "PM";
+									const value = `${h.toString().padStart(2, '0')}:00`;
+									const label = `${hour} ${meridian}`;
+									options.push(`<option value="${value}">${label}</option>`);
+								}
+								return options.join("");
+							}
+
+							function checkClosed(index) {
+								const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`).value;
+								const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`).value;
+								const closedInput = document.getElementById(`closed-day-${index}`);
+								if (open === "CLOSED" || close === "CLOSED") {
+									closedInput.value = "true";
+								} else {
+									closedInput.value = "false";
+								}
+							}
+						</script>
+
+						<!-- ⑥ 지역카드, 유아 동반, 주차 : 라디오 · 체크박스 -->
+						<div class="mb-4">
+							<div class="form-check">
+								<label for="regionCardCheck">
+									<input type="checkbox" id="regionCardCheck" name="localCardAvailable" />
+									지역카드 사용 가능
+								</label>
+
+								<!-- 지역카드 API 응답 혹은 추가 설명 칸 -->
+								<div id="region-card-info" style="display:none; margin-top: 8px;">
+									<p style="color: gray;">지역카드 정보를 불러오는 중이거나, 연결될 API 공간입니다.</p>
+								</div>
+
+								<script>
+									document.getElementById('regionCardCheck').addEventListener('change', function () {
+										const infoBox = document.getElementById('region-card-info');
+										infoBox.style.display = this.checked ? 'block' : 'none';
+									});
+								</script>
 						</div>
 						<div class="form-check">
 							<input class="form-check-input" type="checkbox" name="isChildAllowed" value="true" id="childAllowed">
@@ -644,7 +711,7 @@
 	></script>
 
 	<script>
-		document.getElementById("searchAddressBtn").addEventListener("click", function () {
+		function openPostcode() {
 			new daum.Postcode({
 				oncomplete: function (data) {
 					// 도로명 주소 자동 입력
@@ -657,7 +724,10 @@
 					document.getElementById("detailAddress").focus();
 				},
 			}).open();
-		});
+		}
+
+		document.getElementById("searchAddressBtn").addEventListener("click", openPostcode);
+		document.getElementById("address-api").addEventListener("click", openPostcode);
 	</script>
 
 	<!-- 전화번호 입력할 때 하이픈 넣기 -->
@@ -831,73 +901,6 @@
 		setupMenuImageUpload(template);
 		setupToppingTags(template);
 		updateRemoveMenuButtons(template);
-	</script>
-
-	<!-- 요일별 영업시간 UI -->
-
-	<!-- 반복: 요일 -->
-	<script>
-		const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-		const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-	</script>
-
-	<script>
-		for (let i = 0; i < days.length; i++) {
-			document.write(`
-									<div class="row mb-2 align-items-center">
-									  <div class="col-md-2">
-										<label class="fix_spacing">${dayLabels[i]}</label>
-										<input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}">
-										<input type="hidden" name="weekSchedule[${i}].isClosedDay" value="false" id="closed-day-${i}">
-									  </div>
-									  <div class="col-md-5">
-										<div class="form-group">
-										  <div class="styled-select">
-											<select class="form-control" name="weekSchedule[${i}].openingAt" onchange="checkClosed(${i})">
-											  <option value="">Opening Time</option>
-											  <option value="CLOSED">Closed</option>
-											  ${generateTimeOptions()}
-											</select>
-										  </div>
-										</div>
-									  </div>
-									  <div class="col-md-5">
-										<div class="form-group">
-										  <div class="styled-select">
-											<select class="form-control" name="weekSchedule[${i}].closingAt" onchange="checkClosed(${i})">
-											  <option value="">Closing Time</option>
-											  <option value="CLOSED">Closed</option>
-											  ${generateTimeOptions()}
-											</select>
-										  </div>
-										</div>
-									  </div>
-									</div>
-									`);
-		}
-
-		function generateTimeOptions() {
-			const options = [];
-			for (let h = 0; h < 24; h++) {
-				const hour = h % 12 === 0 ? 12 : h % 12;
-				const meridian = h < 12 ? "AM" : "PM";
-				const value = `${h.toString().padStart(2, '0')}:00`;
-				const label = `${hour} ${meridian}`;
-				options.push(`<option value="${value}">${label}</option>`);
-			}
-			return options.join("");
-		}
-
-		function checkClosed(index) {
-			const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`).value;
-			const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`).value;
-			const closedInput = document.getElementById(`closed-day-${index}`);
-			if (open === "CLOSED" || close === "CLOSED") {
-				closedInput.value = "true";
-			} else {
-				closedInput.value = "false";
-			}
-		}
 	</script>
 
 </body>

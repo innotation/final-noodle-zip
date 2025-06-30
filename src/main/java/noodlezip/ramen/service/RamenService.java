@@ -7,7 +7,6 @@ import noodlezip.ramen.entity.RamenCategory;
 import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.RamenCategoryRepository;
 import noodlezip.ramen.repository.ToppingRepository;
-import noodlezip.ramen.repository.RamenSoupRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.stream.Collectors;
 public class RamenService {
 
     private final RamenCategoryRepository ramenCategoryRepository;
-    private final RamenSoupRepository ramenSoupRepository;
     private final ToppingRepository toppingRepository; // 변경
 
     public List<CategoryResponseDto> getAllCategories() {

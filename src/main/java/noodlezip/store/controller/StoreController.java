@@ -10,9 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@Controller
-@RequestMapping("/store")
 @RequiredArgsConstructor
+@RequestMapping("/store")
+@Controller
 public class StoreController {
 
     private final StoreService storeService;

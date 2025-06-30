@@ -19,14 +19,17 @@ public class SaveStore extends BaseEntity{
     @Column(name = "save_store_id", nullable = false)
     private Long id;
 
+    // SaveStore 레코드는 특정 User가 소유
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // 유저가 저장한 Store 정보 (다대일관계)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    // 저장 카테고리 분류
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "save_store_category_id", nullable = false)
     private SaveStoreCategory saveStoreCategory;
