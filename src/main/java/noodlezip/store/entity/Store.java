@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.store.constant.ApprovalStatus;
 import noodlezip.user.entity.User;
 
 import java.time.Instant;
@@ -15,7 +17,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Store {
+public class Store extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", nullable = false)
@@ -73,10 +75,8 @@ public class Store {
     @Column(name = "y_axis", nullable = false)
     private Double yAxis;
 
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", nullable = false, length = 30)
+    private ApprovalStatus approvalStatus;
 
-    @Column(name = "updated_at")
-    private Instant updatedAt;
 }
