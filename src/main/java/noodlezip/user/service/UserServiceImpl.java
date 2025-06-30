@@ -2,6 +2,8 @@ package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
+import noodlezip.common.mail.MailService;
+import noodlezip.common.redis.RedisRepository;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
+    private final EmailVerificationService emailVerificationService;
 
     @Override
     @Transactional
@@ -41,6 +45,10 @@ public class UserServiceImpl implements UserService {
         newUser.setActiveStatus(ActiveStatus.ACTIVE);
         newUser.setIsEmailVerified(false);
 
+        String email = newUser.getEmail();
+
+        // 이메일 서비스 호출(전송 및 인증코드 생성을 통해 redis 저장)
+        emailVerificationService.sendVerificationCode(email);
         userRepository.save(newUser);
     }
 
