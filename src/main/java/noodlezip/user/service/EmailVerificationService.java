@@ -1,11 +1,15 @@
 package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.exception.CustomException;
 import noodlezip.common.mail.MailService;
 import noodlezip.common.redis.RedisRepository;
+import noodlezip.user.status.UserErrorStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +24,28 @@ public class EmailVerificationService {
 
     @Value("${app.base.url}")
     private String appBaseUrl;
+
+    public boolean verifyEmail(String email, String code) {
+
+        // redis에서 이메일을 통해 코드 불러오기
+        Optional<String> storedCode = redisRepository.get(email);
+
+        if (storedCode.isPresent()) { // 값이 존재할 경우
+            if (storedCode.get().equals(code)) { // 코드 일치시
+                return true;
+            }
+            else { // " 불일치 시
+                throw new CustomException(UserErrorStatus._MISS_MATCH_AUTH_CODE);
+            }
+        } else { // 값 미존재 시
+            throw new CustomException(UserErrorStatus._EXPIRED_AUTH_CODE);
+        }
+    }
+
+    public boolean deleteCode(String email) {
+        return redisRepository.delete(email);
+    }
+
 
     public void sendVerificationCode(String email) {
         // 인증 코드 생성

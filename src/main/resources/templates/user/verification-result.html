@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>이메일 인증 결과</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); max-width: 500px; margin: auto; }
+        h1 { color: #333; }
+        p { font-size: 1.1em; line-height: 1.5; }
+        .success { color: #28a745; font-weight: bold; }
+        .failure, .error { color: #dc3545; font-weight: bold; }
+        .home-link, .resend-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            cursor: pointer; /* 버튼처럼 보이게 */
+            border: none; /* 버튼 기본 스타일 제거 */
+        }
+        .home-link:hover, .resend-button:hover { background-color: #0056b3; }
+        .resend-button { background-color: #ffc107; color: #333; } /* 재전송 버튼 색상 */
+        .resend-button:hover { background-color: #e0a800; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${message}">이메일 인증 결과</h1>
+    <p th:if="${status == 'success'}" class="success">NoodleZip 서비스에 오신 것을 환영합니다! 이제 모든 기능을 이용하실 수 있습니다.</p>
+    <p th:if="${status == 'failure'}" class="failure">인증에 실패했습니다. <span th:text="${message}"></span></p>
+    <p th:if="${status == 'error'}" class="error">요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</p>
+
+    <button th:if="${showResendButton}"
+            class="resend-button"
+            id="resendCodeButton"
+            th:data-email="${emailForResend}">
+        인증 코드 재전송
+    </button>
+
+    <a href="/" class="home-link">홈으로 돌아가기</a>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const resendButton = document.getElementById('resendCodeButton');
+    if (resendButton) {
+        resendButton.addEventListener('click', function() {
+            const email = this.dataset.email; // data-email 속성에서 이메일 가져오기
+            if (!email) {
+                alert("이메일 정보를 찾을 수 없습니다.");
+                return;
+            }
+
+            // AJAX를 사용하여 백엔드 API 호출
+            fetch('/send-verification-code', { // POST 요청 URL
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email }) // 이메일을 JSON 형태로 전송
+            })
+                .then(response => response.json()) // 응답 json parsing
+                .then(message => {
+                    alert(message.message); // 백엔드로부터 받은 메시지 팝업
+                    // 재전송 성공 후 버튼 비활성화 또는 메시지 변경 등 UI 업데이트
+                    resendButton.disabled = true;
+                    resendButton.textContent = '인증 코드 재전송 완료';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('인증 코드 재전송 중 오류가 발생했습니다.');
+                });
+        });
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

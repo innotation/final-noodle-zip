@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public void registUser(UserDto user) {
 
         userRepository.findByLoginId(user.getLoginId()).ifPresent((existingUser) -> {
-                throw new CustomException(UserErrorStatus._ALREADY_EXIST_LOGIN_ID);
+            throw new CustomException(UserErrorStatus._ALREADY_EXIST_LOGIN_ID);
         });
 
         userRepository.findByEmail(user.getEmail()).ifPresent((existingUser) -> {
@@ -57,5 +57,26 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public boolean isEmailDuplicated(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    @Transactional // DB 업데이트와 Redis 삭제를 하나의 트랜잭션으로 묶음
+    public void verifyUserEmail(String email, String code) {
+        // 코드 검증
+        if (emailVerificationService.verifyEmail(email, code)) {
+            // 검증 성공 시, Redis에서 해당 코드 삭제(emailVerifService의 책임)
+            emailVerificationService.deleteCode(email);
+            // 유저 활성화
+            userRepository.findByEmail(email).ifPresentOrElse(
+                    (existingUser) -> {
+                        existingUser.setIsEmailVerified(true);
+                        userRepository.save(existingUser);
+                    },
+                    () -> {
+                        // 유저 미존재 case
+                        throw new CustomException(UserErrorStatus._NOT_FOUND_USER);
+                    }
+            );
+        }
     }
 }
