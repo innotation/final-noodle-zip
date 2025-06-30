@@ -1,4 +1,4 @@
-package noodlezip.store.entity;
+package noodlezip.ramen.entity;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

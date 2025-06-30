@@ -1,4 +1,4 @@
-package noodlezip.store.entity;
+package noodlezip.ramen.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
