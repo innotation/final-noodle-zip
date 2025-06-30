@@ -288,6 +288,8 @@
 						<p style="margin-top: 12px;">Drop files here to upload</p>
 						<input type="file" id="image-input" name="storeImage" accept="image/*" style="display: none;" />
 						<img id="preview-image" src="" style="max-width: 100%; display: none; margin-top: 10px;" />
+						<input type="hidden" name="approvalStatus" value="WAITING" />
+						<input type="hidden" name="operationStatus" value="BEFORE_OPEN" />
 					</div>
 
 					<!-- ② 가게명 / ③ 도로명 주소 API -->
@@ -421,7 +423,7 @@
 
 									<!-- 카테고리 드롭다운 -->
 									<div class="col-md-6 mb-2">
-										<select name="menus[0].category" class="form-select form-select-sm">
+										<select name="menus[0].ramenCategoryId" class="form-select form-select-sm">
 											<option disabled selected>카테고리 선택</option>
 											<option value="기본">기본</option>
 											<option value="사이드">사이드</option>
@@ -798,17 +800,32 @@
 		// 토핑 태그
 		function setupToppingTags(wrapper) {
 			const tagContainer = wrapper.querySelector('.topping-tags');
-			const hiddenInput = wrapper.querySelector('input[name$=".defaultToppings"]');
+			const hiddenInput = wrapper.querySelector('input[name$=".defaultToppingIds"]'); // 이름 정확히 맞춤
 
+			if (!tagContainer || !hiddenInput) return;
+
+			// 초기값에서 선택된 토핑들 배열로 파싱
+			let selectedValues = hiddenInput.value ? hiddenInput.value.split(',') : [];
+
+			// 초기 선택된 토핑에 .selected 클래스 부여
 			tagContainer.querySelectorAll('.topping-tag').forEach(tag => {
+				const value = tag.dataset.value;
+				if (selectedValues.includes(value)) {
+					tag.classList.add('selected');
+				}
+
+				// 클릭 이벤트 등록
 				tag.addEventListener('click', () => {
 					tag.classList.toggle('selected');
+
+					// 현재 선택된 모든 토핑 값 다시 수집해서 hidden input 갱신
 					const selected = [...tagContainer.querySelectorAll('.topping-tag.selected')]
 							.map(el => el.dataset.value);
 					hiddenInput.value = selected.join(',');
 				});
 			});
 		}
+
 
 		// 최초 메뉴에 세팅
 		setupMenuImageUpload(template);

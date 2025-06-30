@@ -27,7 +27,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/", "/login", "/signup", "/images/**", "/stores/**").permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                    .requestMatchers("/user/**").hasAnyAuthority("USER")
+                    .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
                     .anyRequest().authenticated();
         });
 
@@ -67,4 +67,3 @@ public class SecurityConfig {
 
     }
 }
-

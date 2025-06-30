@@ -20,7 +20,10 @@ public class StoreController {
     // 등록 폼 페이지 진입
     @GetMapping("/regist")
     public String showRegistPage(Model model) {
-        // 카테고리, 토핑 등 필요한 데이터 세팅 (생략 가능)
+        // 카테고리와 토핑 목록을 서비스에서 가져와서 model에 담기
+        model.addAttribute("categories", storeService.getRamenCategories());
+        model.addAttribute("toppings", storeService.getRamenToppings());
+
         return "store/regist";
     }
 
