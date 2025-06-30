@@ -1,4 +1,7 @@
 package noodlezip.ramen.repository;
 
-public interface StoreExtraToppingRepository extends org.springframework.data.jpa.repository.JpaRepository<noodlezip.ramen.entity.StoreExtraTopping, java.lang.Long> {
-  }
+import noodlezip.ramen.entity.StoreExtraTopping;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StoreExtraToppingRepository extends JpaRepository<StoreExtraTopping, Long> {
+}

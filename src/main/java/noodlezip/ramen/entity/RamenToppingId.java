@@ -9,6 +9,9 @@ import java.io.Serializable;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Getter
+@Setter
 @EqualsAndHashCode
 public class RamenToppingId implements Serializable {
     @Column(name="menu_id", nullable = false)

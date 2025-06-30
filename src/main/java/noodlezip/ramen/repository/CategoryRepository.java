@@ -1,4 +1,7 @@
 package noodlezip.ramen.repository;
 
-public interface CategoryRepository extends org.springframework.data.jpa.repository.JpaRepository<noodlezip.ramen.entity.Category, java.lang.Integer> {
-  }
+import noodlezip.ramen.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
+}

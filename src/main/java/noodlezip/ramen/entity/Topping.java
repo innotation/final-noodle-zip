@@ -1,21 +1,22 @@
-package noodlezip.store.entity;
+package noodlezip.ramen.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
+@ToString
 @Entity
 @Table(name = "tbl_topping")
 public class Topping {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "topping_id", nullable = false)
     private Long id;
 
@@ -27,6 +28,6 @@ public class Topping {
     @NotNull
     @ColumnDefault("1")
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = false;
+    private Boolean isActive;
 
 }
