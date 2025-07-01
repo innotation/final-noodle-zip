@@ -88,7 +88,7 @@ class UserServiceImplTest {
         mockBannerImage = new MockMultipartFile(
                 "bannerImage", "new_banner.jpg", "image/jpeg", "banner-data".getBytes());
     }
-    
+
     @Test
     @DisplayName("회원 가입 성공 테스트")
     void registUser_success() {
