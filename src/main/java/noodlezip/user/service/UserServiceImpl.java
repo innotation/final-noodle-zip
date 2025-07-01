@@ -138,6 +138,10 @@ public class UserServiceImpl implements UserService {
                 });
         user.setActiveStatus(ActiveStatus.SIGNOUT);
         user.setUserName("탈퇴한사용자");
+
+        // 없애줄 데이터 전부 여기서 soft-delete
+
+        // 유저 이미지 파일들 삭제
         fileUtil.deleteFileFromS3(user.getProfileImageUrl());
         user.setProfileBannerImageUrl(null);
         fileUtil.deleteFileFromS3(user.getProfileBannerImageUrl());
@@ -146,6 +150,5 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         log.info("User with ID: {} has been soft-deleted and data cleared.", userId);
-
     }
 }
