@@ -3,11 +3,12 @@ package noodlezip.badge.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.entity.*;
-import noodlezip.mypage.dto.UserBadgeResponse;
-import noodlezip.mypage.dto.UserOptionBadgeResponse;
+import noodlezip.mypage.dto.UserNoOptionBadgeDto;
+import noodlezip.mypage.dto.UserOptionBadgeDto;
 import noodlezip.ramen.entity.QCategory;
 import org.springframework.stereotype.Repository;
 
@@ -88,13 +89,12 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
 
 
     @Override
-    public List<UserBadgeResponse> findNotOptionBadgeList(Long userId, List<Long> notOptionBadge) {
+    public List<UserNoOptionBadgeDto> findNotOptionBadgeList(Long userId, List<Long> notOptionBadge) {
         QUserBadge userBadge = QUserBadge.userBadge;
         QBadge badge = QBadge.badge;
         QBadgeCategory badgeCategory = QBadgeCategory.badgeCategory;
         QBadgeGroup badgeGroup = QBadgeGroup.badgeGroup;
 
-        // 각 카테고리별 최고 레벨 구하기
         List<Tuple> maxLevels = queryFactory
                 .select(
                         badge.badgeCategory.id,
@@ -107,7 +107,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                 .where(
                         userBadge.userId.eq(userId),
                         userBadge.obtainedAt.isNotNull(),
-                        badgeGroup.id.in(notOptionBadge)
+                        badgeCategory.id.in(notOptionBadge)
                 )
                 .groupBy(badge.badgeCategory.id)
                 .fetch();
@@ -116,13 +116,12 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
             return Collections.emptyList();
         }
 
-        // 동적 where
         BooleanBuilder condition = new BooleanBuilder();
         for (Tuple tuple : maxLevels) {
             Long categoryId = tuple.get(badge.badgeCategory.id);
-            Integer level = tuple.get(1, Integer.class); // index 1이 maxLevel 위치
+            Integer level = tuple.get(1, Integer.class);
 
-            if(categoryId == null) {
+            if (categoryId == null) {
                 continue;
             }
             BooleanBuilder catCond = new BooleanBuilder().and(badge.badgeCategory.id.eq(categoryId));
@@ -136,11 +135,12 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
         }
 
         return queryFactory
-                .select(Projections.constructor(UserBadgeResponse.class,
-                        badgeGroup.id,
-                        badgeCategory.id,
+                .select(Projections.constructor(UserNoOptionBadgeDto.class,
+                        userBadge.id,
                         badge.id,
-                        badgeCategory.badgeCategoryName,
+                        badgeCategory.id,
+                        badgeGroup.id,
+                        badgeCategory.badgeDescription,
                         badge.badgeName,
                         userBadge.accumulativeValue,
                         badge.badgeImageUrl
@@ -163,81 +163,59 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
 
 
     @Override
-    public List<UserBadgeResponse> findOptionBadgeList(Long userId, List<Long> optionBadge) {
+    public List<UserOptionBadgeDto> findOptionBadgeList(Long userId, List<Long> optionBadge) {
         QUserBadge userBadge = QUserBadge.userBadge;
+        QUserBadge subUserBadge = new QUserBadge("subUserBadge");
         QBadge badge = QBadge.badge;
+        QBadge subBadge = new QBadge("subBadge");
         QBadgeCategory badgeCategory = QBadgeCategory.badgeCategory;
         QBadgeGroup badgeGroup = QBadgeGroup.badgeGroup;
         QCategory ramenCategory = QCategory.category;
 
-        // 각 카테고리별 최고 레벨 구하기
-        List<Tuple> maxLevels = queryFactory
-                .select(
-                        badge.badgeCategory.id,
-                        badge.badgeExtraOption.ramenCategory,
-                        badge.badgeExtraOption.storeSidoLegalCode,
-                        badge.badgePolicy.badgeLevel.max()
-                )
-                .from(userBadge)
-                .join(userBadge.badge, badge)
-                .join(badge.badgeCategory, badgeCategory)
-                .join(badgeCategory.badgeGroup, badgeGroup)
-                .join(badge.badgeExtraOption.ramenCategory, ramenCategory)
-                .where(
-                        userBadge.userId.eq(userId),
-                        userBadge.obtainedAt.isNotNull(),
-                        badgeGroup.id.in(optionBadge)
-                )
-                .groupBy(badge.badgeCategory.id)
-                .fetch();
 
-        if (maxLevels.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        // 동적 where
-        BooleanBuilder condition = new BooleanBuilder();
-        for (Tuple tuple : maxLevels) {
-            Long categoryId = tuple.get(badge.badgeCategory.id);
-            Integer level = tuple.get(1, Integer.class); // index 1이 maxLevel 위치
-
-            if(categoryId == null) {
-                continue;
-            }
-            BooleanBuilder catCond = new BooleanBuilder().and(badge.badgeCategory.id.eq(categoryId));
-
-            if (level == null) {
-                catCond.and(badge.badgePolicy.badgeLevel.isNull());
-            } else {
-                catCond.and(badge.badgePolicy.badgeLevel.eq(level));
-            }
-            condition.or(catCond);
-        }
+        BooleanBuilder condition = new BooleanBuilder()
+                .and(userBadge.userId.eq(userId))
+                .and(userBadge.obtainedAt.isNotNull())
+                .and(badgeCategory.id.in(optionBadge))
+                .and(
+                        JPAExpressions.selectOne()
+                                .from(subUserBadge)
+                                .join(subUserBadge.badge, subBadge)
+                                .where(
+                                        subUserBadge.userId.eq(userId),
+                                        subUserBadge.obtainedAt.isNotNull(),
+                                        subBadge.badgeCategory.id.eq(badge.badgeCategory.id),
+                                        badge.badgeExtraOption.storeSidoLegalCode.coalesce(-1)
+                                                .eq(subBadge.badgeExtraOption.storeSidoLegalCode.coalesce(-1)),
+                                        badge.badgeExtraOption.ramenCategory.id.coalesce(-1)
+                                                .eq(subBadge.badgeExtraOption.ramenCategory.id.coalesce(-1)),
+                                        subBadge.badgePolicy.badgeLevel.gt(badge.badgePolicy.badgeLevel)
+                                )
+                                .notExists()
+                );
 
         return queryFactory
-                .select(Projections.constructor(UserBadgeResponse.class,
-                        badgeGroup.id,
-                        badgeCategory.id,
+                .select(Projections.constructor(UserOptionBadgeDto.class,
+                        userBadge.id,
                         badge.id,
-                        badgeCategory.badgeCategoryName,
+                        badgeCategory.id,
+                        badgeGroup.id,
+                        badge.badgeExtraOption.storeSidoLegalCode,
+                        ramenCategory.name,
                         badge.badgeName,
                         userBadge.accumulativeValue,
-                        badge.badgeImageUrl,
-                        badge.badgeExtraOption.storeSidoLegalCode,
-                        badge.badgeExtraOption.ramenCategory.name
+                        badge.badgeImageUrl
                 ))
                 .from(userBadge)
                 .join(userBadge.badge, badge)
-                .join(badge.badgeCategory, badgeCategory)
+                .leftJoin(badge.badgeCategory, badgeCategory)
                 .join(badgeCategory.badgeGroup, badgeGroup)
-                .where(
-                        userBadge.userId.eq(userId),
-                        userBadge.obtainedAt.isNotNull(),
-                        condition
-                )
+                .leftJoin(badge.badgeExtraOption.ramenCategory, ramenCategory)
+                .where(condition)
                 .orderBy(
                         badgeGroup.id.asc(),
-                        badgeCategory.id.asc()
+                        badge.badgeExtraOption.ramenCategory.id.asc(),
+                        badge.badgeExtraOption.storeSidoLegalCode.asc()
                 )
                 .fetch();
     }
