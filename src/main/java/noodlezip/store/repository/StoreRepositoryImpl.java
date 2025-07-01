@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.ramen.entity.*;
+import noodlezip.ramen.entity.QStoreExtraTopping;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
 import noodlezip.store.entity.*;
@@ -150,9 +151,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         distanceExpr.as("distance")
                 ))
                 .from(store)
-                .join(menu).on(menu.storeId.eq(store.id))
-                .join(ramenCategory).on(menu.ramenCategoryId.eq(ramenCategory.id))
-                .join(ramenSoup).on(menu.ramenSoupId.eq(ramenSoup.id))
+                .join(menu).on(menu.id.eq(store.id))
+                .join(ramenCategory).on(menu.id.eq(ramenCategory.id))
+                .join(ramenSoup).on(menu.id.eq(ramenSoup.id))
                 .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
                 .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
                 .where(builder)
@@ -165,9 +166,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         long total = queryFactory
                 .select(store.countDistinct())
                 .from(store)
-                .join(menu).on(menu.storeId.eq(store.id))
-                .join(ramenCategory).on(menu.ramenCategoryId.eq(ramenCategory.id))
-                .join(ramenSoup).on(menu.ramenSoupId.eq(ramenSoup.id))
+                .join(menu).on(menu.id.eq(store.id))
+                .join(ramenCategory).on(menu.id.eq(ramenCategory.id))
+                .join(ramenSoup).on(menu.id.eq(ramenSoup.id))
                 .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
                 .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
                 .where(builder)
