@@ -140,6 +140,9 @@
                                     <img id="profileImagePreview" class="image-preview"
                                          th:src="${userProfile.profileImageUrl != null and !userProfile.profileImageUrl.isEmpty() ? userProfile.profileImageUrl : '/img/avatar.jpg'}"
                                          alt="프로필 이미지 미리보기">
+                                    <script>
+                                        console.log(userProfile.profileImageUrl);
+                                    </script>
                                     <div class="file-input-wrapper">
                                         <input type="file" id="profileImageFile" name="profileImageFile" accept="image/*">
                                     </div>

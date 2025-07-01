@@ -286,18 +286,12 @@ public class UserController {
             RedirectAttributes redirectAttributes) {
 
         if (userDetails == null) {
-            return "redirect:/login";
+            return "redirect:/";
         }
 
         if (bindingResult.hasErrors()) {
             log.error("유효성 검사 실패: {}", bindingResult.getAllErrors());
-            StringBuilder errorMessage = new StringBuilder();
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessage.append(error.getDefaultMessage()).append("\n");
-            });
-            redirectAttributes.addFlashAttribute("validationError", errorMessage.toString());
-            redirectAttributes.addFlashAttribute("userProfile", userDto);
-            return "redirect:/user/edit-profile";
+            throw new IllegalArgumentException("유효성 검사 실패");
         }
 
         try {
@@ -310,7 +304,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("userProfile", userDto);
         }
 
-        return "redirect:/user/edit-profile";
+        return "redirect:/";
     }
 
     @PostMapping("user/signout")
