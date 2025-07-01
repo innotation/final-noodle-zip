@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,9 +38,8 @@ public class FileUtil {
 
     public Map<String, String> fileupload(String folderName, MultipartFile file) {
         if (file.isEmpty()) {
-            // 나중에 예외처리해야됨
             log.warn("업로드 파일이 비어 있습니다. 폴더: {}", folderName);
-            return new HashMap<>(); // 빈 Map 반환
+            throw new CustomException(ErrorStatus._FILE_NOT_FOUND);
         }
 
         String s3FolderPath = folderName + DateTimeFormatter.ofPattern("/yyyyMMdd").format(LocalDate.now()) + "/";

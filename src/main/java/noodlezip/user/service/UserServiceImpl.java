@@ -1,7 +1,9 @@
 package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
@@ -14,10 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -86,12 +87,42 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(Long userId, UserDto userDto, MultipartFile profileImage, MultipartFile bannerImage) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(UserErrorStatus._NOT_FOUND_USER));
-        Map<String, String> profileMap = fileUtil.fileupload("profile", profileImage);
-        Map<String, String> bannerMap = fileUtil.fileupload("banner", bannerImage);
-        user.setEmail(user.getEmail());
-        user.setProfileImageUrl(profileMap.get("fileUrl"));
-        user.setProfileBannerImageUrl(bannerMap.get("fileUrl"));
-        userRepository.save(user);
+                .orElseThrow(() -> {
+                    log.warn("User not found with ID: {}", userId);
+                    return new CustomException(UserErrorStatus._NOT_FOUND_USER);
+                });
+        user.setUserName(userDto.getUserName());
+
+        // 프로필 이미지 변경
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                String profileImageUrl = fileUtil.fileupload("profile", profileImage).get("fileUrl");
+                if (profileImageUrl != null) {
+                    user.setProfileImageUrl(profileImageUrl);
+                    log.info("User {} profile image updated to: {}", userId, profileImageUrl);
+                }
+            } catch (Exception e) {
+                log.error("Failed to upload profile image for user {}: {}", userId, e.getMessage(), e);
+                throw new CustomException(ErrorStatus._FILE_UPLOAD_FAILED);
+            }
+        }
+
+        // 배너 이미지 변경
+        if (bannerImage != null && !bannerImage.isEmpty()) {
+            try {
+                String bannerImageUrl = fileUtil.fileupload("banner", bannerImage).get("fileUrl");
+                if (bannerImageUrl != null) {
+                    user.setProfileBannerImageUrl(bannerImageUrl);
+                    log.info("User {} banner image updated to: {}", userId, bannerImageUrl);
+                }
+            } catch (Exception e) {
+                log.error("Failed to upload banner image for user {}: {}", userId, e.getMessage(), e);
+                throw new CustomException(ErrorStatus._FILE_UPLOAD_FAILED);
+            }
+        }
+
+         userRepository.save(user);
+
+        log.info("User {} profile update completed.", userId);
     }
 }
