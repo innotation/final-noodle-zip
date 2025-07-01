@@ -63,31 +63,5 @@ public class StoreDto implements Serializable {
 
     @NotNull
     private Integer storeLegalCode; // 법정코드
-
-    @NotNull
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    // Store -> StoreDto
-    public static StoreDto toDto(Store store) {
-        return new StoreDto(
-                store.getId(),
-                store.getUserId(),
-                store.getStoreName(),
-                store.getAddress(),
-                store.getPhone(),
-                store.getIsLocalCard(),
-                store.getIsChildAllowed(),
-                store.getHasParking(),
-                store.getOperationStatus(),
-                store.getApprovalStatus(),
-                store.getOwnerComment(),
-                store.getStoreMainImageUrl(),
-                store.getStoreLat(),
-                store.getStoreLng(),
-                store.getStoreLegalCode(),
-                store.getCreatedAt(),
-                store.getUpdatedAt()
-        );
-    }
+    
 }
