@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="NoodleZip - 사용자 프로필을 수정합니다.">
-    <meta name="author" content="Your Name"> <title>NoodleZip - 사용자 프로필 수정</title>
+    <meta name="author" content="Your Name">
+    <title>NoodleZip - 사용자 프로필 수정</title>
 
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="/img/apple-touch-icon-72x72-precomposed.png">
@@ -127,31 +128,10 @@
                     <div class="main">
                         <h6>내 정보 수정</h6>
                         <form id="profileUpdateForm" th:action="@{/user/profile/update}" th:object="${userProfile}" method="post" enctype="multipart/form-data">
-                            <div class="form-group">
-                                <input class="form-control" placeholder="이메일 주소" id="email" name="email" th:field="*{email}">
-                                <i class="icon_mail"></i>
-                                <div class="text-danger validation-message" id="emailError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                            </div>
 
                             <div class="form-group">
-                                <input class="form-control" placeholder="전화번호 (예: 010-1234-5678)" id="phone" name="phone" th:field="*{phone}">
-                                <i class="icon_phone"></i>
-                                <div class="text-danger validation-message" id="phoneError" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <input class="form-control" placeholder="생년월일 8자리 (예: 19900101)" id="birth" name="birth" th:field="*{birth}">
-                                <i class="icon_calendar"></i>
-                                <div class="text-danger validation-message" id="birthError" th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <select name="gender" id="gender" class="form-control" th:field="*{gender}">
-                                    <option value="">성별 선택</option>
-                                    <option value="M">남</option>
-                                    <option value="F">여</option>
-                                </select>
-                                <div class="text-danger validation-message" id="genderError" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
+                                <input class="form-control" placeholder="이름" id="username" name="username" th:field="*{userName}">
+                                <i class="icon_id"></i> <div class="text-danger validation-message" id="nicknameError" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
                             </div>
 
                             <div class="form-group">
@@ -337,17 +317,8 @@
 
 <script>
     // --- HTML 요소 캐싱 ---
-    const emailInput = document.getElementById('email');
-    const emailError = document.getElementById('emailError');
-
-    const phoneInput = document.getElementById('phone');
-    const phoneError = document.getElementById('phoneError');
-
-    const birthInput = document.getElementById('birth');
-    const birthError = document.getElementById('birthError');
-
-    const genderSelect = document.getElementById('gender');
-    const genderError = document.getElementById('genderError');
+    const nicknameInput = document.getElementById('nickname'); // 닉네임 필드 추가
+    const nicknameError = document.getElementById('nicknameError'); // 닉네임 에러 메시지 추가
 
     const updateProfileBtn = document.getElementById('updateProfileBtn');
 
@@ -356,12 +327,6 @@
     const profileImagePreview = document.getElementById('profileImagePreview');
     const bannerImageFile = document.getElementById('bannerImageFile');
     const bannerImagePreview = document.getElementById('bannerImagePreview');
-
-    // --- 정규식 정의 (UserDto와 동일) ---
-    const emailRegexp = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-    const phoneRegexp = /^\d{3}-\d{3,4}-\d{4}$/;
-    const birthRegexp = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|1[1-9]|2[1-9]|3[0-1])$/;
-
 
     // --- 함수: 메시지 표시 ---
     function displayMessage(element, message, type) {
@@ -388,85 +353,48 @@
             };
             reader.readAsDataURL(file);
         } else {
-            // 파일 선택 취소 시 기본 이미지로 되돌리기 (원래 이미지나 플레이스홀더)
-            // 여기서는 Thymeleaf로 이미 초기값이 설정되어 있으므로, 단순히 변경 없음을 유지
-            // 또는 서버에서 받은 원래 URL로 되돌리는 로직을 추가할 수 있습니다.
-            // 아래는 원래 페이지 로드 시의 초기값을 유지하는 예시
-            previewElement.src = defaultSrc; // 기본값으로 돌아가도록 수정
+            // 파일 선택 취소 시 기본 이미지로 되돌리기 (Thymeleaf 초기값이 존재할 경우)
+            // 여기서는 페이지 로드 시 설정된 초기 src 값을 사용합니다.
+            // 만약 userProfile.profileImageUrl 등이 null/empty인 경우 '/img/avatar.jpg'로 설정됩니다.
+            // 해당 값을 다시 불러오기 위해 현재 src 속성을 사용합니다.
+            // 아니면 th:src 속성 자체에서 기본 이미지를 가져올 수도 있습니다.
+            // 여기서는 기존 src 값을 유지하는 방식으로 합니다.
+            previewElement.src = defaultSrc;
         }
     }
 
     // --- 함수: '정보 수정' 버튼 활성화/비활성화 체크 ---
     function checkUpdateButtonStatus() {
-        // 모든 필수 필드의 클라이언트 측 유효성 검사 통과 여부 확인
-        // 이미지 파일은 required=false 이므로 포함하지 않음
-        const isAllFieldsValid =
-            emailInput.value.trim() !== '' && emailRegexp.test(emailInput.value) &&
-            phoneInput.value.trim() !== '' && phoneRegexp.test(phoneInput.value) &&
-            birthInput.value.trim() !== '' && birthRegexp.test(birthInput.value) &&
-            genderSelect.value.trim() !== '';
+        // 닉네임 필드가 비어있지 않은지 확인 (이미지 파일은 필수가 아니므로 포함하지 않음)
+        const isNicknameValid = nicknameInput.value.trim() !== '';
 
-        updateProfileBtn.disabled = !isAllFieldsValid;
+        updateProfileBtn.disabled = !isNicknameValid;
     }
 
     // --- 이벤트 리스너: 입력 필드 유효성 검사 및 버튼 상태 업데이트 ---
-    emailInput.addEventListener('input', () => {
-        const email = emailInput.value.trim();
-        if (email === '') {
-            displayMessage(emailError, '이메일 주소를 입력해주세요.', 'error');
-        } else if (!emailRegexp.test(email)) {
-            displayMessage(emailError, '이메일 형식이 올바르지 않습니다.', 'error');
+    nicknameInput.addEventListener('input', () => {
+        const nickname = nicknameInput.value.trim();
+        if (nickname === '') {
+            displayMessage(nicknameError, '닉네임을 입력해주세요.', 'error');
         } else {
-            displayMessage(emailError, '', ''); // 유효하면 메시지 제거
-        }
-        checkUpdateButtonStatus();
-    });
-
-    phoneInput.addEventListener('input', () => {
-        const phone = phoneInput.value.trim();
-        if (phone === '') {
-            displayMessage(phoneError, '휴대폰 번호를 입력해주세요.', 'error');
-        } else if (!phoneRegexp.test(phone)) {
-            displayMessage(phoneError, '휴대폰 번호는 010-XXXX-XXXX 형식으로 입력해주세요.', 'error');
-        } else {
-            displayMessage(phoneError, '', '');
-        }
-        checkUpdateButtonStatus();
-    });
-
-    birthInput.addEventListener('input', () => {
-        const birth = birthInput.value.trim();
-        if (birth === '') {
-            displayMessage(birthError, '생년월일을 입력해주세요.', 'error');
-        } else if (!birthRegexp.test(birth)) {
-            displayMessage(birthError, '생년월일은 YYYYMMDD 8자리 형식으로 입력해주세요.', 'error');
-        } else {
-            displayMessage(birthError, '', ''); // 유효하면 메시지 제거
-        }
-        checkUpdateButtonStatus();
-    });
-
-    genderSelect.addEventListener('change', () => {
-        if (genderSelect.value.trim() === '') {
-            displayMessage(genderError, '성별을 선택해주세요.', 'error');
-        } else {
-            displayMessage(genderError, '', ''); // 유효하면 메시지 제거
+            displayMessage(nicknameError, '', ''); // 유효하면 메시지 제거
         }
         checkUpdateButtonStatus();
     });
 
     // --- 이벤트 리스너: 이미지 파일 미리보기 ---
     profileImageFile.addEventListener('change', () => {
-        // Thymeleaf로 설정된 초기 이미지 URL을 JavaScript 변수로 가져옵니다.
-        const defaultProfileImgSrc = profileImagePreview.getAttribute('th:src') || '/img/profile_placeholder.png';
-        previewImage(profileImageFile, profileImagePreview, defaultProfileImgSrc);
+        // 현재 프로필 이미지의 기본 src를 가져옵니다.
+        // 이는 Thymeleaf가 렌더링한 최종 src 값입니다.
+        const currentProfileImgSrc = profileImagePreview.src;
+        previewImage(profileImageFile, profileImagePreview, currentProfileImgSrc);
     });
 
     bannerImageFile.addEventListener('change', () => {
-        const defaultBannerImgSrc = bannerImagePreview.getAttribute('th:src') || '/img/banner_placeholder.png';
-        previewImage(bannerImageFile, bannerImagePreview, defaultBannerImgSrc);
+        // 현재 배너 이미지의 기본 src를 가져옵니다.
+        const currentBannerImgSrc = bannerImagePreview.src;
+        previewImage(bannerImageFile, bannerImagePreview, currentBannerImgSrc);
     });
-
 
     // --- 초기 '정보 수정' 버튼 비활성화 상태 설정 및 메시지 처리 ---
     document.addEventListener('DOMContentLoaded', () => {
@@ -490,11 +418,10 @@
         }
         /*]]>*/
 
-        // 페이지 로드 시 이미지 미리보기 기본값 설정
-        // Thymeleaf는 이미 'th:src' 속성을 평가하여 'src' 속성을 만듭니다.
-        // 따라서 JavaScript에서는 'src' 속성을 직접 사용하면 됩니다.
-        profileImagePreview.src = profileImagePreview.src || '/img/profile_placeholder.png';
-        bannerImagePreview.src = bannerImagePreview.src || '/img/banner_placeholder.png';
+        // 페이지 로드 시 이미지 미리보기 기본값 설정 (혹시 Thymeleaf가 처리하지 못할 경우 폴백)
+        // 이 부분은 이미 th:src가 있으므로 대부분 불필요하지만, 안전을 위해 유지
+        profileImagePreview.src = profileImagePreview.src || '/img/avatar.jpg'; // 초기값 확인
+        bannerImagePreview.src = bannerImagePreview.src || '/img/avatar.jpg'; // 초기값 확인
     });
 </script>
 </body>
