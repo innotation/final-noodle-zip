@@ -1,6 +1,5 @@
-package noodlezip.mypage.dto;
+package noodlezip.mypage.dto.response;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 @NoArgsConstructor
@@ -8,6 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 
 public class BadgeGroupResponse {
 
