@@ -55,5 +55,8 @@ public class MyUserDetails implements UserDetails {
         return user.getLoginId();
     }
 
+    public User getUser() {
+        return user;
+    }
 
 }
