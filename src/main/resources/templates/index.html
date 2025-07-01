@@ -1,10 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
+  <meta name="author" content="Ansonika">
+  <title>Foogra - Discover & Book the best restaurants at the best price</title>
+  <!-- Favicons-->
+  <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+  <link rel="apple-touch-icon" type="image/x-icon" th:href="@{/img/apple-touch-icon-57x57-precomposed.png}">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" th:href="@{/img/apple-touch-icon-72x72-precomposed.png}">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" th:href="@{/img/apple-touch-icon-114x114-precomposed.png}">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" th:href="@{/img/apple-touch-icon-144x144-precomposed.png}">
+  <!-- GOOGLE WEB FONT -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- BASE CSS -->
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <!-- SPECIFIC CSS -->
+  <link th:href="@{/css/home.css}" rel="stylesheet">
+  <!-- YOUR CUSTOM CSS -->
+  <link th:href="@{/css/custom.css}" rel="stylesheet">
 <body>
-<a th:href="@{/signup}">회원가입</a>
+<div th:replace="fragements/subHeader::subHeader"></div>
+<main>
+  <div class="hero_single version_2">
+    <div class="opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xl-9 col-lg-10 col-md-8">
+            <h1>Discover &amp; Book</h1>
+            <p>The best restaurants at the best price</p>
+            <form method="post" action="grid-listing-filterscol.html">
+              <div class="row g-0 custom-search-input">
+                <div class="col-lg-4">
+                  <div class="form-group">
+                    <input class="form-control" type="text" placeholder="What are you looking for...">
+                    <i class="icon_search"></i>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <input class="form-control no_border_r" type="text" placeholder="Address, neighborhood...">
+                    <i class="icon_pin_alt"></i>
+                  </div>
+                </div>
+                <div class="col-lg-2">
+                  <input type="submit" value="Search">
+                </div>
+              </div>
+              <!-- /row -->
+            </form>
+          </div>
+        </div>
+        <!-- /row -->
+      </div>
+    </div>
+  </div>
+  <!-- /hero_single -->
+  <div class="bg_gray">
+    <div class="container margin_60_40">
+      <div class="main_title center">
+        <span><em></em></span>
+        <h2>Popular Categories</h2>
+        <p>Cum doctus civibus efficiantur in imperdiet deterruisset</p>
+      </div>
+      <!-- /main_title -->
+      <div class="owl-carousel owl-theme categories_carousel">
+        <div class="item">
+          <a href="#0">
+            <span>98</span>
+            <i class="icon-food_icon_pizza"></i>
+            <h3>Pizza - Italian</h3>
+            <small>Avg price $40</small>
+          </a>
+        </div>
+        <div class="item">
+          <a href="#0">
+            <span>87</span>
+            <i class="icon-food_icon_sushi"></i>
+            <h3>Japanese - Sushi</h3>
+            <small>Avg price $50</small>
+          </a>
+        </div>
+        <div class="item">
+          <a href="#0">
+            <span>96</span>
+            <i class="icon-food_icon_burgher"></i>
+            <h3>Burghers</h3>
+            <small>Avg price $55</small>
+          </a>
+        </div>
+        <div class="item">
+          <a href="#0">
+            <span>78</span>
+            <i class="icon-food_icon_vegetarian"></i>
+            <h3>Vegetarian</h3>
+            <small>Avg price $40</small>
+          </a>
+        </div>
+        <div class="item">
+          <a href="#0">
+            <span>65</span>
+            <i class="icon-food_icon_cake_2"></i>
+            <h3>Bakery</h3>
+            <small>Avg price $60</small>
+          </a>
+        </div>
+        <div class="item">
+          <a href="#0">
+            <span>65</span>
+            <i class="icon-food_icon_chinese"></i>
+            <h3>Chinese</h3>
+            <small>Avg price $40</small>
+          </a>
+        </div>
+        <div class="item">
+          <a href="#0">
+            <span>65</span>
+            <i class="icon-food_icon_burrito"></i>
+            <h3>Mexican</h3>
+            <small>Avg price $35</small>
+          </a>
+        </div>
+      </div>
+      <!-- /carousel -->
+    </div>
+    <!-- /container -->
+  </div>
+  <!-- /bg_gray -->
+  <!-- COMMON SCRIPTS -->
+  <script th:src="@{/js/common_scripts.min.js}"></script>
+  <script th:src="@{/js/slider.js}"></script>
+  <script th:src="@{/js/common_func.js}"></script>
+  <script th:src="@{/assets/validate.js}"></script>
 </body>
 </html>

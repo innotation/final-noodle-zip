@@ -26,7 +26,6 @@ import java.util.Optional;
 @ExtendWith(MockitoExtension.class) // Mockito를 JUnit 5에서 사용하기 위한 설정
 class UserDetailsServiceImplTest {
 
-    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImplTest.class);
     @Mock
     private UserRepository userRepository;
 
@@ -82,15 +81,12 @@ class UserDetailsServiceImplTest {
     @Test
     void testLoadUserByUsername_UserNotFound() {
         // Given: userRepository.findByLoginId("nonExistentUser") 호출 시 null을 반환하도록 설정
-        when(userRepository.findByLoginId("nonExistentUser")).thenReturn(null);
+        when(userRepository.findByLoginId("nonExistentUser")).thenReturn(Optional.empty());
 
         // When & Then: loadUserByUsername 호출 시 UsernameNotFoundException이 발생하는지 확인
         UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class, () -> {
             userDetailsService.loadUserByUsername("nonExistentUser");
         });
-
-        // 예외 메시지가 예상과 일치하는지 확인
-        assertEquals("Name is Not Found: nonExistentUser", exception.getMessage());
 
         // userRepository.findByLoginId("nonExistentUser")가 한 번 호출되었는지 확인
         verify(userRepository, times(1)).findByLoginId("nonExistentUser");

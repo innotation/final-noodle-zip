@@ -22,8 +22,8 @@ public class StoreRequestDto {
     private String ownerComment;      // 사장님 한 줄 소개
     private String storeMainImageUrl; // 대표 이미지 URL
 
-    private Double xAxis; // 위도
-    private Double yAxis; // 경도
+    private Double storeLat; // 위도
+    private Double storeLng; // 경도
 
     private List<MenuRequestDto> menus; // 메뉴 리스트 포함
     private List<StoreScheduleRequestDto> weekSchedule;  // 요일별 영업시간
