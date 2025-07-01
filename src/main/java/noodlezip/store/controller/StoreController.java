@@ -3,6 +3,10 @@ package noodlezip.store.controller;
 import lombok.RequiredArgsConstructor;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
+import noodlezip.user.repository.UserRepository;
+import noodlezip.user.entity.User;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +20,7 @@ import java.io.IOException;
 public class StoreController {
 
     private final StoreService storeService;
+    private final UserRepository userRepository;
 
     // 등록 폼 페이지 진입
     @GetMapping("/regist")
@@ -30,8 +35,17 @@ public class StoreController {
     @PostMapping("/regist")
     public String registerStore(@ModelAttribute StoreRequestDto dto,
                                 @RequestParam("storeMainImage") MultipartFile storeMainImage) throws IOException {
-        Long userId = 1L; // TODO: 실제 로그인 유저 ID로 변경
-        Long storeId = storeService.registerStore(dto, userId, storeMainImage);
+        // 로그인 ID 얻기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loginId = authentication.getName();
+
+        // loginId로 user 직접 조회 → userPk 얻기
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 유저를 찾을 수 없습니다."));
+        Long userPk = user.getId();
+
+        // Store 등록
+        Long storeId = storeService.registerStore(dto, userPk, storeMainImage);
         return "redirect:/store/detail/" + storeId;
     }
 }
