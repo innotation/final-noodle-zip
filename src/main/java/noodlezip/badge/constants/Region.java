@@ -43,4 +43,13 @@ public enum Region {
         return null;
     }
 
+    public static Region getRegionBySidoCode(int sidoCode) {
+        for (Region region : Region.values()) {
+            if (region.code == sidoCode) {
+                return region;
+            }
+        }
+        return null;
+    }
+
 }
