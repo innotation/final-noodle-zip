@@ -70,6 +70,7 @@ class UserServiceImplTest {
                 .build();
 
         testUser = User.builder()
+                .id(99L)
                 .loginId(testUserDto.getLoginId())
                 .userName(testUserDto.getUserName())
                 .password(testUserDto.getPassword())
@@ -410,6 +411,34 @@ class UserServiceImplTest {
         assertThat(testUser.getProfileBannerImageUrl()).isEqualTo("old_banner.jpg");
 
         // 5. userRepository.save 메서드가 정확히 한 번 호출되었는지 확인
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    @DisplayName("성공: 유저 탈퇴 시 상태 변경 및 데이터 초기화, S3 파일 삭제 호출")
+    void signoutUser_Success_StatusChangeAndDataClearAndS3DeleteCalled() {
+        // Given
+        long userId = testUser.getId();
+        // userRepository.findById(userId) 호출 시 testUser 반환 설정
+        when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
+        when(userRepository.save(any(User.class))).thenReturn(testUser);
+
+        // When
+        userService.signoutUser(userId);
+
+        // Then
+        // 1. userRepository.findById 호출 회수 검증
+        verify(userRepository, times(1)).findById(userId);
+
+        // 2. User 엔티티 필드 변경 검증
+        assertThat(testUser.getActiveStatus()).isEqualTo(ActiveStatus.SIGNOUT);
+        assertThat(testUser.getUserName()).isEqualTo("탈퇴한사용자");
+        assertThat(testUser.getIsEmailVerified()).isFalse();
+        assertThat(testUser.getProfileImageUrl()).isNull();
+        assertThat(testUser.getProfileBannerImageUrl()).isNull();
+
+        verify(fileUtil, times(1)).deleteFileFromS3(testUser.getProfileImageUrl());
+        verify(fileUtil, times(1)).deleteFileFromS3(testUser.getProfileBannerImageUrl());
         verify(userRepository, times(1)).save(testUser);
     }
 }
