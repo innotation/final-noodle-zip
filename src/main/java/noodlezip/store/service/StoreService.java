@@ -7,7 +7,6 @@ import noodlezip.ramen.entity.Category;
 import noodlezip.ramen.entity.RamenSoup;
 import noodlezip.ramen.entity.RamenTopping;
 import noodlezip.ramen.entity.RamenToppingId;
-import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.RamenToppingRepository;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.MenuRequestDto;
