@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import noodlezip.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -13,7 +14,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "tbl_save_store_category")
-public class SaveStoreCategory extends BaseEntity{
+public class SaveStoreCategory extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "save_store_category_id", nullable = false)

@@ -1,19 +1,17 @@
 package noodlezip.store.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.users.entity.User;
-
-import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_save_store")
-public class SaveStore extends BaseEntity{
+public class SaveStore extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "save_store_id", nullable = false)
@@ -22,27 +20,25 @@ public class SaveStore extends BaseEntity{
     // SaveStore 레코드는 특정 User가 소유
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User userId;
 
     // 유저가 저장한 Store 정보 (다대일관계)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+    private Store storeId;
 
     // 저장 카테고리 분류
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "save_store_category_id", nullable = false)
-    private SaveStoreCategory saveStoreCategory;
+    private SaveStoreCategory saveStoreCategoryId;
 
     @Size(max = 300)
     @Column(name = "memo", length = 300)
     private String memo;
 
-    @NotNull
-    @Column(name = "x_axis", nullable = false)
-    private Double xAxis;
+    @Column(name = "store_lat", nullable = false)
+    private Double storeLat;
 
-    @NotNull
-    @Column(name = "y_axis", nullable = false)
-    private Double yAxis;
+    @Column(name = "store_lng", nullable = false)
+    private Double storeLng;
 }

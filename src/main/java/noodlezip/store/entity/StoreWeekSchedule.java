@@ -17,7 +17,7 @@ public class StoreWeekSchedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("storeId")
     @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+    private Store storeId;
 
     @NotNull
     @Column(name = "opening_at", nullable = false)

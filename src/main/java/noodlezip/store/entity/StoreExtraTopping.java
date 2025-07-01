@@ -18,11 +18,11 @@ public class StoreExtraTopping {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+    private Store storeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topping_id", nullable = false)
-    private Topping topping;
+    private Topping toppingId;
 
     @Column(name = "price")
     private Integer price;

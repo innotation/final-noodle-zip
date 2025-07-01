@@ -13,19 +13,16 @@ public class StoreLocation {
 
     @Id
     @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "store_id")
-    private Store store;
+    private Store storeId;
 
-    @NotNull
-    @Column(name = "x_axis", nullable = false)
-    private Double xAxis;
+    @Column(name = "store_lat", nullable = false)
+    private Double storeLat;
 
-    @NotNull
-    @Column(name = "y_axis", nullable = false)
-    private Double yAxis;
-
+    @Column(name = "store_lng", nullable = false)
+    private Double storeLng;
 }

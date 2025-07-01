@@ -5,9 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
-import noodlezip.store.constant.ApprovalStatus;
-import noodlezip.store.constant.OperationStatus;
-import noodlezip.store.constant.ParkingType;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,6 @@ import java.util.List;
 public class Store extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "store_id", nullable = false)
     private Long id;
 
     @NotNull
@@ -45,11 +45,11 @@ public class Store extends BaseTimeEntity {
 
     @NotNull
     @Column(name = "is_local_card", nullable = false)
-    private Boolean isLocalCard = false;
+    private Boolean isLocalCard;
 
     @NotNull
     @Column(name = "is_child_allowed", nullable = false)
-    private Boolean isChildAllowed = false;
+    private Boolean isChildAllowed;
 
     // Enum 타입 3개 parking, operationstatus, approvalstatus
     @Enumerated(EnumType.STRING)
@@ -73,12 +73,17 @@ public class Store extends BaseTimeEntity {
     private String storeMainImageUrl;
 
     @NotNull
-    @Column(name = "x_axis", nullable = false)
-    private Double xAxis;
+    @Column(name = "store_lat", nullable = false)
+    private Double storeLat;
 
     @NotNull
-    @Column(name = "y_axis", nullable = false)
-    private Double yAxis;
+    @Column(name = "store_lng", nullable = false)
+    private Double storeLng;
+
+    // 법정코드
+    @NotNull
+    @Column(name = "store_legal_code", nullable = false)
+    private Integer storeLegalCode;
 
     // 메뉴 리스트 (1:N)
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
