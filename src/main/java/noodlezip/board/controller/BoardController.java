@@ -11,4 +11,6 @@ public class BoardController {
     public String review() {
         return "/board/leave-review";
     }
+    @GetMapping("/registBoard")
+    public void registBoard() {}
 }
