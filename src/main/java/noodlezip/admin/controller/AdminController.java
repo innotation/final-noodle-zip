@@ -30,7 +30,33 @@ public class AdminController {
     public void mainPage(){}
 
     @GetMapping("/reportList")
-    public void reportListPage(){}
+    public String reportList(@PageableDefault(size = 5) Pageable pageable, Model model) {
+
+        // 페이지 번호 보정: 0부터 시작 → 1부터로 보정
+        pageable = pageable.withPage(Math.max(0, pageable.getPageNumber() - 1));
+
+        // 기본 정렬이 없는 경우 created_at DESC 정렬 적용
+        if (pageable.getSort().isEmpty()) {
+            pageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by("created_at").descending()
+            );
+        }
+
+        // 서비스로부터 Map 반환받기
+        Map<String, Object> result = storeService.findRegistList(pageable);
+
+        // 모델에 데이터 전달
+        model.addAttribute("registList", result.get("registList"));
+        model.addAttribute("page", result.get("page"));
+        model.addAttribute("beginPage", result.get("beginPage"));
+        model.addAttribute("endPage", result.get("endPage"));
+        model.addAttribute("isFirst", result.get("isFirst"));
+        model.addAttribute("isLast", result.get("isLast"));
+
+        return "admin/reportList";
+    }
 
     @GetMapping("/registList")
     public String registList(@PageableDefault(size = 5) Pageable pageable, Model model) {
@@ -58,7 +84,7 @@ public class AdminController {
         model.addAttribute("isFirst", result.get("isFirst"));
         model.addAttribute("isLast", result.get("isLast"));
 
-        return "admin/registList"; // thymeleaf 템플릿 경로
+        return "admin/registList";
     }
 
     @GetMapping("/recommendList")
