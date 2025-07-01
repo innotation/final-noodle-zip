@@ -24,8 +24,8 @@ public class StoreRequestDto {
 
     private String ownerComment;      // 사장님 한 줄 소개
 
-    private Double xAxis; // 위도
-    private Double yAxis; // 경도
+    private Double storeLat; // 위도
+    private Double storeLng; // 경도
 
     private ApprovalStatus approvalStatus;   // 승인 상태 (WAITING, APPROVED) (Enum)
     private OperationStatus operationStatus;  // 운영 상태 (OPEN, CLOSED) (Enum)

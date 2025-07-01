@@ -4,17 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import noodlezip.ramen.entity.RamenCategory;
-import noodlezip.ramen.entity.RamenSoup;
+import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.ramen.entity.Category;
 
-@Getter
-@Setter
-@Entity
-@Table(name = "tbl_menu")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Menu {
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "tbl_menu")
+public class Menu extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id", nullable = false)

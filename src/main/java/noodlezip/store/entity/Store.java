@@ -4,31 +4,30 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.store.constant.ApprovalStatus;
 import noodlezip.store.constant.OperationStatus;
 import noodlezip.store.constant.ParkingType;
-import noodlezip.users.entity.User;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@Entity
-@Table(name = "tbl_store")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Store extends BaseEntity{
-
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "tbl_store")
+public class Store extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @NotNull
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Size(max = 100)
     @NotNull
