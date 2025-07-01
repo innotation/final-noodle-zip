@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,8 +40,8 @@ public class StoreService {
 
         // 요일별 영업시간 저장
         if (dto.getWeekSchedule() != null && !dto.getWeekSchedule().isEmpty()) {
-            List<StoreSchedule> schedules = dto.getWeekSchedule().stream()
-                    .map(s -> StoreSchedule.builder()
+            List<StoreWeekSchedule> schedules = dto.getWeekSchedule().stream()
+                    .map(s -> StoreWeekSchedule.builder()
                             .storeId(savedStore.getId())
                             .dayOfWeek(s.getDayOfWeek())
                             .openingAt(LocalDateTime.of(LocalDate.now(), s.getOpeningAt()))
@@ -60,7 +61,6 @@ public class StoreService {
                             .price(m.getPrice())
                             .menuDescription(m.getMenuDescription())
                             .menuImageUrl(m.getMenuImageUrl())
-                            .ramenCategoryId(m.getRamenCategoryId())
                             .ramenSoupId(m.getRamenSoupId())
                             .build())
                     .collect(Collectors.toList());
@@ -68,4 +68,16 @@ public class StoreService {
         }
         return savedStore.getId();
     }
+
+    // ID로 활성화 된 매장 찾기
+    public StoreDto getStore(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NoSuchElementException("해당 매장을 찾을 수 없습니다."));
+        if (!"APPROVED".equals(store.getApprovalStatus())) {
+            throw new IllegalStateException("승인되지 않은 매장은 조회할 수 없습니다.");
+        }
+
+        return StoreDto.toDto(store);
+    }
+
 }

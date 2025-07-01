@@ -23,7 +23,7 @@ public class Category extends BaseTimeEntity {
     private Integer id;
 
     @Column(name = "category_name", nullable = false, length = 50)
-    private String name;
+    private String categoryName;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Menu> menus;

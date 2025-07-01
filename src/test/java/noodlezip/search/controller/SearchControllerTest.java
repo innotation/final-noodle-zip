@@ -67,7 +67,7 @@ class SearchControllerTest {
         // ─────── 2. 라멘 카테고리 저장 ───────
         Category category = categoryRepository.save(
                 Category.builder()
-                        .name("돈코츠")
+                        .categoryName("돈코츠")
                         .build()
         );
 
@@ -221,7 +221,7 @@ class SearchControllerTest {
     }
 
     private void createDummyMenuWith(Store store, String categoryName, String soupName, String toppingName, boolean toppingActive) {
-        Category category = categoryRepository.save(Category.builder().name(categoryName).build());
+        Category category = categoryRepository.save(Category.builder().categoryName(categoryName).build());
         RamenSoup soup = ramenSoupRepository.save(RamenSoup.builder().soupName(soupName).build());
         Menu menu = menuRepository.save(Menu.builder()
                 .storeId(store.getId())

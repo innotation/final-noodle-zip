@@ -32,6 +32,7 @@ public class SecurityConfig {
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("USER")
                     .requestMatchers("/search/**").permitAll()
+                    .requestMatchers("/store/**").permitAll()
                     .anyRequest().authenticated();
         });
 

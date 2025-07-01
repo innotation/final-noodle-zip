@@ -1,10 +1,15 @@
 package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.store.dto.StoreDto;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/store")
@@ -25,6 +30,14 @@ public class StoreController {
         Long storeId = storeService.registerStore(dto);
         // 등록 후 상세 페이지로 리다이렉트
         return "redirect:/store/detail/" + storeId;
+    }
+
+    // 매장 상세페이지 진입
+    @GetMapping("/detail.page")
+    public String showDetailPage(Long no, Model model) {
+        StoreDto store = storeService.getStore(no);
+        model.addAttribute("store", store);
+        return "store/detail";
     }
 
 }

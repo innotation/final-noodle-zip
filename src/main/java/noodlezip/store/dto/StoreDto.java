@@ -2,6 +2,7 @@ package noodlezip.store.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Value;
 import noodlezip.store.entity.Store;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  * DTO for {@link noodlezip.store.entity.Store}
  */
 @Value
+@Builder
 public class StoreDto implements Serializable {
     Long id;
     @NotNull
@@ -40,13 +42,15 @@ public class StoreDto implements Serializable {
     @Size(max = 500)
     String storeMainImageUrl;
     @NotNull
-    Double xAxis;
+    Double storeLat;
     @NotNull
-    Double yAxis;
+    Double storeLng;
     @NotNull
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Integer storeLegalCode;
+    String approvalStatus;
+
 
     // Store -> StoreDto
     public static StoreDto toDto(Store store) {
@@ -66,7 +70,8 @@ public class StoreDto implements Serializable {
                 store.getStoreLng(),
                 store.getCreatedAt(),
                 store.getUpdatedAt(),
-                store.getStoreLegalCode()
+                store.getStoreLegalCode(),
+                store.getApprovalStatus()
         );
     }
 

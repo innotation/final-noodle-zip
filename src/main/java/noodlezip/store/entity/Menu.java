@@ -42,14 +42,11 @@ public class Menu extends BaseTimeEntity {
     private String menuImageUrl;
 
     @NotNull
-    @Column(name = "ramen_category_id", nullable = false)
-    private Integer ramenCategoryId;
-
-    @NotNull
     @Column(name = "ramen_soup_id", nullable = false)
     private Integer ramenSoupId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ramen_category_id", insertable = false, updatable = false)
     private Category category;
+
 }
