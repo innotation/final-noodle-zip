@@ -29,7 +29,7 @@ public enum LevelBadgeCategoryType {
     public static List<Long> getNotOptionBadgeCategoryIdList() {
         List<Long> result = new ArrayList<>();
         for (LevelBadgeCategoryType badgeCategoryType : LevelBadgeCategoryType.values()) {
-            if(!badgeCategoryType.isOptional) {
+            if (!badgeCategoryType.isOptional) {
                 result.add(badgeCategoryType.getDbPk());
             }
         }
@@ -39,7 +39,7 @@ public enum LevelBadgeCategoryType {
     public static List<Long> getOptionBadgeCategoryIdList() {
         List<Long> result = new ArrayList<>();
         for (LevelBadgeCategoryType badgeCategoryType : LevelBadgeCategoryType.values()) {
-            if(badgeCategoryType.isOptional) {
+            if (badgeCategoryType.isOptional) {
                 result.add(badgeCategoryType.getDbPk());
             }
         }
