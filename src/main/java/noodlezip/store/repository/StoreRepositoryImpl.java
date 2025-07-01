@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.ramen.entity.*;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
+import noodlezip.store.constant.ApprovalStatus;
 import noodlezip.store.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -87,7 +88,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         BooleanBuilder builder = new BooleanBuilder();
 
         // 운영중인 매장
-        builder.and(store.approvalStatus.eq("APPROVED"));
+        builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
 
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {

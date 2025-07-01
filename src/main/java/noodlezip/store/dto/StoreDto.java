@@ -40,9 +40,9 @@ public class StoreDto implements Serializable {
     @Size(max = 500)
     String storeMainImageUrl;
     @NotNull
-    Double xAxis;
+    Double storeLat;
     @NotNull
-    Double yAxis;
+    Double storeLng;
     @NotNull
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

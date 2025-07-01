@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.store.constant.ApprovalStatus;
 
 @Builder
 @AllArgsConstructor
