@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.ramen.entity.Category;
 
 @Builder
@@ -11,10 +12,9 @@ import noodlezip.ramen.entity.Category;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "tbl_menu")
-public class Menu {
+public class Menu extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id", nullable = false)

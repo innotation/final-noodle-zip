@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum UserSuccessStatus implements BaseCode {
 
-    _OK_EMAIL_NOT_DUPLICATE(HttpStatus.OK, "200", "이메일이 중복되지 않습니다."),
-    _OK_LOGIN_ID_NOT_DUPLICATE(HttpStatus.OK,"200", "ID가 중복되지 않습니다.")
+    _OK_EMAIL_NOT_DUPLICATE(HttpStatus.OK, "USER-001", "이메일이 중복되지 않습니다."),
+    _OK_LOGIN_ID_NOT_DUPLICATE(HttpStatus.OK,"USER-002", "ID가 중복되지 않습니다."),
+    _OK_EMAIL_RESEND(HttpStatus.OK,"USER-003", "이메일 인증 코드가 재전송 되었습니다.")
+
     ;
 
     private final HttpStatus httpStatus;

@@ -5,27 +5,24 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
-import noodlezip.store.constant.ApprovalStatus;
-import noodlezip.user.entity.User;
 
-import java.time.Instant;
-
-@Getter
-@Setter
-@Entity
-@Table(name = "tbl_store")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@Entity
+@Table(name = "tbl_store")
 public class Store extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @NotNull
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Size(max = 100)
     @NotNull
@@ -43,11 +40,11 @@ public class Store extends BaseTimeEntity {
 
     @NotNull
     @Column(name = "is_local_card", nullable = false)
-    private Boolean isLocalCard = false;
+    private Boolean isLocalCard;
 
     @NotNull
     @Column(name = "is_child_allowed", nullable = false)
-    private Boolean isChildAllowed = false;
+    private Boolean isChildAllowed;
 
     @Size(max = 30)
     @NotNull
@@ -68,12 +65,15 @@ public class Store extends BaseTimeEntity {
     private String storeMainImageUrl;
 
     @NotNull
-    @Column(name = "x_axis", nullable = false)
-    private Double xAxis;
+    @Column(name = "store_lat", nullable = false)
+    private Double storeLat;
 
     @NotNull
-    @Column(name = "y_axis", nullable = false)
-    private Double yAxis;
+    @Column(name = "store_lng", nullable = false)
+    private Double storeLng;
+
+    @Column(name = "store_legal_code")
+    private Integer storeLegalCode;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "approval_status", nullable = false, length = 30)
