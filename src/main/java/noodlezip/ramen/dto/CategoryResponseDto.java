@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CategoryResponseDto {
-    private Long id;
+    private Integer id;
     private String categoryName;
 }

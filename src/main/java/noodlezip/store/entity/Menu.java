@@ -52,5 +52,5 @@ public class Menu extends BaseTimeEntity {
     // 메뉴가 사용하는 라멘 국물(RamenSoup) 정보와 연결
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ramen_soup_id", nullable = false)
-    private RamenSoup ramenSoupId;
+    private RamenSoup ramenSoup;
 }

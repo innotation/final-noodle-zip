@@ -9,10 +9,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.ramen.entity.*;
-import noodlezip.ramen.entity.QStoreExtraTopping;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
 import noodlezip.store.entity.*;
+import noodlezip.store.status.ApprovalStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -72,7 +72,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
     public Page<SearchStoreDto> searchStoresByFilter(SearchFilterDto filter, Pageable pageable) {
         QStore store = QStore.store;
         QMenu menu = QMenu.menu;
-        QCategory ramenCategory = QCategory.category;
+        QCategory Category = QCategory.category;
         QRamenSoup ramenSoup = QRamenSoup.ramenSoup;
         QRamenTopping ramenTopping = QRamenTopping.ramenTopping;
         QStoreExtraTopping storeExtraTopping = QStoreExtraTopping.storeExtraTopping;
@@ -88,11 +88,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         BooleanBuilder builder = new BooleanBuilder();
 
         // 운영중인 매장
-        builder.and(store.approvalStatus.eq("APPROVED"));
+        builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
 
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
-            builder.and(ramenCategory.name.in(filter.getRamenCategory()));
+            builder.and(Category.categoryName.in(filter.getRamenCategory()));
         }
 
         // 육수
@@ -122,9 +122,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             toppingBuilder.or(
                     JPAExpressions.selectOne()
                             .from(storeExtraTopping)
-                            .join(topping).on(topping.id.eq(storeExtraTopping.toppingId))
+                            .join(topping).on(topping.id.eq(storeExtraTopping.id))
                             .where(
-                                    storeExtraTopping.storeId.eq(store.id)
+                                    storeExtraTopping.storeId.id.eq(store.id)
                                             .and(topping.toppingName.in(filter.getTopping()))
                                             .and(topping.isActive.isTrue())
                             )
@@ -152,8 +152,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 ))
                 .from(store)
                 .join(menu).on(menu.id.eq(store.id))
-                .join(ramenCategory).on(menu.id.eq(ramenCategory.id))
-                .join(ramenSoup).on(menu.id.eq(ramenSoup.id))
+                .join(Category).on(menu.category.id.eq(Category.id))
+                .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
                 .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
                 .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
                 .where(builder)
@@ -167,8 +167,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .select(store.countDistinct())
                 .from(store)
                 .join(menu).on(menu.id.eq(store.id))
-                .join(ramenCategory).on(menu.id.eq(ramenCategory.id))
-                .join(ramenSoup).on(menu.id.eq(ramenSoup.id))
+                .join(Category).on(menu.category.id.eq(Category.id))
+                .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
                 .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
                 .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
                 .where(builder)

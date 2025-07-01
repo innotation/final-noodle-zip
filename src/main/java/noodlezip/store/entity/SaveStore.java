@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import noodlezip.common.entity.BaseTimeEntity;
-import noodlezip.users.entity.User;
+import noodlezip.user.entity.User;
 
 @Getter
 @Setter

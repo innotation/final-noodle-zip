@@ -86,18 +86,18 @@ public class Store extends BaseTimeEntity {
     private Integer storeLegalCode;
 
     // 메뉴 리스트 (1:N)
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Menu> menus = new ArrayList<>();
 
     // 추가 토핑 리스트 (1:N)
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StoreExtraTopping> extraToppings = new ArrayList<>();
 
     // 요일별 영업 시간 (1:N)
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StoreWeekSchedule> weekSchedules = new ArrayList<>();
 
     // 위치 정보 (1:1)
-    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private StoreLocation storeLocation;
 }

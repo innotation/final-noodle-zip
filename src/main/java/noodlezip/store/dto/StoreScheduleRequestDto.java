@@ -1,9 +1,8 @@
 package noodlezip.store.dto;
 
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -14,11 +13,9 @@ public class StoreScheduleRequestDto {
 
     private String dayOfWeek; // 요일
 
-    @DateTimeFormat(pattern = "HH:mm") // 오픈 시간
-    private LocalTime openingAt;
+    private LocalDateTime openingAt; // 오픈 시간
 
-    @DateTimeFormat(pattern = "HH:mm") // 마감 시간
-    private LocalTime closingAt;
+    private LocalDateTime closingAt; // 마감 시간
 
     private Boolean isClosedDay; // 휴무일
 }

@@ -19,7 +19,7 @@ import noodlezip.store.entity.StoreWeekScheduleId;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
-import noodlezip.users.entity.User;
+import noodlezip.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,25 +113,24 @@ public class StoreService {
                         .menuDescription(m.getMenuDescription())
                         .menuImageUrl(m.getMenuImageUrl())
                         .category(category)
-                        .ramenSoupId(soup)
+                        .ramenSoup(soup)
                         .build();
 
                 Menu savedMenu = menuRepository.save(menu);
 
                 if (m.getDefaultToppingIds() != null) {
-                    for (Integer toppingId : m.getDefaultToppingIds()) {
+                    for (Long toppingId : m.getDefaultToppingIds()) {
                         RamenToppingId toppingIdObj = new RamenToppingId();
                         toppingIdObj.setMenuId(savedMenu.getId());
                         toppingIdObj.setToppingId(toppingId);
 
                         RamenTopping ramenTopping = new RamenTopping();
                         ramenTopping.setToppingId(toppingIdObj);
-                        ramenTopping.setMenu(savedMenu);
 
                         // Topping 객체도 연관관계 맞춰 설정
-                        Topping topping = new Topping();
-                        topping.setId(toppingId);
-                        ramenTopping.setTopping(topping);
+//                        Topping topping = new Topping();
+//                        topping.setId(toppingId);
+//                        ramenTopping.setTopping(topping);
 
                         ramenToppingRepository.save(ramenTopping);
                     }
