@@ -31,8 +31,8 @@ public class StoreService {
                 .hasParking(dto.getHasParking())
                 .ownerComment(dto.getOwnerComment())
                 .storeMainImageUrl(dto.getStoreMainImageUrl())
-                .xAxis(dto.getXAxis())
-                .yAxis(dto.getYAxis())
+                .storeLat(dto.getStoreLat())
+                .storeLng(dto.getStoreLng())
                 .build();
 
         Store savedStore = storeRepository.save(store);
