@@ -403,14 +403,13 @@ class UserServiceImplTest {
         // 2. testUser 객체의 userName이 testUserDto의 userName으로 업데이트되었는지 확인
         assertThat(testUser.getUserName()).isEqualTo(testUserDto.getUserName());
 
-        // 4. 프로필 이미지 URL은 변경되지 않고 기존 값(old_profile.jpg)을 유지하는지 확인
+        // 3. 프로필 이미지 URL은 변경되지 않고 기존 값(old_profile.jpg)을 유지하는지 확인
         assertThat(testUser.getProfileImageUrl()).isEqualTo("old_profile.jpg");
 
-        // 5. 배너 이미지 URL은 변경되지 않고 기존 값(old_banner.jpg)을 유지하는지 확인
+        // 4. 배너 이미지 URL은 변경되지 않고 기존 값(old_banner.jpg)을 유지하는지 확인
         assertThat(testUser.getProfileBannerImageUrl()).isEqualTo("old_banner.jpg");
 
-        // 6. userRepository.save 메서드가 정확히 한 번 호출되었는지 확인
-        // save에 전달된 testUser 객체의 최종 상태를 확인
+        // 5. userRepository.save 메서드가 정확히 한 번 호출되었는지 확인
         verify(userRepository, times(1)).save(testUser);
     }
 }
