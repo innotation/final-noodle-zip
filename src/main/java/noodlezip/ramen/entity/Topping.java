@@ -28,6 +28,6 @@ public class Topping {
     @NotNull
     @ColumnDefault("1")
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = false;
+    private Boolean isActive;
 
 }
