@@ -1,4 +1,4 @@
-package noodlezip.store.constant;
+package noodlezip.store.status;
 
 public enum OperationStatus {
     OPEN,
