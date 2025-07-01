@@ -36,6 +36,9 @@ public class FileUtil {
     @Value("${cloud.aws.s3.endpoint}")
     private String endPoint;
 
+    @Value("${cloud.aws.s3.delete.endpoint}")
+    private String deleteEndpoint;
+
     public Map<String, String> fileupload(String folderName, MultipartFile file) {
         if (file.isEmpty()) {
             log.warn("업로드 파일이 비어 있습니다. 폴더: {}", folderName);
@@ -123,7 +126,7 @@ public class FileUtil {
 
             // 전체 url에서 이미지 값만 추출
             String s3ObjectKey;
-            String urlPrefix = endPoint + "/" + bucket + "/";
+            String urlPrefix = deleteEndpoint + "/";
             if (fileUrl.startsWith(urlPrefix)) {
                 s3ObjectKey = fileUrl.substring(urlPrefix.length());
             } else {
@@ -142,5 +145,4 @@ public class FileUtil {
             log.error("S3 파일 삭제 중 알 수 없는 오류 발생: {}. 메시지: {}", fileUrl, e.getMessage(), e);
         }
     }
-
 }

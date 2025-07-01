@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
@@ -24,6 +26,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,7 +54,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 페이지 반환 성공")
     })
-    public void loginPage() {}
+    public void loginPage() {
+    }
 
     @GetMapping("/signup")
     @Operation(summary = "회원 가입 페이지", description = "사용자 회원 가입 폼 페이지를 반환합니다.")
@@ -309,4 +313,42 @@ public class UserController {
         return "redirect:/user/edit-profile";
     }
 
+    @PostMapping("user/signout")
+    @Operation(summary = "회원 탈퇴 처리", description = "로그인한 사용자의 계정을 탈퇴 처리합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공 및 로그아웃 처리 후 로그인 페이지로 리다이렉트",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "302", description = "로그인하지 않은 경우 로그인 페이지로 리다이렉트",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 오류 (Internal Server Error) 또는 회원 탈퇴 실패",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
+    })
+    @Parameters({
+            @Parameter(hidden = true, name = "userDetails", description = "현재 로그인된 사용자 정보 (Spring Security)"),
+            @Parameter(hidden = true, name = "request", description = "HttpServletRequest 객체 (세션 무효화를 위함)")
+    })
+    public String deleteUser(
+            @AuthenticationPrincipal MyUserDetails userDetails,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+
+        if (userDetails == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "로그인이 필요합니다.");
+            return "redirect:/login";
+        }
+
+        Long userId = userDetails.getUser().getId();
+        userService.signoutUser(userId);
+
+        // 회원 탈퇴 성공 시, 현재 세션 무효화 및 로그아웃 처리
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        SecurityContextHolder.clearContext();
+
+        redirectAttributes.addFlashAttribute("successMessage", "성공적으로 회원 탈퇴가 완료되었습니다.");
+        return "redirect:/login"; // 탈퇴 후 로그인 페이지로 리다이렉트
+    }
 }

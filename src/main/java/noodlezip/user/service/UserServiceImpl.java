@@ -98,6 +98,7 @@ public class UserServiceImpl implements UserService {
             try {
                 String profileImageUrl = fileUtil.fileupload("profile", profileImage).get("fileUrl");
                 if (profileImageUrl != null) {
+                    fileUtil.deleteFileFromS3(user.getProfileImageUrl());
                     user.setProfileImageUrl(profileImageUrl);
                     log.info("User {} profile image updated to: {}", userId, profileImageUrl);
                 }
@@ -112,6 +113,7 @@ public class UserServiceImpl implements UserService {
             try {
                 String bannerImageUrl = fileUtil.fileupload("banner", bannerImage).get("fileUrl");
                 if (bannerImageUrl != null) {
+                    fileUtil.deleteFileFromS3(user.getProfileBannerImageUrl());
                     user.setProfileBannerImageUrl(bannerImageUrl);
                     log.info("User {} banner image updated to: {}", userId, bannerImageUrl);
                 }
@@ -121,8 +123,29 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-         userRepository.save(user);
+        userRepository.save(user);
 
         log.info("User {} profile update completed.", userId);
+    }
+
+    @Override
+    @Transactional
+    public void signoutUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("User not found for deletion with ID: {}", userId);
+                    return new CustomException(UserErrorStatus._NOT_FOUND_USER);
+                });
+        user.setActiveStatus(ActiveStatus.SIGNOUT);
+        user.setUserName("탈퇴한사용자");
+        fileUtil.deleteFileFromS3(user.getProfileImageUrl());
+        user.setProfileBannerImageUrl(null);
+        fileUtil.deleteFileFromS3(user.getProfileBannerImageUrl());
+        user.setProfileImageUrl(null);
+        user.setIsEmailVerified(false);
+
+        userRepository.save(user);
+        log.info("User with ID: {} has been soft-deleted and data cleared.", userId);
+
     }
 }
