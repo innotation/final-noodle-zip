@@ -3,9 +3,9 @@ package noodlezip.ramen.service;
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
-import noodlezip.ramen.entity.RamenCategory;
+import noodlezip.ramen.entity.Category;
 import noodlezip.ramen.entity.Topping;
-import noodlezip.ramen.repository.RamenCategoryRepository;
+import noodlezip.ramen.repository.CategoryRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,20 +16,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RamenService {
 
-    private final RamenCategoryRepository ramenCategoryRepository;
-    private final ToppingRepository toppingRepository; // 변경
+    private final ToppingRepository toppingRepository;
+    private final CategoryRepository categoryRepository;
 
-    public List<CategoryResponseDto> getAllCategories() {
-        List<RamenCategory> categories = ramenCategoryRepository.findAll();
-        return categories.stream()
-                .map(c -> new CategoryResponseDto(c.getId(), c.getCategoryName()))
-                .collect(Collectors.toList());
-    }
-
+    // 전체 토핑 목록 조회
     public List<ToppingResponseDto> getAllToppings() {
         List<Topping> toppings = toppingRepository.findAll();
         return toppings.stream()
                 .map(t -> new ToppingResponseDto(t.getId(), t.getToppingName()))
+                .collect(Collectors.toList());
+    }
+
+    // 전체 카테고리 목록 조회
+    public List<CategoryResponseDto> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(c -> new CategoryResponseDto(c.getId(), c.getCategoryName()))
                 .collect(Collectors.toList());
     }
 }
