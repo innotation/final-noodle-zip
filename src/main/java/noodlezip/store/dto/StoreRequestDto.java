@@ -1,9 +1,9 @@
 package noodlezip.store.dto;
 
 import lombok.*;
-import noodlezip.store.constant.ApprovalStatus;
-import noodlezip.store.constant.OperationStatus;
-import noodlezip.store.constant.ParkingType;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
 
 import java.util.List;
 
@@ -35,5 +35,5 @@ public class StoreRequestDto {
 
     private String storeMainImageUrl; // 이미지저장 url
 
-    // userId는 서버에서 받아와서 Entity에 매핑해야함
+    private Integer storeLegalCode; // 법정코드
 }
