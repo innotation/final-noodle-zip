@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.store.constant.ApprovalStatus;
 
 @Builder
 @AllArgsConstructor
@@ -75,7 +76,8 @@ public class Store extends BaseTimeEntity {
     @Column(name = "store_legal_code")
     private Integer storeLegalCode;
 
-    @Column(name = "approval_status")
-    private String approvalStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", nullable = false, length = 30)
+    private ApprovalStatus approvalStatus;
 
 }

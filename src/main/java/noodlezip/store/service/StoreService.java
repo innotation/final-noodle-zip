@@ -1,24 +1,33 @@
 package noodlezip.store.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import noodlezip.admin.dto.RegistListDto;
 import noodlezip.store.dto.*;
 import noodlezip.store.entity.*;
 import noodlezip.store.repository.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoreService {
 
     private final StoreRepository storeRepository;
     private final StoreScheduleRepository scheduleRepository;
     private final MenuRepository menuRepository;
+    private final noodlezip.util.PageUtil pageUtil;
+    private final ModelMapper modelMapper;
 
     @Transactional
     public Long registerStore(StoreRequestDto dto) {
@@ -68,4 +77,16 @@ public class StoreService {
         }
         return savedStore.getId();
     }
+
+    // 등록요청매장 조회
+    public Map<String, Object> findRegistList(Pageable pageable) {
+
+        Page<RegistListDto> page = storeRepository.findRegistStores(pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(page, 5);
+        map.put("registList", page.getContent());
+        return map;
+    }
+
+
+
 }
