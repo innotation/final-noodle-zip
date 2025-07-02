@@ -10,8 +10,8 @@ public interface UserBadgeService {
 
     List<BadgeGroupResponse> getBadgeGroupIds();
 
-    List<UserNoOptionBadgeDto> findNotOptionBadgeList(Long userId);
+    List<UserNoOptionBadgeDto> getNoOptionUserBadgeList(Long userId);
 
-    List<UserOptionBadgeDto> findOptionBadgeList(Long userId);
+    List<UserOptionBadgeDto> getOptionUserBadgeList(Long userId);
 
 }

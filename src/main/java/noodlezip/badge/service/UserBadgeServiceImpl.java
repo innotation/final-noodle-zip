@@ -8,6 +8,7 @@ import noodlezip.mypage.dto.UserNoOptionBadgeDto;
 import noodlezip.mypage.dto.UserOptionBadgeDto;
 import noodlezip.mypage.dto.response.BadgeGroupResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,19 +20,22 @@ public class UserBadgeServiceImpl implements UserBadgeService {
     private final UserBadgeRepository userBadgeRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<BadgeGroupResponse> getBadgeGroupIds() {
         return badgeGroupRepository.getBadgeGroups();
     }
 
     @Override
-    public List<UserNoOptionBadgeDto> findNotOptionBadgeList(Long userIde) {
-        List<Long> categoryIdList = LevelBadgeCategoryType.getNotOptionBadgeCategoryIdList();
+    @Transactional(readOnly = true)
+    public List<UserNoOptionBadgeDto> getNoOptionUserBadgeList(Long userIde) {
+        List<Long> categoryIdList = LevelBadgeCategoryType.getNoOptionBadgeCategoryIdList();
 
-        return userBadgeRepository.findNotOptionBadgeList(userIde, categoryIdList);
+        return userBadgeRepository.findNoOptionBadgeList(userIde, categoryIdList);
     }
 
     @Override
-    public List<UserOptionBadgeDto> findOptionBadgeList(Long userId) {
+    @Transactional(readOnly = true)
+    public List<UserOptionBadgeDto> getOptionUserBadgeList(Long userId) {
         List<Long> categoryIdList = LevelBadgeCategoryType.getOptionBadgeCategoryIdList();
 
         return userBadgeRepository.findOptionBadgeList(userId, categoryIdList);
