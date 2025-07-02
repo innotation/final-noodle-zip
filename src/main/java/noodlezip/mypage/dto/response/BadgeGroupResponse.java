@@ -8,7 +8,6 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-
 public class BadgeGroupResponse {
 
     private Long id;

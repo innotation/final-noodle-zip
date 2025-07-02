@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 @Builder
 @ToString
-
 public class MyBadgeBadgeResponse {
 
     private BadgeGroupResponse badgeGroup;
