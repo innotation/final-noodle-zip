@@ -1,4 +1,4 @@
-package noodlezip.board.entity;
+package noodlezip.community.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QBoard extends EntityPathBase<Board> {
 
-    private static final long serialVersionUID = -1581743873L;
+    private static final long serialVersionUID = -661922084L;
 
     public static final QBoard board = new QBoard("board");
 

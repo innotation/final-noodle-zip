@@ -155,22 +155,24 @@
 		<div class="row justify-content-center">
 			<div class="col-lg-8">
 				<div class="box_general write_review">
-					<div class="form-group">
-						<label>제목</label>
-						<input class="form-control" type="text" placeholder="제목을 작성해 주세요.">
-					</div>
-					<div class="form-group">
-						<label>내용</label>
-						<textarea class="form-control" style="height: 180px;" placeholder="내용을 작성해 주세요."></textarea>
-					</div>
-					<div class="form-group">
-						<label>Add your photo (optional)</label>
-						<div class="fileupload"><input type="file" name="fileupload" accept="image/*"></div>
-					</div>
-					<a href="confirm.html" class="btn_1">Submit review</a>
+					<form id="reviewForm" th:action="@{/board/regist}" method="post" enctype="multipart/form-data">
+						<div class="form-group">
+							<label>제목</label>
+							<input class="form-control" type="text" placeholder="제목을 작성해 주세요." name="title"> </div>
+						<div class="form-group">
+							<label>내용</label>
+							<textarea class="form-control" style="height: 180px;" placeholder="내용을 작성해 주세요." name="content"></textarea> </div>
+						<div class="form-group">
+							<label>Add your photo (optional)</label>
+							<div class="fileupload">
+								<input type="file" name="boardImage" accept="image/*"> </div>
+						</div>
+						<button type="submit" class="btn_1">Submit review</button>
+					</form>
 				</div>
 			</div>
 		</div>
+	</div>
 		<!-- /row -->
 	</div>
 	<!-- /container -->

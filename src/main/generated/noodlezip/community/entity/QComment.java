@@ -1,4 +1,4 @@
-package noodlezip.board.entity;
+package noodlezip.community.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QComment extends EntityPathBase<Comment> {
 
-    private static final long serialVersionUID = 1261002296L;
+    private static final long serialVersionUID = 446478549L;
 
     public static final QComment comment = new QComment("comment");
 

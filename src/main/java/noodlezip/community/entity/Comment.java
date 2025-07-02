@@ -1,4 +1,4 @@
-package noodlezip.board.entity;
+package noodlezip.community.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import noodlezip.common.entity.BaseTimeEntity;
-
-import java.time.Instant;
 
 @Getter
 @Setter

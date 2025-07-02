@@ -1,10 +1,9 @@
-package noodlezip.board.entity;
+package noodlezip.community.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -14,6 +13,10 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "tbl_community")
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +42,6 @@ public class Board extends BaseTimeEntity {
     private String communityType;
 
     @Size(max = 30)
-    @NotNull
     @Column(name = "post_status", nullable = false, length = 30)
     private String postStatus;
 
@@ -49,14 +51,12 @@ public class Board extends BaseTimeEntity {
     @Column(name = "review_visit_date")
     private Instant reviewVisitDate;
 
-    @NotNull
     @ColumnDefault("0")
-    @Column(name = "likes_count", nullable = false)
+    @Column(name = "likes_count")
     private Integer likesCount;
 
-    @NotNull
     @ColumnDefault("0")
-    @Column(name = "views_count", nullable = false)
+    @Column(name = "views_count")
     private Integer viewsCount;
 
 }
