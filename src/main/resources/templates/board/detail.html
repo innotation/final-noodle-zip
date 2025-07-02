@@ -9,25 +9,25 @@
     <title>Foogra - Discover & Book the best restaurants at the best price</title>
 
     <!-- Favicons-->
-    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="/img/apple-touch-icon-144x144-precomposed.png">
 
      <!-- GOOGLE WEB FONT -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- BASE CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 
     <!-- SPECIFIC CSS -->
-    <link href="css/blog.css" rel="stylesheet">
+    <link href="/css/blog.css" rel="stylesheet">
 
     <!-- YOUR CUSTOM CSS -->
-    <link href="css/custom.css" rel="stylesheet">
+    <link href="/css/custom.css" rel="stylesheet">
 
 </head>
 
@@ -37,7 +37,7 @@
 		<div class="container">
 		<div id="logo">
 			<a href="index.html">
-				<img src="img/logo_sticky.svg" width="140" height="35" alt="">
+				<img src="/img/logo_sticky.svg" width="140" height="35" alt="">
 			</a>
 		</div>
 		<ul id="top_menu">
@@ -53,7 +53,7 @@
 				<a href="#0" class="open_close">
 					<i class="icon_close"></i><span>Menu</span>
 				</a>
-				<a href="index.html"><img src="img/logo.svg" width="140" height="35" alt=""></a>
+				<a href="index.html"><img src="/img/logo.svg" width="140" height="35" alt=""></a>
 			</div>
 			<ul>
 				<li class="submenu">
@@ -178,12 +178,12 @@
 			<div class="row">
 				<div class="col-lg-9">
 					<div class="singlepost">
-						<figure><img alt="" class="img-fluid" src="img/blog-single.jpg"></figure>
-						<h1>Cooking best practices</h1>
+						<figure><img alt="" class="img-fluid" th:src="${board.imageUrl}"></figure>
+						<h1><span th:text="${board.title}"></span></h1>
 						<div class="postmeta">
 							<ul>
-								<li><a href="#"><i class="icon_folder-alt"></i> Category</a></li>
-								<li><i class="icon_calendar"></i> 23/12/2015</li>
+								<li><a href="#"><i class="icon_folder-alt"></i><span th:text="${board.communityType}">카테고리</span></a></li>
+								<li><i class="icon_calendar"></i> <span th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
 								<li><a href="#"><i class="icon_pencil-edit"></i> Admin</a></li>
 								<li><a href="#"><i class="icon_comment_alt"></i> (14) Comments</a></li>
 							</ul>
@@ -191,10 +191,9 @@
 						<!-- /post meta -->
 						<div class="post-content">
 							<div class="dropcaps">
-								<p>Aorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+								<p th:text="${board.content}">Aorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 							</div>
 
-							<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
 						</div>
 						<!-- /post -->
 					</div>
@@ -205,7 +204,7 @@
 						<ul>
 							<li>
 								<div class="avatar">
-									<a href="#"><img src="img/avatar1.jpg" alt="">
+									<a href="#"><img src="/img/avatar1.jpg" alt="">
 									</a>
 								</div>
 								<div class="comment_right clearfix">
@@ -275,24 +274,7 @@
 
 					<hr>
 
-					<h5>Leave a comment</h5>
-					<div class="row">
-						<div class="col-md-4 col-sm-6">
-							<div class="form-group">
-								<input type="text" name="name" id="name2" class="form-control" placeholder="Name">
-							</div>
-						</div>
-						<div class="col-md-4 col-sm-6">
-							<div class="form-group">
-								<input type="text" name="email" id="email2" class="form-control" placeholder="Email">
-							</div>
-						</div>
-						<div class="col-md-4 col-sm-12">
-							<div class="form-group">
-								<input type="text" name="email" id="website3" class="form-control" placeholder="Website">
-							</div>
-						</div>
-					</div>
+					<h5>댓글을 남기세요</h5>
 					<div class="form-group">
 						<textarea class="form-control" name="comments" id="comments2" rows="6" placeholder="Comment"></textarea>
 					</div>
@@ -311,21 +293,21 @@
 						<ul class="comments-list">
 							<li>
 								<div class="alignleft">
-									<a href="#0"><img src="img/blog-5.jpg" alt=""></a>
+									<a href="#0"><img src="/img/blog-5.jpg" alt=""></a>
 								</div>
 								<small>Category - 11.08.2016</small>
 								<h3><a href="#" title="">Verear qualisque ex minimum...</a></h3>
 							</li>
 							<li>
 								<div class="alignleft">
-									<a href="#0"><img src="img/blog-6.jpg" alt=""></a>
+									<a href="#0"><img src="/img/blog-6.jpg" alt=""></a>
 								</div>
 								<small>Category - 11.08.2016</small>
 								<h3><a href="#" title="">Verear qualisque ex minimum...</a></h3>
 							</li>
 							<li>
 								<div class="alignleft">
-									<a href="#0"><img src="img/blog-4.jpg" alt=""></a>
+									<a href="#0"><img src="/img/blog-4.jpg" alt=""></a>
 								</div>
 								<small>Category - 11.08.2016</small>
 								<h3><a href="#" title="">Verear qualisque ex minimum...</a></h3>
@@ -455,7 +437,7 @@
 								</select>
 							</div>
 						</li>
-						<li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="img/cards_all.svg" alt="" width="198" height="30" class="lazy"></li>
+						<li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" data-src="/img/cards_all.svg" alt="" width="198" height="30" class="lazy"></li>
 					</ul>
 				</div>
 				<div class="col-lg-6">
@@ -523,9 +505,9 @@
 	<!-- /Sign In Modal -->
 	
 	<!-- COMMON SCRIPTS -->
-    <script src="js/common_scripts.min.js"></script>
-    <script src="js/common_func.js"></script>
-    <script src="assets/validate.js"></script>
+    <script src="/js/common_scripts.min.js"></script>
+    <script src="/js/common_func.js"></script>
+    <script src="/assets/validate.js"></script>
 
 </body>
 </html>

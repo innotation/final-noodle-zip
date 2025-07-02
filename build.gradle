@@ -67,3 +67,8 @@ tasks.named('test') {
 tasks.named('jar'){
 	enabled = false;
 }
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	options.compilerArgs << "-parameters"
+}
