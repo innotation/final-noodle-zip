@@ -12,7 +12,6 @@ import noodlezip.ramen.entity.*;
 import noodlezip.store.entity.QStoreExtraTopping;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
-import noodlezip.store.constant.ApprovalStatus;
 import noodlezip.store.entity.*;
 import noodlezip.store.status.ApprovalStatus;
 import org.springframework.data.domain.Page;
