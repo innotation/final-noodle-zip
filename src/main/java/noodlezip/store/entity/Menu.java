@@ -6,12 +6,14 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.ramen.entity.Category;
+import noodlezip.ramen.entity.RamenSoup;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "tbl_menu")
 public class Menu extends BaseTimeEntity {
@@ -20,9 +22,10 @@ public class Menu extends BaseTimeEntity {
     @Column(name = "menu_id", nullable = false)
     private Long id;
 
-    @NotNull
-    @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    // 여러 메뉴는 하나의 매장(Store)에 속한다
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store storeId;
 
     @Size(max = 30)
     @NotNull
@@ -41,12 +44,13 @@ public class Menu extends BaseTimeEntity {
     @Column(name = "menu_image_url", length = 500)
     private String menuImageUrl;
 
-    @NotNull
-    @Column(name = "ramen_soup_id", nullable = false)
-    private Integer ramenSoupId;
-
+    // 메뉴는 카테고리(Category)에 속한다.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ramen_category_id", insertable = false, updatable = false)
+    @JoinColumn(name = "ramen_category_id", nullable = false)
     private Category category;
 
+    // 메뉴가 사용하는 라멘 국물(RamenSoup) 정보와 연결
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ramen_soup_id", nullable = false)
+    private RamenSoup ramenSoup;
 }

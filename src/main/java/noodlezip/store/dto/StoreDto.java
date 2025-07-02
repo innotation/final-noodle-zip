@@ -2,18 +2,20 @@ package noodlezip.store.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
 import noodlezip.store.entity.Store;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-/**
- * DTO for {@link noodlezip.store.entity.Store}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class StoreDto implements Serializable {
     Long id;
@@ -35,22 +37,25 @@ public class StoreDto implements Serializable {
     @Size(max = 30)
     String hasParking;
     @NotNull
-    @Size(max = 30)
-    String operationStatus;
+    private OperationStatus operationStatus;
+
+    @NotNull
+    private ApprovalStatus approvalStatus;
+
     @Size(max = 300)
     String ownerComment;
     @Size(max = 500)
     String storeMainImageUrl;
     @NotNull
-    Double storeLat;
+    private Double storeLat;
+
     @NotNull
-    Double storeLng;
+    private Double storeLng;
+
     @NotNull
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Integer storeLegalCode;
-    String approvalStatus;
-
 
     // Store -> StoreDto
     public static StoreDto toDto(Store store) {

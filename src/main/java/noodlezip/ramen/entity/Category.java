@@ -5,7 +5,6 @@ import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.store.entity.Menu;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity

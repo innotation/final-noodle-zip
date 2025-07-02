@@ -1,35 +1,33 @@
 package noodlezip.store.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "tbl_store_week_schedule")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Entity
+@Table(name = "tbl_store_week_schedule")
 public class StoreWeekSchedule {
+    @EmbeddedId
+    private StoreWeekScheduleId id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 복합키를 피하고 싶다면 이 필드 필요, 아니면 생략 가능
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("storeId")
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store storeId;
 
-    @Column(name = "store_id", nullable = false)
-    private Long storeId;
-
-    @Column(name = "day_of_week", nullable = false)
-    private String dayOfWeek;
-
+    @NotNull
     @Column(name = "opening_at", nullable = false)
     private LocalDateTime openingAt;
 
+    @NotNull
     @Column(name = "closing_at", nullable = false)
     private LocalDateTime closingAt;
 
+    @NotNull
     @Column(name = "is_closed_day", nullable = false)
-    private Boolean isClosedDay;
+    private Boolean isClosedDay = false;
 }

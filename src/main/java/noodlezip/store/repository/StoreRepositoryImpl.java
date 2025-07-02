@@ -9,13 +9,17 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.ramen.entity.*;
+import noodlezip.store.entity.QStoreExtraTopping;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
 import noodlezip.store.entity.*;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -71,7 +75,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
     public Page<SearchStoreDto> searchStoresByFilter(SearchFilterDto filter, Pageable pageable) {
         QStore store = QStore.store;
         QMenu menu = QMenu.menu;
-        QCategory ramenCategory = QCategory.category;
+        QCategory Category = QCategory.category;
         QRamenSoup ramenSoup = QRamenSoup.ramenSoup;
         QRamenTopping ramenTopping = QRamenTopping.ramenTopping;
         QStoreExtraTopping storeExtraTopping = QStoreExtraTopping.storeExtraTopping;
@@ -87,11 +91,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         BooleanBuilder builder = new BooleanBuilder();
 
         // 운영중인 매장
-        builder.and(store.approvalStatus.eq("APPROVED"));
+        builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
+//        builder.and(store.operationStatus.eq(OperationStatus.OPEN));
 
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
-            builder.and(ramenCategory.name.in(filter.getRamenCategory()));
+            builder.and(Category.categoryName.in(filter.getRamenCategory()));
         }
 
         // 육수
@@ -121,9 +126,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             toppingBuilder.or(
                     JPAExpressions.selectOne()
                             .from(storeExtraTopping)
-                            .join(topping).on(topping.id.eq(storeExtraTopping.toppingId))
+                            .join(topping).on(topping.id.eq(storeExtraTopping.id))
                             .where(
-                                    storeExtraTopping.storeId.eq(store.id)
+                                    storeExtraTopping.storeId.id.eq(store.id)
                                             .and(topping.toppingName.in(filter.getTopping()))
                                             .and(topping.isActive.isTrue())
                             )
@@ -131,6 +136,32 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             );
 
             builder.and(toppingBuilder);
+        }
+
+        // 검색어 조건
+        if (filter.getKeyword() != null && !filter.getKeyword().isBlank()) {
+            String keyword = filter.getKeyword();
+            // null 값으로 들어올 경우 기본적으로 ALL로 검색
+            String searchType = Optional.ofNullable(filter.getSearchType()).orElse("ALL").toUpperCase();
+
+            BooleanBuilder keywordBuilder = new BooleanBuilder();
+            switch (searchType) {
+                case "STORE_NAME":
+                    keywordBuilder.and(store.storeName.containsIgnoreCase(keyword));
+                    break;
+                case "MENU_NAME":
+                    keywordBuilder.and(menu.menuName.containsIgnoreCase(keyword));
+                    break;
+                case "ALL":
+                default:
+                    keywordBuilder.andAnyOf(
+                            store.storeName.containsIgnoreCase(keyword),
+                            menu.menuName.containsIgnoreCase(keyword)
+                    );
+                    break;
+            }
+
+            builder.and(keywordBuilder);
         }
 
         // 본 쿼리
@@ -150,11 +181,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         distanceExpr.as("distance")
                 ))
                 .from(store)
-                .join(menu).on(menu.storeId.eq(store.id))
-                .join(ramenCategory).on(menu.ramenCategoryId.eq(ramenCategory.id))
-                .join(ramenSoup).on(menu.ramenSoupId.eq(ramenSoup.id))
-                .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
-                .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
+                .join(menu).on(menu.storeId.id.eq(store.id))
+                .join(Category).on(menu.category.id.eq(Category.id))
+                .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
+                .leftJoin(ramenTopping).on(ramenTopping.menu.id.eq(menu.id))
+                .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(builder)
                 .distinct()
                 .orderBy(distanceExpr.asc())
@@ -165,11 +196,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         long total = queryFactory
                 .select(store.countDistinct())
                 .from(store)
-                .join(menu).on(menu.storeId.eq(store.id))
-                .join(ramenCategory).on(menu.ramenCategoryId.eq(ramenCategory.id))
-                .join(ramenSoup).on(menu.ramenSoupId.eq(ramenSoup.id))
-                .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
-                .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
+                .join(menu).on(menu.storeId.id.eq(store.id))
+                .join(Category).on(menu.category.id.eq(Category.id))
+                .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
+                .leftJoin(ramenTopping).on(ramenTopping.menu.id.eq(menu.id))
+                .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(builder)
                 .fetchOne();
 
