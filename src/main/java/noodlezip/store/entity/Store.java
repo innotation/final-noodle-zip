@@ -12,6 +12,7 @@ import noodlezip.store.status.ParkingType;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -85,7 +86,7 @@ public class Store extends BaseTimeEntity {
     @Column(name = "store_legal_code", nullable = false)
     private Integer storeLegalCode;
 
-  /*  // 메뉴 리스트 (1:N)
+    // 메뉴 리스트 (1:N)
     @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Menu> menus = new ArrayList<>();
 
@@ -97,7 +98,4 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StoreWeekSchedule> weekSchedules = new ArrayList<>();
 
-    // 위치 정보 (1:1)
-    @OneToOne(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private StoreLocation storeLocation;*/
 }

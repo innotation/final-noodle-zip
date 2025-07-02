@@ -20,6 +20,14 @@ import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
+import noodlezip.admin.dto.RegistListDto;
+import noodlezip.store.dto.*;
+import noodlezip.store.entity.*;
+import noodlezip.store.repository.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,10 +38,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class StoreService {
 
     private final StoreRepository storeRepository;
@@ -41,6 +51,8 @@ public class StoreService {
     private final MenuRepository menuRepository;
     private final RamenToppingRepository ramenToppingRepository;
     private final RamenService ramenService;
+    private final ModelMapper modelMapper;
+
 
     @Value("${upload.path}")
     private String uploadDir;
@@ -57,6 +69,7 @@ public class StoreService {
         if (storeMainImage != null && !storeMainImage.isEmpty()) {
             imageUrl = saveFile(storeMainImage);
         }
+
 
         Store store = Store.builder()
                 .storeName(dto.getStoreName())
@@ -175,4 +188,16 @@ public class StoreService {
     public List<ToppingResponseDto> getRamenToppings() {
         return ramenService.getAllToppings();
     }
+
+    // 등록요청매장 조회
+    public Map<String, Object> findRegistList(Pageable pageable) {
+
+        Page<RegistListDto> page = storeRepository.findRegistStores(pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(page, 5);
+        map.put("registList", page.getContent());
+        return map;
+    }
+
+
+
 }
