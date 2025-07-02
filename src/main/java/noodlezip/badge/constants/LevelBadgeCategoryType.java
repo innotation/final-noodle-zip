@@ -1,10 +1,12 @@
 package noodlezip.badge.constants;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Getter
 public enum LevelBadgeCategoryType {
 
@@ -21,12 +23,16 @@ public enum LevelBadgeCategoryType {
     private final boolean isOptional;
 
 
-    LevelBadgeCategoryType(Long dbPk, boolean isOptional) {
-        this.dbPk = dbPk;
-        this.isOptional = isOptional;
+    public static LevelBadgeCategoryType getByPk(Long pk) {
+        for (LevelBadgeCategoryType type : LevelBadgeCategoryType.values()) {
+            if (type.dbPk.equals(pk)) {
+                return type;
+            }
+        }
+        return null;
     }
 
-    public static List<Long> getNotOptionBadgeCategoryIdList() {
+    public static List<Long> getNoOptionBadgeCategoryIdList() {
         List<Long> result = new ArrayList<>();
         for (LevelBadgeCategoryType badgeCategoryType : LevelBadgeCategoryType.values()) {
             if (!badgeCategoryType.isOptional) {
