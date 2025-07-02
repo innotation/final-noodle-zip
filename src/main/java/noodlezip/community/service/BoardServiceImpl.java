@@ -2,6 +2,7 @@ package noodlezip.community.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.entity.Image;
@@ -39,6 +40,7 @@ public class BoardServiceImpl implements BoardService {
         map.put("list", boardPage.getContent().stream().map(data -> {
             return modelMapper.map(data, Board.class);
         }).toList());
+
         return map;
     }
 
@@ -49,10 +51,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void registBoard(Board board, MultipartFile boardImage) {
-        log.info("registBoard : {}", board.toString());
-        boardRepository.save(board);
-        log.info("board save : {}", board);
+    public void registBoard(BoardReqDto boardReqDto, long userId,MultipartFile boardImage) {
+        Board board = modelMapper.map(boardReqDto, Board.class);
+        board.setCommunityType("community");
+        board.setUserId(userId);
         if (!boardImage.isEmpty() && boardImage.getOriginalFilename() != null) {
             Map<String, String> map = fileUtil.fileupload("board", boardImage);
             Image image = Image.builder()
@@ -62,7 +64,10 @@ public class BoardServiceImpl implements BoardService {
                                 .targetId(board.getId())
                                 .build();
             imageRepository.save(image);
+            board.setImageUrl(image.getImageUrl());
             log.info("image save : {}", image);
         }
+        boardRepository.save(board);
+        log.info("board save : {}", board);
     }
 }

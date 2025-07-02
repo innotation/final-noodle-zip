@@ -2,6 +2,7 @@ package noodlezip.community.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.service.BoardService;
@@ -14,6 +15,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +29,6 @@ import java.util.Map;
 public class BoardController {
 
     private final BoardService boardService;
-    private final ModelMapper modelMapper;
 
     @GetMapping("/review")
     public String review() {
@@ -38,17 +40,14 @@ public class BoardController {
 
     @PostMapping("/regist")
     public String regist(@AuthenticationPrincipal MyUserDetails user
-                        , BoardReqDto boardReqDto
-                        ,@RequestParam("boardImage") MultipartFile boardImage) {
-        log.info("regist board : {}", boardReqDto);
-        Board board = modelMapper.map(boardReqDto, Board.class);
-//        board.setLikesCount(0);
-        board.setCommunityType("community");
-//        board.setPostStatus();
-//        board.setReviewStoreId();
-        board.setUserId(user.getUser().getId());
-//        board.setViewsCount();
-        boardService.registBoard(board, boardImage);
+                        ,@Validated(ValidationGroups.OnCreate.class) BoardReqDto boardReqDto
+                        , BindingResult bindingResult
+                        ,@RequestParam(value = "boardImage", required = false) MultipartFile boardImage) {
+        if (bindingResult.hasErrors()) {
+            log.error("게시판 작성 유효성 검사 실패: {}", bindingResult.getAllErrors());
+            throw new IllegalArgumentException("게시판 작성 유효성 검사 실패");
+        }
+        boardService.registBoard(boardReqDto, user.getUser().getId(), boardImage);
         return "redirect:/board/list";
     }
 
@@ -64,6 +63,7 @@ public class BoardController {
 
         Map<String, Object> map = boardService.findBoardList(pageable);
 
+        log.info(map.toString());
         model.addAttribute("board", map.get("list"));
         model.addAttribute("page", map.get("page"));
         model.addAttribute("beginPage", map.get("beginPage"));

@@ -61,4 +61,7 @@ public class Board extends BaseTimeEntity {
     @Column(name = "views_count", nullable = false)
     private Integer viewsCount;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
 }
