@@ -12,13 +12,14 @@ import noodlezip.ramen.entity.*;
 import noodlezip.store.entity.QStoreExtraTopping;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
-import noodlezip.store.constant.ApprovalStatus;
 import noodlezip.store.entity.*;
 import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -91,6 +92,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
 
         // 운영중인 매장
         builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
+//        builder.and(store.operationStatus.eq(OperationStatus.OPEN));
 
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
@@ -136,6 +138,32 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             builder.and(toppingBuilder);
         }
 
+        // 검색어 조건
+        if (filter.getKeyword() != null && !filter.getKeyword().isBlank()) {
+            String keyword = filter.getKeyword();
+            // null 값으로 들어올 경우 기본적으로 ALL로 검색
+            String searchType = Optional.ofNullable(filter.getSearchType()).orElse("ALL").toUpperCase();
+
+            BooleanBuilder keywordBuilder = new BooleanBuilder();
+            switch (searchType) {
+                case "STORE_NAME":
+                    keywordBuilder.and(store.storeName.containsIgnoreCase(keyword));
+                    break;
+                case "MENU_NAME":
+                    keywordBuilder.and(menu.menuName.containsIgnoreCase(keyword));
+                    break;
+                case "ALL":
+                default:
+                    keywordBuilder.andAnyOf(
+                            store.storeName.containsIgnoreCase(keyword),
+                            menu.menuName.containsIgnoreCase(keyword)
+                    );
+                    break;
+            }
+
+            builder.and(keywordBuilder);
+        }
+
         // 본 쿼리
         List<SearchStoreDto> content = queryFactory
                 .select(Projections.constructor(SearchStoreDto.class,
@@ -153,11 +181,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         distanceExpr.as("distance")
                 ))
                 .from(store)
-                .join(menu).on(menu.id.eq(store.id))
+                .join(menu).on(menu.storeId.id.eq(store.id))
                 .join(Category).on(menu.category.id.eq(Category.id))
                 .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
-                .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
-                .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
+                .leftJoin(ramenTopping).on(ramenTopping.menu.id.eq(menu.id))
+                .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(builder)
                 .distinct()
                 .orderBy(distanceExpr.asc())
@@ -168,11 +196,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         long total = queryFactory
                 .select(store.countDistinct())
                 .from(store)
-                .join(menu).on(menu.id.eq(store.id))
+                .join(menu).on(menu.storeId.id.eq(store.id))
                 .join(Category).on(menu.category.id.eq(Category.id))
                 .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
-                .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
-                .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
+                .leftJoin(ramenTopping).on(ramenTopping.menu.id.eq(menu.id))
+                .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(builder)
                 .fetchOne();
 

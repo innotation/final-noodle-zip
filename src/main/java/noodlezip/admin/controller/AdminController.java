@@ -24,7 +24,7 @@ import java.util.Map;
 public class AdminController {
 
     private final StoreService storeService;
-    private final noodlezip.util.PageUtil pageUtil;
+    private final noodlezip.common.util.PageUtil pageUtil;
 
     @GetMapping("/main")
     public void mainPage(){}
