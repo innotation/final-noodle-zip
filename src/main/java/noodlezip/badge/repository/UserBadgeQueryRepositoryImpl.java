@@ -89,7 +89,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
 
 
     @Override
-    public List<UserNoOptionBadgeDto> findNotOptionBadgeList(Long userId, List<Long> notOptionBadge) {
+    public List<UserNoOptionBadgeDto> findNoOptionBadgeList(Long userId, List<Long> notOptionBadge) {
         QUserBadge userBadge = QUserBadge.userBadge;
         QBadge badge = QBadge.badge;
         QBadgeCategory badgeCategory = QBadgeCategory.badgeCategory;

@@ -19,7 +19,7 @@ public interface UserBadgeQueryRepository {
                                                      long badgeCategoryId,
                                                      int sidoRegionCode);
 
-    List<UserNoOptionBadgeDto> findNotOptionBadgeList(Long userId, List<Long> notOptionBadge);
+    List<UserNoOptionBadgeDto> findNoOptionBadgeList(Long userId, List<Long> notOptionBadge);
 
     List<UserOptionBadgeDto> findOptionBadgeList(Long userId, List<Long> optionBadge);
 
