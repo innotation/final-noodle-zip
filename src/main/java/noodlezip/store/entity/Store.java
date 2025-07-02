@@ -5,7 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
-import noodlezip.store.constant.ApprovalStatus;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Builder
 @AllArgsConstructor
@@ -18,7 +24,6 @@ import noodlezip.store.constant.ApprovalStatus;
 public class Store extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "store_id", nullable = false)
     private Long id;
 
     @NotNull
@@ -47,15 +52,18 @@ public class Store extends BaseTimeEntity {
     @Column(name = "is_child_allowed", nullable = false)
     private Boolean isChildAllowed;
 
-    @Size(max = 30)
-    @NotNull
+    // Enum 타입 3개 parking, operationstatus, approvalstatus
+    @Enumerated(EnumType.STRING)
     @Column(name = "has_parking", nullable = false, length = 30)
-    private String hasParking;
+    private ParkingType hasParking;
 
-    @Size(max = 30)
-    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "operation_status", nullable = false, length = 30)
-    private String operationStatus;
+    private OperationStatus operationStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", nullable = false, length = 30)
+    private ApprovalStatus approvalStatus;
 
     @Size(max = 300)
     @Column(name = "owner_comment", length = 300)
@@ -73,11 +81,21 @@ public class Store extends BaseTimeEntity {
     @Column(name = "store_lng", nullable = false)
     private Double storeLng;
 
-    @Column(name = "store_legal_code")
+    // 법정코드
+    @NotNull
+    @Column(name = "store_legal_code", nullable = false)
     private Integer storeLegalCode;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "approval_status", nullable = false, length = 30)
-    private ApprovalStatus approvalStatus;
+    // 메뉴 리스트 (1:N)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Menu> menus = new ArrayList<>();
+
+    // 추가 토핑 리스트 (1:N)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<StoreExtraTopping> extraToppings = new ArrayList<>();
+
+    // 요일별 영업 시간 (1:N)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<StoreWeekSchedule> weekSchedules = new ArrayList<>();
 
 }
