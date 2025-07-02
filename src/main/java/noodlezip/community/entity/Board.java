@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.Instant;
 
@@ -17,6 +18,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,11 +54,11 @@ public class Board extends BaseTimeEntity {
     private Instant reviewVisitDate;
 
     @ColumnDefault("0")
-    @Column(name = "likes_count")
+    @Column(name = "likes_count", nullable = false)
     private Integer likesCount;
 
     @ColumnDefault("0")
-    @Column(name = "views_count")
+    @Column(name = "views_count", nullable = false)
     private Integer viewsCount;
 
 }
