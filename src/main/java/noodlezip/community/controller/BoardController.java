@@ -58,12 +58,11 @@ public class BoardController {
         if(pageable.getSort().isEmpty()) {
             pageable = PageRequest.of(pageable.getPageNumber()
                                     ,pageable.getPageSize()
-                                    , Sort.by(Sort.Direction.ASC, "id"));
+                                    , Sort.by(Sort.Direction.DESC, "id"));
         }
 
         Map<String, Object> map = boardService.findBoardList(pageable);
 
-        log.info(map.toString());
         model.addAttribute("board", map.get("list"));
         model.addAttribute("page", map.get("page"));
         model.addAttribute("beginPage", map.get("beginPage"));

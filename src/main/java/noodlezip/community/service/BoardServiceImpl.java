@@ -57,15 +57,15 @@ public class BoardServiceImpl implements BoardService {
         board.setUserId(userId);
         if (!boardImage.isEmpty() && boardImage.getOriginalFilename() != null) {
             Map<String, String> map = fileUtil.fileupload("board", boardImage);
-            Image image = Image.builder()
-                                .imageOrder(1)
-                                .imageUrl(map.get("fileUrl"))
-                                .imageType("community")
-                                .targetId(board.getId())
-                                .build();
-            imageRepository.save(image);
-            board.setImageUrl(image.getImageUrl());
-            log.info("image save : {}", image);
+//            Image image = Image.builder()
+//                                .imageOrder(1)
+//                                .imageUrl(map.get("fileUrl"))
+//                                .imageType("community")
+//                                .targetId(board.getId())
+//                                .build();
+//            imageRepository.save(image);
+            board.setImageUrl(map.get("fileUrl"));
+//            log.info("image save : {}", image);
         }
         boardRepository.save(board);
         log.info("board save : {}", board);
