@@ -3,11 +3,9 @@ package noodlezip.store.service;
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
-import noodlezip.ramen.entity.Category;
-import noodlezip.ramen.entity.RamenSoup;
-import noodlezip.ramen.entity.RamenTopping;
-import noodlezip.ramen.entity.RamenToppingId;
+import noodlezip.ramen.entity.*;
 import noodlezip.ramen.repository.RamenToppingRepository;
+import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.dto.StoreRequestDto;
@@ -54,6 +52,7 @@ public class StoreService {
     private final RamenService ramenService;
     private final ModelMapper modelMapper;
     private final PageUtil pageUtil;
+    private final ToppingRepository toppingRepository;
 
 
     @Value("${upload.path}")
@@ -134,17 +133,11 @@ public class StoreService {
 
                 if (m.getDefaultToppingIds() != null) {
                     for (Long toppingId : m.getDefaultToppingIds()) {
-                        RamenToppingId toppingIdObj = new RamenToppingId();
-                        toppingIdObj.setMenuId(savedMenu.getId());
-                        toppingIdObj.setToppingId(toppingId);
+                        Topping topping = toppingRepository.getReferenceById(toppingId);
 
                         RamenTopping ramenTopping = new RamenTopping();
-                        ramenTopping.setToppingId(toppingIdObj);
-
-                        // Topping 객체도 연관관계 맞춰 설정
-//                        Topping topping = new Topping();
-//                        topping.setId(toppingId);
-//                        ramenTopping.setTopping(topping);
+                        ramenTopping.setTopping(topping);
+                        ramenTopping.setMenu(savedMenu);
 
                         ramenToppingRepository.save(ramenTopping);
                     }

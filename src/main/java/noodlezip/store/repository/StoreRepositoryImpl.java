@@ -14,6 +14,7 @@ import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
 import noodlezip.store.entity.*;
 import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -91,6 +92,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
 
         // 운영중인 매장
         builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
+//        builder.and(store.operationStatus.eq(OperationStatus.OPEN));
 
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
@@ -179,11 +181,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         distanceExpr.as("distance")
                 ))
                 .from(store)
-                .join(menu).on(menu.id.eq(store.id))
+                .join(menu).on(menu.storeId.id.eq(store.id))
                 .join(Category).on(menu.category.id.eq(Category.id))
                 .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
-                .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
-                .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
+                .leftJoin(ramenTopping).on(ramenTopping.menu.id.eq(menu.id))
+                .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(builder)
                 .distinct()
                 .orderBy(distanceExpr.asc())
@@ -194,11 +196,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         long total = queryFactory
                 .select(store.countDistinct())
                 .from(store)
-                .join(menu).on(menu.id.eq(store.id))
+                .join(menu).on(menu.storeId.id.eq(store.id))
                 .join(Category).on(menu.category.id.eq(Category.id))
                 .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
-                .leftJoin(ramenTopping).on(ramenTopping.toppingId.menuId.eq(menu.id))
-                .leftJoin(topping).on(topping.id.eq(ramenTopping.toppingId.toppingId))
+                .leftJoin(ramenTopping).on(ramenTopping.menu.id.eq(menu.id))
+                .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(builder)
                 .fetchOne();
 
