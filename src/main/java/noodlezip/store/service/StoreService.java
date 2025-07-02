@@ -16,6 +16,7 @@ import noodlezip.store.entity.StoreWeekScheduleId;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
+import noodlezip.store.status.ApprovalStatus;
 import noodlezip.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -198,7 +199,7 @@ public class StoreService {
     public StoreDto getStore(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NoSuchElementException("해당 매장을 찾을 수 없습니다."));
-        if (!"APPROVED".equals(store.getApprovalStatus())) {
+        if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus())) {
             throw new IllegalStateException("승인되지 않은 매장은 조회할 수 없습니다.");
         }
 

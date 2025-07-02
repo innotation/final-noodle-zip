@@ -18,66 +18,61 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class StoreDto implements Serializable {
-    Long id;
+    private Long id;
     @NotNull
-    Long userId;
+    private Long userId;
     @NotNull
     @Size(max = 100)
-    String storeName;
+    private String storeName;
     @NotNull
     @Size(max = 255)
-    String address;
+    private String address;
     @Size(max = 20)
-    String phone;
+    private String phone;
     @NotNull
-    Boolean isLocalCard;
+    private Boolean isLocalCard;
     @NotNull
-    Boolean isChildAllowed;
+    private Boolean isChildAllowed;
     @NotNull
     @Size(max = 30)
-    String hasParking;
+    private String hasParking;
     @NotNull
-    private OperationStatus operationStatus;
-
+    private String operationStatus;
     @NotNull
-    private ApprovalStatus approvalStatus;
-
+    private String approvalStatus;
     @Size(max = 300)
-    String ownerComment;
+    private String ownerComment;
     @Size(max = 500)
-    String storeMainImageUrl;
+    private String storeMainImageUrl;
     @NotNull
     private Double storeLat;
-
     @NotNull
     private Double storeLng;
-
     @NotNull
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
-    Integer storeLegalCode;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Integer storeLegalCode;
 
     // Store -> StoreDto
     public static StoreDto toDto(Store store) {
-        return new StoreDto(
-                store.getId(),
-                store.getUserId(),
-                store.getStoreName(),
-                store.getAddress(),
-                store.getPhone(),
-                store.getIsLocalCard(),
-                store.getIsChildAllowed(),
-                store.getHasParking(),
-                store.getOperationStatus(),
-                store.getOwnerComment(),
-                store.getStoreMainImageUrl(),
-                store.getStoreLat(),
-                store.getStoreLng(),
-                store.getCreatedAt(),
-                store.getUpdatedAt(),
-                store.getStoreLegalCode(),
-                store.getApprovalStatus()
-        );
+        return StoreDto.builder()
+                .id(store.getId())
+                .userId(store.getUserId())
+                .storeName(store.getStoreName())
+                .address(store.getAddress())
+                .phone(store.getPhone())
+                .isLocalCard(store.getIsLocalCard())
+                .isChildAllowed(store.getIsChildAllowed())
+                .operationStatus(store.getOperationStatus().getValue())
+                .approvalStatus(store.getApprovalStatus().getValue())
+                .ownerComment(store.getOwnerComment())
+                .storeMainImageUrl(store.getStoreMainImageUrl())
+                .storeLat(store.getStoreLat())
+                .storeLng(store.getStoreLng())
+                .createdAt(store.getCreatedAt())
+                .updatedAt(store.getUpdatedAt())
+                .storeLegalCode(store.getStoreLegalCode())
+                .build();
     }
 
 }

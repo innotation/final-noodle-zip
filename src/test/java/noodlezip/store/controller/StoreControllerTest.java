@@ -5,6 +5,9 @@ import noodlezip.store.dto.StoreDto;
 import noodlezip.store.entity.Store;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.service.StoreService;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +70,12 @@ class StoreControllerTest {
                 .phone("010-1010-0101")
                 .isLocalCard(false)
                 .isChildAllowed(true)
-                .hasParking("주차가능")
-                .operationStatus("운영중")
+                .hasParking(ParkingType.FREE)
+                .operationStatus(OperationStatus.OPEN)
                 .ownerComment("테스트 라면가게입니다.")
                 .storeMainImageUrl("TESTImageUrl")
                 .storeLegalCode(110101101)
-                .approvalStatus("APPROVED")
+                .approvalStatus(ApprovalStatus.APPROVED)
                 .storeLat(37.5665)
                 .storeLng(126.9780)
                 .build());
