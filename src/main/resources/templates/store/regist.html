@@ -52,7 +52,7 @@
 						<input type="file" id="image-input" name="storeMainImage" accept="image/*" style="display: none;" />
 						<img id="preview-image" src="" style="max-width: 100%; display: none; margin-top: 10px;" />
 						<input type="hidden" name="approvalStatus" value="WAITING" />
-						<input type="hidden" name="operationStatus" value="BEFORE_OPEN" />
+						<input type="hidden" name="operationStatus" value="TEMP_CLOSED" />
 					</div>
 
 					<!-- ② 가게명 / ③ 도로명 주소 API / ④ 전화번호 -->
@@ -60,7 +60,7 @@
 						<div class="col-md-6 position-relative">
 							<!-- 가게명 -->
 							<input type="text" name="storeName" class="form-control mb-3" placeholder="가게명" required />
-							<!-- ④ 전화번호 -->
+							<!-- 전화번호 -->
 							<div class="form-group mb-0">
 								<label for="phone" style="font-weight: normal;">전화번호</label>
 								<input type="text" id="phone" name="phone" class="form-control" placeholder="010-1234-5678" maxlength="13" />
@@ -76,8 +76,12 @@
 								<input type="hidden" id="zipcode" name="zipcode" />
 								<!-- 상세주소 -->
 								<input type="text" id="detailAddress" name="detailAddress" class="form-control mt-2" placeholder="상세 주소 입력" />
-								<!-- 법정코드 저장용 숨김 필드 -->
-								<input type="hidden" id="legalCode" name="legalCode" value="" /> <!-- 폼 전송 시 -> legalCode가 서버로 넘어감 -->
+
+								<!-- 숨김 필드: 위도, 경도, 법정코드 -->
+								<input type="hidden" id="storeLat" name="storeLat" />
+								<input type="hidden" id="storeLng" name="storeLng" />
+								<input type="hidden" id="storeLegalCode" name="storeLegalCode" />
+
 								<!-- 주소 검색 버튼 -->
 								<button type="button" class="btn mt-2" id="searchAddressBtn" style="background-color: #f39c12; color: white; border: none;">
 									주소 검색
@@ -152,13 +156,19 @@
 							}
 
 							function checkClosed(index) {
-								const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`).value;
-								const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`).value;
+								const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`);
+								const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`);
 								const closedInput = document.getElementById(`closed-day-${index}`);
-								if (open === "CLOSED" || close === "CLOSED") {
+
+								if (open.value === "CLOSED" || close.value === "CLOSED") {
 									closedInput.value = "true";
+									// 둘 다 disabled 처리하여 서버로 전송 안 되게
+									open.disabled = true;
+									close.disabled = true;
 								} else {
 									closedInput.value = "false";
+									open.disabled = false;
+									close.disabled = false;
 								}
 							}
 						</script>
@@ -258,33 +268,68 @@
 										</div>
 									</div>
 
-									<!-- 카테고리 드롭다운 -->
-									<div class="col-md-6 mb-2">
-										<select name="menus[0].ramenCategoryId" class="form-select form-select-sm">
+									<!-- 카테고리 선택 및 육수 선택 묶음 -->
+									<div class="col-md-8 mb-2 d-flex gap-2">
+										<!-- 카테고리 드롭다운 -->
+										<select name="menus[0].ramenCategoryId" class="form-select form-select-sm" style="flex: 1;">
 											<option disabled selected>카테고리 선택</option>
-											<option value="기본">기본</option>
-											<option value="사이드">사이드</option>
-											<option value="세트">세트</option>
-											<option value="토핑">토핑</option>
+											<option value="돈코츠">돈코츠 (Tonkotsu, 돼지뼈 육수)</option>
+											<option value="쇼유">쇼유 (Shoyu, 간장 베이스)</option>
+											<option value="미소">미소 (Miso, 된장 베이스)</option>
+											<option value="시오">시오 (Shio, 소금 베이스)</option>
+											<option value="카레">카레 (Curry 라멘)</option>
+											<option value="츠케멘">츠케멘 (찍먹 스타일)</option>
+											<option value="탄탄멘">탄탄멘 (Spicy sesame)</option>
+											<option value="사케라멘">사케라멘 (해산물 베이스)</option>
+											<option value="마제소바">마제소바 (비빔면 스타일)</option>
+										</select>
+
+										<!-- 육수 선택 드롭다운 -->
+										<select name="menus[0].ramenSoupId" class="form-select form-select-sm" style="flex: 1;">
+											<option disabled selected>육수 선택</option>
+											<option value="1">돈코츠 (돼지뼈)</option>
+											<option value="2">소유 (간장)</option>
+											<option value="3">미소 (된장)</option>
+											<option value="4">시오 (소금)</option>
+											<option value="4">토리파이탄 (닭육수)</option>
+											<option value="4">가츠오부시 (가다랑어포)</option>
+											<option value="4">콘부 (다시마)</option>
+											<option value="4">해산물 베이스</option>
 										</select>
 									</div>
 
-									<!-- 메뉴 설명 -->
-									<div class="col-md-6 mb-2">
-										<textarea name="menus[0].menuDescription" class="form-control form-control-sm" placeholder="메뉴 설명" rows="2"></textarea>
-									</div>
+									<!-- 메뉴 설명 + 기본 토핑 선택 묶음 -->
+									<div class="col-md-12 mb-2 d-flex gap-3 align-items-start">
+										<!-- 메뉴 설명 -->
+										<textarea name="menus[0].menuDescription" class="form-control form-control-sm" placeholder="메뉴 설명" rows="2" style="flex: 1;"></textarea>
 
-									<!-- 토핑 선택 UI -->
-									<div class="col-md-12 mb-2">
-										<label class="form-label d-block">기본 토핑 선택</label>
-										<div class="d-flex flex-wrap gap-2 topping-tags" data-menu-index="0">
-											<span class="topping-tag" data-value="계란">계란</span>
-											<span class="topping-tag" data-value="차슈">차슈</span>
-											<span class="topping-tag" data-value="김">김</span>
-											<span class="topping-tag" data-value="숙주">숙주</span>
-											<span class="topping-tag" data-value="면추가">면추가</span>
+										<!-- 기본 토핑 선택 -->
+										<div>
+											<label class="form-label d-block">기본 토핑 선택</label>
+											<div class="d-flex flex-wrap gap-2 topping-tags" data-menu-index="0" style="max-width: 300px;">
+												<span class="topping-tag" data-value="차슈">차슈</span>
+												<span class="topping-tag" data-value="닭가슴살">닭가슴살</span>
+												<span class="topping-tag" data-value="계란">반숙 계란</span>
+												<span class="topping-tag" data-value="파">파</span>
+												<span class="topping-tag" data-value="김">김</span>
+												<span class="topping-tag" data-value="멘마">멘마</span>
+												<span class="topping-tag" data-value="숙주">숙주</span>
+												<span class="topping-tag" data-value="버터">버터</span>
+												<span class="topping-tag" data-value="옥수수">옥수수</span>
+												<span class="topping-tag" data-value="김치">김치</span>
+												<span class="topping-tag" data-value="생강">생강</span>
+												<span class="topping-tag" data-value="마늘">마늘</span>
+												<span class="topping-tag" data-value="치즈">치즈</span>
+												<span class="topping-tag" data-value="매운고추">매운 고추</span>
+												<span class="topping-tag" data-value="새우튀김">새우튀김</span>
+												<span class="topping-tag" data-value="두부">두부</span>
+												<span class="topping-tag" data-value="시금치">시금치</span>
+												<span class="topping-tag" data-value="팽이버섯">팽이버섯</span>
+												<span class="topping-tag" data-value="고추기름">고추기름</span>
+												<span class="topping-tag" data-value="텐카스">텐카스</span>
+											</div>
+											<div class="default-toppings-container"></div>
 										</div>
-										<input type="hidden" name="menus[0].defaultToppingIds" value="1,3,5">
 									</div>
 
 									<!-- 추가 토핑 입력 -->
@@ -464,7 +509,13 @@
 		<!--form -->
 	</div>
 	<!-- /Sign In Modal -->
-	
+
+
+
+
+
+
+
 	<!-- COMMON SCRIPTS -->
     <script src="/js/common_scripts.min.js"></script>
     <script src="/js/common_func.js"></script>
@@ -476,8 +527,6 @@
 	<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js" charset="utf-8"></script>
 
 	<script>
-		const KAKAO_REST_API_KEY = 'KakaoAK YOUR_REST_API_KEY'; // Kakao REST API 키 넣기
-
 		function openPostcode() {
 			new daum.Postcode({
 				oncomplete: function (data) {
@@ -488,33 +537,22 @@
 					document.getElementById("zipcode").value = zonecode;
 					document.getElementById("detailAddress").focus();
 
-					// 주소 → 좌표 변환 API 호출
-					fetch(`https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(roadAddress)}`, {
+					// 서버에 도로명 주소 전송 -> 위도, 경도, 법정코드 받아오기
+					fetch("/api/location-info", {
+						method: "POST",
 						headers: {
-							Authorization: KAKAO_REST_API_KEY
-						}
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({ roadAddress })
 					})
-							.then(response => response.json())
-							.then(result => {
-								const addressInfo = result.documents[0];
-								const x = addressInfo.x;
-								const y = addressInfo.y;
-
-								// 좌표 → 법정동코드 변환
-								return fetch(`https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${x}&y=${y}`, {
-									headers: {
-										Authorization: KAKAO_REST_API_KEY
-									}
-								});
+							.then(res => res.json())
+							.then(data => {
+								// 받은 값을 숨김 필드에 넣기
+								document.getElementById("storeLegalCode").value = data.storeLegalCode || '';
+								document.getElementById("storeLat").value = data.storeLat || '';
+								document.getElementById("storeLng").value = data.storeLng || '';
 							})
-							.then(response => response.json())
-							.then(result => {
-								const legalCode = result.documents.find(item => item.region_type === 'B')?.code;
-								document.getElementById("legalCode").value = legalCode || '';
-							})
-							.catch(error => {
-								console.error("법정동 코드 가져오기 실패:", error);
-							});
+							.catch(err => console.error("주소 정보 조회 실패:", err));
 				}
 			}).open();
 		}
@@ -522,6 +560,7 @@
 		document.getElementById("searchAddressBtn").addEventListener("click", openPostcode);
 		document.getElementById("address-api").addEventListener("click", openPostcode);
 	</script>
+
 
 	<!-- 전화번호 입력할 때 하이픈 넣기 -->
 	<script>
@@ -663,14 +702,14 @@
 		// 토핑 태그
 		function setupToppingTags(wrapper) {
 			const tagContainer = wrapper.querySelector('.topping-tags');
-			const hiddenInput = wrapper.querySelector('input[name$=".defaultToppingIds"]'); // 이름 정확히 맞춤
+			const hiddenInputsContainer = wrapper.querySelector('.default-toppings-container');
 
-			if (!tagContainer || !hiddenInput) return;
+			if (!tagContainer || !hiddenInputsContainer) return;
 
-			// 초기값에서 선택된 토핑들 배열로 파싱
-			let selectedValues = hiddenInput.value ? hiddenInput.value.split(',') : [];
+			// 초기 선택된 토핑 배열 (hidden input이 여러 개라면 값을 모음)
+			let selectedValues = [...hiddenInputsContainer.querySelectorAll('input')].map(input => input.value);
 
-			// 초기 선택된 토핑에 .selected 클래스 부여
+			// 초기 선택 토핑에 클래스 부여
 			tagContainer.querySelectorAll('.topping-tag').forEach(tag => {
 				const value = tag.dataset.value;
 				if (selectedValues.includes(value)) {
@@ -681,14 +720,23 @@
 				tag.addEventListener('click', () => {
 					tag.classList.toggle('selected');
 
-					// 현재 선택된 모든 토핑 값 다시 수집해서 hidden input 갱신
-					const selected = [...tagContainer.querySelectorAll('.topping-tag.selected')]
-							.map(el => el.dataset.value);
-					hiddenInput.value = selected.join(',');
+					// 선택된 토핑 값 리스트
+					const selected = [...tagContainer.querySelectorAll('.topping-tag.selected')].map(el => el.dataset.value);
+
+					// 기존 숨김 필드 모두 삭제
+					hiddenInputsContainer.innerHTML = '';
+
+					// 선택된 토핑 별로 숨김 input 생성
+					selected.forEach(val => {
+						const input = document.createElement('input');
+						input.type = 'hidden';
+						input.name = wrapper.querySelector('input[name$=".defaultToppingIds"]')?.name || 'defaultToppingIds';
+						input.value = val;
+						hiddenInputsContainer.appendChild(input);
+					});
 				});
 			});
 		}
-
 
 		// 최초 메뉴에 세팅
 		setupMenuImageUpload(template);
