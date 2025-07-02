@@ -7,7 +7,6 @@ import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.service.BoardService;
 import noodlezip.common.auth.MyUserDetails;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
