@@ -100,9 +100,17 @@ public class StoreService {
 
                         StoreWeekSchedule schedule = new StoreWeekSchedule();
                         schedule.setId(id);
-                        schedule.setOpeningAt(s.getOpeningAt());
-                        schedule.setClosingAt(s.getClosingAt());
                         schedule.setIsClosedDay(s.getIsClosedDay());
+
+                        // 스케줄 저장 시 openingAt == null && isClosedDay == true 라면 → 영업하지 않는 날로 처리
+                        if (Boolean.TRUE.equals(s.getIsClosedDay())) {
+                            schedule.setOpeningAt(null);
+                            schedule.setClosingAt(null);
+                        } else {
+                            schedule.setOpeningAt(s.getOpeningAt());
+                            schedule.setClosingAt(s.getClosingAt());
+                        }
+
                         return schedule;
                     }).collect(Collectors.toList());
 
@@ -189,6 +197,7 @@ public class StoreService {
         return ramenService.getAllToppings();
     }
 
+/*
     // 등록요청매장 조회
     public Map<String, Object> findRegistList(Pageable pageable) {
 
@@ -198,6 +207,5 @@ public class StoreService {
         return map;
     }
 
-
-
+*/
 }
