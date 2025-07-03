@@ -96,19 +96,15 @@
         </div>
       </div>
       <div class="list_general">
-        <ul>
+        <ul id="storeListContainer">
           <li th:each="store : ${registList}">
             <figure><img th:src="@{/admin_section/img/item_1.jpg}" alt=""></figure>
             <small>매장 등록 요청</small>
-            <h4 th:text="${store.storeName}">매장 이름</h4>
+            <h4 th:text="|매장명 : ${store.storeName}|">매장 이름</h4>
+            <p><strong th:text="|등록자 ID : ${store.loginId}|"></strong></p>
+            <p><strong th:text="|등록일 : ${store.createdAt}|"></strong></p>
             <p>
-              <strong th:text="|등록자 ID : ${store.loginId}|"></strong>
-            </p>
-            <p>
-              <strong th:text="|등록일 : ${store.createdAt}|"></strong>
-            </p>
-            <p>
-              <a href="매장상세" class="btn_1 gray">
+              <a href="#" class="btn_1 gray">
                 <i class="fa fa-fw fa-eye"></i> View item
               </a>
             </p>
@@ -117,21 +113,22 @@
       </div>
     <!-- /box_general-->
       <nav aria-label="...">
-        <ul class="pagination pagination-sm add_bottom_30">
+        <ul class="pagination pagination-sm add_bottom_30" id="paginationArea">
           <li class="page-item" th:classappend="${isFirst} ? 'disabled'">
-            <a class="page-link" th:href="@{/admin/registList(page=${page - 1})}">이전</a>
+            <a class="page-link" href="#" th:onclick="${!isFirst} ? 'loadStoreList(' + (${page - 1}) + '); return false;' : null">이전</a>
           </li>
 
           <li class="page-item"
               th:each="p : ${#numbers.sequence(beginPage, endPage)}"
               th:classappend="${p == page} ? 'active'">
             <a class="page-link"
-               th:href="@{/admin/registList(page=${p})}"
-               th:text="${p}">1</a>
+               href="#"
+               th:text="${p}"
+               th:onclick="'loadStoreList(' + ${p} + '); return false;'"></a>
           </li>
 
           <li class="page-item" th:classappend="${isLast} ? 'disabled'">
-            <a class="page-link" th:href="@{/admin/registList(page=${page + 1})}">다음</a>
+            <a class="page-link" href="#" th:onclick="${!isLast} ? 'loadStoreList(' + (${page + 1}) + '); return false;' : null">다음</a>
           </li>
         </ul>
       </nav>
@@ -183,6 +180,64 @@
 <script th:src="@{/admin_section/vendor/jquery.magnific-popup.min.js}"></script>
 <!-- Custom scripts for all pages-->
 <script th:src="@{/admin_section/js/admin.js}"></script>
+
+<script>
+  function loadStoreList(page) {
+    fetch(`/admin/registList/data?page=${page}`)
+      .then(response => response.json())
+      .then(data => {
+        const listHtml = data.content.map(store => `
+          <li>
+            <figure><img src="/admin_section/img/item_1.jpg" alt=""></figure>
+            <small>매장 등록 요청</small>
+            <h4>${store.storeName}</h4>
+            <p><strong>등록자 ID : ${store.loginId}</strong></p>
+            <p><strong>등록일 : ${store.createdAt}</strong></p>
+            <p>
+              <a href="#" class="btn_1 gray"><i class="fa fa-fw fa-eye"></i> View item</a>
+            </p>
+          </li>
+        `).join('');
+
+        document.getElementById("storeListContainer").innerHTML = listHtml;
+
+        // 페이징 UI 렌더링
+        const pagination = document.getElementById("paginationArea");
+        let html = '';
+
+        if (!data.first) {
+          html += `<li class="page-item"><a class="page-link" href="#" onclick="loadStoreList(${page}); return false;">이전</a></li>`;
+        } else {
+          html += `<li class="page-item disabled">
+             <a class="page-link" href="#" tabindex="-1" aria-disabled="true">이전</a>
+           </li>`;
+        }
+
+
+        const current = page;
+        const total = data.totalPages;
+
+        const start = Math.max(0, current - 2);
+        const end = Math.min(total - 1, current + 2);
+
+        for (let i = start; i <= end; i++) {
+          html += `<li class="page-item ${i === current ? 'active' : ''}">
+              <a class="page-link" href="#" onclick="loadStoreList(${i}); return false;">${i + 1}</a>
+           </li>`;
+        }
+
+        if (!data.last) {
+          html += `<li class="page-item"><a class="page-link" href="#" onclick="loadStoreList(${page}); return false;">다음</a></li>`;
+        } else {
+          html += `<li class="page-item disabled">
+             <a class="page-link" href="#" tabindex="-1" aria-disabled="true">다음</a>
+           </li>`;
+        }
+
+        pagination.innerHTML = html;
+      });
+  }
+</script>
 </body>
 
 </html>
