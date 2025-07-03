@@ -85,30 +85,30 @@
       <div class="header_box">
         <h2 class="d-inline-block">Listings</h2>
         <div class="filter">
-          <!--  게시글, 댓글, 마이페이지-->
+          <!--          조건변경 (상태에 따라 보기로 바꿀듯?)-->
           <div class="styled-select short">
-            <select name="orderby">
-              <option value="Any time">게시글</option>
-              <option value="Latest">댓글</option>
-              <option value="Oldest">마이페이지</option>
-            </select>
+            <form method="get" action="#" id="filterForm">
+              <select name="type" onchange="document.getElementById('filterForm').submit()">
+                <option value="ALL" th:selected="${type == 'ALL'}">전체</option>
+                <option value="POST" th:selected="${type == 'POST'}">게시글</option>
+                <option value="COMMENT" th:selected="${type == 'COMMENT'}">댓글</option>
+                <option value="USER" th:selected="${type == 'USER'}">사용자</option>
+              </select>
+            </form>
           </div>
         </div>
       </div>
       <div class="list_general">
-        <ul>
-          <li th:each="store : ${registList}">
+        <ul id="storeListContainer">
+          <li th:each="report : ${reportList}">
             <figure><img th:src="@{/admin_section/img/item_1.jpg}" alt=""></figure>
-            <small>매장 등록 요청</small>
-            <h4 th:text="${store.storeName}">매장 이름</h4>
+            <small>신고내역</small>
+            <h4 th:text="|신고유형 : ${report.reportType}|"></h4>
+            <p><strong th:text="|신고자 아이디 : ${report.loginId}|"></strong></p>
+            <p><strong th:text="|신고 내용 : ${report.content}|"></strong></p>
+            <p><strong th:text="|신고일시 : ${report.createdAt}|"></strong></p>
             <p>
-              <strong th:text="|등록자 ID : ${store.loginId}|"></strong>
-            </p>
-            <p>
-              <strong th:text="|등록일 : ${store.createdAt}|"></strong>
-            </p>
-            <p>
-              <a href="매장상세" class="btn_1 gray">
+              <a href="#" class="btn_1 gray">
                 <i class="fa fa-fw fa-eye"></i> View item
               </a>
             </p>
@@ -117,21 +117,22 @@
       </div>
       <!-- /box_general-->
       <nav aria-label="...">
-        <ul class="pagination pagination-sm add_bottom_30">
+        <ul class="pagination pagination-sm add_bottom_30" id="paginationArea">
           <li class="page-item" th:classappend="${isFirst} ? 'disabled'">
-            <a class="page-link" th:href="@{/admin/registList(page=${page - 1})}">이전</a>
+            <a class="page-link" href="#" th:onclick="${!isFirst} ? 'loadReportList(' + (${page - 1}) + '); return false;' : null">이전</a>
           </li>
 
           <li class="page-item"
               th:each="p : ${#numbers.sequence(beginPage, endPage)}"
               th:classappend="${p == page} ? 'active'">
             <a class="page-link"
-               th:href="@{/admin/registList(page=${p})}"
-               th:text="${p}">1</a>
+               href="#"
+               th:text="${p}"
+               th:onclick="'loadReportList(' + ${p} + '); return false;'"></a>
           </li>
 
           <li class="page-item" th:classappend="${isLast} ? 'disabled'">
-            <a class="page-link" th:href="@{/admin/registList(page=${page + 1})}">다음</a>
+            <a class="page-link" href="#" th:onclick="${!isLast} ? 'loadReportList(' + (${page + 1}) + '); return false;' : null">다음</a>
           </li>
         </ul>
       </nav>
@@ -172,17 +173,78 @@
   </div>
 </div>
 
-  <!-- Bootstrap core JavaScript-->
-  <script th:src="@{/admin_section/vendor/jquery/jquery.min.js}"></script>
-  <script th:src="@{/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-  <!-- Core plugin JavaScript-->
-  <script th:src="@{/admin_section/vendor/jquery-easing/jquery.easing.min.js}"></script>
-  <!-- Page level plugin JavaScript-->
-  <script th:src="@{/admin_section/vendor/datatables/jquery.dataTables.js}"></script>
-  <script th:src="@{/admin_section/vendor/datatables/dataTables.bootstrap4.js}"></script>
-  <script th:src="@{/admin_section/vendor/jquery.magnific-popup.min.js}"></script>
-  <!-- Custom scripts for all pages-->
-  <script th:src="@{/admin_section/js/admin.js}"></script>
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/admin_section/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- Core plugin JavaScript-->
+<script th:src="@{/admin_section/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<!-- Page level plugin JavaScript-->
+<script th:src="@{/admin_section/vendor/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/admin_section/vendor/datatables/dataTables.bootstrap4.js}"></script>
+<script th:src="@{/admin_section/vendor/jquery.magnific-popup.min.js}"></script>
+<!-- Custom scripts for all pages-->
+<script th:src="@{/admin_section/js/admin.js}"></script>
+
+<script>
+  function loadReportList(page) {
+    fetch(`/admin/reportList/data?page=${page - 1}&type=${selectedType}\`)`) // 0-based index로 서버 요청
+      .then(response => response.json())
+      .then(data => {
+        if (!Array.isArray(data.reportList)) return;
+
+        const listHtml = data.reportList.map(report => `
+          <li>
+            <figure><img src="/admin_section/img/item_1.jpg" alt=""></figure>
+            <small>신고내역</small>
+            <h4>신고유형 : ${report.reportType}</h4>
+            <p><strong>신고자 아이디: ${report.loginId}</strong></p>
+            <p><strong>신고 내용 : ${report.content}</strong></p>
+            <p><strong>신고일시 : ${report.createdAt}</strong></p>
+            <p>
+              <a href="#" class="btn_1 gray"><i class="fa fa-fw fa-eye"></i> View item</a>
+            </p>
+          </li>
+        `).join('');
+
+        document.getElementById("storeListContainer").innerHTML = listHtml;
+
+        // 페이지네이션 렌더링
+        const pagination = document.getElementById("paginationArea");
+        let html = '';
+
+        if (!data.isFirst) {
+          html += `<li class="page-item">
+                     <a class="page-link" href="#" onclick="loadReportList(${data.page - 1}); return false;">이전</a>
+                   </li>`;
+        } else {
+          html += `<li class="page-item disabled">
+                     <a class="page-link" href="#">이전</a>
+                   </li>`;
+        }
+
+        for (let i = data.beginPage; i <= data.endPage; i++) {
+          html += `<li class="page-item ${i === data.page ? 'active' : ''}">
+                     <a class="page-link" href="#" onclick="loadReportList(${i}); return false;">${i}</a>
+                   </li>`;
+        }
+
+        if (!data.isLast) {
+          html += `<li class="page-item">
+                     <a class="page-link" href="#" onclick="loadReportList(${data.page + 1}); return false;">다음</a>
+                   </li>`;
+        } else {
+          html += `<li class="page-item disabled">
+                     <a class="page-link" href="#">다음</a>
+                   </li>`;
+        }
+
+        pagination.innerHTML = html;
+      })
+      .catch(error => {
+        console.error("비동기 요청 실패:", error);
+      });
+  }
+</script>
 </body>
 
 </html>

@@ -2,13 +2,8 @@ package noodlezip.report.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.common.auth.MyUserDetails;
-import noodlezip.report.dto.ReportDto;
+import noodlezip.report.dto.ReportRequestDto;
 import noodlezip.report.service.ReportService;
-import noodlezip.user.entity.User;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +19,7 @@ public class ReportController {
     @PostMapping("/report")
     @ResponseBody
     public String submitReport(
-            @ModelAttribute ReportDto dto,
+            @ModelAttribute ReportRequestDto dto,
             @RequestParam(required = false) List<String> reasons,
             @RequestParam(required = false) String content
     ) {
