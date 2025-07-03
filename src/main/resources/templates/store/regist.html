@@ -41,14 +41,14 @@
 		<!-- ❗regist.html용 Spring 연동 폼❗ -->
 
 		<!-- form 태그 시작 -->
-		<form method="post" action="/store/regist" enctype="multipart/form-data" id="register">
+		<form method="post" action="/store/regist" enctype="multipart/form-data" id="register" autocomplete="off">
 			<div class="card mb-4">
 				<h2 class="form_title">가게 등록</h2>
 				<div class="card-body">
 
 					<!-- ① 이미지 업로드 -->
-					<div id="image-upload-area" style="border: 2px dashed #ccc; padding: 40px 30px 30px 30px; text-align: center; cursor: pointer;">
-						<p style="margin-top: 12px;">Drop files here to upload</p>
+					<div id="image-upload-area" style="border: 2px dashed #ccc; padding: 40px 30px 30px 30px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+						<p id="upload-text" style="margin-top: 12px;">Drop files here to upload</p>
 						<input type="file" id="image-input" name="storeMainImage" accept="image/*" style="display: none;" />
 						<img id="preview-image" src="" style="max-width: 100%; display: none; margin-top: 10px;" />
 						<input type="hidden" name="approvalStatus" value="WAITING" />
@@ -57,13 +57,41 @@
 
 					<!-- ② 가게명 / ③ 도로명 주소 API / ④ 전화번호 -->
 					<div class="row mb-3">
+					<div class="row mb-3">
 						<div class="col-md-6 position-relative">
 							<!-- 가게명 -->
 							<input type="text" name="storeName" class="form-control mb-3" placeholder="가게명" required />
 							<!-- 전화번호 -->
+							<!-- 전화번호 -->
 							<div class="form-group mb-0">
-								<label for="phone" style="font-weight: normal;">전화번호</label>
-								<input type="text" id="phone" name="phone" class="form-control" placeholder="010-1234-5678" maxlength="13" />
+								<label for="phonePrefix" style="font-weight: normal;">전화번호</label>
+								<div class="d-flex gap-2">
+									<!-- 앞자리 선택 -->
+									<select id="phonePrefix" name="phonePrefix" class="form-select" style="max-width: 100px;" required>
+										<option value="" disabled selected>선택</option>
+										<option value="02">02</option>
+										<option value="031">031</option>
+										<option value="032">032</option>
+										<option value="033">042</option>
+										<option value="010">051</option>
+										<option value="011">053</option>
+										<option value="032">062</option>
+										<option value="033">033</option>
+										<option value="010">041</option>
+										<option value="011">043</option>
+										<option value="032">054</option>
+										<option value="033">055</option>
+										<option value="010">061</option>
+										<option value="011">063</option>
+										<option value="044">044</option>
+										<!-- 필요한 번호 추가 -->
+									</select>
+
+									<!-- 나머지 번호 입력 -->
+									<input type="text" id="phoneRest" name="phoneRest" class="form-control" placeholder="1234-5678" maxlength="9" required />
+								</div>
+								<!-- 합친 전화번호를 form submit 시 hidden 필드로 만들기 -->
+								<input type="hidden" id="phone" name="phone" />
 							</div>
 						</div>
 
@@ -75,7 +103,17 @@
 								<!-- 우편번호 (hidden) -->
 								<input type="hidden" id="zipcode" name="zipcode" />
 								<!-- 상세주소 -->
-								<input type="text" id="detailAddress" name="detailAddress" class="form-control mt-2" placeholder="상세 주소 입력" />
+								<input
+										type="text"
+										id="store_detail_input"
+										name="store_detail_input"
+										class="form-control mt-2"
+										placeholder="상세 주소 입력"
+										autocomplete="off"
+										autocorrect="off"
+										spellcheck="false"
+										inputmode="text"
+								/>
 
 								<!-- 숨김 필드: 위도, 경도, 법정코드 -->
 								<input type="hidden" id="storeLat" name="storeLat" />
@@ -178,7 +216,8 @@
 
 						<!-- 지역카드 사용 가능 -->
 						<div class="form-check d-inline-block me-4" style="vertical-align: middle;">
-							<input type="checkbox" id="regionCardCheck" name="isLocalCard" class="form-check-input" />
+							<input type="hidden" name="isLocalCard" value="false" />
+							<input type="checkbox" id="regionCardCheck" name="isLocalCard" class="form-check-input" value="true" />
 							<label for="regionCardCheck" class="form-check-label">지역카드 사용 가능</label>
 						</div>
 
@@ -200,7 +239,7 @@
 								<label class="form-check-label" for="parkingPaid">유료</label>
 							</div>
 							<div class="form-check form-check-inline">
-								<input class="form-check-input" type="radio" name="hasParking" id="parkingNone" value="NONE">
+								<input class="form-check-input" type="radio" name="hasParking" id="parkingNone" value="NOT_AVAILABLE">
 								<label class="form-check-label" for="parkingNone">불가</label>
 							</div>
 						</div>
@@ -216,27 +255,26 @@
 								id="owner-intro"
 								name="ownerComment"
 								class="form-control"
+								rows="8"
 								placeholder="매장 소개를 적어주세요."
-								rows="4"
-								style="position: relative; background: transparent;"
+								style="white-space: pre-line; line-height: 1.5; height: 140px;"
 						></textarea>
-
-						<div id="owner-intro-hint"
-							 style="
-						  position: absolute;
-						  top: 70px; /* placeholder보다 아래 */
-						  left: 16px;
-						  color: #888;
-						  font-size: 0.9em;
-						  pointer-events: none;
-						  white-space: pre-line;
-						  line-height: 1.2;
-						  user-select: none;
-						  opacity: 1;
-						  transition: opacity 0.3s;
-					   ">
+						<div id="owner-intro-hint" style="
+								position: absolute;
+								top: 48px;
+								left: 16px;
+								color: #888;
+								font-size: 0.9em;
+								pointer-events: none;
+								white-space: pre-line;
+								line-height: 1.3;
+								user-select: none;
+								opacity: 1;
+								transition: opacity 0.3s;
+							">
 							• 주말/공휴일 영업 여부<br>• 유료 주차(ex: 1시간당 2,000원) 안내
 						</div>
+
 					</div>
 
 					<hr>
@@ -257,7 +295,14 @@
 								<div class="row">
 									<!-- 메뉴명 -->
 									<div class="col-md-6 mb-2">
-										<input type="text" name="menus[0].menuName" class="form-control form-control-sm" placeholder="메뉴명" required>
+										<input
+												type="text"
+												name="menus[0].menuLabel"
+												id="menu_label_0"
+												class="form-control"
+												placeholder="메뉴명 입력"
+												autocomplete="off"
+										/>
 									</div>
 
 									<!-- 가격 -->
@@ -271,7 +316,7 @@
 									<!-- 카테고리 선택 및 육수 선택 묶음 -->
 									<div class="col-md-8 mb-2 d-flex gap-2">
 										<!-- 카테고리 드롭다운 -->
-										<select name="menus[0].ramenCategoryId" class="form-select form-select-sm" style="flex: 1;">
+										<select name="menus[0].ramenCategoryId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
 											<option disabled selected>카테고리 선택</option>
 											<option value="돈코츠">돈코츠 (Tonkotsu, 돼지뼈 육수)</option>
 											<option value="쇼유">쇼유 (Shoyu, 간장 베이스)</option>
@@ -285,7 +330,7 @@
 										</select>
 
 										<!-- 육수 선택 드롭다운 -->
-										<select name="menus[0].ramenSoupId" class="form-select form-select-sm" style="flex: 1;">
+										<select name="menus[0].ramenSoupId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
 											<option disabled selected>육수 선택</option>
 											<option value="1">돈코츠 (돼지뼈)</option>
 											<option value="2">소유 (간장)</option>
@@ -333,9 +378,16 @@
 									</div>
 
 									<!-- 추가 토핑 입력 -->
-									<div class="col-md-12 mb-2">
-										<input type="text" name="menus[0].extraTopping" class="form-control form-control-sm" placeholder="이 가게만의 추가 토핑 (예: 매운 멘마)">
+									<!-- 추가 토핑 입력 컨테이너 -->
+									<div id="extra-toppings-container">
+										<div class="extra-topping-item d-flex align-items-center mb-2">
+											<input type="text" name="menus[0].extraToppings[0]" class="form-control form-control-sm" placeholder="추가 토핑 (예: 매운 멘마)">
+											<button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeExtraTopping(this)">삭제</button>
+										</div>
 									</div>
+
+									<button type="button" class="btn btn-sm btn-outline-secondary" style="width: 80px;" onclick="addExtraTopping(0)">+ 추가 토핑</button>
+
 
 									<!-- 삭제 버튼 -->
 									<div class="col-12 text-end">
@@ -352,6 +404,7 @@
 						</div>
 					</div>
 				</div>
+			</div>
 			</div>
 		</form>
 
@@ -459,9 +512,9 @@
 	<!--/footer-->
 
 	<div id="toTop"></div><!-- Back to top button -->
-	
+
 	<div class="layer"></div><!-- Opacity Mask Menu Mobile -->
-	
+
 	<!-- Sign In Modal -->
 	<div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
 		<div class="modal_header">
@@ -535,7 +588,7 @@
 
 					document.getElementById("address-api").value = roadAddress;
 					document.getElementById("zipcode").value = zonecode;
-					document.getElementById("detailAddress").focus();
+					document.getElementById("store_detail_input").focus();
 
 					// 서버에 도로명 주소 전송 -> 위도, 경도, 법정코드 받아오기
 					fetch("/api/location-info", {
@@ -562,54 +615,52 @@
 	</script>
 
 
-	<!-- 전화번호 입력할 때 하이픈 넣기 -->
+	<!-- 전화번호 -->
 	<script>
-		const phoneInput = document.getElementById('phone');
-		phoneInput.addEventListener('input', function (e) {
-			let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
-			if (value.length < 4) {
-				e.target.value = value;
-			} else if (value.length < 8) {
-				e.target.value = value.slice(0, 3) + '-' + value.slice(3);
-			} else {
-				e.target.value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+		const phonePrefix = document.getElementById('phonePrefix');
+		const phoneRest = document.getElementById('phoneRest');
+		const phoneHidden = document.getElementById('phone');
+
+		// phoneRest 입력 시 하이픈 자동 추가
+		phoneRest.addEventListener('input', e => {
+			let val = e.target.value.replace(/[^0-9]/g, '');
+			if (val.length > 4) {
+				val = val.slice(0, 4) + '-' + val.slice(4, 8);
 			}
+			e.target.value = val;
+		});
+
+		// 폼 제출 직전 hidden input에 합쳐서 숫자만 저장
+		document.getElementById('register').addEventListener('submit', e => {
+			const prefix = phonePrefix.value;
+			const rest = phoneRest.value.replace(/-/g, '');
+
+			if (!prefix || !rest) {
+				alert('전화번호를 올바르게 입력해주세요.');
+				e.preventDefault();
+				return false;
+			}
+
+			phoneHidden.value = prefix + rest;
 		});
 	</script>
 
 	<!-- 대표이미지 업로드 미리보기 -->
 	<script>
-		const uploadArea = document.getElementById('image-upload-area');
-		const imageInput = document.getElementById('image-input');
-		const previewImage = document.getElementById('preview-image');
-
-		uploadArea.addEventListener('click', () => imageInput.click());
-
-		uploadArea.addEventListener('dragover', (e) => {
-			e.preventDefault();
-			uploadArea.style.borderColor = '#007bff';
+		document.getElementById('image-upload-area').addEventListener('click', function () {
+			document.getElementById('image-input').click();
 		});
 
-		uploadArea.addEventListener('dragleave', () => {
-			uploadArea.style.borderColor = '#ccc';
-		});
-
-		uploadArea.addEventListener('drop', (e) => {
-			e.preventDefault();
-			uploadArea.style.borderColor = '#ccc';
-			const file = e.dataTransfer.files[0];
+		document.getElementById('image-input').addEventListener('change', function (event) {
+			const file = event.target.files[0];
 			if (file) {
-				imageInput.files = e.dataTransfer.files;
-				previewImage.src = URL.createObjectURL(file);
-				previewImage.style.display = 'block';
-			}
-		});
-
-		imageInput.addEventListener('change', () => {
-			const file = imageInput.files[0];
-			if (file) {
-				previewImage.src = URL.createObjectURL(file);
-				previewImage.style.display = 'block';
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					const img = document.getElementById('preview-image');
+					img.src = e.target.result;
+					img.style.display = 'block';
+				};
+				reader.readAsDataURL(file);
 			}
 		});
 	</script>
@@ -637,16 +688,25 @@
 				}
 				if (input.type === 'radio' || input.type === 'checkbox') {
 					input.checked = false;
+				} else if (input.type === 'file') {
+					// 파일 input 초기화
+					input.value = '';
 				} else {
 					input.value = '';
 				}
 			});
 
+			// 이미지 미리보기 초기화
+			const preview = clone.querySelector('.menu-preview-image');
+			if (preview) {
+				preview.src = '';
+				preview.style.display = 'none';
+			}
+
 			setupMenuImageUpload(clone);
 			setupToppingTags(clone);
 			updateRemoveMenuButtons(clone);
 
-			// 버튼 앞에 삽입
 			menuList.insertBefore(clone, addButton);
 
 			menuIndex++;
@@ -761,6 +821,56 @@
 
 		textarea.addEventListener('input', updateHintVisibility);
 		window.addEventListener('DOMContentLoaded', updateHintVisibility);
+	</script>
+
+	<!-- 지역카드 -->
+	<script>
+		document.querySelector("form").addEventListener("submit", function () {
+			const regionCard = document.getElementById("regionCardCheck");
+			if (!regionCard.checked) {
+				const hiddenInput = document.createElement("input");
+				hiddenInput.type = "hidden";
+				hiddenInput.name = "isLocalCard";
+				hiddenInput.value = "false";
+				this.appendChild(hiddenInput);
+			}
+		});
+	</script>
+
+	<!-- 추가 토핑 -->
+	<script>
+		function addExtraTopping(menuIndex) {
+			const container = document.querySelector(`#extra-toppings-container-${menuIndex}`) || document.getElementById('extra-toppings-container');
+			const count = container.querySelectorAll('input').length;
+
+			const wrapper = document.createElement('div');
+			wrapper.className = 'extra-topping-item d-flex align-items-center mb-2';
+
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.name = `menus[${menuIndex}].extraToppings[${count}]`;
+			input.className = 'form-control form-control-sm';
+			input.placeholder = '추가 토핑 (예: 매운 멘마)';
+
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'btn btn-sm btn-outline-danger ms-2';
+			btn.textContent = '삭제';
+			btn.onclick = function () {
+				container.removeChild(wrapper);
+				// 이름 재정렬 필요하면 여기서 다시 업데이트 해줘야 함
+			};
+
+			wrapper.appendChild(input);
+			wrapper.appendChild(btn);
+
+			container.appendChild(wrapper);
+		}
+
+		function removeExtraTopping(button) {
+			const wrapper = button.parentElement;
+			wrapper.parentElement.removeChild(wrapper);
+		}
 	</script>
 
 </body>
