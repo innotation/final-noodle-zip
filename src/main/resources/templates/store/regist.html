@@ -297,6 +297,15 @@
 										</div>
 									</div>
 
+									<!---->
+
+<!--									<input type="hidden" id="storeLat" name="storeLat">-->
+<!--									<input type="hidden" id="storeLng" name="storeLng">-->
+<!--									<input type="hidden" id="storeLegalCode" name="storeLegalCode">-->
+
+
+									<!---->
+
 									<!-- 추가 토핑 입력 -->
 									<!-- 추가 토핑 입력 컨테이너 -->
 									<div id="extra-toppings-container" style="display: none;">
@@ -498,7 +507,74 @@
 
 	<!-- 카카오 다음 우편번호 API 스크립트 -->
 	<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js" charset="utf-8"></script>
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d8455fa8f84607ce70b0cd1184c74538&libraries=services"></script>
 
+
+	<h2>주소로 좌표 조회 테스트</h2>
+
+	<input type="text" id="address-input" placeholder="도로명 주소 입력" style="width:300px">
+	<button id="test-btn">좌표 조회</button>
+
+	<p id="result"></p>
+
+
+	<script>
+		function getCoordinatesByAddress(address, callback) {
+			const geocoder = new kakao.maps.services.Geocoder();
+
+			geocoder.addressSearch(address, function(result, status) {
+				if (status === kakao.maps.services.Status.OK) {
+					const lat = parseFloat(result[0].y);
+					const lng = parseFloat(result[0].x);
+					let legalCode = null;
+					if (result[0].road_address) {
+						legalCode = result[0].road_address.b_code;
+					} else if (result[0].address) {
+						legalCode = result[0].address.b_code;
+					}
+					console.log("위도:", lat);
+					console.log("경도:", lng);
+					console.log("법정동 코드:", legalCode);
+
+					if (callback) {
+						callback({
+							storeLat: lat,
+							storeLng: lng,
+							storeLegalCode: legalCode
+						});
+					}
+				} else {
+					console.warn("주소를 좌표로 변환할 수 없습니다. 상태:", status);
+					alert("주소를 찾을 수 없습니다. 정확한 도로명 주소를 입력해주세요.");
+				}
+			});
+		}
+
+		// 예시: 주소 입력 필드 값으로부터 실행
+		// document.getElementById("address-api").addEventListener("blur", function() {
+		// 	const roadAddress = this.value;
+		// 	getCoordinatesByAddress(roadAddress, function(locationInfo) {
+		// 		// 결과를 hidden input에 넣거나 폼에 반영
+		// 		document.getElementById("storeLat").value = locationInfo.storeLat;
+		// 		document.getElementById("storeLng").value = locationInfo.storeLng;
+		// 		document.getElementById("storeLegalCode").value = locationInfo.storeLegalCode;
+		// 	});
+
+		document.getElementById("test-btn").addEventListener("click", function () {
+			const address = document.getElementById("address-input").value;
+			if (!address) {
+				alert("주소를 입력해주세요.");
+				return;
+			}
+
+			getCoordinatesByAddress(address, function (location) {
+				document.getElementById("result").innerText =
+						`위도: ${location.storeLat}\n경도: ${location.storeLng}\n법정동 코드: ${location.storeLegalCode}`;
+			});
+
+
+		});
+	</script>
 	<script>
 		/* ==============================
            카카오 주소 검색
@@ -513,24 +589,25 @@
 					document.getElementById("zipcode").value = zonecode;
 					document.getElementById("store_detail_input").focus();
 
-					fetch("/api/location-info", {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ roadAddress })
-					})
-							.then(res => res.json())
-							.then(data => {
-								document.getElementById("storeLegalCode").value = data.storeLegalCode || '';
-								document.getElementById("storeLat").value = data.storeLat || '';
-								document.getElementById("storeLng").value = data.storeLng || '';
-							})
-							.catch(err => console.error("주소 정보 조회 실패:", err));
-				}
-			}).open();
-		}
-
-		document.getElementById("searchAddressBtn").addEventListener("click", openPostcode);
-		document.getElementById("address-api").addEventListener("click", openPostcode);
+		// 			fetch("/location/info", {
+		// 				method: "POST",
+		// 				headers: { "Content-Type": "application/json" },
+		// 				body: JSON.stringify({ roadAddress })
+		// 			})
+		// 					.then(res => res.json())
+		// 					.then(data => {
+		// 						console.log("roadAddress: {}", roadAddress);
+		// 						document.getElementById("storeLegalCode").value = data.storeLegalCode || '';
+		// 						document.getElementById("storeLat").value = data.storeLat || '';
+		// 						document.getElementById("storeLng").value = data.storeLng || '';
+		// 					})
+		// 					.catch(err => console.error("주소 정보 조회 실패:", err));
+		// 		}
+		// 	}).open();
+		// }
+		//
+		// document.getElementById("searchAddressBtn").addEventListener("click", openPostcode);
+		// document.getElementById("address-api").addEventListener("click", openPostcode);
 
 		/* ==============================
            전화번호 처리

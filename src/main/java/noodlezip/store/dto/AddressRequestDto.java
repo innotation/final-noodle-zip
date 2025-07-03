@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AddressRequestDto {
-    private String address;
+    private String roadAddress;
 }
 // 클라이언트 요청용

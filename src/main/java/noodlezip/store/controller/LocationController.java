@@ -1,21 +1,24 @@
 package noodlezip.store.controller;
 
+import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import noodlezip.store.dto.AddressRequestDto;
 import noodlezip.store.dto.LocationInfoDto;
 import noodlezip.store.service.LocationService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api")
+@Controller
+@RequestMapping("/location")
 @RequiredArgsConstructor
 public class LocationController {
 
     private final LocationService locationService;
 
-    @PostMapping("/location-info")
-    public ResponseEntity<LocationInfoDto> getLocationInfo(@RequestBody AddressRequestDto dto) {
-        return ResponseEntity.ok(locationService.getLocationInfo(dto.getAddress()));
+    @PostMapping("/info")
+    @ResponseBody
+    public LocationInfoDto getLocationInfo(@RequestBody AddressRequestDto dto) {
+        System.out.println(dto.getRoadAddress());
+        return locationService.getLocationInfo(dto.getRoadAddress());
     }
 }

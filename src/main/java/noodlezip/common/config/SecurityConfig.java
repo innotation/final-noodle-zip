@@ -27,7 +27,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
                     "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**", "/swagger-ui/**",
-                    "/send-verification-code", "/fragments/**", "/search/**", "/store/**").permitAll();
+                    "/send-verification-code", "/fragments/**", "/search/**", "/store/**", "location/**").permitAll();
             auth.requestMatchers("/admin/**").hasAuthority("ADMIN");
             auth.requestMatchers("/user/**").hasAuthority("USER");
             auth.anyRequest().authenticated();

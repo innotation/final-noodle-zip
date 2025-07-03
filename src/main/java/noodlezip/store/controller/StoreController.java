@@ -2,7 +2,6 @@ package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.auth.MyUserDetails;
-import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
 import noodlezip.user.repository.UserRepository;
