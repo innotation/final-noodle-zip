@@ -1,6 +1,7 @@
 package noodlezip.store.dto;
 
 import lombok.*;
+import noodlezip.store.entity.Menu;
 
 import java.util.List;
 
@@ -20,4 +21,5 @@ public class MenuRequestDto {
     private Integer ramenSoupId;
 
     private List<Long> defaultToppingIds; // 기본 토핑 ID 목록 (다대다 관계)
+
 }

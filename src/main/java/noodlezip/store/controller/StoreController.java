@@ -1,24 +1,21 @@
 package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.store.dto.MenuDetailDto;
 import noodlezip.store.dto.StoreDto;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
-import noodlezip.user.repository.UserRepository;
 import noodlezip.user.entity.User;
+import noodlezip.user.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/store")
@@ -62,6 +59,13 @@ public class StoreController {
         StoreDto store = storeService.getStore(no);
         model.addAttribute("store", store);
         return "store/detail";
+    }
+
+    // 매장 메뉴 조회 (비동기)
+    @GetMapping("/detail/menuList")
+    @ResponseBody
+    public List<MenuDetailDto> showDetailMenuList(Long storeId) {
+        return storeService.getMenus(storeId);
     }
 
 }

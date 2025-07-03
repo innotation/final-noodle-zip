@@ -1,5 +1,6 @@
 package noodlezip.store.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
@@ -36,10 +37,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -55,6 +53,7 @@ public class StoreService {
     private final ModelMapper modelMapper;
     private final PageUtil pageUtil;
     private final ToppingRepository toppingRepository;
+    private final EntityManager em;
 
 
     @Value("${upload.path}")
@@ -204,6 +203,11 @@ public class StoreService {
         }
 
         return StoreDto.toDto(store);
+    }
+
+    // 매장에서 메뉴 조회
+    public List<MenuDetailDto> getMenus(Long storeId) {
+        return menuRepository.findMenuDetailByStoreId(storeId);
     }
 
 
