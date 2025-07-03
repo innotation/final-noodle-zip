@@ -379,7 +379,7 @@
 
 									<!-- 추가 토핑 입력 -->
 									<!-- 추가 토핑 입력 컨테이너 -->
-									<div id="extra-toppings-container">
+									<div id="extra-toppings-container" style="display: none;">
 										<div class="extra-topping-item d-flex align-items-center mb-2">
 											<input type="text" name="menus[0].extraToppings[0]" class="form-control form-control-sm" placeholder="추가 토핑 (예: 매운 멘마)">
 											<button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeExtraTopping(this)">삭제</button>
@@ -653,12 +653,15 @@
 
 		document.getElementById('image-input').addEventListener('change', function (event) {
 			const file = event.target.files[0];
+			const preview = document.getElementById('preview-image');
+			const uploadText = document.getElementById('upload-text');
+
 			if (file) {
 				const reader = new FileReader();
 				reader.onload = function (e) {
-					const img = document.getElementById('preview-image');
-					img.src = e.target.result;
-					img.style.display = 'block';
+					preview.src = e.target.result;
+					preview.style.display = 'block';
+					uploadText.style.display = 'none';
 				};
 				reader.readAsDataURL(file);
 			}
@@ -841,6 +844,12 @@
 	<script>
 		function addExtraTopping(menuIndex) {
 			const container = document.querySelector(`#extra-toppings-container-${menuIndex}`) || document.getElementById('extra-toppings-container');
+
+			// 처음 클릭 시 보여지게
+			if (container.style.display === 'none') {
+				container.style.display = 'block';
+			}
+
 			const count = container.querySelectorAll('input').length;
 
 			const wrapper = document.createElement('div');
@@ -858,7 +867,6 @@
 			btn.textContent = '삭제';
 			btn.onclick = function () {
 				container.removeChild(wrapper);
-				// 이름 재정렬 필요하면 여기서 다시 업데이트 해줘야 함
 			};
 
 			wrapper.appendChild(input);
