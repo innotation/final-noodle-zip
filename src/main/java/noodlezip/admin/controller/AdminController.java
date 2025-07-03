@@ -3,6 +3,7 @@ package noodlezip.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.util.PageUtil;
 import noodlezip.store.service.StoreService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class AdminController {
 
     private final StoreService storeService;
+    private final PageUtil pageUtil;
 
     @GetMapping("/main")
     public void mainPage(){}
@@ -36,22 +38,26 @@ public class AdminController {
 
     @GetMapping("/registList")
     public String registListPage(@PageableDefault(size = 5) Pageable pageable, Model model) {
-        Page<RegistListDto> page = storeService.findWaitingStores(pageable);
+        Map<String, Object> page = storeService.findWaitingStores(pageable);
 
-        model.addAttribute("registList", page.getContent());
-        model.addAttribute("page", page.getNumber());           // 현재 페이지 번호
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("isFirst", page.isFirst());
-        model.addAttribute("isLast", page.isLast());
-        model.addAttribute("beginPage", Math.max(0, page.getNumber() - 2));
-        model.addAttribute("endPage", Math.min(page.getTotalPages() - 1, page.getNumber() + 2));
+        model.addAttribute("totalCount", page.get("totalCount"));
+        model.addAttribute("page", page.get("page"));
+        model.addAttribute("size", page.get("size"));
+        model.addAttribute("pagePerBlock", page.get("pagePerBlock"));
+        model.addAttribute("totalPage", page.get("totalPage"));
+        model.addAttribute("beginPage", page.get("beginPage"));
+        model.addAttribute("endPage", page.get("endPage"));
+        model.addAttribute("isFirst", page.get("isFirst"));
+        model.addAttribute("isLast", page.get("isLast"));
+        model.addAttribute("registList", page.get("registList"));
+
 
         return "admin/registList";
     }
 
     @GetMapping("/registList/data")
     @ResponseBody
-    public Page<RegistListDto> registListData(@PageableDefault(size = 5) Pageable pageable) {
+    public Map<String, Object> registListData(@PageableDefault(size = 5) Pageable pageable) {
         return storeService.findWaitingStores(pageable);
     }
 

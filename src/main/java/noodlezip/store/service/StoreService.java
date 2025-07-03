@@ -3,6 +3,7 @@ package noodlezip.store.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.util.PageUtil;
 import noodlezip.store.dto.*;
 import noodlezip.store.entity.*;
 import noodlezip.store.repository.*;
@@ -26,7 +27,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreScheduleRepository scheduleRepository;
     private final MenuRepository menuRepository;
-    private final noodlezip.util.PageUtil pageUtil;
+    private final PageUtil pageUtil;
     private final ModelMapper modelMapper;
 
     @Transactional
@@ -79,8 +80,11 @@ public class StoreService {
     }
 
     // 등록요청매장 조회
-    public Page<RegistListDto> findWaitingStores(Pageable pageable) {
-        return storeRepository.findWaitingStores(pageable);
+    public Map<String, Object> findWaitingStores(Pageable pageable) {
+        Page<RegistListDto> resultPage = storeRepository.findWaitingStores(pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(resultPage, resultPage.getSize());
+        map.put("registList", resultPage.getContent());
+        return map;
     }
 
 
