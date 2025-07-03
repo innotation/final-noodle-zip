@@ -3,8 +3,9 @@ package noodlezip.report.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
-import noodlezip.report.constant.ReportStatus;
-import noodlezip.report.constant.ReportType;
+import noodlezip.report.status.ReportStatus;
+import noodlezip.report.status.ReportType;
+
 
 @Entity
 @Table(

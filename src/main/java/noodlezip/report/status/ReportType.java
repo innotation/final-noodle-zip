@@ -1,4 +1,4 @@
-package noodlezip.report.constant;
+package noodlezip.report.status;
 
 public enum ReportType {
     POST,

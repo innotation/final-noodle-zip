@@ -1,4 +1,4 @@
-package noodlezip.report.constant;
+package noodlezip.report.status;
 
 public enum ReportStatus {
     PENDING,    // 대기

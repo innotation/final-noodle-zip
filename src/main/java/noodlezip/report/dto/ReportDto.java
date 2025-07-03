@@ -1,8 +1,8 @@
 package noodlezip.report.dto;
 
 import lombok.*;
-import noodlezip.report.constant.ReportStatus;
-import noodlezip.report.constant.ReportType;
+import noodlezip.report.status.ReportStatus;
+import noodlezip.report.status.ReportType;
 
 import java.util.List;
 

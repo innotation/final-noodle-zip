@@ -31,8 +31,7 @@ public class AdminController {
     public void mainPage(){}
 
     @GetMapping("/reportList")
-    public String reportList(@PageableDefault(size = 5) Pageable pageable, Model model) {
-
+    public String reportList() {
         return "admin/reportList";
     }
 
