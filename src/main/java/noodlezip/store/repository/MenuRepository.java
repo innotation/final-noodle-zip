@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long>, MenuRepositoryCustom {
-    List<Menu> findMenusByStoreId(Store storeId);
 
 }
