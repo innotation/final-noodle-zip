@@ -3,7 +3,7 @@ package noodlezip.badge.service.event.review;
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.constants.LevelBadgeCategoryType;
 import noodlezip.badge.constants.Region;
-import noodlezip.badge.dto.RamenReviewBadgeDto;
+import noodlezip.badge.dto.request.RamenReviewBadgeRequest;
 import noodlezip.badge.service.event.BadgeEventReader;
 import noodlezip.badge.service.process.level.LevelDirectUpdateProcessor;
 import noodlezip.badge.service.process.level.RamenReviewCategoryBadge;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class RamenReviewPostEvent implements BadgeEventReader<RamenReviewBadgeDto> {
+public class RamenReviewPostEvent implements BadgeEventReader<RamenReviewBadgeRequest> {
 
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
@@ -23,7 +23,7 @@ public class RamenReviewPostEvent implements BadgeEventReader<RamenReviewBadgeDt
     private final RamenReviewCategoryBadge ramenReviewCategoryBadge;
 
     @Override
-    public void read(Long userId, RamenReviewBadgeDto extraOption) {
+    public void read(Long userId, RamenReviewBadgeRequest extraOption) {
         processAllCommunityCount(userId);
         processRamenCategory(userId, extraOption.getMenuIdList());
         processRamenStoreRegion(userId, extraOption.getStoreId());

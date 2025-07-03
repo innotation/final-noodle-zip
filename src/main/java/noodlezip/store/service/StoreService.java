@@ -24,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -157,18 +156,21 @@ public class StoreService {
 
     // 삭제 메서드는 추가 기능(FileUtil에 추가 필요)
 
+    // 라멘 카테고리 목록 조회
     public List<CategoryResponseDto> getRamenCategories() {
         return ramenService.getAllCategories();
     }
 
+    // 라멘 토핑 목록 조회
     public List<ToppingResponseDto> getRamenToppings() {
         return ramenService.getAllToppings();
     }
 
-    public Map<String, Object> findRegistList(Pageable pageable) {
-        Page<RegistListDto> page = storeRepository.findRegistStores(pageable);
-        Map<String, Object> map = pageUtil.getPageInfo(page, 5);
-        map.put("registList", page.getContent());
+    // 등록요청매장 조회
+    public Map<String, Object> findWaitingStores(Pageable pageable) {
+        Page<RegistListDto> resultPage = storeRepository.findWaitingStores(pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(resultPage, resultPage.getSize());
+        map.put("registList", resultPage.getContent());
         return map;
     }
 }

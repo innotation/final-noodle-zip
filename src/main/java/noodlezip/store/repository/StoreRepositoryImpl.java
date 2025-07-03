@@ -8,11 +8,13 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.admin.dto.RegistListDto;
 import noodlezip.ramen.entity.*;
 import noodlezip.store.entity.QStoreExtraTopping;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
 import noodlezip.store.entity.*;
+import noodlezip.user.entity.QUser;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.store.status.OperationStatus;
 import org.springframework.data.domain.Page;
@@ -92,7 +94,6 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
 
         // 운영중인 매장
         builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
-//        builder.and(store.operationStatus.eq(OperationStatus.OPEN));
 
         // 라멘 카테고리
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
@@ -205,6 +206,40 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<RegistListDto> findWaitingStores(Pageable pageable) {
+        QStore store = QStore.store;
+        QUser user = QUser.user;
+
+        // 1. 본문 조회
+        List<RegistListDto> content = queryFactory
+                .select(Projections.constructor(RegistListDto.class,
+                        user.loginId,
+                        store.storeName,
+                        Expressions.stringTemplate(
+                                "DATE_FORMAT({0}, '%Y-%m-%d %H:%i')",
+                                store.createdAt
+                        )
+                ))
+                .from(store)
+                .join(user).on(store.userId.eq(user.id))
+                .where(store.approvalStatus.eq(ApprovalStatus.WAITING))
+                .orderBy(store.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 2. 전체 개수 조회
+        Long total = queryFactory
+                .select(store.count())
+                .from(store)
+                .join(user).on(store.userId.eq(user.id))
+                .where(store.approvalStatus.eq(ApprovalStatus.WAITING))
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, total == null ? 0 : total);
     }
 
 }

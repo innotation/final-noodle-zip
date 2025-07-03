@@ -7,4 +7,6 @@ public interface UserService {
     boolean isLoginIdDuplicated(String loginId);
     boolean isEmailDuplicated(String email);
     void verifyUserEmail(String email, String code);
+
+    void validateMyPageExistingUserByUserId(Long userId);
 }

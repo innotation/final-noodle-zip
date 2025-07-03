@@ -29,6 +29,15 @@
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
+  <button type="button"
+          class="btn btn-sm btn-outline-danger report-btn"
+          th:data-user-id="1"
+          th:data-type="'POST'"
+          th:data-target-id="123"
+          data-toggle="modal"
+          data-target="#reportModal">
+    신고
+  </button>
   <div class="collapse navbar-collapse" id="navbarResponsive">
     <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
       <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
@@ -162,6 +171,8 @@
   <i class="fa fa-angle-up"></i>
 </a>
 
+<div th:replace="~{fragments/reportModal::reportModalFragment}"></div>
+
 <!-- Logout Modal-->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -181,6 +192,8 @@
   </div>
 </div>
 
+
+
 <!-- Bootstrap core JavaScript-->
 <script th:src="@{/admin_section/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
@@ -195,6 +208,7 @@
 <script th:src="@{/admin_section/js/admin.js}"></script>
 <!-- Custom scripts for this page-->
 <script th:src="@{/admin_section/js/admin-charts.js}"></script>
+<script th:src="@{/js/reportModal.js}"></script>
 </body>
 
 </html>

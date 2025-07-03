@@ -1,7 +1,9 @@
 package noodlezip.badge.constants;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 @Getter
 public enum Region {
 
@@ -26,17 +28,15 @@ public enum Region {
     private final int code;
     private final String name;
 
-    Region(int code, String name) {
-        this.code = code;
-        this.name = name;
-    }
-
-
     public static Region getRegionByCode(int legalCode) {
         int sido = Integer.parseInt(String.valueOf(legalCode).substring(0, 2));
 
+        return getRegionBySidoCode(sido);
+    }
+
+    public static Region getRegionBySidoCode(int sidoCode) {
         for (Region region : Region.values()) {
-            if (region.code == sido) {
+            if (region.code == sidoCode) {
                 return region;
             }
         }

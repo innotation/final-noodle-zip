@@ -1,13 +1,13 @@
 package noodlezip.admin.dto;
 
 import lombok.*;
-import noodlezip.store.constant.ApprovalStatus;
-import noodlezip.user.entity.User;
+
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 public class RegistListDto {
 
