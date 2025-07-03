@@ -192,7 +192,7 @@
                             <li><i class="icon_calendar"></i> <span
                                     th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
                             <li><a href="#"><i class="icon_pencil-edit"></i> Admin</a></li>
-                            <li><a href="#"><i class="icon_comment_alt"></i> (14) Comments</a></li>
+                            <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
                         </ul>
                     </div>
                     <!-- /post meta -->
@@ -227,6 +227,7 @@
 
                     const commentsList = document.getElementById('comments-list');
                     const commentsPagination = document.getElementById('comments-pagination');
+                    const commentsCount = document.getElementById('comments-count');
 
                     // 댓글 아이템 HTML을 생성하는 함수
                     function createCommentItem(comment) {
@@ -293,6 +294,7 @@
                             console.log(data);
                             commentsList.innerHTML = ''; // 기존 댓글 비우기
                             if (data.payload.comments && data.payload.comments.length > 0) {
+                                commentsCount.innerText = '(' + data.payload.totalComments + ')';
                                 data.payload.comments.forEach(comment => {
                                     commentsList.appendChild(createCommentItem(comment));
                                 });

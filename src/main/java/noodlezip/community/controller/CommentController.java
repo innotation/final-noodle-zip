@@ -49,11 +49,18 @@ public class CommentController {
             log.warn("비로그인 사용자가 댓글 등록 시도");
             return "redirect:/login";
         }
+
+        if (bindingResult.hasErrors()) {
+            log.warn("validate error: {}", bindingResult.getAllErrors());
+            return "redirect:/";
+        }
+
         try {
             commentService.registComment(commentReqDto);
         } catch (Exception e) {
             log.error("댓글 등록 중 오류 발생: {}", e.getMessage(), e);
         }
+
         return "redirect:/board/detail/" + commentReqDto.getBoardId();
     }
 }

@@ -32,6 +32,7 @@ public class CommentServiceImpl implements CommentService {
         Page<CommentRespDto> commentDtoPage = commentRepository.findCommentByBoardIdWithUser(boardId, pageable);
         Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
         map.put("comments", commentDtoPage.getContent());
+        map.put("totalComments", commentDtoPage.getTotalElements());
         return map;
     }
 
