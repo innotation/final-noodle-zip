@@ -51,7 +51,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .where(
                         comment.communityId.eq(boardId)
                 )
-                .orderBy(comment.createdAt.desc())
+                .orderBy(comment.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

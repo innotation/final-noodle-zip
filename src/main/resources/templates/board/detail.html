@@ -211,80 +211,6 @@
                     </div>
                     <!-- /post -->
                 </div>
-                <!-- /single-post -->
-
-                <!--					<div id="comments">-->
-                <!--						<h5>Comments</h5>-->
-                <!--						<ul>-->
-                <!--							<li>-->
-                <!--								<div class="avatar">-->
-                <!--									<a href="#"><img src="/img/avatar1.jpg" alt="">-->
-                <!--									</a>-->
-                <!--								</div>-->
-                <!--								<div class="comment_right clearfix">-->
-                <!--									<div class="comment_info">-->
-                <!--										By <a href="#">Anna Smith</a><span>|</span>25/10/2019<span>|</span><a href="#">Reply</a>-->
-                <!--									</div>-->
-                <!--									<p>-->
-                <!--										Nam cursus tellus quis magna porta adipiscing. Donec et eros leo, non pellentesque arcu. Curabitur vitae mi enim, at vestibulum magna. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sit amet sem a urna rutrumeger fringilla. Nam vel enim ipsum, et congue ante.-->
-                <!--									</p>-->
-                <!--								</div>-->
-                <!--								<ul class="replied-to">-->
-                <!--									<li>-->
-                <!--										<div class="avatar">-->
-                <!--											<a href="#"><img src="img/avatar4.jpg" alt="">-->
-                <!--											</a>-->
-                <!--										</div>-->
-                <!--										<div class="comment_right clearfix">-->
-                <!--											<div class="comment_info">-->
-                <!--												By <a href="#">Anna Smith</a><span>|</span>25/10/2019<span>|</span><a href="#">Reply</a>-->
-                <!--											</div>-->
-                <!--											<p>-->
-                <!--												Nam cursus tellus quis magna porta adipiscing. Donec et eros leo, non pellentesque arcu. Curabitur vitae mi enim, at vestibulum magna. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sit amet sem a urna rutrumeger fringilla. Nam vel enim ipsum, et congue ante.-->
-                <!--											</p>-->
-                <!--											<p>-->
-                <!--												Aenean iaculis sodales dui, non hendrerit lorem rhoncus ut. Pellentesque ullamcorper venenatis elit idaipiscingi Duis tellus neque, tincidunt eget pulvinar sit amet, rutrum nec urna. Suspendisse pretium laoreet elit vel ultricies. Maecenas ullamcorper ultricies rhoncus. Aliquam erat volutpat.-->
-                <!--											</p>-->
-                <!--										</div>-->
-                <!--										<ul class="replied-to">-->
-                <!--											<li>-->
-                <!--												<div class="avatar">-->
-                <!--													<a href="#"><img src="img/avatar6.jpg" alt="">-->
-                <!--													</a>-->
-                <!--												</div>-->
-                <!--												<div class="comment_right clearfix">-->
-                <!--													<div class="comment_info">-->
-                <!--														By <a href="#">Anna Smith</a><span>|</span>25/10/2019<span>|</span><a href="#">Reply</a>-->
-                <!--													</div>-->
-                <!--													<p>-->
-                <!--														Nam cursus tellus quis magna porta adipiscing. Donec et eros leo, non pellentesque arcu. Curabitur vitae mi enim, at vestibulum magna. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sit amet sem a urna rutrumeger fringilla. Nam vel enim ipsum, et congue ante.-->
-                <!--													</p>-->
-                <!--													<p>-->
-                <!--														Aenean iaculis sodales dui, non hendrerit lorem rhoncus ut. Pellentesque ullamcorper venenatis elit idaipiscingi Duis tellus neque, tincidunt eget pulvinar sit amet, rutrum nec urna. Suspendisse pretium laoreet elit vel ultricies. Maecenas ullamcorper ultricies rhoncus. Aliquam erat volutpat.-->
-                <!--													</p>-->
-                <!--												</div>-->
-                <!--											</li>-->
-                <!--										</ul>-->
-                <!--									</li>-->
-                <!--								</ul>-->
-                <!--							</li>-->
-                <!--							<li>-->
-                <!--								<div class="avatar">-->
-                <!--									<a href="#"><img src="img/avatar1.jpg" alt="">-->
-                <!--									</a>-->
-                <!--								</div>-->
-
-                <!--								<div class="comment_right clearfix">-->
-                <!--									<div class="comment_info">-->
-                <!--										By <a href="#">Anna Smith</a><span>|</span>25/10/2019<span>|</span><a href="#">Reply</a>-->
-                <!--									</div>-->
-                <!--									<p>-->
-                <!--										Cursus tellus quis magna porta adipiscin-->
-                <!--									</p>-->
-                <!--								</div>-->
-                <!--							</li>-->
-                <!--						</ul>-->
-                <!--					</div>-->
                 <div id="comments">
                     <h5>전체 댓글</h5>
                     <ul id="comments-list">
@@ -301,7 +227,6 @@
 
                     const commentsList = document.getElementById('comments-list');
                     const commentsPagination = document.getElementById('comments-pagination');
-                    const commentsPerPage = 5; // 한 페이지에 보여줄 댓글 수 (백엔드 size 파라미터와 일치해야 함)
 
                     // 댓글 아이템 HTML을 생성하는 함수
                     function createCommentItem(comment) {
@@ -311,19 +236,27 @@
 
                         // 날짜 포맷 (JavaScript Date 객체 사용)
                         const date = new Date(comment.createdAt);
+                        // 원하는 날짜 형식으로 포맷 (예: 25/10/2019)
                         const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 
+                        // ### 여기부터 HTML 구조 변경 ###
                         li.innerHTML = `
+        <li>
             <div class="avatar">
-                <a href="#"><img src="${avatarSrc}" alt="${comment.author}"></a>
+                <a href="#">
+                    <img src="${avatarSrc}" alt="${comment.author}" class="comment-avatar">
+                </a>
             </div>
             <div class="comment_right clearfix">
                 <div class="comment_info">
-                    By <a href="#">${comment.author}</a><span>|</span>${formattedDate}<span>|</span><a href="#">Reply</a>
+                    By <a href="#">${comment.author}</a><span>|</span>${formattedDate}<span>
                 </div>
-                <p>${comment.content}</p>
+                <p>
+                    ${comment.content}
+                </p>
             </div>
-        `;
+        </li>
+    `;
                         return li;
                     }
 
@@ -332,7 +265,7 @@
                         const link = document.createElement('a');
                         link.href = '#'; // JS로 페이지 이동 처리
                         link.dataset.page = pageNumber; // 페이지 번호를 data-page 속성에 저장
-                        link.textContent = text;
+                        link.innerHTML = text;
                         if (isActive) {
                             link.classList.add('active');
                         }
@@ -344,7 +277,6 @@
                         return link;
                     }
 
-                    // 댓글과 페이지네이션을 가져와 렌더링하는 함수
                     async function fetchComments(boardId, page = 0) { // page는 0부터 시작하는 페이지 인덱스
                         if (!boardId) {
                             console.error('Board ID is null. Cannot fetch comments.');
@@ -352,20 +284,12 @@
                         }
 
                         try {
-                            const response = await fetch(`/comments?boardId=${boardId}&page=${page}&size=${commentsPerPage}`);
+                            const response = await fetch(`/comments?boardId=${boardId}&page=${page}`);
                             console.log(response);
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);
                             }
                             const data = await response.json(); // 백엔드에서 Map 형태로 온 JSON 데이터를 받음
-                            console.log(data);
-                            // --- JavaScript에서 Map 데이터에 접근하는 방식 변경 ---
-                            // data.content -> data.comments
-                            // data.totalPages -> data.totalPage
-                            // data.number -> data.page - 1 (백엔드에서 page를 1부터 시작하는 값으로 보내므로, JS에서는 0-indexed로 변환)
-                            // data.first -> data.isFirst
-                            // data.last -> data.isLast
-
                             // 댓글 목록 렌더링
                             commentsList.innerHTML = ''; // 기존 댓글 비우기
                             // 백엔드에서 'comments'라는 키로 댓글 목록을 보낸다고 가정
@@ -400,14 +324,14 @@
 
                                 for (let i = startPage; i <= endPage; i++) {
                                     // i는 0-indexed 페이지 번호, 표시할 때는 i + 1
-                                    commentsPagination.appendChild(createPaginationLink(i, i === (data.page - 1), (i + 1).toString()));
+                                    commentsPagination.appendChild(createPaginationLink(i+1, i === (data.page - 1), (i + 1).toString()));
                                 }
 
                                 // 다음 페이지 버튼
                                 // 백엔드에서 'isLast'라는 키로 마지막 페이지 여부를 보낸다고 가정
                                 if (!data.isLast) {
                                     // data.page는 1부터 시작하는 현재 페이지 번호, JS에서 0-indexed로 변환하여 요청
-                                    commentsPagination.appendChild(createPaginationLink(data.page, false, '&raquo;'));
+                                    commentsPagination.appendChild(createPaginationLink(data.page + 1, false, '&raquo;'));
                                 }
                             }
 
@@ -417,55 +341,14 @@
                         }
                     }
 
-                    // 페이지 링크 생성 헬퍼 함수 (기존과 동일)
-                    function createPaginationLink(pageIndex, isActive, text) {
-                        const li = document.createElement('li');
-                        li.className = `page-item ${isActive ? 'active' : ''}`;
-                        const a = document.createElement('a');
-                        a.className = 'page-link';
-                        a.href = '#';
-                        a.innerHTML = text;
-                        a.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            fetchComments(boardId, pageIndex); // 클릭 시 해당 페이지로 댓글 다시 가져오기
-                        });
-                        li.appendChild(a);
-                        return li;
-                    }
-
-                    // 댓글 아이템 생성 헬퍼 함수 (기존과 동일하다고 가정)
-                    // comment 객체의 속성명은 CommentDto의 JSON 필드명과 일치해야 합니다.
-                    function createCommentItem(comment) {
-                        const li = document.createElement('li');
-                        li.className = 'comment-item';
-                        // 예시: comment 객체의 속성들이 DTO에 따라 다르다면 수정 필요
-                        li.innerHTML = `
-        <div class="comment-author">
-            <img src="${comment.authorProfileImageUrl || '/images/default_profile.png'}" alt="프로필 이미지">
-            <span>${comment.author}</span>
-        </div>
-        <div class="comment-content">${comment.content}</div>
-        <div class="comment-date">${new Date(comment.createdAt).toLocaleString()}</div>
-    `;
-                        return li;
-                    }
-
                     // 페이지 로드 시 댓글 가져오기
                     document.addEventListener('DOMContentLoaded', () => {
-                        // boardId를 가져오는 방식이 <input type="hidden" id="boardId" value="..." /> 라면
-                        // const boardId = document.getElementById('boardId').value;
-                        // 또는 URL에서 직접 파싱하는 방식이라면:
-                        // const urlParams = new URLSearchParams(window.location.search);
-                        // const boardId = urlParams.get('boardId'); // 혹은 다른 방식으로 가져올 수 있습니다.
-
-                        // 이 예시에서는 전역 변수 boardId가 이미 설정되어 있다고 가정합니다.
                         if (boardId) {
                             fetchComments(boardId, 0); // 첫 페이지(0) 로드
                         } else {
                             console.error("Board ID not found for fetching comments.");
                         }
                     });
-                    ;
 
                     /*]]>*/
                 </script>

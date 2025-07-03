@@ -32,6 +32,7 @@ public class CommentController {
         log.info("get comments for {}", boardId);
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
         Map<String, Object> map = commentService.findCommentList(boardId, pageable);
+        log.info("map: {}", map.toString());
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }
