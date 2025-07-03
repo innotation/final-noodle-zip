@@ -2,13 +2,21 @@ package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
-import noodlezip.ramen.entity.*;
+import noodlezip.ramen.entity.Category;
+import noodlezip.ramen.entity.RamenSoup;
+import noodlezip.ramen.entity.RamenTopping;
+import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.RamenToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.ramen.service.RamenService;
+import noodlezip.store.dto.MenuDetailDto;
 import noodlezip.store.dto.MenuRequestDto;
+import noodlezip.store.dto.StoreDto;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.Store;
@@ -19,25 +27,22 @@ import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.user.entity.User;
-import org.springframework.beans.factory.annotation.Value;
-import lombok.extern.slf4j.Slf4j;
-import noodlezip.admin.dto.RegistListDto;
-import noodlezip.store.dto.*;
-import noodlezip.store.entity.*;
-import noodlezip.store.repository.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import noodlezip.common.util.PageUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -207,7 +212,16 @@ public class StoreService {
 
     // 매장에서 메뉴 조회
     public List<MenuDetailDto> getMenus(Long storeId) {
-        return menuRepository.findMenuDetailByStoreId(storeId);
+        List<MenuDetailDto> menuList = menuRepository.findMenuDetailByStoreId(storeId);
+        Map<Long, List<String>> toppingMap = ramenToppingRepository.findToppingNamesByStoreGroupedByMenuId(storeId);
+
+        // 메뉴에 라멘토핑 맵핑
+        for (MenuDetailDto dto : menuList) {
+            List<String> toppings = toppingMap.getOrDefault(dto.getMenuId(), List.of());
+            dto.setToppingNames(toppings);
+        }
+
+        return menuList;
     }
 
 
