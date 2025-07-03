@@ -35,7 +35,7 @@ public class CommentController {
             @RequestParam("boardId") Long boardId,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
-        Map<String, Object> map = commentService.findCommentList(boardId, user.getUser().getId(),pageable);
+        Map<String, Object> map = commentService.findCommentList(boardId, user.getUser().getId(), pageable);
         return ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_COMMENT, map);
     }
 

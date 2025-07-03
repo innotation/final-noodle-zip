@@ -286,7 +286,7 @@
                         link.addEventListener('click', (e) => {
                             e.preventDefault();
                             const targetPage = parseInt(e.target.dataset.page);
-                            fetchComments(boardId, targetPage - 1); // 클릭된 페이지로 댓글 다시 로드 (JS는 0-indexed)
+                            fetchComments(boardId, targetPage); // 클릭된 페이지로 댓글 다시 로드 (JS는 0-indexed)
                         });
                         return link;
                     }
@@ -309,7 +309,6 @@
                             // 댓글 목록 렌더링
                             commentsList.innerHTML = ''; // 기존 댓글 비우기
                             if (data.payload.comments && data.payload.comments.length > 0) {
-                                console.log("Fetched comments:", data.payload);
                                 commentsCount.innerText = '(' + data.payload.totalComments + ')';
                                 data.payload.comments.forEach(comment => {
                                     commentsList.appendChild(createCommentItem(comment));
@@ -321,34 +320,72 @@
 
                             // 페이지네이션 렌더링
                             commentsPagination.innerHTML = ''; // 기존 페이지네이션 비우기
-                            const currentPage = data.payload.number; // 0-indexed 현재 페이지
-                            const totalPages = data.payload.totalPages; // 전체 페이지 수
 
-                            if (totalPages > 1) {
-                                // 이전 페이지 버튼
-                                if (!data.payload.first) {
-                                    commentsPagination.appendChild(createPaginationLink(currentPage, false, '&laquo;'));
+                            if (data.payload.totalPage > 1) {
+
+// 이전 페이지 버튼
+
+// 백엔드에서 'isFirst'라는 키로 첫 페이지 여부를 보낸다고 가정
+
+                                if (!data.payload.isFirst) {
+
+// data.page는 1부터 시작하는 현재 페이지 번호, JS에서 0-indexed로 변환하여 요청
+
+                                    commentsPagination.appendChild(createPaginationLink(data.page - 2, false, '&laquo;'));
+
                                 }
 
-                                // 페이지 번호 링크
-                                const pageGroupSize = 5; // 한 번에 보여줄 페이지 번호 개수
-                                const startPageGroup = Math.floor(currentPage / pageGroupSize) * pageGroupSize;
-                                const endPageGroup = Math.min(startPageGroup + pageGroupSize, totalPages);
 
-                                for (let i = startPageGroup; i < endPageGroup; i++) {
-                                    commentsPagination.appendChild(createPaginationLink(i + 1, i === currentPage, (i + 1).toString()));
+// 페이지 번호 링크
+
+                                const pagesToShow = data.payload.pagePerBlock || 10; // 백엔드에서 pagePerBlock을 보내준다면 그 값을 사용, 아니면 기본 10
+
+// beginPage와 endPage는 백엔드에서 계산해서 보내준다고 가정
+
+                                const startPage = data.payload.beginPage - 1; // JS는 0-indexed이므로 -1
+
+                                const endPage = data.payload.endPage - 1; // JS는 0-indexed이므로 -1
+
+
+// 기존 페이지네이션 로직은 `data.number` (0-indexed)를 사용했으나,
+
+// 이제 `data.page` (1-indexed)와 `data.totalPage` (1-indexed)를 사용하므로 로직 변경
+
+// `data.beginPage`와 `data.endPage`를 백엔드에서 직접 보내준다면 더 간단해짐
+
+
+                                for (let i = startPage; i <= endPage; i++) {
+
+// i는 0-indexed 페이지 번호, 표시할 때는 i + 1
+
+                                    commentsPagination.appendChild(createPaginationLink(i + 1, i === (data.payload.page - 1), (i + 1).toString()));
+
                                 }
 
-                                // 다음 페이지 버튼
-                                if (!data.payload.last) {
-                                    commentsPagination.appendChild(createPaginationLink(currentPage + 2, false, '&raquo;'));
+
+// 다음 페이지 버튼
+
+// 백엔드에서 'isLast'라는 키로 마지막 페이지 여부를 보낸다고 가정
+
+                                if (!data.payload.isLast) {
+
+// data.page는 1부터 시작하는 현재 페이지 번호, JS에서 0-indexed로 변환하여 요청
+
+                                    commentsPagination.appendChild(createPaginationLink(data.payload.page + 1, false, '&raquo;'));
+
                                 }
+
                             }
 
+
                         } catch (error) {
+
                             console.error('Failed to fetch comments:', error);
+
                             commentsList.innerHTML = '<p>댓글을 불러오는 데 실패했습니다.</p>';
+
                         }
+
                     }
 
                     // 수정 버튼 클릭 시 실행될 함수 (예시)
@@ -409,7 +446,7 @@
                                       placeholder="댓글을 입력해 주세요."></textarea>
                         </div>
                         <!-- 게시글 ID를 숨겨진 필드로 추가하여 폼 제출 시 함께 전송 -->
-                        <input type="hidden" name="boardId" th:value="${board.id}" />
+                        <input type="hidden" name="boardId" th:value="${board.id}"/>
 
                         <!--
                         보안 참고: 작성자 정보(author, authorProfileImageUrl)는 클라이언트에서 직접 받지 않고,

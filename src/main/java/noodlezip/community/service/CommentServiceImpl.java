@@ -45,6 +45,5 @@ public class CommentServiceImpl implements CommentService {
                 .content(commentReqDto.getContent())
                 .build();
         commentRepository.save(comment);
-        log.info("regist comment {}", comment);
     }
 }
