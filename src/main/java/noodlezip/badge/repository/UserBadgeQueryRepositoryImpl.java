@@ -201,7 +201,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                         badgeCategory.id,
                         badgeGroup.id,
                         badge.badgeExtraOption.storeSidoLegalCode,
-                        ramenCategory.name,
+                        ramenCategory.categoryName,
                         badge.badgeName,
                         userBadge.accumulativeValue,
                         badge.badgeImageUrl
