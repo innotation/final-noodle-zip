@@ -19,4 +19,8 @@ public class SearchFilterDto {
     private List<String> ramenSoup;
     private List<String> topping;
 
+    // 검색어 필터
+    private String searchType; // "STORE_NAME", "MENU_NAME", "ALL"
+    private String keyword;    // 검색어
+
 }

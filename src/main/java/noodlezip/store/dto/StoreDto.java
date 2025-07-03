@@ -2,72 +2,66 @@ package noodlezip.store.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Value;
+import lombok.*;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
 import noodlezip.store.entity.Store;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
-/**
- * DTO for {@link noodlezip.store.entity.Store}
- */
-@Value
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StoreDto implements Serializable {
-    Long id;
+    private Long id;
+
     @NotNull
-    Long userId;
+    private Long userId;
+
     @NotNull
     @Size(max = 100)
-    String storeName;
+    private String storeName;
+
     @NotNull
     @Size(max = 255)
-    String address;
+    private String address;
+
     @Size(max = 20)
-    String phone;
+    private String phone;
+
     @NotNull
-    Boolean isLocalCard;
+    private Boolean isLocalCard;
+
     @NotNull
-    Boolean isChildAllowed;
+    private Boolean isChildAllowed;
+
+    // Enum
     @NotNull
-    @Size(max = 30)
-    String hasParking;
+    private ParkingType hasParking;
+
     @NotNull
-    @Size(max = 30)
-    String operationStatus;
+    private OperationStatus operationStatus;
+
+    @NotNull
+    private ApprovalStatus approvalStatus;
+
     @Size(max = 300)
-    String ownerComment;
+    private String ownerComment;
+
     @Size(max = 500)
-    String storeMainImageUrl;
-    @NotNull
-    Double storeLat;
-    @NotNull
-    Double storeLng;
-    @NotNull
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
-    Integer storeLegalCode;
+    private String storeMainImageUrl;
 
-    // Store -> StoreDto
-    public static StoreDto toDto(Store store) {
-        return new StoreDto(
-                store.getId(),
-                store.getUserId(),
-                store.getStoreName(),
-                store.getAddress(),
-                store.getPhone(),
-                store.getIsLocalCard(),
-                store.getIsChildAllowed(),
-                store.getHasParking(),
-                store.getOperationStatus(),
-                store.getOwnerComment(),
-                store.getStoreMainImageUrl(),
-                store.getStoreLat(),
-                store.getStoreLng(),
-                store.getCreatedAt(),
-                store.getUpdatedAt(),
-                store.getStoreLegalCode()
-        );
-    }
+    @NotNull
+    private Double storeLat;
 
+    @NotNull
+    private Double storeLng;
+
+    @NotNull
+    private Integer storeLegalCode; // 법정코드
+    
 }
