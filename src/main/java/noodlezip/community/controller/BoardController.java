@@ -7,6 +7,7 @@ import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.service.BoardService;
 import noodlezip.common.auth.MyUserDetails;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -51,14 +52,10 @@ public class BoardController {
     }
 
     @GetMapping("/list")
-    public String list(@PageableDefault Pageable pageable, Model model) {
-        pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
+    public String list(@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, Model model) {
 
-        if(pageable.getSort().isEmpty()) {
-            pageable = PageRequest.of(pageable.getPageNumber()
-                                    ,pageable.getPageSize()
-                                    , Sort.by(Sort.Direction.DESC, "id"));
-        }
+        // 0보다 작을 경우 예외처리 및 인덱싱
+        pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
         Map<String, Object> map = boardService.findBoardList(pageable);
 

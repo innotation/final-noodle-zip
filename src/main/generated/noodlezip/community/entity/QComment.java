@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -16,6 +17,8 @@ import com.querydsl.core.types.Path;
 public class QComment extends EntityPathBase<Comment> {
 
     private static final long serialVersionUID = 446478549L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
 
     public static final QComment comment = new QComment("comment");
 
@@ -37,18 +40,27 @@ public class QComment extends EntityPathBase<Comment> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public final NumberPath<Long> userId = createNumber("userId", Long.class);
+    public final noodlezip.user.entity.QUser user;
 
     public QComment(String variable) {
-        super(Comment.class, forVariable(variable));
+        this(Comment.class, forVariable(variable), INITS);
     }
 
     public QComment(Path<? extends Comment> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QComment(PathMetadata metadata) {
-        super(Comment.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QComment(PathMetadata metadata, PathInits inits) {
+        this(Comment.class, metadata, inits);
+    }
+
+    public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.user = inits.isInitialized("user") ? new noodlezip.user.entity.QUser(forProperty("user")) : null;
     }
 
 }

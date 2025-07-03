@@ -35,7 +35,7 @@ public class BoardServiceImpl implements BoardService {
     public Map<String, Object> findBoardList(Pageable pageable) {
         Page<Board> boardPage = boardRepository.findAll(pageable);
 
-        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 6);
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
         map.put("list", boardPage.getContent().stream().map(data -> {
             return modelMapper.map(data, Board.class);

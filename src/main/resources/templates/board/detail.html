@@ -352,16 +352,25 @@
                         }
 
                         try {
-                            const response = await fetch(`/api/comments?boardId=${boardId}&page=${page}&size=${commentsPerPage}`);
+                            const response = await fetch(`/comments?boardId=${boardId}&page=${page}&size=${commentsPerPage}`);
+                            console.log(response);
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);
                             }
-                            const data = await response.json();
+                            const data = await response.json(); // 백엔드에서 Map 형태로 온 JSON 데이터를 받음
+                            console.log(data);
+                            // --- JavaScript에서 Map 데이터에 접근하는 방식 변경 ---
+                            // data.content -> data.comments
+                            // data.totalPages -> data.totalPage
+                            // data.number -> data.page - 1 (백엔드에서 page를 1부터 시작하는 값으로 보내므로, JS에서는 0-indexed로 변환)
+                            // data.first -> data.isFirst
+                            // data.last -> data.isLast
 
                             // 댓글 목록 렌더링
                             commentsList.innerHTML = ''; // 기존 댓글 비우기
-                            if (data.content && data.content.length > 0) {
-                                data.content.forEach(comment => {
+                            // 백엔드에서 'comments'라는 키로 댓글 목록을 보낸다고 가정
+                            if (data.comments && data.comments.length > 0) {
+                                data.comments.forEach(comment => {
                                     commentsList.appendChild(createCommentItem(comment));
                                 });
                             } else {
@@ -370,30 +379,35 @@
 
                             // 페이지네이션 렌더링
                             commentsPagination.innerHTML = ''; // 기존 페이지네이션 비우기
-                            if (data.totalPages > 1) {
+                            // 백엔드에서 'totalPage'라는 키로 총 페이지 수를 보낸다고 가정
+                            if (data.totalPage > 1) {
                                 // 이전 페이지 버튼
-                                if (!data.first) {
-                                    commentsPagination.appendChild(createPaginationLink(data.number - 1, false, '&laquo;'));
+                                // 백엔드에서 'isFirst'라는 키로 첫 페이지 여부를 보낸다고 가정
+                                if (!data.isFirst) {
+                                    // data.page는 1부터 시작하는 현재 페이지 번호, JS에서 0-indexed로 변환하여 요청
+                                    commentsPagination.appendChild(createPaginationLink(data.page - 2, false, '&laquo;'));
                                 }
 
                                 // 페이지 번호 링크
-                                // 예시: 현재 페이지를 중심으로 5개씩 보여주는 페이지네이션
-                                const pagesToShow = 5;
-                                let startPage = Math.max(0, data.number - Math.floor(pagesToShow / 2));
-                                let endPage = Math.min(data.totalPages - 1, startPage + pagesToShow - 1);
+                                const pagesToShow = data.pagePerBlock || 10; // 백엔드에서 pagePerBlock을 보내준다면 그 값을 사용, 아니면 기본 10
+                                // beginPage와 endPage는 백엔드에서 계산해서 보내준다고 가정
+                                const startPage = data.beginPage - 1; // JS는 0-indexed이므로 -1
+                                const endPage = data.endPage - 1;     // JS는 0-indexed이므로 -1
 
-                                // 시작 페이지 조정 (끝 페이지가 totalPages에 고정되도록)
-                                if (endPage - startPage + 1 < pagesToShow) {
-                                    startPage = Math.max(0, endPage - pagesToShow + 1);
-                                }
+                                // 기존 페이지네이션 로직은 `data.number` (0-indexed)를 사용했으나,
+                                // 이제 `data.page` (1-indexed)와 `data.totalPage` (1-indexed)를 사용하므로 로직 변경
+                                // `data.beginPage`와 `data.endPage`를 백엔드에서 직접 보내준다면 더 간단해짐
 
                                 for (let i = startPage; i <= endPage; i++) {
-                                    commentsPagination.appendChild(createPaginationLink(i, i === data.number, (i + 1).toString()));
+                                    // i는 0-indexed 페이지 번호, 표시할 때는 i + 1
+                                    commentsPagination.appendChild(createPaginationLink(i, i === (data.page - 1), (i + 1).toString()));
                                 }
 
                                 // 다음 페이지 버튼
-                                if (!data.last) {
-                                    commentsPagination.appendChild(createPaginationLink(data.number + 1, false, '&raquo;'));
+                                // 백엔드에서 'isLast'라는 키로 마지막 페이지 여부를 보낸다고 가정
+                                if (!data.isLast) {
+                                    // data.page는 1부터 시작하는 현재 페이지 번호, JS에서 0-indexed로 변환하여 요청
+                                    commentsPagination.appendChild(createPaginationLink(data.page, false, '&raquo;'));
                                 }
                             }
 
@@ -403,10 +417,55 @@
                         }
                     }
 
+                    // 페이지 링크 생성 헬퍼 함수 (기존과 동일)
+                    function createPaginationLink(pageIndex, isActive, text) {
+                        const li = document.createElement('li');
+                        li.className = `page-item ${isActive ? 'active' : ''}`;
+                        const a = document.createElement('a');
+                        a.className = 'page-link';
+                        a.href = '#';
+                        a.innerHTML = text;
+                        a.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            fetchComments(boardId, pageIndex); // 클릭 시 해당 페이지로 댓글 다시 가져오기
+                        });
+                        li.appendChild(a);
+                        return li;
+                    }
+
+                    // 댓글 아이템 생성 헬퍼 함수 (기존과 동일하다고 가정)
+                    // comment 객체의 속성명은 CommentDto의 JSON 필드명과 일치해야 합니다.
+                    function createCommentItem(comment) {
+                        const li = document.createElement('li');
+                        li.className = 'comment-item';
+                        // 예시: comment 객체의 속성들이 DTO에 따라 다르다면 수정 필요
+                        li.innerHTML = `
+        <div class="comment-author">
+            <img src="${comment.authorProfileImageUrl || '/images/default_profile.png'}" alt="프로필 이미지">
+            <span>${comment.author}</span>
+        </div>
+        <div class="comment-content">${comment.content}</div>
+        <div class="comment-date">${new Date(comment.createdAt).toLocaleString()}</div>
+    `;
+                        return li;
+                    }
+
                     // 페이지 로드 시 댓글 가져오기
                     document.addEventListener('DOMContentLoaded', () => {
-                        fetchComments(boardId); // 첫 페이지(0) 로드
+                        // boardId를 가져오는 방식이 <input type="hidden" id="boardId" value="..." /> 라면
+                        // const boardId = document.getElementById('boardId').value;
+                        // 또는 URL에서 직접 파싱하는 방식이라면:
+                        // const urlParams = new URLSearchParams(window.location.search);
+                        // const boardId = urlParams.get('boardId'); // 혹은 다른 방식으로 가져올 수 있습니다.
+
+                        // 이 예시에서는 전역 변수 boardId가 이미 설정되어 있다고 가정합니다.
+                        if (boardId) {
+                            fetchComments(boardId, 0); // 첫 페이지(0) 로드
+                        } else {
+                            console.error("Board ID not found for fetching comments.");
+                        }
                     });
+                    ;
 
                     /*]]>*/
                 </script>

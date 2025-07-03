@@ -3,14 +3,18 @@ package noodlezip.community.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.user.entity.User;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_comment")
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +24,16 @@ public class Comment extends BaseTimeEntity {
     @NotNull
     @Column(name = "community_id", nullable = false)
     private Long communityId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "community_id", nullable = false)
+//    private Board board;
 
-    @NotNull
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    //    @NotNull
+    //    @Column(name = "user_id", nullable = false)
+    //    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Size(max = 300)
     @NotNull

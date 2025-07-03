@@ -30,7 +30,7 @@ public class SecurityConfig {
                     .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
-                    .requestMatchers("/board/**").permitAll()
+                    .requestMatchers("/board/**", "/comments/**").permitAll()
                     .anyRequest().authenticated();
         });
 
