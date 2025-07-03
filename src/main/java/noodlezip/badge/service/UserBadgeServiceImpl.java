@@ -1,0 +1,44 @@
+package noodlezip.badge.service;
+
+import lombok.RequiredArgsConstructor;
+import noodlezip.badge.constants.LevelBadgeCategoryType;
+import noodlezip.badge.repository.BadgeGroupRepository;
+import noodlezip.badge.repository.UserBadgeRepository;
+import noodlezip.mypage.dto.UserNoOptionBadgeDto;
+import noodlezip.mypage.dto.UserOptionBadgeDto;
+import noodlezip.mypage.dto.response.BadgeGroupResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class UserBadgeServiceImpl implements UserBadgeService {
+
+    private final BadgeGroupRepository badgeGroupRepository;
+    private final UserBadgeRepository userBadgeRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BadgeGroupResponse> getBadgeGroupIds() {
+        return badgeGroupRepository.getBadgeGroups();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserNoOptionBadgeDto> getNoOptionUserBadgeList(Long userIde) {
+        List<Long> categoryIdList = LevelBadgeCategoryType.getNoOptionBadgeCategoryIdList();
+
+        return userBadgeRepository.findNoOptionBadgeList(userIde, categoryIdList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserOptionBadgeDto> getOptionUserBadgeList(Long userId) {
+        List<Long> categoryIdList = LevelBadgeCategoryType.getOptionBadgeCategoryIdList();
+
+        return userBadgeRepository.findOptionBadgeList(userId, categoryIdList);
+    }
+
+}

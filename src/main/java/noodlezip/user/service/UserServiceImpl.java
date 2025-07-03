@@ -2,6 +2,8 @@ package noodlezip.user.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
+import noodlezip.mypage.exception.MyPageErrorStatus;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;
@@ -79,4 +81,12 @@ public class UserServiceImpl implements UserService {
             );
         }
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateMyPageExistingUserByUserId(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
+    }
+
 }
