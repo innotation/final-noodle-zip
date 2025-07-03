@@ -1,8 +1,8 @@
 package noodlezip.ramen.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.*;
+import noodlezip.store.entity.Menu;
 
 import java.io.Serializable;
 
@@ -13,9 +13,10 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class RamenToppingId implements Serializable {
+public class RamenToppingId /*implements Serializable*/ {
     @Column(name="menu_id", nullable = false)
     private Long menuId;
     @Column(name="topping_id", nullable = false)
     private Long toppingId;
+
 }
