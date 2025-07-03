@@ -1,6 +1,8 @@
 package noodlezip.store.service;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
 import noodlezip.store.dto.LocationInfoDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -34,7 +36,7 @@ public class LocationService {
         List<?> docs = (List<?>) res.getBody().get("documents");
 
         if (docs == null || docs.isEmpty()) {
-            throw new IllegalArgumentException("주소로 좌표를 찾을 수 없습니다.");
+            throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
         Map firstDoc = (Map) docs.get(0);
