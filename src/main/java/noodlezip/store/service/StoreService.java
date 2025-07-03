@@ -20,6 +20,7 @@ import noodlezip.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.util.PageUtil;
 import noodlezip.store.dto.*;
 import noodlezip.store.entity.*;
 import noodlezip.store.repository.*;
@@ -29,7 +30,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import noodlezip.common.util.PageUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -185,11 +185,10 @@ public class StoreService {
     }
 
     // 등록요청매장 조회
-    public Map<String, Object> findRegistList(Pageable pageable) {
-
-        Page<RegistListDto> page = storeRepository.findRegistStores(pageable);
-        Map<String, Object> map = pageUtil.getPageInfo(page, 5);
-        map.put("registList", page.getContent());
+    public Map<String, Object> findWaitingStores(Pageable pageable) {
+        Page<RegistListDto> resultPage = storeRepository.findWaitingStores(pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(resultPage, resultPage.getSize());
+        map.put("registList", resultPage.getContent());
         return map;
     }
 

@@ -8,6 +8,7 @@ import noodlezip.user.entity.User;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
 public class RegistListDto {
 
