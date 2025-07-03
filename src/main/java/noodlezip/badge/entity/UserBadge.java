@@ -73,20 +73,20 @@ public class UserBadge extends BaseTimeEntity {
     }
 
 
-    public UserBadge getNextLevelUserDefaultBadge(BadgeStrategyType strategy) {
-        Long nextLevelBadgeId = badge.getNextLevelBadgeId();
-        Integer updatedAccumulativeValue = accumulativeValue == null ? null : accumulativeValue; //얘를
-
-        Badge newLevelBadge = Badge.builder()
-                .id(nextLevelBadgeId)
-                .build();
-        return UserBadge.builder()
-                .userId(userId)
-                .badge(newLevelBadge)
-                .currentValue(strategy.getInitCurrentValueForNextLevel())
-                .postStatus(PostStatusType.VISIBLE)
-                .accumulativeValue(updatedAccumulativeValue)
-                .build();
-    }
+//    public UserBadge getNextLevelUserDefaultBadge(BadgeStrategyType strategy) {
+//        Long nextLevelBadgeId = badge.getNextLevelBadgeId();
+//        Integer updatedAccumulativeValue = accumulativeValue == null ? null : accumulativeValue; //얘를
+//
+//        Badge newLevelBadge = Badge.builder()
+//                .id(nextLevelBadgeId)
+//                .build();
+//        return UserBadge.builder()
+//                .userId(userId)
+//                .badge(newLevelBadge)
+//                .currentValue(strategy.getInitCurrentValueForNextLevel())
+//                .postStatus(PostStatusType.VISIBLE)
+//                .accumulativeValue(updatedAccumulativeValue)
+//                .build();
+//    }
 
 }
