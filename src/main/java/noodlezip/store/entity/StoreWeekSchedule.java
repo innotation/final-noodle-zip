@@ -29,5 +29,5 @@ public class StoreWeekSchedule {
 
     @NotNull
     @Column(name = "is_closed_day", nullable = false)
-    private Boolean isClosedDay = false;
+    private Boolean isClosedDay;
 }
