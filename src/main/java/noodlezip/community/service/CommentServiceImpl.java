@@ -28,8 +28,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> findCommentList(Long boardId, Pageable pageable) {
-        Page<CommentRespDto> commentDtoPage = commentRepository.findCommentByBoardIdWithUser(boardId, pageable);
+    public Map<String, Object> findCommentList(Long boardId, Long userId, Pageable pageable) {
+        Page<CommentRespDto> commentDtoPage = commentRepository.findCommentByBoardIdWithUser(boardId, userId, pageable);
         Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
         map.put("comments", commentDtoPage.getContent());
         map.put("totalComments", commentDtoPage.getTotalElements());

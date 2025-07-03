@@ -1,5 +1,6 @@
 package noodlezip.community.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import noodlezip.community.entity.Comment;
 
@@ -8,31 +9,24 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class CommentRespDto {
-    private long id;
+    private Long id;
     private String author;
     private String authorProfileImageUrl;
+    private Long userId;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private boolean isWriter;
 
-    public CommentRespDto(Comment comment) {
-        this.id = comment.getId();
-        if (comment.getUser() != null) {
-            this.author = comment.getUser().getUserName();
-            this.authorProfileImageUrl = comment.getUser().getProfileImageUrl();
-        } else {
-            this.author = null;
-            this.authorProfileImageUrl = null;
-        }
-        this.content = comment.getContent();
-        this.createdAt = comment.getCreatedAt();
-        this.updatedAt = comment.getUpdatedAt();
-    }
-
-    public static CommentRespDto from(Comment comment) {
-        return new CommentRespDto(comment);
+    @QueryProjection
+    public CommentRespDto(Long id, String author, String authorProfileImageUrl, Long userId, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.author = author;
+        this.authorProfileImageUrl = authorProfileImageUrl;
+        this.userId = userId;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }
