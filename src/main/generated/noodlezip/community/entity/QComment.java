@@ -24,7 +24,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final noodlezip.common.entity.QBaseTimeEntity _super = new noodlezip.common.entity.QBaseTimeEntity(this);
 
-    public final StringPath commentStatus = createString("commentStatus");
+    public final EnumPath<CommunityActiveStatus> commentStatus = createEnum("commentStatus", CommunityActiveStatus.class);
 
     public final NumberPath<Long> communityId = createNumber("communityId", Long.class);
 

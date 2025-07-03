@@ -43,9 +43,9 @@ public class Board extends BaseTimeEntity {
     @Column(name = "community_type", nullable = false, length = 30)
     private String communityType;
 
-    @Size(max = 30)
+    @Enumerated(EnumType.STRING)
     @Column(name = "post_status", nullable = false, length = 30)
-    private String postStatus;
+    private CommunityActiveStatus postStatus;
 
     @Column(name = "review_store_id")
     private Long reviewStoreId;

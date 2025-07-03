@@ -28,9 +28,9 @@ public class Comment extends BaseTimeEntity {
 //    @JoinColumn(name = "community_id", nullable = false)
 //    private Board board;
 
-    //    @NotNull
-    //    @Column(name = "user_id", nullable = false)
-    //    private Long userId;
+//        @NotNull
+//        @Column(name = "user_id", nullable = false)
+//        private Long userId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -40,10 +40,11 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "content", nullable = false, length = 300)
     private String content;
 
-    @Size(max = 30)
+
+    @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "comment_status", nullable = false, length = 30)
-    private String commentStatus;
+    private CommunityActiveStatus commentStatus;
 
     @Column(name = "parent_comment_id")
     private Long parentCommentId;

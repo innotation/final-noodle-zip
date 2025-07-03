@@ -3,7 +3,7 @@ package noodlezip.community.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import noodlezip.community.dto.CommentDto;
+import noodlezip.community.dto.CommentRespDto;
 import noodlezip.community.entity.QComment;
 import noodlezip.user.entity.QUser;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<CommentDto> findCommentByBoardIdWithUser(Long boardId, Pageable pageable) {
+    public Page<CommentRespDto> findCommentByBoardIdWithUser(Long boardId, Pageable pageable) {
         QComment comment = QComment.comment;
         QUser user = QUser.user;
 
@@ -37,8 +37,8 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 //                .fetch();
 
         // Comment Dto로 프로젝션 하는 방식, 현재의 댓글이 level1만 있는 경우 유용
-        List<CommentDto> commentList = queryFactory
-                .select(Projections.constructor(CommentDto.class,
+        List<CommentRespDto> commentList = queryFactory
+                .select(Projections.constructor(CommentRespDto.class,
                         comment.id,
                         comment.user.userName,
                         comment.user.profileImageUrl,

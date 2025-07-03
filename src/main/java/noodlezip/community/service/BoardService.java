@@ -11,5 +11,5 @@ import java.util.Map;
 public interface BoardService {
     Map<String, Object> findBoardList(Pageable pageable);
     Board findBoardById(long id);
-    void registBoard(BoardReqDto boardReqDto, long userId, MultipartFile boardImage);
+    void registBoard(BoardReqDto boardReqDto, Long userId, MultipartFile boardImage);
 }

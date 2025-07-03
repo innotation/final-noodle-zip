@@ -34,7 +34,7 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final NumberPath<Integer> likesCount = createNumber("likesCount", Integer.class);
 
-    public final StringPath postStatus = createString("postStatus");
+    public final EnumPath<CommunityActiveStatus> postStatus = createEnum("postStatus", CommunityActiveStatus.class);
 
     public final NumberPath<Long> reviewStoreId = createNumber("reviewStoreId", Long.class);
 

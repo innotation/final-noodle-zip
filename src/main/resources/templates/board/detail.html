@@ -285,16 +285,15 @@
 
                         try {
                             const response = await fetch(`/comments?boardId=${boardId}&page=${page}`);
-                            console.log(response);
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);
                             }
                             const data = await response.json(); // 백엔드에서 Map 형태로 온 JSON 데이터를 받음
                             // 댓글 목록 렌더링
+                            console.log(data);
                             commentsList.innerHTML = ''; // 기존 댓글 비우기
-                            // 백엔드에서 'comments'라는 키로 댓글 목록을 보낸다고 가정
-                            if (data.comments && data.comments.length > 0) {
-                                data.comments.forEach(comment => {
+                            if (data.payload.comments && data.payload.comments.length > 0) {
+                                data.payload.comments.forEach(comment => {
                                     commentsList.appendChild(createCommentItem(comment));
                                 });
                             } else {
@@ -355,13 +354,30 @@
                 <hr>
 
                 <h5>댓글 남기기</h5>
-                <div class="form-group">
-                    <textarea class="form-control" name="comments" id="comments2" rows="6"
-                              placeholder="Comment"></textarea>
-                </div>
-                <div class="form-group">
-                    <button type="submit" id="submit2" class="btn_1 add_bottom_15" th:href="@{/comment/regist}">등록
-                    </button>
+                <div class="comment-form">
+                    <!-- th:action은 폼 제출 시 요청을 보낼 URL을 지정합니다. -->
+                    <!-- boardId는 숨겨진 input 필드로 폼 데이터에 포함시킵니다. -->
+                    <form th:action="@{/comments/regist}" method="post">
+                        <div class="form-group">
+                            <!-- name="content"는 컨트롤러의 DTO 필드명과 일치해야 합니다. -->
+                            <textarea class="form-control" name="content" id="commentContent" rows="6"
+                                      placeholder="Comment"></textarea>
+                        </div>
+                        <!-- 게시글 ID를 숨겨진 필드로 추가하여 폼 제출 시 함께 전송 -->
+                        <input type="hidden" name="boardId" th:value="${board.id}" />
+
+                        <!--
+                        보안 참고: 작성자 정보(author, authorProfileImageUrl)는 클라이언트에서 직접 받지 않고,
+                        백엔드(컨트롤러)에서 @AuthenticationPrincipal 등을 통해 현재 로그인한 사용자 정보를 가져와 사용하는 것이
+                        보안상 훨씬 안전하고 권장됩니다. 아래는 예시를 위해 임시로 주석 처리합니다.
+                        <input type="hidden" name="author" th:value="${currentUser.name}" />
+                        <input type="hidden" name="authorProfileImageUrl" th:value="${currentUser.profileImageUrl}" />
+                        -->
+
+                        <div class="form-group">
+                            <button type="submit" id="submit2" class="btn_1 add_bottom_15">등록</button>
+                        </div>
+                    </form>
                 </div>
 
             </div>

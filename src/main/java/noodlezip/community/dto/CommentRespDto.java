@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommentDto {
+public class CommentRespDto {
     private long id;
     private String author;
     private String authorProfileImageUrl;
@@ -18,7 +18,7 @@ public class CommentDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public CommentDto(Comment comment) {
+    public CommentRespDto(Comment comment) {
         this.id = comment.getId();
         if (comment.getUser() != null) {
             this.author = comment.getUser().getUserName();
@@ -32,7 +32,7 @@ public class CommentDto {
         this.updatedAt = comment.getUpdatedAt();
     }
 
-    public static CommentDto from(Comment comment) {
-        return new CommentDto(comment);
+    public static CommentRespDto from(Comment comment) {
+        return new CommentRespDto(comment);
     }
 }

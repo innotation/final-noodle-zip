@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.entity.Board;
+import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.entity.Image;
 import noodlezip.common.repository.ImageRepository;
@@ -51,9 +52,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void registBoard(BoardReqDto boardReqDto, long userId,MultipartFile boardImage) {
+    public void registBoard(BoardReqDto boardReqDto, Long userId,MultipartFile boardImage) {
         Board board = modelMapper.map(boardReqDto, Board.class);
         board.setCommunityType("community");
+        board.setPostStatus(CommunityActiveStatus.POSTED);
         board.setUserId(userId);
         if (!boardImage.isEmpty() && boardImage.getOriginalFilename() != null) {
             Map<String, String> map = fileUtil.fileupload("board", boardImage);
