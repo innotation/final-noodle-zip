@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
               div.innerHTML = `
                                 <img src="${level.imageUrl}" alt="Level Badge">
                                 <h6>${level.levelTitle}</h6>
-                                <small>${level.obtainedDate ? formatDate(level.obtainedDate) : ''}</small>
+                                <small>${level.obtainedDate ? formatDate(level.obtainedDate) : '-미달성-'}</small>
                               `;
               badgeLevelsGrid.appendChild(div);
             });
