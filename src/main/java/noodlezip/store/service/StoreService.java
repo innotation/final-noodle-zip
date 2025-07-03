@@ -80,6 +80,7 @@ public class StoreService {
         Store savedStore = storeRepository.save(store);
 
         // 영업시간 저장
+
         if (dto.getWeekSchedule() != null) {
             List<StoreWeekSchedule> schedules = dto.getWeekSchedule().stream()
                     .map(s -> {

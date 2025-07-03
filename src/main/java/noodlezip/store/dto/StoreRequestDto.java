@@ -33,7 +33,6 @@ public class StoreRequestDto {
 
     private List<MenuRequestDto> menus; // 메뉴 리스트 포함(메뉴 엔티티로 매핑)
     private List<StoreScheduleRequestDto> weekSchedule;  // 요일별 영업시간
-    private List<MultipartFile> menuImages; // 메뉴 이미지
 
     private String storeMainImageUrl; // 이미지저장 url
 

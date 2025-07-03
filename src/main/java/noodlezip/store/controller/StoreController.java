@@ -2,6 +2,7 @@ package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
 import noodlezip.user.repository.UserRepository;
@@ -11,8 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @RequestMapping("/store")
@@ -40,8 +39,9 @@ public class StoreController {
         User user = myUserDetails.getUser();
 
         // 가게 등록 처리
-        storeService.registerStore(dto, storeMainImage, user);
+        Long storeId = storeService.registerStore(dto, storeMainImage, user);
 
-        return "redirect:/store/detail";
+        return "redirect:/store/detail/" + storeId;
+
     }
 }

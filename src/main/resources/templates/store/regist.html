@@ -128,88 +128,13 @@
 						</div>
 					</div>
 
-					<!-- ⑤ 요일별 영업시간 -->
-					<div class="box_general padding_bottom">
-						<div class="header_box version_2">
-							<h2><i class="fa fa-clock-o"></i>Opening Hours</h2>
+				<!-- ⑤ 요일별 영업시간 -->
+						<div class="box_general padding_bottom">
+							<div class="header_box version_2">
+								<h2><i class="fa fa-clock-o"></i>Opening Hours</h2>
+							</div>
+							<div id="opening-schedule"></div>
 						</div>
-
-						<!-- 요일 목록 -->
-						<div id="opening-schedule"></div>
-					</div>
-
-						<!-- 요일별 영업시간 UI -->
-
-						<!-- 반복: 요일 -->
-						<script>
-							const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-							const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-						</script>
-
-						<script>
-							for (let i = 0; i < days.length; i++) {
-								document.write(`
-									<div class="row mb-2 align-items-center">
-									  <div class="col-md-2">
-										<label class="fix_spacing">${dayLabels[i]}</label>
-										<input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}">
-										<input type="hidden" name="weekSchedule[${i}].isClosedDay" value="false" id="closed-day-${i}">
-									  </div>
-									  <div class="col-md-5">
-										<div class="form-group">
-										  <div class="styled-select">
-											<select class="form-control" name="weekSchedule[${i}].openingAt" onchange="checkClosed(${i})">
-											  <option value="">Opening Time</option>
-											  <option value="CLOSED">Closed</option>
-											  ${generateTimeOptions()}
-											</select>
-										  </div>
-										</div>
-									  </div>
-									  <div class="col-md-5">
-										<div class="form-group">
-										  <div class="styled-select">
-											<select class="form-control" name="weekSchedule[${i}].closingAt" onchange="checkClosed(${i})">
-											  <option value="">Closing Time</option>
-											  <option value="CLOSED">Closed</option>
-											  ${generateTimeOptions()}
-											</select>
-										  </div>
-										</div>
-									  </div>
-									</div>
-									`);
-							}
-
-							function generateTimeOptions() {
-								const options = [];
-								for (let h = 0; h < 24; h++) {
-									const hour = h % 12 === 0 ? 12 : h % 12;
-									const meridian = h < 12 ? "AM" : "PM";
-									const value = `${h.toString().padStart(2, '0')}:00`;
-									const label = `${hour} ${meridian}`;
-									options.push(`<option value="${value}">${label}</option>`);
-								}
-								return options.join("");
-							}
-
-							function checkClosed(index) {
-								const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`);
-								const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`);
-								const closedInput = document.getElementById(`closed-day-${index}`);
-
-								if (open.value === "CLOSED" || close.value === "CLOSED") {
-									closedInput.value = "true";
-									// 둘 다 disabled 처리하여 서버로 전송 안 되게
-									open.disabled = true;
-									close.disabled = true;
-								} else {
-									closedInput.value = "false";
-									open.disabled = false;
-									close.disabled = false;
-								}
-							}
-						</script>
 
 					<!-- ⑥ 지역카드, 유아 동반, 주차 : 라디오 · 체크박스 -->
 					<div class="mb-4">
@@ -285,7 +210,7 @@
 							<div class="col-md-4">
 								<div class="menu-image-upload" style="border: 2px dashed #ccc; padding: 30px 20px; text-align: center; cursor: pointer; height: 180px;">
 									<p style="margin-top: 10px;">Drop files here to upload</p>
-									<input type="file" name="menus[0].menuImage" class="menu-image-input" accept="image/*" style="display: none;" />
+									<input type="file" name="menus[0].menuImageFile" class="menu-image-input" accept="image/*" style="display: none;" />
 									<img class="menu-preview-image" src="" style="max-width: 100%; max-height: 120px; display: none; margin-top: 10px;" />
 								</div>
 							</div>
@@ -294,21 +219,14 @@
 							<div class="col-md-8">
 								<div class="row">
 									<!-- 메뉴명 -->
-									<div class="col-md-6 mb-2">
-										<input
-												type="text"
-												name="menus[0].menuLabel"
-												id="menu_label_0"
-												class="form-control"
-												placeholder="메뉴명 입력"
-												autocomplete="off"
-										/>
+									<div class="col-md-4">
+										<input type="text" name="menus[0].menuName" class="form-control" placeholder="메뉴 이름" required />
 									</div>
 
 									<!-- 가격 -->
 									<div class="col-md-6 mb-2">
 										<div class="input-group">
-											<input type="number" name="menus[0].price" class="form-control form-control-sm price-input" placeholder="가격" min="0" step="500" required>
+											<input type="number" name="menus[0].price" class="form-control" placeholder="가격" min="0" step="500" required>
 											<span class="input-group-text">원</span>
 										</div>
 									</div>
@@ -343,35 +261,37 @@
 										</select>
 									</div>
 
-									<!-- 메뉴 설명 + 기본 토핑 선택 묶음 -->
+									<!-- 메뉴 설명 + 기본 토핑 -->
 									<div class="col-md-12 mb-2 d-flex gap-3 align-items-start">
 										<!-- 메뉴 설명 -->
-										<textarea name="menus[0].menuDescription" class="form-control form-control-sm" placeholder="메뉴 설명" rows="2" style="flex: 1;"></textarea>
+										<div class="col-md-6 mt-2">
+											<textarea name="menus[0].menuDescription" class="form-control" rows="2" placeholder="설명"></textarea>
+										</div>
 
 										<!-- 기본 토핑 선택 -->
 										<div>
 											<label class="form-label d-block">기본 토핑 선택</label>
-											<div class="d-flex flex-wrap gap-2 topping-tags" data-menu-index="0" style="max-width: 300px;">
-												<span class="topping-tag" data-value="차슈">차슈</span>
-												<span class="topping-tag" data-value="닭가슴살">닭가슴살</span>
-												<span class="topping-tag" data-value="계란">반숙 계란</span>
-												<span class="topping-tag" data-value="파">파</span>
-												<span class="topping-tag" data-value="김">김</span>
-												<span class="topping-tag" data-value="멘마">멘마</span>
-												<span class="topping-tag" data-value="숙주">숙주</span>
-												<span class="topping-tag" data-value="버터">버터</span>
-												<span class="topping-tag" data-value="옥수수">옥수수</span>
-												<span class="topping-tag" data-value="김치">김치</span>
-												<span class="topping-tag" data-value="생강">생강</span>
-												<span class="topping-tag" data-value="마늘">마늘</span>
-												<span class="topping-tag" data-value="치즈">치즈</span>
-												<span class="topping-tag" data-value="매운고추">매운 고추</span>
-												<span class="topping-tag" data-value="새우튀김">새우튀김</span>
-												<span class="topping-tag" data-value="두부">두부</span>
-												<span class="topping-tag" data-value="시금치">시금치</span>
-												<span class="topping-tag" data-value="팽이버섯">팽이버섯</span>
-												<span class="topping-tag" data-value="고추기름">고추기름</span>
-												<span class="topping-tag" data-value="텐카스">텐카스</span>
+											<div class="topping-tags" data-menu-index="0">
+												<span class="topping-tag" data-id="1" data-name="차슈">차슈</span>
+												<span class="topping-tag" data-id="2" data-name="닭가슴살">닭가슴살</span>
+												<span class="topping-tag" data-id="3" data-name="반숙 계란">반숙 계란</span>
+												<span class="topping-tag" data-id="4" data-name="파">파</span>
+												<span class="topping-tag" data-id="5" data-name="김">김</span>
+												<span class="topping-tag" data-id="6" data-name="멘마">멘마</span>
+												<span class="topping-tag" data-id="7" data-name="숙주">숙주</span>
+												<span class="topping-tag" data-id="8" data-name="버터">버터</span>
+												<span class="topping-tag" data-id="9" data-name="옥수수">옥수수</span>
+												<span class="topping-tag" data-id="10" data-name="김치">김치</span>
+												<span class="topping-tag" data-id="11" data-name="생강">생강</span>
+												<span class="topping-tag" data-id="12" data-name="마늘">마늘</span>
+												<span class="topping-tag" data-id="13" data-name="치즈">치즈</span>
+												<span class="topping-tag" data-id="14" data-name="매운 고추">매운 고추</span>
+												<span class="topping-tag" data-id="15" data-name="새우튀김">새우튀김</span>
+												<span class="topping-tag" data-id="16" data-name="두부">두부</span>
+												<span class="topping-tag" data-id="17" data-name="시금치">시금치</span>
+												<span class="topping-tag" data-id="18" data-name="팽이버섯">팽이버섯</span>
+												<span class="topping-tag" data-id="19" data-name="고추기름">고추기름</span>
+												<span class="topping-tag" data-id="20" data-name="텐카스">텐카스</span>
 											</div>
 											<div class="default-toppings-container"></div>
 										</div>
@@ -580,6 +500,9 @@
 	<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js" charset="utf-8"></script>
 
 	<script>
+		/* ==============================
+           카카오 주소 검색
+           ============================== */
 		function openPostcode() {
 			new daum.Postcode({
 				oncomplete: function (data) {
@@ -590,17 +513,13 @@
 					document.getElementById("zipcode").value = zonecode;
 					document.getElementById("store_detail_input").focus();
 
-					// 서버에 도로명 주소 전송 -> 위도, 경도, 법정코드 받아오기
 					fetch("/api/location-info", {
 						method: "POST",
-						headers: {
-							"Content-Type": "application/json"
-						},
+						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ roadAddress })
 					})
 							.then(res => res.json())
 							.then(data => {
-								// 받은 값을 숨김 필드에 넣기
 								document.getElementById("storeLegalCode").value = data.storeLegalCode || '';
 								document.getElementById("storeLat").value = data.storeLat || '';
 								document.getElementById("storeLng").value = data.storeLng || '';
@@ -612,53 +531,45 @@
 
 		document.getElementById("searchAddressBtn").addEventListener("click", openPostcode);
 		document.getElementById("address-api").addEventListener("click", openPostcode);
-	</script>
 
-
-	<!-- 전화번호 -->
-	<script>
+		/* ==============================
+           전화번호 처리
+           ============================== */
 		const phonePrefix = document.getElementById('phonePrefix');
 		const phoneRest = document.getElementById('phoneRest');
 		const phoneHidden = document.getElementById('phone');
 
-		// phoneRest 입력 시 하이픈 자동 추가
 		phoneRest.addEventListener('input', e => {
 			let val = e.target.value.replace(/[^0-9]/g, '');
-			if (val.length > 4) {
-				val = val.slice(0, 4) + '-' + val.slice(4, 8);
-			}
+			if (val.length > 4) val = val.slice(0, 4) + '-' + val.slice(4, 8);
 			e.target.value = val;
 		});
 
-		// 폼 제출 직전 hidden input에 합쳐서 숫자만 저장
 		document.getElementById('register').addEventListener('submit', e => {
 			const prefix = phonePrefix.value;
 			const rest = phoneRest.value.replace(/-/g, '');
-
 			if (!prefix || !rest) {
 				alert('전화번호를 올바르게 입력해주세요.');
 				e.preventDefault();
 				return false;
 			}
-
 			phoneHidden.value = prefix + rest;
 		});
-	</script>
 
-	<!-- 대표이미지 업로드 미리보기 -->
-	<script>
-		document.getElementById('image-upload-area').addEventListener('click', function () {
+		/* ==============================
+           대표 이미지 업로드 미리보기
+           ============================== */
+		document.getElementById('image-upload-area').addEventListener('click', () => {
 			document.getElementById('image-input').click();
 		});
 
-		document.getElementById('image-input').addEventListener('change', function (event) {
+		document.getElementById('image-input').addEventListener('change', event => {
 			const file = event.target.files[0];
 			const preview = document.getElementById('preview-image');
 			const uploadText = document.getElementById('upload-text');
-
 			if (file) {
 				const reader = new FileReader();
-				reader.onload = function (e) {
+				reader.onload = e => {
 					preview.src = e.target.result;
 					preview.style.display = 'block';
 					uploadText.style.display = 'none';
@@ -666,21 +577,17 @@
 				reader.readAsDataURL(file);
 			}
 		});
-	</script>
 
-	<!-- 메뉴 추가/삭제 및 토핑 선택 기능 -->
-	<script>
+		/* ==============================
+           메뉴 추가/삭제 및 이미지 업로드
+           ============================== */
 		let menuIndex = 1;
-
 		const menuList = document.getElementById('menu-items');
 		const template = document.querySelector('.menu-item');
 		const addButton = document.getElementById('add-menu');
 
-		// 메뉴 추가
 		addButton.addEventListener('click', () => {
 			const clone = template.cloneNode(true);
-
-			// name/index 정리
 			clone.querySelectorAll('input, select, textarea').forEach(input => {
 				if (input.name) input.name = input.name.replace(/\d+/, menuIndex);
 				if (input.id) {
@@ -689,17 +596,13 @@
 					input.id = newId;
 					if (label) label.setAttribute("for", newId);
 				}
-				if (input.type === 'radio' || input.type === 'checkbox') {
-					input.checked = false;
-				} else if (input.type === 'file') {
-					// 파일 input 초기화
-					input.value = '';
-				} else {
-					input.value = '';
-				}
+				input.type === 'checkbox' || input.type === 'radio' ? input.checked = false : input.value = '';
 			});
 
-			// 이미지 미리보기 초기화
+			clone.querySelectorAll('.topping-tags, .default-toppings-container').forEach(el => {
+				el.dataset.menuIndex = menuIndex;
+			});
+
 			const preview = clone.querySelector('.menu-preview-image');
 			if (preview) {
 				preview.src = '';
@@ -711,38 +614,30 @@
 			updateRemoveMenuButtons(clone);
 
 			menuList.insertBefore(clone, addButton);
-
 			menuIndex++;
 		});
 
-		// 삭제 버튼 제한
 		function updateRemoveMenuButtons(context = document) {
 			context.querySelectorAll('.remove-menu').forEach(button => {
 				button.onclick = () => {
 					const allMenus = document.querySelectorAll('.menu-item');
-					if (allMenus.length > 1) {
-						button.closest('.menu-item').remove();
-					} else {
-						alert("최소 한 개의 메뉴는 등록되어 있어야 합니다.");
-					}
+					if (allMenus.length > 1) button.closest('.menu-item').remove();
+					else alert("최소 한 개의 메뉴는 등록되어 있어야 합니다.");
 				};
 			});
 		}
 
-		// 이미지 업로드
 		function setupMenuImageUpload(area) {
 			const uploadArea = area.querySelector('.menu-image-upload');
 			const input = uploadArea.querySelector('.menu-image-input');
 			const preview = uploadArea.querySelector('.menu-preview-image');
+			const uploadText = uploadArea.querySelector('p');
 
 			uploadArea.addEventListener('click', () => input.click());
-			uploadArea.addEventListener('dragover', e => {
+			['dragover', 'dragleave'].forEach(evt => uploadArea.addEventListener(evt, e => {
 				e.preventDefault();
-				uploadArea.style.borderColor = '#007bff';
-			});
-			uploadArea.addEventListener('dragleave', () => {
-				uploadArea.style.borderColor = '#ccc';
-			});
+				uploadArea.style.borderColor = evt === 'dragover' ? '#007bff' : '#ccc';
+			}));
 			uploadArea.addEventListener('drop', e => {
 				e.preventDefault();
 				uploadArea.style.borderColor = '#ccc';
@@ -751,6 +646,7 @@
 					input.files = e.dataTransfer.files;
 					preview.src = URL.createObjectURL(file);
 					preview.style.display = 'block';
+					if (uploadText) uploadText.style.display = 'none';
 				}
 			});
 			input.addEventListener('change', () => {
@@ -758,76 +654,53 @@
 				if (file) {
 					preview.src = URL.createObjectURL(file);
 					preview.style.display = 'block';
+					if (uploadText) uploadText.style.display = 'none';
 				}
 			});
 		}
 
-		// 토핑 태그
-		function setupToppingTags(wrapper) {
-			const tagContainer = wrapper.querySelector('.topping-tags');
-			const hiddenInputsContainer = wrapper.querySelector('.default-toppings-container');
-
-			if (!tagContainer || !hiddenInputsContainer) return;
-
-			// 초기 선택된 토핑 배열 (hidden input이 여러 개라면 값을 모음)
-			let selectedValues = [...hiddenInputsContainer.querySelectorAll('input')].map(input => input.value);
-
-			// 초기 선택 토핑에 클래스 부여
-			tagContainer.querySelectorAll('.topping-tag').forEach(tag => {
-				const value = tag.dataset.value;
-				if (selectedValues.includes(value)) {
-					tag.classList.add('selected');
-				}
-
-				// 클릭 이벤트 등록
+		/* ==============================
+           토핑 선택 기능
+           ============================== */
+		function setupToppingTags(context = document) {
+			context.querySelectorAll('.topping-tag').forEach(tag => {
 				tag.addEventListener('click', () => {
 					tag.classList.toggle('selected');
+					const container = tag.closest('.menu-item');
+					const defaultContainer = container.querySelector('.default-toppings-container');
+					const menuIndex = container.querySelector('.topping-tags').dataset.menuIndex;
+					const toppingId = tag.dataset.id;
 
-					// 선택된 토핑 값 리스트
-					const selected = [...tagContainer.querySelectorAll('.topping-tag.selected')].map(el => el.dataset.value);
-
-					// 기존 숨김 필드 모두 삭제
-					hiddenInputsContainer.innerHTML = '';
-
-					// 선택된 토핑 별로 숨김 input 생성
-					selected.forEach(val => {
-						const input = document.createElement('input');
-						input.type = 'hidden';
-						input.name = wrapper.querySelector('input[name$=".defaultToppingIds"]')?.name || 'defaultToppingIds';
-						input.value = val;
-						hiddenInputsContainer.appendChild(input);
-					});
+					const existing = defaultContainer.querySelector(`input[value="${toppingId}"]`);
+					if (tag.classList.contains('selected')) {
+						if (!existing) {
+							const input = document.createElement('input');
+							input.type = 'hidden';
+							input.name = `menus[${menuIndex}].defaultToppingIds`;
+							input.value = toppingId;
+							defaultContainer.appendChild(input);
+						}
+					} else {
+						if (existing) defaultContainer.removeChild(existing);
+					}
 				});
 			});
 		}
 
-		// 최초 메뉴에 세팅
-		setupMenuImageUpload(template);
-		setupToppingTags(template);
-		updateRemoveMenuButtons(template);
-	</script>
-
-	<!-- 사장님 한 줄 소개 -->
-	<script>
+		/* ==============================
+           한 줄 소개 안내문
+           ============================== */
 		const textarea = document.getElementById('owner-intro');
 		const hint = document.getElementById('owner-intro-hint');
-
 		function updateHintVisibility() {
-			if (textarea.value.trim().length > 0) {
-				// 입력된 내용이 있으면 안내문 숨김
-				hint.style.opacity = '0';
-			} else {
-				// 입력이 없으면 안내문 보임
-				hint.style.opacity = '1';
-			}
+			hint.style.opacity = textarea.value.trim() ? '0' : '1';
 		}
-
 		textarea.addEventListener('input', updateHintVisibility);
 		window.addEventListener('DOMContentLoaded', updateHintVisibility);
-	</script>
 
-	<!-- 지역카드 -->
-	<script>
+		/* ==============================
+           지역카드 체크 처리
+           ============================== */
 		document.querySelector("form").addEventListener("submit", function () {
 			const regionCard = document.getElementById("regionCardCheck");
 			if (!regionCard.checked) {
@@ -838,20 +711,18 @@
 				this.appendChild(hiddenInput);
 			}
 		});
-	</script>
 
-	<!-- 추가 토핑 -->
-	<script>
+		/* ==============================
+           추가 토핑 추가/삭제
+           ============================== */
 		function addExtraTopping(menuIndex) {
 			const container = document.querySelector(`#extra-toppings-container-${menuIndex}`) || document.getElementById('extra-toppings-container');
-
-			// 처음 클릭 시 보여지게
 			if (container.style.display === 'none') {
 				container.style.display = 'block';
+				if (container.querySelectorAll('.extra-topping-item').length > 0) return;
 			}
 
 			const count = container.querySelectorAll('input').length;
-
 			const wrapper = document.createElement('div');
 			wrapper.className = 'extra-topping-item d-flex align-items-center mb-2';
 
@@ -865,20 +736,93 @@
 			btn.type = 'button';
 			btn.className = 'btn btn-sm btn-outline-danger ms-2';
 			btn.textContent = '삭제';
-			btn.onclick = function () {
-				container.removeChild(wrapper);
-			};
+			btn.onclick = () => container.removeChild(wrapper);
 
 			wrapper.appendChild(input);
 			wrapper.appendChild(btn);
-
 			container.appendChild(wrapper);
 		}
 
-		function removeExtraTopping(button) {
-			const wrapper = button.parentElement;
-			wrapper.parentElement.removeChild(wrapper);
+		/* ==============================
+           최초 템플릿 초기화 1회만 수행
+           ============================== */
+		setupMenuImageUpload(template);
+		setupToppingTags(template);
+		updateRemoveMenuButtons(template);
+
+		/* ==============================
+		요일별 영업시간
+		============================== */
+
+		const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+		const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+		function generateTimeOptions() {
+			const options = [];
+			for (let h = 0; h < 24; h++) {
+				const hour = h % 12 === 0 ? 12 : h % 12;
+				const meridian = h < 12 ? "AM" : "PM";
+				const value = `${h.toString().padStart(2, '0')}:00`;
+				const label = `${hour} ${meridian}`;
+				options.push(`<option value="${value}">${label}</option>`);
+			}
+			return options.join("");
 		}
+
+		function checkClosed(index) {
+			const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`);
+			const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`);
+			const closedInput = document.getElementById(`closed-day-${index}`);
+
+			if (open) open.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+			if (open.value === "CLOSED" || close.value === "CLOSED") {
+				closedInput.value = "true";
+				open.disabled = true;
+				close.disabled = true;
+			} else {
+				closedInput.value = "false";
+				open.disabled = false;
+				close.disabled = false;
+			}
+		}
+
+		function renderOpeningSchedule() {
+			const container = document.getElementById("opening-schedule");
+			let html = "";
+			for (let i = 0; i < days.length; i++) {
+				html += `
+      <div class="row mb-2 align-items-center">
+        <div class="col-md-2">
+          <label class="fix_spacing">${dayLabels[i]}</label>
+          <input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}">
+          <input type="hidden" name="weekSchedule[${i}].isClosedDay" value="false" id="closed-day-${i}">
+        </div>
+        <div class="col-md-5">
+          <div class="form-group">
+            <select class="form-control" name="weekSchedule[${i}].openingAt" onchange="checkClosed(${i})">
+              <option value="">Opening Time</option>
+              <option value="CLOSED">Closed</option>
+              ${generateTimeOptions()}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group">
+            <select class="form-control" name="weekSchedule[${i}].closingAt" onchange="checkClosed(${i})">
+              <option value="">Closing Time</option>
+              <option value="CLOSED">Closed</option>
+              ${generateTimeOptions()}
+            </select>
+          </div>
+        </div>
+      </div>
+    `;
+			}
+			container.innerHTML = html;
+		}
+
+		document.addEventListener("DOMContentLoaded", renderOpeningSchedule);
 	</script>
 
 </body>
