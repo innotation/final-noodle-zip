@@ -1,10 +1,6 @@
 package noodlezip.report.dto;
 
 import lombok.*;
-import noodlezip.report.status.ReportStatus;
-import noodlezip.report.status.ReportType;
-
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,7 +8,7 @@ import java.util.List;
 @Setter
 @Builder
 @ToString
-public class ReportDto {
+public class ReportRequestDto {
     private Long userId;
     private String reportType;
     private Long reportTargetId;
