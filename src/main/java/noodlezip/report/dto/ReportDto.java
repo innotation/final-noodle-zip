@@ -14,8 +14,8 @@ import java.util.List;
 @ToString
 public class ReportDto {
     private Long userId;
-    private ReportType reportType;
+    private String reportType;
     private Long reportTargetId;
     private String content;
-    private ReportStatus reportStatus;
+    private String reportStatus;
 }

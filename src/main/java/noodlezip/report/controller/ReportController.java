@@ -2,9 +2,13 @@ package noodlezip.report.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.auth.MyUserDetails;
 import noodlezip.report.dto.ReportDto;
 import noodlezip.report.service.ReportService;
+import noodlezip.user.entity.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +28,7 @@ public class ReportController {
             @RequestParam(required = false) List<String> reasons,
             @RequestParam(required = false) String content
     ) {
+
         // 여러 체크박스 사유 + 추가 텍스트를 content로 합침
         StringBuilder finalContent = new StringBuilder();
 
