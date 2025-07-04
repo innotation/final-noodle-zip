@@ -56,4 +56,17 @@ public class CommentServiceImpl implements CommentService {
         map.put("totalComments", commentDtoPage.getTotalElements());
         return map;
     }
+
+    @Override
+    public Map<String, Object> deleteComment(Long commentId, Long boardId, Long userId) {
+        commentRepository.deleteById(commentId);
+        int pageSize = 10; // 한 페이지에 보여줄 댓글 수
+        Sort sort = Sort.by(Sort.Direction.DESC, "id"); // 생성일 기준으로 내림차순 정렬
+        Pageable firstPage = PageRequest.of(0, pageSize, sort);
+        Page<CommentRespDto> commentDtoPage = commentRepository.findCommentByBoardIdWithUser(boardId, userId, firstPage);
+        Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
+        map.put("comments", commentDtoPage.getContent());
+        map.put("totalComments", commentDtoPage.getTotalElements());
+        return map;
+    }
 }

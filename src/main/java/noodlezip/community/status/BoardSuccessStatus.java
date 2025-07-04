@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 public enum BoardSuccessStatus implements BaseCode {
 
     _OK_GET_COMMENT(HttpStatus.OK, "COMMENT-001", "댓글 조회가 완료되었습니다."),
-    _OK_COMMENT_ADDED(HttpStatus.OK, "COMMENT-002", "댓글이 추가되었습니다.");
+    _OK_COMMENT_ADDED(HttpStatus.OK, "COMMENT-002", "댓글이 추가되었습니다."),
+    _OK_COMMENT_DELETED(HttpStatus.OK, "COMMENT-003", "댓글이 삭제되었습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

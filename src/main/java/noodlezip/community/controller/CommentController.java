@@ -68,8 +68,9 @@ public class CommentController {
         }
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<ApiResponse<?>> deleteComment(@PathVariable Long id, @AuthenticationPrincipal MyUserDetails user) {
-//
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> deleteComment(@PathVariable Long id,@RequestParam("boardId") Long boardId ,@AuthenticationPrincipal MyUserDetails user) {
+        Map<String, Object> map = commentService.deleteComment(id, boardId, user.getUser().getId());
+        return ApiResponse.onSuccess(BoardSuccessStatus._OK_COMMENT_DELETED, map);
+    }
 }
