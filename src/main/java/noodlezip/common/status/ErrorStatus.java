@@ -32,7 +32,17 @@ public enum ErrorStatus implements BaseErrorCode {
     // Common Errors
     _DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON-001", "데이터를 찾을 수 없습니다."),
     _INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON-002", "잘못된 입력 값입니다."),
-    _RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON-003", "요청한 리소스를 찾을 수 없습니다.")
+    _RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON-003", "요청한 리소스를 찾을 수 없습니다."),
+
+    // File Errors
+    _FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "FILE-001", "요청하신 파일을 찾을 수 없습니다."),
+    _FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE-002", "파일 업로드에 실패했습니다."),
+    _FILE_DOWNLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE-003", "파일 다운로드에 실패했습니다."),
+    _FILE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE-004", "파일 삭제에 실패했습니다."),
+    _UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE-005", "지원하지 않는 파일 형식입니다."),
+    _FILE_SIZE_LIMIT_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "FILE-006", "파일 크기가 허용된 한도를 초과했습니다."),
+    _INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FILE-007", "파일 이름이 유효하지 않습니다."),
+     _STORAGE_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "FILE-008", "파일 저장 서비스에 문제가 발생했습니다.");
 ;
     private final HttpStatus httpStatus;
     private final String code;

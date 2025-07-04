@@ -25,12 +25,32 @@ public class SecurityConfig {
 
         // URL 접근 제어( 인가 설정 )
         http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers("/",
+                                 "/check-login-id",
+                                 "/check-email",
+                                 "/verify-email",
+                                 "/signup",
+                                 "/login",
+                                 "/images/**",
+                                 "/css/**",
+                                 "/img/**",
+                                 "/js/**",
+                                 "/assets/**",
+                                 "/v3/api-docs/**",
+                                 "/swagger-ui/**",
+                                 "/send-verification-code",
+                                 "/fragments/**",
+                                 "/search/**",
+                                 "/store/**"
+                                  ).permitAll();
+                    .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
+                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                    .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
+                    .requestMatchers("/board/**", "/comments/**").permitAll()
+                    .anyRequest().authenticated();
             auth.requestMatchers("/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
                     "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**", "/swagger-ui/**",
                     "/send-verification-code", "/fragments/**", "/search/**", "/store/**").permitAll();
-            auth.requestMatchers("/admin/**").hasAuthority("ADMIN");
-            auth.requestMatchers("/user/**").hasAuthority("USER");
-            auth.anyRequest().authenticated();
         });
 
         // 로그인 처리 설정( 인증 설정 ) => custom
