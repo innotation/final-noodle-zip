@@ -85,7 +85,7 @@ public class Store extends BaseTimeEntity {
     // 법정코드
     @NotNull
     @Column(name = "store_legal_code", nullable = false)
-    private Integer storeLegalCode;
+    private Long storeLegalCode;
 
     /* 양방향 연관관계 매핑. 필요없을 듯 하다
     // 메뉴 리스트 (1:N)

@@ -35,6 +35,7 @@ public class StoreRequestDto {
     private List<StoreScheduleRequestDto> weekSchedule;  // 요일별 영업시간
 
     private String storeMainImageUrl; // 이미지저장 url
+    private MultipartFile storeMainImage;
 
-    private Integer storeLegalCode; // 법정코드
+    private Long storeLegalCode; // 법정코드
 }

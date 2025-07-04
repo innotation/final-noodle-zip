@@ -26,4 +26,6 @@ public class MenuRequestDto {
     private Integer ramenSoupId;
 
     private List<Long> defaultToppingIds; // 기본 토핑 ID 목록 (다대다 관계)
+
+    private List<String> extraToppings;   // 추가 토핑
 }
