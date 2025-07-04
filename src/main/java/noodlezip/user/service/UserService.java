@@ -11,4 +11,5 @@ public interface UserService {
     void verifyUserEmail(String email, String code);
     void updateUser(Long id, UserDto user, MultipartFile profileImage, MultipartFile bannerImage);
     void signoutUser(Long userId);
+    void validateMyPageExistingUserByUserId(Long userId);
 }

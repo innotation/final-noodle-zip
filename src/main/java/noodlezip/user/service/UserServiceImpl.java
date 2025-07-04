@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
+import noodlezip.mypage.exception.MyPageErrorStatus;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;
@@ -151,4 +152,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         log.info("User with ID: {} has been soft-deleted and data cleared.", userId);
     }
+    @Transactional(readOnly = true)
+    public void validateMyPageExistingUserByUserId(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
+    }
+
 }

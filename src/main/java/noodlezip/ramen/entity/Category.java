@@ -2,9 +2,9 @@ package noodlezip.ramen.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.store.entity.Menu;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category {
+public class Category extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +22,7 @@ public class Category {
     private Integer id;
 
     @Column(name = "category_name", nullable = false, length = 50)
-    private String name;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private String categoryName;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Menu> menus;

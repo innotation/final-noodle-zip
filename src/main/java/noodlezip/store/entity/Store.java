@@ -1,43 +1,104 @@
 package noodlezip.store.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
 
-@Entity
-@Table(name = "tbl_store")
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class Store {
-
+@ToString
+@Entity
+@Table(name = "tbl_store")
+public class Store extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "store_id")
+    @Column(name = "store_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @NotNull
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Size(max = 100)
+    @NotNull
+    @Column(name = "store_name", nullable = false, length = 100)
     private String storeName;
 
-    @Column(nullable = false, length = 300)
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(nullable = false, length = 20)
+    @Size(max = 20)
+    @Column(name = "phone", length = 20)
     private String phone;
 
+    @NotNull
+    @Column(name = "is_local_card", nullable = false)
     private Boolean isLocalCard;
+
+    @NotNull
+    @Column(name = "is_child_allowed", nullable = false)
     private Boolean isChildAllowed;
 
-    @Column(length = 10)
-    private String hasParking;
+    // Enum 타입 3개 parking, operationstatus, approvalstatus
+    @Enumerated(EnumType.STRING)
+    @Column(name = "has_parking", nullable = false, length = 30)
+    private ParkingType hasParking;
 
-    @Column(length = 300)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "operation_status", nullable = false, length = 30)
+    private OperationStatus operationStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", nullable = false, length = 30)
+    private ApprovalStatus approvalStatus;
+
+    @Size(max = 300)
+    @Column(name = "owner_comment", length = 300)
     private String ownerComment;
 
-    @Column(length = 500)
+    @Size(max = 500)
+    @Column(name = "store_main_image_url", length = 500)
     private String storeMainImageUrl;
 
-    private Double xAxis;
-    private Double yAxis;
+    @NotNull
+    @Column(name = "store_lat", nullable = false)
+    private Double storeLat;
+
+    @NotNull
+    @Column(name = "store_lng", nullable = false)
+    private Double storeLng;
+
+    // 법정코드
+    @NotNull
+    @Column(name = "store_legal_code", nullable = false)
+    private Integer storeLegalCode;
+
+    /* 양방향 연관관계 매핑. 필요없을 듯 하다
+    // 메뉴 리스트 (1:N)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Menu> menus = new ArrayList<>();
+
+    // 추가 토핑 리스트 (1:N)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<StoreExtraTopping> extraToppings = new ArrayList<>();
+
+    // 요일별 영업 시간 (1:N)
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<StoreWeekSchedule> weekSchedules = new ArrayList<>();
+*/
+
 }

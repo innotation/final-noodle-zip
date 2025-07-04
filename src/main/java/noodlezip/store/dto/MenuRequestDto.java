@@ -1,6 +1,9 @@
 package noodlezip.store.dto;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,9 +15,15 @@ public class MenuRequestDto {
     private String menuName;
     private Integer price;
     private String menuDescription;
+
+    // DB에 저장할 URL
     private String menuImageUrl;
 
-    private Integer ramenCategoryId; // tbl_ramen_category 참조
-    private Integer ramenSoupId;     // tbl_ramen_soup 참조
+    // 클라이언트에서 전달할 MultipartFile 이미지
+    private MultipartFile menuImageFile;
 
+    private Integer ramenCategoryId;
+    private Integer ramenSoupId;
+
+    private List<Long> defaultToppingIds; // 기본 토핑 ID 목록 (다대다 관계)
 }
