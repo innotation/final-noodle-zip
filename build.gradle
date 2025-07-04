@@ -53,6 +53,11 @@ dependencies {
 	testImplementation 'com.h2database:h2'
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// aws s3
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.11.238'
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+	runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
 }
 
 tasks.named('test') {
@@ -61,4 +66,9 @@ tasks.named('test') {
 
 tasks.named('jar'){
 	enabled = false;
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	options.compilerArgs << "-parameters"
 }

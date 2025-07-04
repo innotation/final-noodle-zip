@@ -3,6 +3,7 @@ package noodlezip.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.util.PageUtil;
 import noodlezip.store.service.StoreService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,41 +25,39 @@ import java.util.Map;
 public class AdminController {
 
     private final StoreService storeService;
-    private final noodlezip.common.util.PageUtil pageUtil;
+    private final PageUtil pageUtil;
 
     @GetMapping("/main")
     public void mainPage(){}
 
     @GetMapping("/reportList")
-    public void reportListPage(){}
+    public String reportList() {
+        return "admin/reportList";
+    }
 
     @GetMapping("/registList")
-    public String registList(@PageableDefault(size = 5) Pageable pageable, Model model) {
+    public String registListPage(@PageableDefault(size = 5) Pageable pageable, Model model) {
+        Map<String, Object> page = storeService.findWaitingStores(pageable);
 
-        // 페이지 번호 보정: 0부터 시작 → 1부터로 보정
-        pageable = pageable.withPage(Math.max(0, pageable.getPageNumber() - 1));
+        model.addAttribute("totalCount", page.get("totalCount"));
+        model.addAttribute("page", page.get("page"));
+        model.addAttribute("size", page.get("size"));
+        model.addAttribute("pagePerBlock", page.get("pagePerBlock"));
+        model.addAttribute("totalPage", page.get("totalPage"));
+        model.addAttribute("beginPage", page.get("beginPage"));
+        model.addAttribute("endPage", page.get("endPage"));
+        model.addAttribute("isFirst", page.get("isFirst"));
+        model.addAttribute("isLast", page.get("isLast"));
+        model.addAttribute("registList", page.get("registList"));
 
-        // 기본 정렬이 없는 경우 created_at DESC 정렬 적용
-        if (pageable.getSort().isEmpty()) {
-            pageable = PageRequest.of(
-                    pageable.getPageNumber(),
-                    pageable.getPageSize(),
-                    Sort.by("created_at").descending()
-            );
-        }
 
-        // 서비스로부터 Map 반환받기
-        Map<String, Object> result = storeService.findRegistList(pageable);
+        return "admin/registList";
+    }
 
-        // 모델에 데이터 전달
-        model.addAttribute("registList", result.get("registList"));
-        model.addAttribute("page", result.get("page"));
-        model.addAttribute("beginPage", result.get("beginPage"));
-        model.addAttribute("endPage", result.get("endPage"));
-        model.addAttribute("isFirst", result.get("isFirst"));
-        model.addAttribute("isLast", result.get("isLast"));
-
-        return "admin/registList"; // thymeleaf 템플릿 경로
+    @GetMapping("/registList/data")
+    @ResponseBody
+    public Map<String, Object> registListData(@PageableDefault(size = 5) Pageable pageable) {
+        return storeService.findWaitingStores(pageable);
     }
 
     @GetMapping("/recommendList")

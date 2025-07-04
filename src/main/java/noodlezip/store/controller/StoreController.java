@@ -1,12 +1,15 @@
 package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.auth.MyUserDetails;
+import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.dto.MenuDetailDto;
 import noodlezip.store.dto.StoreDto;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
-import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
+import noodlezip.user.entity.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -35,22 +38,18 @@ public class StoreController {
         return "store/regist";
     }
 
-    // 등록 처리
     @PostMapping("/regist")
-    public String registerStore(@ModelAttribute StoreRequestDto dto,
-                                @RequestParam("storeMainImage") MultipartFile storeMainImage) throws IOException {
-        // 로그인 ID 얻기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String loginId = authentication.getName();
+    public String registerStore(@AuthenticationPrincipal MyUserDetails myUserDetails,
+                                @ModelAttribute StoreRequestDto dto,
+                                @RequestParam("storeMainImage") MultipartFile storeMainImage) {
+        // 로그인한 유저 객체 얻기
+        User user = myUserDetails.getUser();
 
-        // loginId로 user 직접 조회 → userPk 얻기
-        User user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new IllegalArgumentException("로그인한 유저를 찾을 수 없습니다."));
-        Long userPk = user.getId();
+        // 가게 등록 처리
+        Long storeId = storeService.registerStore(dto, storeMainImage, user);
 
-        // Store 등록
-        Long storeId = storeService.registerStore(dto, userPk, storeMainImage);
         return "redirect:/store/detail/" + storeId;
+
     }
 
     // 매장 상세페이지 진입

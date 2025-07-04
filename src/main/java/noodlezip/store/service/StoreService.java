@@ -1,9 +1,11 @@
 package noodlezip.store.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
@@ -18,6 +20,9 @@ import noodlezip.store.dto.MenuDetailDto;
 import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.dto.StoreDto;
 import noodlezip.store.dto.StoreRequestDto;
+import noodlezip.store.entity.*;
+import noodlezip.store.repository.*;
+import noodlezip.user.entity.User;
 import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.Store;
 import noodlezip.store.entity.StoreWeekSchedule;
@@ -40,6 +45,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -58,7 +64,6 @@ public class StoreService {
     private final ModelMapper modelMapper;
     private final PageUtil pageUtil;
     private final ToppingRepository toppingRepository;
-    private final EntityManager em;
 
 
     @Value("${upload.path}")
@@ -154,31 +159,7 @@ public class StoreService {
         return savedStore.getId();
     }
 
-    // 이미지 저장 메서드 (이미지 MIME 타입 체크 포함)
-    private String saveFile(MultipartFile file) throws IOException {
-        String originalFilename = file.getOriginalFilename();
-        String ext = "";
-        if (originalFilename != null && originalFilename.contains(".")) {
-            ext = originalFilename.substring(originalFilename.lastIndexOf("."));
-        }
-
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("이미지 파일만 업로드 가능합니다.");
-        }
-
-        String savedFilename = UUID.randomUUID().toString() + ext;
-        Path uploadPath = Paths.get(uploadDir);
-
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        Path filePath = uploadPath.resolve(savedFilename);
-        file.transferTo(filePath.toFile());
-
-        return urlPrefix + savedFilename;
-    }
+    // 삭제 메서드는 추가 기능(FileUtil에 추가 필요)
 
     // 라멘 카테고리 목록 조회
     public List<CategoryResponseDto> getRamenCategories() {
@@ -191,11 +172,10 @@ public class StoreService {
     }
 
     // 등록요청매장 조회
-    public Map<String, Object> findRegistList(Pageable pageable) {
-
-        Page<RegistListDto> page = storeRepository.findRegistStores(pageable);
-        Map<String, Object> map = pageUtil.getPageInfo(page, 5);
-        map.put("registList", page.getContent());
+    public Map<String, Object> findWaitingStores(Pageable pageable) {
+        Page<RegistListDto> resultPage = storeRepository.findWaitingStores(pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(resultPage, resultPage.getSize());
+        map.put("registList", resultPage.getContent());
         return map;
     }
 

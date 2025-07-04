@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum PostStatusType {
 
     VISIBLE,
-    HIDDEN,
+    //    HIDDEN,
     FAVORITE;
 
 }

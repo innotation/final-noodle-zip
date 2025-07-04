@@ -1,0 +1,165 @@
+html, body {
+    height: 100%;
+    overflow-y: auto;
+}
+
+#opening-schedule {
+    margin-top: 50px;
+    overflow: visible;
+}
+
+#opening-schedule .day-row {
+    min-height: 100px;
+    align-items: center;
+}
+
+#opening-schedule select,
+#opening-schedule .form-control {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    min-height: 38px;
+    line-height: 1.4;
+}
+
+#opening-schedule .row {
+    margin-bottom: 12px;
+}
+
+#opening-schedule > div:first-child {
+    margin-top: 10px;
+}
+
+.box_general.padding_bottom {
+    overflow: visible !important;
+}
+
+#image-upload-area {
+    margin-bottom: 20px;
+}
+
+#phone,
+#owner-intro {
+    border: 1px solid #ced4da;
+}
+
+textarea#owner-intro {
+    width: 100%;
+    min-height: 120px;
+}
+
+.search-icon {
+    top: 12px !important;
+    right: 4px !important;
+}
+
+.form_title {
+    font-size: 24px;
+    font-weight: bold;
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.menu-image-upload {
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+.menu-image-upload p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.topping-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.topping-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    user-select: none;
+    transition: all 0.2s;
+    margin: 2px;
+}
+
+.topping-tag:hover {
+    background-color: #c1a1dd;
+}
+
+.topping-tag.selected {
+    background-color: #9344dd;
+    color: white;
+    border-color: #9344dd;
+}
+
+#searchAddressBtn {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+#searchAddressBtn:hover {
+    background-color: #e67e22;
+}
+
+.search-bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.search-bar .search-trigger {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    width: 250px;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.search-bar i {
+    font-size: 1.2rem;
+    color: #888;
+    margin-left: 8px;
+}
+
+#owner-intro::placeholder {
+    white-space: pre-line;
+    color: #888;
+    font-size: 14px;
+}
+
+#owner-intro-hint {
+    top: 70px;
+    left: 16px;
+    font-size: 0.85em;
+}
+
+.scrollable-select {
+    max-height: 50px;
+    overflow-y: auto;
+}
