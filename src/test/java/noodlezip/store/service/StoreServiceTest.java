@@ -1,20 +1,29 @@
 package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
+import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
+import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.RamenToppingRepository;
+import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.MenuDetailDto;
+import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +43,10 @@ class StoreServiceTest {
     @Mock private ModelMapper modelMapper;
     @Mock private PageUtil pageUtil;
     @Mock private ToppingRepository toppingRepository;
-    @Mock private EntityManager entityManager;
+    @Mock private FileUtil fileUtil;
+    @Mock private EntityManager em;
+    @Mock private RamenReviewRepository ramenReviewRepository;
+    @Mock private ReviewToppingRepository reviewToppingRepository;
 
     private StoreService storeService;
 
@@ -49,7 +61,10 @@ class StoreServiceTest {
                 modelMapper,
                 pageUtil,
                 toppingRepository,
-                entityManager
+                fileUtil,
+                em,
+                ramenReviewRepository,
+                reviewToppingRepository
         );
     }
 
@@ -75,5 +90,59 @@ class StoreServiceTest {
         // then
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getToppingNames()).containsExactly("계란", "차슈");
+    }
+
+    @Test
+    void getReviews_정상조회_토핑까지포함() {
+        // given
+        Long storeId = 1L;
+        Pageable pageable = PageRequest.of(0, 5);
+
+        // 리뷰 DTO 예시 데이터
+        StoreReviewDto review1 = StoreReviewDto.builder()
+                .id(100L)
+                .communityId(1L)
+                .menuId(10L)
+                .menuName("카라미소라멘")
+                .noodleThickness("굵음")
+                .noodleTexture("쫄깃")
+                .noodleBoilLevel("기본")
+                .soupTemperature("뜨거움")
+                .soupSaltiness("짭짤")
+                .soupSpicinessLevel("매움")
+                .soupOiliness("기름기 보통")
+                .soupFlavorKeywords("진한, 깔끔")
+                .content("맛있어요!")
+                .reviewImageUrl("http://image.com/review1.jpg")
+                .isReceiptReview(true)
+                .build();
+
+        List<StoreReviewDto> reviews = List.of(review1);
+        Page<StoreReviewDto> pageResult = new PageImpl<>(reviews, pageable, 1);
+
+        // 리뷰ID → 토핑 이름 매핑
+        Map<Long, List<String>> toppingMap = Map.of(
+                100L, List.of("차슈", "계란")
+        );
+
+        // mocking
+        given(ramenReviewRepository.findReviewsByStoreId(storeId, pageable))
+                .willReturn(pageResult);
+
+        given(reviewToppingRepository.findToppingNamesByReviewIds(List.of(100L)))
+                .willReturn(toppingMap);
+
+        // when
+        Page<StoreReviewDto> result = storeService.getReviews(storeId, pageable);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+
+        StoreReviewDto resultDto = result.getContent().get(0);
+        assertThat(resultDto.getId()).isEqualTo(100L);
+        assertThat(resultDto.getToppingNames()).containsExactly("차슈", "계란");
+        assertThat(resultDto.getMenuName()).isEqualTo("카라미소라멘");
+        assertThat(resultDto.getIsReceiptReview()).isTrue();
     }
 }
