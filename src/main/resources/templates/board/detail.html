@@ -191,11 +191,10 @@
                                     th:text="${board.communityType}">카테고리</span></a></li>
                             <li><i class="icon_calendar"></i> <span
                                     th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
-                            <li><a href="#"><i class="icon_pencil-edit"></i> Admin</a></li>
+                            <li><a href="#"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
                             <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
                         </ul>
                     </div>
-                    <!-- /post meta -->
                     <div class="post-content">
                         <div class="dropcaps">
                             <p th:text="${board.content}">Aorem Ipsum is simply dummy text of the printing and
@@ -207,9 +206,11 @@
                                 with desktop publishing software like Aldus PageMaker including versions of Lorem
                                 Ipsum.</p>
                         </div>
-
                     </div>
-                    <!-- /post -->
+                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post" th:if="${board.userId == #authentication.principal?.user.id}">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">게시글 삭제</button>
+                    </form>
                 </div>
                 <div id="comments">
                     <h5>전체 댓글</h5>
@@ -219,24 +220,6 @@
                     <div id="comments-pagination" class="pagination_fg"></div>
                 </div>
                 <hr>
-
-                <!--                <h5>댓글 남기기</h5>-->
-                <!--                <div class="comment-form">-->
-                <!--                    &lt;!&ndash; th:action은 폼 제출 시 요청을 보낼 URL을 지정합니다. &ndash;&gt;-->
-                <!--                    &lt;!&ndash; boardId는 숨겨진 input 필드로 폼 데이터에 포함시킵니다. &ndash;&gt;-->
-                <!--                    <form th:action="@{/comments/regist}" method="post">-->
-                <!--                        <div class="form-group">-->
-                <!--                            &lt;!&ndash; name="content"는 컨트롤러의 DTO 필드명과 일치해야 합니다. &ndash;&gt;-->
-                <!--                            <textarea class="form-control" name="content" id="commentContent" rows="6"-->
-                <!--                                      placeholder="댓글을 입력해 주세요."></textarea>-->
-                <!--                        </div>-->
-                <!--                        &lt;!&ndash; 게시글 ID를 숨겨진 필드로 추가하여 폼 제출 시 함께 전송 &ndash;&gt;-->
-                <!--                        <input type="hidden" name="boardId" th:value="${board.id}"/>-->
-                <!--                        <div class="form-group">-->
-                <!--                            <button type="submit" id="submit2" class="btn_1 add_bottom_15">등록</button>-->
-                <!--                        </div>-->
-                <!--                    </form>-->
-                <!--                </div>-->
 
                 <h5>댓글 남기기</h5>
                 <div class="comment-form">
@@ -254,7 +237,7 @@
                 /*<![CDATA[*/
 
                 // 게시글 ID는 Thymeleaf에서 JavaScript로 전달받아야 합니다.
-                const boardId = /*[[${board.id}]]*/ null;
+                const boardId = /*[[${board.boardId}]]*/ null;
 
                 // 현재 로그인한 사용자 ID (서버에서 주입)
                 const currentLoggedInUserId = [[${#authentication.principal?.user.id}]] || null;

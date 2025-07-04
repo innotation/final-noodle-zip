@@ -15,6 +15,7 @@ import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
+import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.service.BoardService;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +30,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequestMapping("/board")
@@ -103,7 +106,7 @@ public class BoardController {
         }
 
         try {
-            boardService.registBoard(boardReqDto, user.getUser().getId(), boardImage);
+            boardService.registBoard(boardReqDto, user.getUser(), boardImage);
             return "redirect:/board/list";
         } catch (CustomException e) {
             log.error("게시글 등록 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
@@ -114,8 +117,8 @@ public class BoardController {
         }
     }
 
-    @GetMapping("/list")
-    @Operation(summary = "게시글 목록 조회", description = "모든 게시글을 최신 순으로 페이지네이션하여 조회합니다.")
+    @GetMapping({"/list", "/{category}/list"})
+    @Operation(summary = "게시글 목록 조회", description = "모든 게시글 또는 특정 카테고리의 게시글을 최신 순으로 페이지네이션하여 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
@@ -123,26 +126,39 @@ public class BoardController {
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
     @Parameters({
+            @Parameter(name = "category", description = "조회할 게시글의 카테고리 (선택 사항). 예: 'community', 'qna'", required = false, example = "community"),
             @Parameter(name = "page", description = "조회할 페이지 번호 (기본값: 0, 1부터 요청 시 내부적으로 0으로 변환)", example = "1"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 게시글 개수 (기본값: 6)", example = "6"),
             @Parameter(name = "sort", description = "정렬 기준 (예: id, createdAt). 기본값은 id,desc", example = "id,desc", hidden = true),
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String list(
+            @PathVariable("category") Optional<String> category,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
         try {
-            Map<String, Object> map = boardService.findBoardList(pageable);
+            Map<String, Object> map;
+            if (category.isPresent()) {
+                // 특정 카테고리 게시글 조회
+                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category.get());
+                map = boardService.findBoardListByCategory(category.get(), pageable);
+                model.addAttribute("category", category.get());
+            } else {
+                // 전체 게시글 목록 조회
+                log.info("전체 게시글 목록 조회 요청");
+                map = boardService.findBoardList(pageable);
+            }
 
-            model.addAttribute("board", map.get("list")); // 실제 게시글 리스트
-            model.addAttribute("page", map.get("page")); // 현재 페이지 번호 (1-based)
-            model.addAttribute("beginPage", map.get("beginPage")); // 페이지네이션 시작 페이지
-            model.addAttribute("endPage", map.get("endPage")); // 페이지네이션 끝 페이지
-            model.addAttribute("isFirst", map.get("isFirst")); // 첫 페이지 여부
-            model.addAttribute("isLast", map.get("isLast")); // 마지막 페이지 여부
+            log.info("map: {}", map.toString());
+            model.addAttribute("board", map.get("list"));
+            model.addAttribute("page", map.get("page"));
+            model.addAttribute("beginPage", map.get("beginPage"));
+            model.addAttribute("endPage", map.get("endPage"));
+            model.addAttribute("isFirst", map.get("isFirst"));
+            model.addAttribute("isLast", map.get("isLast"));
 
             return "/board/list"; // HTML 템플릿 경로 반환
         } catch (CustomException e) {
@@ -175,6 +191,7 @@ public class BoardController {
     })
     public String board(
             @PathVariable("id") Long id,
+            @AuthenticationPrincipal MyUserDetails user,
             Model model) {
 
         if (id == null || id <= 0) {
@@ -183,7 +200,7 @@ public class BoardController {
         }
 
         try {
-            Board board = boardService.findBoardById(id);
+            BoardRespDto board = boardService.findBoardById(id, user.getUser().getId());
             if (board == null) {
                 log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
                 throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
@@ -199,5 +216,30 @@ public class BoardController {
             model.addAttribute("errorMessage", "게시글을 불러오는 중 예상치 못한 오류가 발생했습니다.");
             return "/error/general-error";
         }
+    }
+
+    @PostMapping("/delete/{boardId}")
+    @Operation(summary = "게시글 삭제", description = "지정된 ID의 게시글을 삭제합니다. 게시글 작성자만 삭제할 수 있습니다.",
+            method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302", description = "게시글 삭제 성공 및 게시글 목록 페이지로 리다이렉트",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자 (로그인 필요)",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "403", description = "권한 없음 (게시글 작성자가 아님)",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
+    })
+    @Parameters({
+            @Parameter(name = "boardId", description = "삭제할 게시글의 ID", required = true, example = "1",
+                    schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
+    })
+    public String deleteBoard(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
+        boardService.deleteBoard(boardId);
+        return "redirect:/board/list";
     }
 }
