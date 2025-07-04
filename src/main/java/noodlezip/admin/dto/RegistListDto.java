@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class RegistListDto {
 
+    private Long id;
     private String loginId;
     private String storeName;
     private String createdAt;
