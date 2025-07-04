@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -38,6 +39,10 @@ public class MyBadgeServiceImpl implements MyBadgeService {
         List<BadgeGroupResponse> badgeGroupList = userBadgeService.getBadgeGroupIds();
         List<UserNoOptionBadgeDto> notOptionBadgeList = userBadgeService.getNoOptionUserBadgeList(userId);
         List<UserOptionBadgeDto> optionBadgeList = userBadgeService.getOptionUserBadgeList(userId);
+
+        badgeGroupList.sort(Comparator.comparing(BadgeGroupResponse::getId));
+        notOptionBadgeList.sort(Comparator.comparing(UserNoOptionBadgeDto::getBadgeGroupId));
+        optionBadgeList.sort(Comparator.comparing(UserOptionBadgeDto::getBadgeGroupId));
 
         return mergeBadgeListResultByGroup(badgeGroupList, notOptionBadgeList, optionBadgeList);
     }
