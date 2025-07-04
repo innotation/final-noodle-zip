@@ -4,9 +4,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.PageUtil;
+import noodlezip.community.entity.Comment;
+import noodlezip.community.repository.CommentRepository;
 import noodlezip.report.dto.ReportRequestDto;
 import noodlezip.report.dto.ReportResponseDto;
+import noodlezip.report.dto.ReportedCommentDto;
 import noodlezip.report.entity.Report;
 import noodlezip.report.repository.ReportRepository;
 import noodlezip.report.status.ReportStatus;
@@ -18,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,7 @@ public class ReportService {
     private final UserRepository userRepository;
     private final PageUtil pageUtil;
     private final EntityManager em;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public void save(ReportRequestDto dto) {
@@ -52,4 +59,25 @@ public class ReportService {
         map.put("reportList", resultPage.getContent());
         return map;
     }
+
+    @Transactional
+    public void changeStatus(Long id, ReportStatus status) {
+        Report report = reportRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+        report.setReportStatus(status);
+        reportRepository.save(report);
+    }
+
+
+    public ReportedCommentDto getReportedCommentById(Long id) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorStatus._BAD_REQUEST));
+
+        return ReportedCommentDto.builder()
+                .loginId(comment.getUser().getLoginId())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .build();
+    }
+
 }

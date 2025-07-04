@@ -1,6 +1,8 @@
 package noodlezip.store.service;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.*;
@@ -16,6 +18,7 @@ import noodlezip.store.entity.StoreWeekScheduleId;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
+import noodlezip.store.status.ApprovalStatus;
 import noodlezip.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -192,6 +195,11 @@ public class StoreService {
         return map;
     }
 
-
-
+    // 등록 요청 매장 상태 변경
+    public void changeStatus(Long id, ApprovalStatus status) {
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+        store.setApprovalStatus(status);
+        storeRepository.save(store);
+    }
 }
