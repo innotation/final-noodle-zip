@@ -10,7 +10,9 @@ import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.repository.CommentRepository;
 import noodlezip.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void registComment(CommentReqDto commentReqDto) {
+    public Map<String, Object> registComment(CommentReqDto commentReqDto) {
         Comment comment = Comment.builder()
                 .communityId(commentReqDto.getBoardId())
                 .user(userRepository.getReferenceById(commentReqDto.getUserId()))
@@ -45,5 +47,13 @@ public class CommentServiceImpl implements CommentService {
                 .content(commentReqDto.getContent())
                 .build();
         commentRepository.save(comment);
+        int pageSize = 10; // 한 페이지에 보여줄 댓글 수
+        Sort sort = Sort.by(Sort.Direction.DESC, "id"); // 생성일 기준으로 내림차순 정렬
+        Pageable firstPage = PageRequest.of(0, pageSize, sort);
+        Page<CommentRespDto> commentDtoPage = commentRepository.findCommentByBoardIdWithUser(commentReqDto.getBoardId(), commentReqDto.getUserId(), firstPage);
+        Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
+        map.put("comments", commentDtoPage.getContent());
+        map.put("totalComments", commentDtoPage.getTotalElements());
+        return map;
     }
 }

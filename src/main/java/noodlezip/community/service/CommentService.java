@@ -9,5 +9,5 @@ public interface CommentService {
 
     Map<String, Object> findCommentList(Long boardId, Long userId, Pageable pageable);
 
-    void registComment(CommentReqDto commentReqDto);
+    Map<String, Object> registComment(CommentReqDto commentReqDto);
 }
