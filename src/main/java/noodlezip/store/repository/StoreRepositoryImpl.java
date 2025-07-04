@@ -216,6 +216,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         // 1. 본문 조회
         List<RegistListDto> content = queryFactory
                 .select(Projections.constructor(RegistListDto.class,
+                        store.id,
                         user.loginId,
                         store.storeName,
                         Expressions.stringTemplate(
