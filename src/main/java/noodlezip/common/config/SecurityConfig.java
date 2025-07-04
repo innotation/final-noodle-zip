@@ -42,15 +42,11 @@ public class SecurityConfig {
                                  "/fragments/**",
                                  "/search/**",
                                  "/store/**"
-                                  ).permitAll();
-                    .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
+                                  ).permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
                     .requestMatchers("/board/**", "/comments/**").permitAll()
                     .anyRequest().authenticated();
-            auth.requestMatchers("/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
-                    "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**", "/swagger-ui/**",
-                    "/send-verification-code", "/fragments/**", "/search/**", "/store/**").permitAll();
         });
 
         // 로그인 처리 설정( 인증 설정 ) => custom

@@ -30,7 +30,7 @@ public class RamenToppingRepositoryImpl implements RamenToppingRepositoryCustom 
                 .from(ramenTopping)
                 .join(ramenTopping.menu, menu)
                 .join(ramenTopping.topping, topping)
-                .where(menu.storeId.id.eq(storeId))
+                .where(menu.store.id.eq(storeId))
                 .fetch();
 
         Map<Long, List<String>> toppingMap = new HashMap<>();

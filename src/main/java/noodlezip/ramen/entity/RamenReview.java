@@ -3,9 +3,14 @@ package noodlezip.ramen.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import noodlezip.store.entity.Menu;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -19,10 +24,14 @@ public class RamenReview {
     @NotNull
     @Column(name = "community_id", nullable = false)
     private Long communityId;
-
-    @NotNull
-    @Column(name = "menu_id", nullable = false)
-    private Long menuId;
+    /*
+        @NotNull
+        @Column(name = "menu_id", nullable = false)
+        private Long menuId;
+    */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id", insertable = false, updatable = false)
+    private Menu menu;
 
     @Size(max = 50)
     @NotNull

@@ -36,7 +36,7 @@ public class MenuRepositoryImpl implements MenuRepositoryCustom {
                 .from(menu)
                 .join(menu.category, category)
                 .join(menu.ramenSoup, soup)
-                .where(menu.storeId.id.eq(storeId))
+                .where(menu.store.id.eq(storeId))
                 .fetch();
     }
 

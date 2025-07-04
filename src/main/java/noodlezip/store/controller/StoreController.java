@@ -2,22 +2,19 @@ package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.auth.MyUserDetails;
-import noodlezip.store.dto.MenuRequestDto;
-import noodlezip.store.dto.MenuDetailDto;
-import noodlezip.store.dto.StoreDto;
-import noodlezip.store.dto.StoreRequestDto;
+import noodlezip.common.util.PageUtil;
+import noodlezip.store.dto.*;
 import noodlezip.store.service.StoreService;
-import noodlezip.user.repository.UserRepository;
 import noodlezip.user.entity.User;
+import noodlezip.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,6 +24,7 @@ public class StoreController {
 
     private final StoreService storeService;
     private final UserRepository userRepository;
+    private final PageUtil pageUtil;
 
     // 등록 폼 페이지 진입
     @GetMapping("/regist")
@@ -65,6 +63,22 @@ public class StoreController {
     @ResponseBody
     public List<MenuDetailDto> showDetailMenuList(Long storeId) {
         return storeService.getMenus(storeId);
+    }
+
+
+    // 매장 리뷰 조회
+    @GetMapping("/detail/review")
+    @ResponseBody
+    public StoreReviewResponseDto showStoreReviewList(
+            @RequestParam Long storeId,
+            Pageable pageable
+    ) {
+
+        Page<StoreReviewDto> reviews = storeService.getReviews(storeId, pageable);
+        return StoreReviewResponseDto.builder()
+                .reviews(reviews.getContent())
+                .pagination(pageUtil.getPageInfo(reviews, 10))
+                .build();
     }
 
 }
