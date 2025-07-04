@@ -19,8 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 public class MyPageMainController {
 
-    @GetMapping("/")
-    public String myPage(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) { /// 자기 자신의 마이페이지로 이동
+    @GetMapping("/my")
+    public String myPage(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) { /// 자기 자신의 마이페이지로 이동 - url 경로가 유일함
         User user = myUserDetails.getUser();
 
         model.addAttribute("userId", user.getId()); ///마이페이지 내부에서 하위 페이지 이동시 herf에 필요
