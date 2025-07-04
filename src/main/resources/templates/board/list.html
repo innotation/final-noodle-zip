@@ -186,7 +186,7 @@
                     <div class="col-md-6" th:each="item : ${board}">
                         <article class="blog">
                             <figure>
-                                <a th:href="@{/board/detail/{id}(id=${item.id})}">
+                                <a th:href="@{/board/detail/{id}(id=${item.boardId})}">
                                     <img th:src="${#strings.isEmpty(item.imageUrl) ? '/img/blog-1.jpg' : item.imageUrl}"
                                          alt="게시글 이미지">
                                     <div class="preview"><span>더 보기</span></div>
@@ -197,14 +197,19 @@
                                     <span th:text="${item.communityType}">카테고리</span> -
                                     <span th:text="${#temporals.format(item.createdAt, 'yyyy.MM.dd')}">2023.01.01</span>
                                 </small>
-                                <h2><a th:href="@{/board/detail/{id}(id=${item.id})}" th:text="${item.title}">게시글 제목</a>
+                                <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
+                                    제목</a>
                                 </h2>
                                 <p th:text="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>
                                 <ul>
-                                    <!--								<li>-->
-                                    <!--									<div class="thumb"><img th:src="${#strings.isEmpty(item.authorProfileImageUrl) ? '/img/avatar.jpg' : item.authorProfileImageUrl}" alt="작성자 프로필 이미지"></div> <span th:text="${item.authorName}">작성자</span>-->
-                                    <!--								</li>-->
-<!--                                    <li><i class="icon_comment_alt"></i><span th:text="${item.likesCount}">0</span></li>-->
+                                    <li>
+                                        <div class="thumb"><img
+                                                th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
+                                                alt="작성자 프로필 이미지"></div>
+                                        <span th:text="${item.userName}">작성자</span>
+                                    </li>
+                                    <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
+                                    <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
                                 </ul>
                             </div>
                         </article>
@@ -215,14 +220,24 @@
                 <!-- /row -->
 
                 <div class="pagination_fg">
-                    <a th:href="@{/board/list(page=${page - 1})}" th:if="${!isFirst}">&laquo;</a>
+                    <a th:href="${category != null and #strings.length(category) > 0} ?
+                @{/board/{category}/list(page=${page - 1}, category=${category})} :
+                @{/board/list(page=${page - 1})}"
+                       th:if="${!isFirst}">&laquo;</a>
 
                     <th:block th:each="i : ${#numbers.sequence(beginPage, endPage)}">
-                        <a th:href="@{/board/list(page=${i})}" th:classappend="${i eq page} ? 'active' : ''"><span
-                                th:text="${i}"></span></a>
+                        <a th:href="${category != null and #strings.length(category) > 0} ?
+                    @{/board/{category}/list(page=${i}, category=${category})} :
+                    @{/board/list(page=${i})}"
+                           th:classappend="${i eq page} ? 'active' : ''">
+                            <span th:text="${i}"></span>
+                        </a>
                     </th:block>
 
-                    <a th:href="@{/board/list(page=${page + 1})}" th:if="${!isLast}">&raquo;</a>
+                    <a th:href="${category != null and #strings.length(category) > 0} ?
+                @{/board/{category}/list(page=${page + 1}, category=${category})} :
+                @{/board/list(page=${page + 1})}"
+                       th:if="${!isLast}">&raquo;</a>
                 </div>
 
             </div>
@@ -350,9 +365,9 @@
 <!-- /Sign In Modal -->
 
 <!-- COMMON SCRIPTS -->
-<script src="js/common_scripts.min.js"></script>
-<script src="js/common_func.js"></script>
-<script src="assets/validate.js"></script>
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
 
 </body>
 </html>

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.user.entity.User;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -25,9 +26,12 @@ public class Board extends BaseTimeEntity {
     @Column(name = "community_id", nullable = false)
     private Long id;
 
-    @NotNull
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+//    @NotNull
+//    @Column(name = "user_id", nullable = false)
+//    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Size(max = 30)
     @NotNull
