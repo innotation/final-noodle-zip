@@ -9,11 +9,11 @@ import lombok.*;
 @Builder
 @ToString
 public class SavedStoreCategoryResponse {
-    /// 사용자가 가게 저장하기 Whishlist를 클릭했을 때 띄울 카테고리 리스트
+    /// 사용자가 가게 저장하기 Whishlist를 클릭했을 때 띄울 카테고리 리스트 + 파이페이지 카테고리 목록 체크박스
 
     private Long categoryId;
     private String categoryName;
-    private boolean isDefault;    /// isDefault가 true인 값은 [라디오 버튼]이 선택된 상태로 띄워집니다.
+    private boolean isActive;    /// isActive가 true인 값은 [라디오 버튼]이 선택된 상태로 띄워집니다.
 
 }
 
