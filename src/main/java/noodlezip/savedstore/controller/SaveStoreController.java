@@ -30,7 +30,7 @@ public class SaveStoreController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public List<SavedStoreCategoryResponse> getSavedStoreInfo(@AuthenticationPrincipal MyUserDetails myUserDetails,
+    public List<SavedStoreCategoryResponse> getSavedStoreInfo(@AuthenticationPrincipal MyUserDetails myUserDetails, /// FIXME 가게 상세보기 컨트롤러에 두는게 맞다
                                                               @PathVariable String storeId
     ) {
         User user = myUserDetails.getUser();
