@@ -44,6 +44,7 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
 
         List<ReportResponseDto> content = queryFactory
                 .select(Projections.constructor(ReportResponseDto.class,
+                        report.id,
                         user.loginId,
                         report.reportType,
                         report.reportTargetId,
