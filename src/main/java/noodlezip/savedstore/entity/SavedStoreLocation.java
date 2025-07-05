@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 
 @Embeddable
-public class SaveStoreLocation {
+public class SavedStoreLocation {
 
     @Column(name = "store_lat")
     private Double storeLat;

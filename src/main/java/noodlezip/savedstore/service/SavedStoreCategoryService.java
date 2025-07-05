@@ -4,7 +4,7 @@ import noodlezip.savedstore.dto.request.SavedStoreCategoryUpdateRequest;
 
 import java.util.List;
 
-public interface SaveStoreCategoryService {
+public interface SavedStoreCategoryService {
 
     void updateSavedCategoryList(List<SavedStoreCategoryUpdateRequest> categoryRequests);
 

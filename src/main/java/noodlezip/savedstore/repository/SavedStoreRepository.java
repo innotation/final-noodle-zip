@@ -1,9 +1,9 @@
 package noodlezip.savedstore.repository;
 
-import noodlezip.savedstore.entity.SaveStore;
+import noodlezip.savedstore.entity.SavedStore;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SaveStoreRepository extends JpaRepository<SaveStore, Long> {
+public interface SavedStoreRepository extends JpaRepository<SavedStore, Long> {
 
     void deleteByUserIdAndStoreId(long userId, long storeId);
 

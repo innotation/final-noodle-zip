@@ -5,7 +5,7 @@ import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 
 import java.util.List;
 
-public interface SaveStoreService {
+public interface SavedStoreService {
 
     List<SavedStoreCategoryResponse> getUserSaveCategoryList(Long userId, String storeId);
 

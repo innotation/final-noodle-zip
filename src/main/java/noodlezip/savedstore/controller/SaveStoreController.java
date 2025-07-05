@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
-import noodlezip.savedstore.service.SaveStoreService;
+import noodlezip.savedstore.service.SavedStoreService;
 import noodlezip.user.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +23,7 @@ import java.util.List;
 @Controller
 public class SaveStoreController {
 
-    private final SaveStoreService saveStoreService;
+    private final SavedStoreService saveStoreService;
 
     @GetMapping(
             value = "/{storeId}/saved-store/info", /// 저장 버튼을 누를 때

@@ -16,7 +16,7 @@ import noodlezip.user.entity.User;
 
 @Entity
 @Table(name = "tbl_save_store")
-public class SaveStore extends BaseTimeEntity {
+public class SavedStore extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,12 +33,12 @@ public class SaveStore extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "save_store_category_id", nullable = false)
-    private SaveStoreCategory saveStoreCategory;
+    private SavedStoreCategory saveStoreCategory;
 
     @Column(name = "memo", nullable = false)
     private String memo;
 
     @Embedded
-    private SaveStoreLocation location;
+    private SavedStoreLocation location;
 
 }

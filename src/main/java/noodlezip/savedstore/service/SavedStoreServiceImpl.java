@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
-import noodlezip.savedstore.entity.SaveStore;
-import noodlezip.savedstore.entity.SaveStoreCategory;
-import noodlezip.savedstore.entity.SaveStoreLocation;
-import noodlezip.savedstore.repository.SaveStoreCategoryRepository;
-import noodlezip.savedstore.repository.SaveStoreRepository;
+import noodlezip.savedstore.entity.SavedStore;
+import noodlezip.savedstore.entity.SavedStoreCategory;
+import noodlezip.savedstore.entity.SavedStoreLocation;
+import noodlezip.savedstore.repository.SavedStoreCategoryRepository;
+import noodlezip.savedstore.repository.SavedStoreRepository;
 import noodlezip.savedstore.status.SavedStoreErrorStatus;
 import noodlezip.store.entity.Store;
 import noodlezip.store.repository.StoreRepository;
@@ -21,11 +21,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class SaveStoreServiceImpl implements SaveStoreService {
+public class SavedStoreServiceImpl implements SavedStoreService {
 
     private final EntityManager entityManager;
-    private final SaveStoreCategoryRepository saveStoreCategoryRepository;
-    private final SaveStoreRepository saveStoreRepository;
+    private final SavedStoreCategoryRepository saveStoreCategoryRepository;
+    private final SavedStoreRepository saveStoreRepository;
     private final StoreRepository storeRepository;
 
     @Override
@@ -38,13 +38,13 @@ public class SaveStoreServiceImpl implements SaveStoreService {
         User user = entityManager.getReference(User.class, userId);
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_SAVED_STORE));
-        SaveStoreCategory saveStoreCategory = getSavedCategory(categoryId, newCategoryName);
+        SavedStoreCategory saveStoreCategory = getSavedCategory(categoryId, newCategoryName);
 
-        SaveStoreLocation storeLocation = SaveStoreLocation.builder()
+        SavedStoreLocation storeLocation = SavedStoreLocation.builder()
                 .storeLat(store.getStoreLat())
                 .storeLng(store.getStoreLng())
                 .build();
-        SaveStore saveStore = SaveStore.builder()
+        SavedStore saveStore = SavedStore.builder()
                 .user(user)
                 .store(store)
                 .saveStoreCategory(saveStoreCategory)
@@ -55,9 +55,9 @@ public class SaveStoreServiceImpl implements SaveStoreService {
         saveStoreRepository.save(saveStore);
     }
 
-    private SaveStoreCategory getSavedCategory(Long savedCategoryId, String newCategoryName) {
+    private SavedStoreCategory getSavedCategory(Long savedCategoryId, String newCategoryName) {
         if (isNewCategory(savedCategoryId, newCategoryName)) {
-            SaveStoreCategory newCategory = SaveStoreCategory.builder()
+            SavedStoreCategory newCategory = SavedStoreCategory.builder()
                     .categoryName(newCategoryName)
                     .isPublic(true)
                     .categoryOrder(0)
@@ -66,7 +66,7 @@ public class SaveStoreServiceImpl implements SaveStoreService {
             saveStoreCategoryRepository.save(newCategory);
             return newCategory;
         }
-        return entityManager.getReference(SaveStoreCategory.class, savedCategoryId);
+        return entityManager.getReference(SavedStoreCategory.class, savedCategoryId);
     }
 
     private boolean isNewCategory(Long savedCategoryId, String newCategoryName) {
