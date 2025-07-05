@@ -2,9 +2,9 @@ package noodlezip.mypage.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.mypage.dto.request.BadgeDetailRequest;
-import noodlezip.mypage.dto.response.BadgeDetailResponse;
-import noodlezip.mypage.dto.response.MyBadgeBadgeResponse;
+import noodlezip.mypage.dto.request.badge.BadgeDetailRequest;
+import noodlezip.mypage.dto.response.badge.BadgeDetailResponse;
+import noodlezip.mypage.dto.response.badge.MyBadgeBadgeResponse;
 import noodlezip.mypage.service.MyBadgeService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

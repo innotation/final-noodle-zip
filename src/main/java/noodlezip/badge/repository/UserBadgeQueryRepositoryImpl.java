@@ -7,8 +7,8 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.entity.*;
-import noodlezip.mypage.dto.UserNoOptionBadgeDto;
-import noodlezip.mypage.dto.UserOptionBadgeDto;
+import noodlezip.badge.dto.UserNoOptionBadgeDto;
+import noodlezip.badge.dto.UserOptionBadgeDto;
 import noodlezip.ramen.entity.QCategory;
 import org.springframework.stereotype.Repository;
 

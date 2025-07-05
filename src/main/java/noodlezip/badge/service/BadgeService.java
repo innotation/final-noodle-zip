@@ -1,6 +1,6 @@
 package noodlezip.badge.service;
 
-import noodlezip.mypage.dto.response.LevelBadgeDetailResponse;
+import noodlezip.mypage.dto.response.badge.LevelBadgeDetailResponse;
 
 import java.util.List;
 

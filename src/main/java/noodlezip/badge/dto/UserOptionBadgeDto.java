@@ -1,4 +1,4 @@
-package noodlezip.mypage.dto;
+package noodlezip.badge.dto;
 
 import lombok.*;
 
@@ -8,13 +8,14 @@ import lombok.*;
 @Setter
 @Builder
 @ToString
-public class UserNoOptionBadgeDto {
+public class UserOptionBadgeDto {
 
     private Long userBadgeId;
     private Long badgeId;
     private Long badgeCategoryId;
     private Long badgeGroupId;
-    private String badgeCategoryName;
+    private Integer storeSidoLegalCode;
+    private String ramenCategoryName;
     private String badgeName;
     private Integer accumulativeValue;
     private String badgeImageUrl;

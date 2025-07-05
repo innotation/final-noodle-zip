@@ -25,17 +25,32 @@ public class SaveStoreController {
 
     private final SavedStoreService saveStoreService;
 
+
+
+
+
+
+    /// FIXME 가게 상세보기 컨트롤러에 두는게 맞다
     @GetMapping(
-            value = "/{storeId}/saved-store/info", /// 저장 버튼을 누를 때
+            value = "/{storeId}/saved-store/info", /// Wishlist 버튼 누를떄
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public List<SavedStoreCategoryResponse> getSavedStoreInfo(@AuthenticationPrincipal MyUserDetails myUserDetails, /// FIXME 가게 상세보기 컨트롤러에 두는게 맞다
-                                                              @PathVariable String storeId
-    ) {
+    public List<SavedStoreCategoryResponse> getSavedStoreInfo(@AuthenticationPrincipal MyUserDetails myUserDetails,
+                                                              @PathVariable Long storeId) {
         User user = myUserDetails.getUser();
         return saveStoreService.getUserSaveCategoryList(user.getId(), storeId);
     }
+
+
+
+
+
+
+
+
+
+
 
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -48,7 +63,7 @@ public class SaveStoreController {
                            @RequestBody @Validated SaveStoreRequest saveStoreRequest
     ) {
         User user = myUserDetails.getUser();
-        saveStoreService.addSavedStore(user.getId(), storeId, saveStoreRequest);
+        saveStoreService.saveSavedStore(user.getId(), storeId, saveStoreRequest);
     }
 
 

@@ -1,4 +1,4 @@
-package noodlezip.mypage.dto.response;
+package noodlezip.mypage.dto.response.badge;
 
 import lombok.*;
 

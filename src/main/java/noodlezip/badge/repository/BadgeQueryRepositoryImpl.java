@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import noodlezip.badge.entity.Badge;
 import noodlezip.badge.entity.QBadge;
 import noodlezip.badge.entity.QUserBadge;
-import noodlezip.mypage.dto.response.LevelBadgeDetailResponse;
+import noodlezip.mypage.dto.response.badge.LevelBadgeDetailResponse;
 import noodlezip.ramen.entity.Category;
 import org.springframework.stereotype.Repository;
 
