@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface SavedStoreRepository extends JpaRepository<SavedStore, Long> {
+public interface SavedStoreRepository extends JpaRepository<SavedStore, Long> , SaveStoreQueryRepository{
 
     void deleteByUserIdAndStoreId(long userId, long storeId);
 
