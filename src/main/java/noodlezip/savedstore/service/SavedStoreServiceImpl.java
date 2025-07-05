@@ -38,7 +38,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         User user = entityManager.getReference(User.class, userId);
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_SAVED_STORE));
-        SavedStoreCategory saveStoreCategory = getSavedCategory(categoryId, newCategoryName);
+        SavedStoreCategory saveStoreCategory = getSavedCategory(user, categoryId, newCategoryName);
 
         SavedStoreLocation storeLocation = SavedStoreLocation.builder()
                 .storeLat(store.getStoreLat())
@@ -55,9 +55,10 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         saveStoreRepository.save(saveStore);
     }
 
-    private SavedStoreCategory getSavedCategory(Long savedCategoryId, String newCategoryName) {
+    private SavedStoreCategory getSavedCategory(User user, Long savedCategoryId, String newCategoryName) {
         if (isNewCategory(savedCategoryId, newCategoryName)) {
             SavedStoreCategory newCategory = SavedStoreCategory.builder()
+                    .user(user)
                     .categoryName(newCategoryName)
                     .isPublic(true)
                     .categoryOrder(0)
