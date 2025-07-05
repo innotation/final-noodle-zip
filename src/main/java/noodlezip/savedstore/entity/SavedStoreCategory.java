@@ -3,6 +3,7 @@ package noodlezip.savedstore.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.user.entity.User;
 
 import java.util.List;
 
@@ -13,12 +14,16 @@ import java.util.List;
 
 @Entity
 @Table(name = "tbl_save_store_category")
-public class SaveStoreCategory extends BaseTimeEntity {
+public class SavedStoreCategory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "save_store_category_id", nullable = false)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Setter
     @Column(name = "category_name", nullable = false)
@@ -32,5 +37,5 @@ public class SaveStoreCategory extends BaseTimeEntity {
     private Integer categoryOrder;
 
     @OneToMany(mappedBy = "saveStoreCategory", fetch = FetchType.LAZY)
-    private List<SaveStore> saveStores;
+    private List<SavedStore> saveStores;
 }
