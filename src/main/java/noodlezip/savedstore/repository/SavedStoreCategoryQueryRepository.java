@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface SavedStoreCategoryQueryRepository {
 
-    List<SavedStoreCategoryResponse> findUserSaveCategoryList(long userId);
+    List<SavedStoreCategoryResponse> findUserSaveCategoryListForSearch(long userId, boolean isOwner);
+
+    List<SavedStoreCategoryResponse> findUserSavedCategoryList(long userId);
 
 }
