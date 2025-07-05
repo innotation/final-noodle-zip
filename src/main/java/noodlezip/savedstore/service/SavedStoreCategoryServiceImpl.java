@@ -19,24 +19,37 @@ public class SavedStoreCategoryServiceImpl implements SavedStoreCategoryService 
 
     @Override
     @Transactional
-    public void updateSavedCategoryList(List<SavedStoreCategoryUpdateRequest> categoryRequests) {
+    public void updateSavedCategoryList(Long userId, List<SavedStoreCategoryUpdateRequest> categoryRequests) {
         for (SavedStoreCategoryUpdateRequest categoryRequest : categoryRequests) {
             Long saveStoreCategoryId = categoryRequest.getSaveStoreCategoryId();
             String savedStoreCategoryName = categoryRequest.getSavedStoreCategoryName().trim();
             boolean isPublic = categoryRequest.isPublic();
 
-            SavedStoreCategory savedStoreCategory = saveStoreCategoryRepository.findById(saveStoreCategoryId)
+            SavedStoreCategory category = saveStoreCategoryRepository.findById(saveStoreCategoryId)
                     .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_UPDATE_SAVED_STORE_CATEGORY));
 
-            savedStoreCategory.setCategoryName(savedStoreCategoryName);
-            savedStoreCategory.setIsPublic(isPublic);
+            if (!category.validateOwner(userId)) {
+                throw new CustomException(SavedStoreErrorStatus._UNAUTHORIZED_SAVED_STORE_ACCESS);
+            }
+
+            category.setCategoryName(savedStoreCategoryName);
+            category.setIsPublic(isPublic);
         }
     }
 
     @Override
     @Transactional
-    public void deleteSavedCategoryList(List<Long> categoryIdList) {
-        categoryIdList.forEach(saveStoreCategoryRepository::deleteById);
+    public void deleteSavedCategoryList(Long userId, List<Long> categoryIdList) {
+        for (Long categoryId : categoryIdList) {
+            SavedStoreCategory category = saveStoreCategoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_DELETE_SAVED_STORE_CATEGORY));
+
+            if (!category.validateOwner(userId)) {
+                throw new CustomException(SavedStoreErrorStatus._UNAUTHORIZED_SAVED_STORE_ACCESS);
+            }
+
+            saveStoreCategoryRepository.delete(category);
+        }
     }
 
 }

@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface SavedStoreCategoryService {
 
-    void updateSavedCategoryList(List<SavedStoreCategoryUpdateRequest> categoryRequests);
+    void updateSavedCategoryList(Long userId, List<SavedStoreCategoryUpdateRequest> categoryRequests);
 
-    void deleteSavedCategoryList(List<Long> categoryIdList);
+    void deleteSavedCategoryList(Long userId, List<Long> categoryIdList);
 
 }
