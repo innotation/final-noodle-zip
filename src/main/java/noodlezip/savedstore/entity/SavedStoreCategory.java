@@ -36,8 +36,9 @@ public class SavedStoreCategory extends BaseTimeEntity {
     @Column(name = "category_order", nullable = false)
     private Integer categoryOrder;
 
-    @OneToMany(mappedBy = "saveStoreCategory", fetch = FetchType.LAZY)
-    private List<SavedStore> saveStores;
+    @OneToMany(mappedBy = "saveStoreCategory", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavedStore> saveStoreList;
 
 
     public boolean validateOwner(Long userId) {
