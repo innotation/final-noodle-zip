@@ -41,7 +41,7 @@ public class SavedStoreCategoryServiceImpl implements SavedStoreCategoryService 
     @Transactional
     public void deleteSavedCategoryList(Long userId, List<Long> categoryIdList) {
         for (Long categoryId : categoryIdList) {
-            SavedStoreCategory category = saveStoreCategoryRepository.findById(categoryId)
+            SavedStoreCategory category = saveStoreCategoryRepository.findWithSaveStoresById(categoryId)
                     .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_DELETE_SAVED_STORE_CATEGORY));
 
             if (!category.validateOwner(userId)) {
