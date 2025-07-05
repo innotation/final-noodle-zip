@@ -3,6 +3,10 @@ package noodlezip.savedstore.service;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
+import noodlezip.common.util.PageUtil;
+import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
+import noodlezip.mypage.dto.response.savedstore.*;
+import noodlezip.mypage.util.SavedStorePagePolicy;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 import noodlezip.savedstore.entity.SavedStore;
@@ -14,10 +18,13 @@ import noodlezip.savedstore.status.SavedStoreErrorStatus;
 import noodlezip.store.entity.Store;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -28,6 +35,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
     private final SavedStoreCategoryRepository saveStoreCategoryRepository;
     private final SavedStoreRepository saveStoreRepository;
     private final StoreRepository storeRepository;
+    private final PageUtil pageUtil;
 
     /// todo [가게상세-1] 가게 상세페이지 wishlist 활성화 여부 판단
     @Override
@@ -41,7 +49,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
     @Transactional(readOnly = true)
     public List<SavedStoreCategoryResponse> getUserSaveCategoryList(Long userId, Long storeId) {
         List<SavedStoreCategoryResponse> categoryList =
-                saveStoreCategoryRepository.findUserSaveCategoryList(userId);
+                saveStoreCategoryRepository.findUserSaveCategoryListForSearch(userId, true);
         if (categoryList.isEmpty()) {
             return categoryList;
         }
@@ -149,5 +157,73 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         saveStoreRepository.deleteByUserIdAndStoreId(userId, storeId);
     }
 
+
+    @Override
+    public MySavedStorePageResponse getMySavedStoreInitPage(Long userId) {
+        List<SavedStoreCategoryResponse> searchFilter =
+                saveStoreCategoryRepository.findUserSaveCategoryListForSearch(userId, true);
+        List<SavedStoreCategoryResponse> updateCategoryList =
+                saveStoreCategoryRepository.findUserSavedCategoryList(userId);
+        SavedStoreListResponse savedStoreList = getSavedStoreListWithPaging(
+                userId,
+                SavedStoreCategoryFilterRequest.builder()
+                        .categoryIdList(List.of(searchFilter.get(0).getCategoryId()))
+                        .isAllCategory(false)
+                        .build(),
+                1, false
+        );
+        searchFilter.get(0).setActive(true);
+
+        return MySavedStorePageResponse.builder()
+                .searchFilter(searchFilter)
+                .updateCategoryList(updateCategoryList)
+                .savedStoreList(savedStoreList)
+                .build();
+    }
+
+    @Override
+    public SavedStorePageResponse getSavedStoreInitPage(Long userId) {
+        List<SavedStoreCategoryResponse> searchFilter =
+                saveStoreCategoryRepository.findUserSaveCategoryListForSearch(userId, false);
+        SavedStoreListResponse savedStoreList = getSavedStoreListWithPaging(
+                userId,
+                SavedStoreCategoryFilterRequest.builder()
+                        .categoryIdList(List.of(searchFilter.get(0).getCategoryId()))
+                        .isAllCategory(false)
+                        .build(),
+                1, false
+        );
+        searchFilter.get(0).setActive(true);
+
+        return SavedStorePageResponse.builder()
+                .savedStoreList(savedStoreList)
+                .savedStoreList(savedStoreList)
+                .build();
+    }
+
+    @Override
+    public SavedStoreListResponse getSavedStoreListWithPaging(Long userId,
+                                                              SavedStoreCategoryFilterRequest filter,
+                                                              int page,
+                                                              boolean isOwner
+    ) {
+        Pageable pageable = SavedStorePagePolicy.getPageable(page);
+        Page<SavedStoreResponse> storePage =
+                saveStoreRepository.findSavedStoreByCategoryWithPaging(userId, filter, isOwner, pageable);
+
+        Map<String, Object> pageInfo = pageUtil.getPageInfo(storePage, SavedStorePagePolicy.PAGE_PER_BLOCK);
+        SavedStoreListResponse response = SavedStoreListResponse.of(pageInfo);
+        response.setSavedStoreList(storePage.getContent());
+
+        return response;
+    }
+
+    @Override
+    public List<StoreLocationResponse> getStoreLocationList(Long userId,
+                                                            SavedStoreCategoryFilterRequest filter,
+                                                            boolean isOwner
+    ) {
+        return saveStoreRepository.getStoreLocationList(userId, filter.getCategoryIdList(), isOwner);
+    }
 
 }

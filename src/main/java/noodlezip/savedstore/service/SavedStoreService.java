@@ -1,5 +1,10 @@
 package noodlezip.savedstore.service;
 
+import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
+import noodlezip.mypage.dto.response.savedstore.MySavedStorePageResponse;
+import noodlezip.mypage.dto.response.savedstore.SavedStoreListResponse;
+import noodlezip.mypage.dto.response.savedstore.SavedStorePageResponse;
+import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 
@@ -21,5 +26,18 @@ public interface SavedStoreService {
 
 
     /// 마이페이지에서 검색한 카테고리로 가게정보들 반환
+
+    MySavedStorePageResponse getMySavedStoreInitPage(Long userId);
+
+    SavedStorePageResponse getSavedStoreInitPage(Long userId);
+
+    SavedStoreListResponse getSavedStoreListWithPaging(Long userId,
+                                                       SavedStoreCategoryFilterRequest filter,
+                                                       int page,
+                                                       boolean isOwner);
+
+    List<StoreLocationResponse> getStoreLocationList(Long userId,
+                                                     SavedStoreCategoryFilterRequest filter,
+                                                     boolean isOwner);
 
 }
