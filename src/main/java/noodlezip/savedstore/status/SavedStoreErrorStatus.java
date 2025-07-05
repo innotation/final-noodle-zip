@@ -10,12 +10,17 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum SavedStoreErrorStatus implements BaseErrorCode {
 
+    _UNAUTHORIZED_SAVED_STORE_ACCESS(HttpStatus.FORBIDDEN,
+            "MYPAGE-SAVED-STORE-000", "접근 권한이 없습니다."),
     _FAIL_SAVED_STORE(HttpStatus.BAD_REQUEST,
             "MYPAGE-SAVED-STORE-001", "가게 저장에 실패하였습니다."),
     _FAIL_DELETED_STORE(HttpStatus.BAD_REQUEST,
             "MYPAGE-SAVED-STORE-002", "가게 삭제에 실패하였습니다."),
     _FAIL_UPDATE_SAVED_STORE_CATEGORY(HttpStatus.BAD_REQUEST,
-            "MYPAGE-SAVED-STORE-003", "저장 가게 카테고리 수정에 실패하였습니다.");
+            "MYPAGE-SAVED-STORE-003", "저장 가게 카테고리 수정에 실패하였습니다."),
+    _FAIL_DELETE_SAVED_STORE_CATEGORY(HttpStatus.BAD_REQUEST,
+            "MYPAGE-SAVED-STORE-004", "저장 가게 카테고리 삭제에 실패하였습니다.")
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
