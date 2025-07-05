@@ -24,12 +24,15 @@ public class MyPageMainController {
         User user = myUserDetails.getUser();
 
         model.addAttribute("userId", user.getId()); ///마이페이지 내부에서 하위 페이지 이동시 herf에 필요
+        model.addAttribute("isOwner", true);
 //        return "index";
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{userId}")
     public String userMyPage(@PathVariable String userId, Model model) { /// 특정 사용자의 마이페이지로 이동
+
+        model.addAttribute("isOwner", false);
         return "index";
     }
 
