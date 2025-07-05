@@ -10,4 +10,6 @@ public interface CommentService {
     Map<String, Object> findCommentList(Long boardId, Long userId, Pageable pageable);
 
     Map<String, Object> registComment(CommentReqDto commentReqDto);
+
+    Map<String, Object> deleteComment(Long commentId, Long boardId, Long userId);
 }
