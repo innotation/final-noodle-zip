@@ -38,4 +38,10 @@ public class SavedStoreCategory extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "saveStoreCategory", fetch = FetchType.LAZY)
     private List<SavedStore> saveStores;
+
+
+    public boolean validateOwner(Long userId) {
+        return this.user.getId().equals(userId);
+    }
+
 }
