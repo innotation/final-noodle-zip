@@ -1,10 +1,7 @@
 package noodlezip.savedstore.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.store.entity.Store;
 import noodlezip.user.entity.User;
@@ -31,10 +28,12 @@ public class SavedStore extends BaseTimeEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "save_store_category_id", nullable = false)
     private SavedStoreCategory saveStoreCategory;
 
+    @Setter
     @Column(name = "memo", nullable = false)
     private String memo;
 
