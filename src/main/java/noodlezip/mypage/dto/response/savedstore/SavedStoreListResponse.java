@@ -9,6 +9,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @Builder
 public class SavedStoreListResponse {
 
