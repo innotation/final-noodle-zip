@@ -1,5 +1,13 @@
 package noodlezip.mypage.dto.response.savedstore;
 
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Builder
 public class SavedStoreResponse {
 
     private Long savedStoreId;

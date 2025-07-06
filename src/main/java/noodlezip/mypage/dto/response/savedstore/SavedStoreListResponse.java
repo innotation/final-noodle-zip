@@ -26,8 +26,8 @@ public class SavedStoreListResponse {
         return SavedStoreListResponse.builder()
                 .page((Integer) map.get("page"))
                 .totalPage((Integer) map.get("totalPage"))
-                .startPage((Integer) map.get("startPage"))
-                .beginPage((Integer) map.get("beginPage"))
+                .startPage((Integer) map.get("beginPage"))
+                .beginPage((Integer) map.get("endPage"))
                 .isFirst((Boolean) map.get("isFirst"))
                 .isLast((Boolean) map.get("isLast"))
                 .build();
