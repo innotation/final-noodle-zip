@@ -37,7 +37,7 @@ public class MySavedStoreController {
         model.addAttribute("isOwner", true);
         model.addAttribute("mySavedStorePageInfo", mySavedStorePageInfo);
 
-        return "index";
+        return "mypage/savedStore";
     }
 
     @GetMapping("/{userId}/saved-store/list")
@@ -48,7 +48,7 @@ public class MySavedStoreController {
         model.addAttribute("isOwner", false);
         model.addAttribute("savedStorePageInfo", savedStorePageInfo);
 
-        return "index";
+        return "mypage/savedStore";
     }
 
 
