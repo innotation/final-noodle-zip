@@ -10,6 +10,7 @@ import noodlezip.mypage.dto.response.savedstore.SavedStorePageResponse;
 import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
 import noodlezip.mypage.service.MySavedStoreService;
 import noodlezip.mypage.util.SavedStorePagePolicy;
+import noodlezip.mypage.util.UserAccessInfo;
 import noodlezip.savedstore.service.SavedStoreService;
 import noodlezip.user.entity.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @Controller
-public class MySavedStoreController {
+public class MySavedStoreController extends MyBaseController {
 
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
@@ -53,40 +54,40 @@ public class MySavedStoreController {
 
 
     /// 카테고리 조회 + 페이지네이션
-    @GetMapping("/{userId}/saved-store/list/category-filter-search")
+    @GetMapping({
+            "/my/saved-store/list/category-filter-search",
+            "/{userId}/saved-store/list/category-filter-search"
+    })
     @ResponseBody
     public SavedStoreListResponse getMySavedStoreListByCategory(@AuthenticationPrincipal MyUserDetails userDetails,
-                                                                @PathVariable Long userId,
+                                                                @PathVariable(required = false) String userId,
                                                                 @ModelAttribute SavedStoreCategoryFilterRequest filter,
                                                                 @RequestParam(defaultValue =
                                                                         SavedStorePagePolicy.DEFAULT_PAGE) int page
     ) {
-        User user = userDetails.getUser();
-        boolean isOwner = user.getId().equals(userId);
+
+
+        UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 
         return savedStoreService.getSavedStoreListWithPaging(
-                userId, filter, page, isOwner
+                userAccessInfo.targetUserId(), filter, page, userAccessInfo.isOwner()
         );
     }
 
-
-    /// 사용자가 지도보기를 눌렀을때  storeId+좌표 리스트 비동기 조회
-
-    /**
-     * 선택된 카테고리 전체?
-     * 현재 페이지네이션 기준? : 그럼 List<sotreId>로 받아야됨
-     */
-    @GetMapping("/{userId}/saved-store/list/map")
+    @GetMapping({
+            "/my/saved-store/list/map",
+            "/{userId}/saved-store/list/map"
+    })
     @ResponseBody
     public List<StoreLocationResponse> getMySavedStoreListMap(@AuthenticationPrincipal MyUserDetails userDetails,
-                                                              @PathVariable Long userId,
+                                                              @PathVariable(required = false) String userId,
                                                               @ModelAttribute SavedStoreCategoryFilterRequest filter
     ) {
-        User user = userDetails.getUser();
-        boolean isOwner = user.getId().equals(userId);
+
+        UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 
         return savedStoreService.getStoreLocationList(
-                userId, filter, isOwner
+                userAccessInfo.targetUserId(), filter, userAccessInfo.isOwner()
         );
     }
 
