@@ -68,6 +68,7 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
         Long total = queryFactory
                 .select(savedStore.count())
                 .from(savedStore)
+                .join(savedStore.saveStoreCategory, savedStoreCategory)
                 .where(where)
                 .fetchOne();
 
