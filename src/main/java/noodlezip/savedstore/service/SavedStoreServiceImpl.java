@@ -157,51 +157,21 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         saveStoreRepository.deleteByUserIdAndStoreId(userId, storeId);
     }
 
-
     @Override
-    public MySavedStorePageResponse getMySavedStoreInitPage(Long userId) {
-        List<SavedStoreCategoryResponse> searchFilter =
-                saveStoreCategoryRepository.findUserSaveCategoryListForSearch(userId, true);
-        List<SavedStoreCategoryResponse> updateCategoryList =
-                saveStoreCategoryRepository.findUserSavedCategoryList(userId);
-        SavedStoreListResponse savedStoreList = getSavedStoreListWithPaging(
-                userId,
-                SavedStoreCategoryFilterRequest.builder()
-                        .categoryIdList(List.of(searchFilter.get(0).getCategoryId()))
-                        .isAllCategory(false)
-                        .build(),
-                1, false
-        );
-        searchFilter.get(0).setActive(true);
-
-        return MySavedStorePageResponse.builder()
-                .searchFilter(searchFilter)
-                .updateCategoryList(updateCategoryList)
-                .savedStoreList(savedStoreList)
-                .build();
+    @Transactional(readOnly = true)
+    public List<SavedStoreCategoryResponse> getSaveCategoryListForSearch(Long userId, boolean isOwner) {
+        return saveStoreCategoryRepository.findUserSaveCategoryListForSearch(userId, isOwner);
     }
 
     @Override
-    public SavedStorePageResponse getSavedStoreInitPage(Long userId) {
-        List<SavedStoreCategoryResponse> searchFilter =
-                saveStoreCategoryRepository.findUserSaveCategoryListForSearch(userId, false);
-        SavedStoreListResponse savedStoreList = getSavedStoreListWithPaging(
-                userId,
-                SavedStoreCategoryFilterRequest.builder()
-                        .categoryIdList(List.of(searchFilter.get(0).getCategoryId()))
-                        .isAllCategory(false)
-                        .build(),
-                1, false
-        );
-        searchFilter.get(0).setActive(true);
-
-        return SavedStorePageResponse.builder()
-                .savedStoreList(savedStoreList)
-                .savedStoreList(savedStoreList)
-                .build();
+    @Transactional(readOnly = true)
+    public List<SavedStoreCategoryResponse> getSavedCategoryList(Long userId) {
+        return saveStoreCategoryRepository.findUserSavedCategoryList(userId);
     }
 
+
     @Override
+    @Transactional(readOnly = true)
     public SavedStoreListResponse getSavedStoreListWithPaging(Long userId,
                                                               SavedStoreCategoryFilterRequest filter,
                                                               int page,
@@ -219,6 +189,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<StoreLocationResponse> getStoreLocationList(Long userId,
                                                             SavedStoreCategoryFilterRequest filter,
                                                             boolean isOwner

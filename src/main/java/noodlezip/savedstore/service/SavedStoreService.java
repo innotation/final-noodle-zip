@@ -24,12 +24,9 @@ public interface SavedStoreService {
     /// todo [가게상세-4] 가게저장 리스트에 삭제 - 모달 '삭제' 버튼 클릭시
     void deleteSavedStore(Long userId, Long storeId);
 
+    List<SavedStoreCategoryResponse> getSaveCategoryListForSearch(Long userId, boolean isOwner);
 
-    /// 마이페이지에서 검색한 카테고리로 가게정보들 반환
-
-    MySavedStorePageResponse getMySavedStoreInitPage(Long userId);
-
-    SavedStorePageResponse getSavedStoreInitPage(Long userId);
+    List<SavedStoreCategoryResponse> getSavedCategoryList(Long userId);
 
     SavedStoreListResponse getSavedStoreListWithPaging(Long userId,
                                                        SavedStoreCategoryFilterRequest filter,
