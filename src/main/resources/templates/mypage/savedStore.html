@@ -25,9 +25,10 @@
 
     <!-- SPECIFIC CSS -->
     <link th:href="@{/css/listing.css}" rel="stylesheet">
+    <link th:href="@{/css/saved-store.css}" rel="stylesheet">
 </head>
 
-<body>
+<body th:attr="data-path=${isOwner} ? 'my' : ${userId}">
 <div th:replace="/fragments/subHeader::subHeader"></div>
 <main>
 
@@ -44,15 +45,6 @@
                     <a class="btn_map d-flex align-items-center justify-content-center" data-bs-toggle="collapse" href="#collapseMap" aria-expanded="false" aria-controls="collapseMap">
                         <span class="btn_map_txt" data-text-swap="Hide Map" data-text-original="View on Map">지도 보기</span>
                     </a>
-                    <div class="sort_select">
-                        <select name="sort" id="sort">
-                            <option value="popularity" selected="selected">Sort by Popularity</option>
-                            <option value="rating">Sort by Average rating</option>
-                            <option value="date">Sort by newness</option>
-                            <option value="price">Sort by Price: low to high</option>
-                            <option value="price-desc">Sort by Price: high to low</option>
-                        </select>
-                    </div>
                     <a class="btn_map mobile btn_filters" data-bs-toggle="collapse" href="#collapseMap">
                         <i class="icon_pin_alt"></i>
                     </a>
@@ -61,7 +53,7 @@
                     </a>
                 </div>
 
-
+<!--                <input type="hidden" id="userId" th:value="${userId}">-->
                 <div class="filter_col">
                     <div class="inner_bt">
                         <a href="#" class="open_filters"><i class="icon_close"></i></a>
@@ -126,12 +118,12 @@
             </aside>
 
             <div class="col-lg-9">
-                <div class="row">
+                <div class="row" id="store-list">
                     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6"
                          th:each="store : ${(isOwner ? mySavedStorePageInfo.savedStoreList.savedStoreList : savedStorePageInfo.savedStoreList.savedStoreList)}">
                         <div class="strip">
                             <figure>
-                                <img src="img/lazy-placeholder.png"
+                                <img src="/img/lazy-placeholder.png"
                                      th:attr="data-src=${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
                                 <a th:href="@{'/store/' + ${store.storeId}}" class="strip_info">
                                     <div class="item_title">
@@ -141,7 +133,11 @@
                                 </a>
                             </figure>
                             <ul>
-                                <li><span th:text="${store.memo}">저장 메모</span></li>
+                                <li>
+                                    <span class="memo-tooltip" th:attr="title=${store.memo}"
+                                          th:text="${store.memo}">
+                                    </span>
+                                </li>
                                 <li>
                                     <div class="score"></div>
                                 </li>
@@ -150,19 +146,23 @@
                     </div>
                 </div>
 
-                <div class="pagination_fg">
-                    <a href="#">&laquo;</a>
-                    <a href="#"
-                       th:each="i : ${#numbers.sequence(1, (isOwner ? mySavedStorePageInfo.savedStoreList.totalPage : savedStorePageInfo.savedStoreList.totalPage))}"
-                       th:classappend="${(isOwner ? mySavedStorePageInfo.savedStoreList.page : savedStorePageInfo.savedStoreList.page) == i} ? 'active'">
-                        <span th:text="${i}">1</span>
-                    </a>
-                    <a href="#">&raquo;</a>
+                <div th:with="pageInfo=${isOwner} ? ${mySavedStorePageInfo.savedStoreList} : ${savedStorePageInfo.savedStoreList}">
+                    <div class="pagination_fg">
+                        <a href="#"
+                           th:attr="data-page=${pageInfo.page > 1 ? pageInfo.page - 1 : 1}">&laquo;
+                        </a>
+                        <a href="#"
+                           th:each="i : ${#numbers.sequence(1, pageInfo.totalPage)}"
+                           th:attr="data-page=${i}"
+                           th:classappend="${pageInfo.page == i} ? 'active'">
+                            <span th:text="${i}">1</span>
+                        </a>
+                        <a href="#"
+                           th:attr="data-page=${pageInfo.page < pageInfo.totalPage ? pageInfo.page + 1 : pageInfo.totalPage}">&raquo;
+                        </a>
+                    </div>
                 </div>
             </div>
-
-
-
 
             <!-- /col -->
         </div>
@@ -322,7 +322,6 @@
     </form>
     <!--form -->
 </div>
-<!-- /Sign In Modal -->
 
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
@@ -332,6 +331,7 @@
 <!-- SPECIFIC SCRIPTS -->
 <script src="/js/sticky_sidebar.min.js"></script>
 <script src="/js/specific_listing.js"></script>
+<script src="/js/saved-store-search.js"></script>
 
 <!-- Map -->
 </body>
