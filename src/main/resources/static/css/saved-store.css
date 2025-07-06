@@ -1,0 +1,8 @@
+.memo-tooltip {
+    display: inline-block;
+    max-width: 250px;  /* 메모 글자수 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
