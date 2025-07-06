@@ -50,6 +50,10 @@ public class StoreController {
 
     }
 
+    // 프론트 테스트용
+    @GetMapping("/detail")
+    public void detailPage(){}
+
     // 매장 상세페이지 진입
     @GetMapping("/detail.page")
     public String showDetailPage(Long no, Model model) {
