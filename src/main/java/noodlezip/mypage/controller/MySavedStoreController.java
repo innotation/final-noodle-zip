@@ -3,6 +3,7 @@ package noodlezip.mypage.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.mypage.dto.MyPageAuthorityContext;
 import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
 import noodlezip.mypage.dto.response.savedstore.MySavedStorePageResponse;
 import noodlezip.mypage.dto.response.savedstore.SavedStoreListWithPageInfoResponse;
@@ -25,7 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @Controller
-public class MySavedStoreController extends MyBaseController { /// todo savedStore 도메인으로 이동
+public class MySavedStoreController extends MyBaseController {
+    /// todo savedStore 도메인으로 이동
 
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
@@ -34,10 +36,9 @@ public class MySavedStoreController extends MyBaseController { /// todo savedSto
     public String mySavedStoreList(@AuthenticationPrincipal MyUserDetails userDetails, Model model) {
         User user = userDetails.getUser();
         MySavedStorePageResponse mySavedStorePageInfo = mySavedStoreService.getMySavedStoreInitPage(user.getId());
+        MyPageAuthorityContext authorityContext = new MyPageAuthorityContext(user.getId(), true);
 
-        model.addAttribute("userId", user.getId());
-        model.addAttribute("isOwner", true);
-        model.addAttribute("dataPath", MyPageUrlPolicy.MY_PAGE_KEY);
+        model.addAttribute("authorityContext", authorityContext);
         model.addAttribute("mySavedStorePageInfo", mySavedStorePageInfo);
 
         return "mypage/savedStore";
@@ -46,10 +47,9 @@ public class MySavedStoreController extends MyBaseController { /// todo savedSto
     @GetMapping("/{userId}/saved-store/list")
     public String savedStoreList(@PathVariable Long userId, Model model) {
         SavedStorePageResponse savedStorePageInfo = mySavedStoreService.getSavedStoreInitPage(userId);
+        MyPageAuthorityContext authorityContext = new MyPageAuthorityContext(userId, false);
 
-        model.addAttribute("userId", userId);
-        model.addAttribute("isOwner", false);
-        model.addAttribute("dataPath", userId.toString());
+        model.addAttribute("authorityContext", authorityContext);
         model.addAttribute("savedStorePageInfo", savedStorePageInfo);
 
         return "mypage/savedStore";
@@ -66,7 +66,7 @@ public class MySavedStoreController extends MyBaseController { /// todo savedSto
                                                                             @PathVariable(required = false) String userId,
                                                                             @ModelAttribute SavedStoreCategoryFilterRequest filter,
                                                                             @RequestParam(defaultValue =
-                                                                        SavedStorePagePolicy.DEFAULT_PAGE) int page
+                                                                                    SavedStorePagePolicy.DEFAULT_PAGE) int page
     ) {
         UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 
