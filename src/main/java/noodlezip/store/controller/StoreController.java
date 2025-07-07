@@ -64,7 +64,8 @@ public class StoreController {
 
         MenuDetailResponseDto menuDetail = storeService.getMenuDetail(no);
         model.addAttribute("menuDetail", menuDetail);
-        return "store/fragment :: menu-tab";
+
+        return "store/fragment/tab-menu :: menu-tab";
     }
 
 

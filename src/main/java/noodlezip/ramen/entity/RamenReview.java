@@ -95,4 +95,7 @@ public class RamenReview {
     @Column(name = "is_receipt_review")
     private Boolean isReceiptReview;
 
+    @Column(name = "ocr_key_hash")
+    private String ocrKeyHash;
+
 }
