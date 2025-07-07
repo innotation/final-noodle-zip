@@ -49,18 +49,23 @@ public class StoreService {
     public Long registerStore(StoreRequestDto dto, MultipartFile storeMainImage, User user) {
         String storeMainImageUrl = null;
 
-        // 매장 이미지 저장
+        // ① 대표 이미지 업로드 및 유효성 검사
         if (storeMainImage != null && !storeMainImage.isEmpty()) {
             try {
                 Map<String, String> uploadResult = fileUtil.fileupload("store", storeMainImage);
-                storeMainImageUrl = uploadResult.get("filePath") + "/" + uploadResult.get("filesystemName");
+                storeMainImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
                 log.info("Store main image uploaded for user {}: {}", user.getId(), storeMainImageUrl);
+            } catch (CustomException ce) {
+                throw ce; // 확장자, 용량 등 오류
             } catch (Exception e) {
                 log.error("Failed to upload store main image for user {}: {}", user.getId(), e.getMessage(), e);
                 throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
             }
+            log.warn("대표 이미지가 첨부되지 않았습니다.");
+            throw new CustomException(ErrorStatus._FILE_REQUIRED);
         }
 
+        // ② Store 엔티티 생성 및 저장
         Store store = Store.builder()
                 .storeName(dto.getStoreName())
                 .address(dto.getAddress())
@@ -77,9 +82,10 @@ public class StoreService {
                 .userId(user.getId())
                 .build();
         store.setStoreLegalCode(dto.getStoreLegalCode() != null ? dto.getStoreLegalCode().longValue() : null);
+
         Store savedStore = storeRepository.save(store);
 
-        // 영업시간 저장
+        // ③ 영업시간 저장
         if (dto.getWeekSchedule() != null) {
             List<StoreWeekSchedule> schedules = dto.getWeekSchedule().stream()
                     .map(s -> {
@@ -99,33 +105,39 @@ public class StoreService {
             scheduleRepository.saveAll(schedules);
         }
 
-        // 메뉴 및 기본 토핑 저장 (메뉴 이미지 로컬 저장 포함)
+        // ④ 메뉴 및 기본 토핑, 추가 토핑 저장
         if (dto.getMenus() != null) {
             for (MenuRequestDto m : dto.getMenus()) {
                 String menuImageUrl = null;
-
                 MultipartFile menuImageFile = m.getMenuImageFile();
+
+                // 메뉴 이미지 업로드
                 if (menuImageFile != null && !menuImageFile.isEmpty()) {
                     try {
                         Map<String, String> uploadResult = fileUtil.fileupload("menu", menuImageFile);
-                        menuImageUrl = uploadResult.get("filePath") + "/" + uploadResult.get("filesystemName");
+                        menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
                         log.info("Menu image uploaded for menu {}: {}", m.getMenuName(), menuImageUrl);
+                    } catch (CustomException ce) {
+                        throw ce;
                     } catch (Exception e) {
                         log.error("Failed to upload menu image for menu {}: {}", m.getMenuName(), e.getMessage(), e);
                         throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
                     }
                 }
 
+                // 클라이언트에서 직접 URL 보낸 경우 사용
                 if (menuImageUrl == null) {
-                    menuImageUrl = m.getMenuImageUrl();  // 클라이언트가 이미 URL 넘겼을 경우
+                    menuImageUrl = m.getMenuImageUrl();
                 }
 
+                // 카테고리/육수 매핑
                 Category category = new Category();
                 category.setId(m.getRamenCategoryId());
 
                 RamenSoup soup = new RamenSoup();
                 soup.setId(m.getRamenSoupId());
 
+                // 메뉴 엔티티 저장
                 Menu menu = Menu.builder()
                         .store(savedStore)
                         .menuName(m.getMenuName())
@@ -149,12 +161,11 @@ public class StoreService {
                     }
                 }
 
-                // 추가 토핑 저장 (StoreExtraTopping)
+                // 추가 토핑 저장
                 if (m.getExtraToppings() != null && !m.getExtraToppings().isEmpty()) {
                     for (String toppingName : m.getExtraToppings()) {
                         if (toppingName == null || toppingName.isBlank()) continue;
 
-                        // 새 토핑 엔티티 생성 및 저장
                         Topping topping = Topping.builder()
                                 .toppingName(toppingName)
                                 .isActive(true)
@@ -164,7 +175,6 @@ public class StoreService {
                         StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
                         storeExtraTopping.setStore(savedStore);
                         storeExtraTopping.setTopping(topping);
-
                         storeExtraToppingRepository.save(storeExtraTopping);
                     }
                 }
