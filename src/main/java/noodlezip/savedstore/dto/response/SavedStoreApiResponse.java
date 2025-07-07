@@ -10,7 +10,7 @@ import lombok.*;
 @ToString
 public class SavedStoreApiResponse {
 
-    private boolean isSuccess;
+    private boolean success;
     private String message;
 
 }

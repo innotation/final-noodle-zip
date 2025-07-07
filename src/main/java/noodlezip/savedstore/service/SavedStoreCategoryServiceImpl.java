@@ -23,7 +23,7 @@ public class SavedStoreCategoryServiceImpl implements SavedStoreCategoryService 
         for (SavedStoreCategoryUpdateRequest categoryRequest : categoryRequests) {
             Long saveStoreCategoryId = categoryRequest.getSaveStoreCategoryId();
             String savedStoreCategoryName = categoryRequest.getSavedStoreCategoryName().trim();
-            boolean isPublic = categoryRequest.isPublic();
+            Boolean isPublic = categoryRequest.getIsPublic();
 
             SavedStoreCategory category = saveStoreCategoryRepository.findById(saveStoreCategoryId)
                     .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_UPDATE_SAVED_STORE_CATEGORY));
