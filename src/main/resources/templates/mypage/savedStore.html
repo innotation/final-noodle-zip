@@ -68,7 +68,6 @@
                                 <li th:each="category : ${mySavedStorePageInfo.searchFilter}">
                                     <label class="container_check">
                                         <span th:text="${category.categoryName}"></span>
-                                        <small>개수</small>
                                         <input type="checkbox" th:value="${category.categoryId}" th:checked="${category.isActive}">
                                         <span class="checkmark"></span>
                                     </label>
@@ -78,7 +77,6 @@
                                 <li th:each="category : ${savedStorePageInfo.searchFilter}">
                                     <label class="container_check">
                                         <span th:text="${category.categoryName}"></span>
-                                        <small>개수</small>
                                         <input type="checkbox" th:value="${category.categoryId}" th:checked="${category.isActive}">
                                         <span class="checkmark"></span>
                                     </label>
@@ -96,22 +94,31 @@
                         </h4>
                         <div class="collapse" id="filter_2">
                             <ul>
-                                <li th:each="category : ${mySavedStorePageInfo.updateCategoryList}">
-                                    <input type="checkbox" class="category_check" th:value="${category.categoryId}">
-                                    <input type="text" class="category_name_input" th:value="${category.categoryName}"><br>
-                                    <label>
-                                        <input type="radio" th:name="'public_' + ${category.categoryId}" value="true"
-                                               th:checked="${category.isActive}"> 공개
+                                <li th:each="category : ${mySavedStorePageInfo.updateCategoryList}" class="category-item">
+                                    <label class="container_check">
+                                        <input type="checkbox" class="category_check" th:value="${category.categoryId}">
+                                        <span class="checkmark" id="checkmark-update"></span>
                                     </label>
-                                    <label>
-                                        <input type="radio" th:name="'public_' + ${category.categoryId}" value="false"
-                                               th:checked="${!category.isActive}"> 비공개
-                                    </label>
+
+                                    <div class="category-group">
+                                        <input type="text" class="category_name_input" th:value="${category.categoryName}">
+                                        <div class="radio-group">
+                                            <label>
+                                                <input type="radio" th:name="'public_' + ${category.categoryId}" value="true"
+                                                       th:checked="${category.isActive}"> 공개
+                                            </label>
+                                            <label>
+                                                <input type="radio" th:name="'public_' + ${category.categoryId}" value="false"
+                                                       th:checked="${!category.isActive}"> 비공개
+                                            </label>
+                                        </div>
+                                    </div>
                                 </li>
                             </ul>
-                            <div class="buttons">
-                                <button id="update_categories" class="btn_1 full-width">수정</button>
-                                <button id="delete_categories" class="btn_1 full-width">삭제</button>
+
+                            <div class="category-buttons">
+                                <button id="update_categories" class="btn_1">수정</button>
+                                <button id="delete_categories" class="btn_1">삭제</button>
                             </div>
                         </div>
                     </div>
