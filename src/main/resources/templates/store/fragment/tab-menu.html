@@ -1,11 +1,46 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="https://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
+
+<!-- store/fragments/tab-menu.html -->
+<div th:fragment="menuFragment">
+  <h3>Menu</h3>
+
+  <!-- 태그 필터 -->
+  <div id="menu-tag-filters" class="tag-filter-container">
+    <div class="tag-group" id="category-tags">
+            <span class="filter-tag active" th:each="c : ${categoryNames}"
+                  th:text="${c}" data-type="category" th:attr="data-value=${c}">Category</span>
+    </div>
+    <div class="tag-group" id="soup-tags">
+            <span class="filter-tag active" th:each="s : ${soupNames}"
+                  th:text="${s}" data-type="soup" th:attr="data-value=${s}">Soup</span>
+    </div>
+    <div class="tag-group" id="topping-tags">
+            <span class="filter-tag active" th:each="t : ${toppingNames}"
+                  th:text="${t}" data-type="topping" th:attr="data-value=${t}">Topping</span>
+    </div>
+  </div>
+
+  <!-- 메뉴 리스트 -->
+  <div id="menu-list">
+    <div th:each="menu : ${menus}"
+         class="menu_item"
+         th:attr="data-category=${menu.categoryName},
+                      data-soup=${menu.soupName},
+                      data-toppings=${#strings.arrayJoin(menu.toppingNames, ',')}">
+      <em th:text="${#numbers.formatDecimal(menu.price, 1, 'POINT', 2, 'NONE')} + '₩'"></em>
+      <h4 th:text="${menu.name}">Menu Name</h4>
+      <p th:text="${menu.description}">Menu Description</p>
+      <div class="menu_meta">
+        <span class="tag" th:text="${menu.categoryName}"></span>
+        <span class="tag" th:text="${menu.soupName}"></span>
+        <span class="tag"
+              th:each="t : ${menu.toppingNames}"
+              th:text="${t}"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 </html>
