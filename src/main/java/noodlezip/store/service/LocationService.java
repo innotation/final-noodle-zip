@@ -89,12 +89,11 @@ public class LocationService {
 
         // 3) 그래도 실패하면 키워드 검색 fallback
         if (location == null) {
-            return searchByKeyword(roadAddress);
+            location = searchByKeyword(roadAddress);
         }
 
         return location;
     }
-
 
     /*
      주소 검색 결과가 없을 때 호출되는 키워드 기반 검색 메서드

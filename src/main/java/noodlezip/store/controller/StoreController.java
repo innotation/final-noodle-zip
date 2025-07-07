@@ -1,6 +1,7 @@
 package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.common.util.PageUtil;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/store")
 @Controller
@@ -39,16 +41,26 @@ public class StoreController {
 
     @PostMapping("/regist")
     public String registerStore(@AuthenticationPrincipal MyUserDetails myUserDetails,
-                                @ModelAttribute StoreRequestDto dto,
-                                @RequestParam("storeMainImage") MultipartFile storeMainImage) {
+                                @ModelAttribute StoreRequestDto dto) {
         // 로그인한 유저 객체 얻기
         User user = myUserDetails.getUser();
+        log.info("Store registration requested by userId: {}, storeName: {}", user.getId(), dto.getStoreName());
+
+        for (MenuRequestDto menu : dto.getMenus()) {
+            log.info("메뉴명: {}", menu.getMenuName());
+            log.info(" - 가격: {}", menu.getPrice());
+            log.info(" - 기본 토핑: {}", menu.getDefaultToppingIds());
+            log.info(" - 추가 토핑: {}", menu.getExtraToppings());
+            log.info(" - 이미지 파일명: {}",
+                    menu.getMenuImageFile() != null ? menu.getMenuImageFile().getOriginalFilename() : "없음");
+        }
 
         // 가게 등록 처리
-        Long storeId = storeService.registerStore(dto, storeMainImage, user);
+        Long storeId = storeService.registerStore(dto, dto.getStoreMainImage(), user);
 
-        return "redirect:/store/detail/" + storeId;
+        log.info("StoreRequestDto: {}", dto);
 
+        return "redirect:/store/detail.page?no=" + storeId;
     }
 
     // 매장 상세페이지 진입
