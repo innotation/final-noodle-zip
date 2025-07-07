@@ -32,6 +32,7 @@ public class MySavedStoreController extends MyBaseController {
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
 
+
     @GetMapping("/my/saved-store/list")
     public String mySavedStoreList(@AuthenticationPrincipal MyUserDetails userDetails, Model model) {
         User user = userDetails.getUser();
@@ -44,6 +45,7 @@ public class MySavedStoreController extends MyBaseController {
         return "mypage/savedStore";
     }
 
+
     @GetMapping("/{userId}/saved-store/list")
     public String savedStoreList(@PathVariable Long userId, Model model) {
         SavedStorePageResponse savedStorePageInfo = mySavedStoreService.getSavedStoreInitPage(userId);
@@ -54,6 +56,7 @@ public class MySavedStoreController extends MyBaseController {
 
         return "mypage/savedStore";
     }
+
 
 
     /// 카테고리 조회 + 페이지네이션

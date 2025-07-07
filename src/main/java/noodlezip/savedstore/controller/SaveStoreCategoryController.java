@@ -1,8 +1,10 @@
 package noodlezip.savedstore.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.common.dto.ApiResponse;
 import noodlezip.savedstore.dto.request.SavedStoreCategoryUpdateRequest;
 import noodlezip.savedstore.dto.response.SavedStoreApiResponse;
 import noodlezip.savedstore.service.SavedStoreCategoryService;
@@ -27,35 +29,32 @@ public class SaveStoreCategoryController {
 
     private final SavedStoreCategoryService saveStoreCategoryService;
 
-    @PostMapping(
-            value = "/my/saved-store/categories/update",
-            consumes = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(value = "/my/saved-store/categories/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SavedStoreApiResponse updateCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
-                                                    @RequestBody @Validated List<SavedStoreCategoryUpdateRequest> requestList) {
+                                                    @RequestBody @Valid List<@Valid SavedStoreCategoryUpdateRequest> requestList) {
         User user = myUserDetails.getUser();
         saveStoreCategoryService.updateSavedCategoryList(user.getId(), requestList);
 
+
+        for(SavedStoreCategoryUpdateRequest updateRequest : requestList) {
+            System.out.println(updateRequest);
+        }
         return SavedStoreApiResponse.builder()
-                .isSuccess(true)
+                .success(true)
                 .message(SavedStoreSuccessStatus._OK_UPDATE_SAVED_STORE_CATEGORY.getMessage())
                 .build();
     }
 
-
-    @PostMapping(
-            value = "/my/saved-store/categories/delete",
-            consumes = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(value = "/my/saved-store/categories/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SavedStoreApiResponse deleteCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
-                                                @RequestBody List<Long> categoryIdList) {
+                                                    @RequestBody List<Long> categoryIdList) {
         User user = myUserDetails.getUser();
         saveStoreCategoryService.deleteSavedCategoryList(user.getId(), categoryIdList);
 
         return SavedStoreApiResponse.builder()
-                .isSuccess(true)
+                .success(true)
                 .message(SavedStoreSuccessStatus._OK_DELETED_SAVED_STORE_CATEGORY.getMessage())
                 .build();
     }

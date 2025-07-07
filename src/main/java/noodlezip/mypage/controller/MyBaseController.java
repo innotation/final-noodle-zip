@@ -9,6 +9,7 @@ public abstract class MyBaseController {
 
     protected UserAccessInfo resolveUserAccess(MyUserDetails userDetails, String userId) {
         User user = userDetails.getUser();
+
         if (userId == null || MyPageUrlPolicy.MY_PAGE_KEY.equals(userId)) {
             return new UserAccessInfo(user.getId(), true);
         } else {
