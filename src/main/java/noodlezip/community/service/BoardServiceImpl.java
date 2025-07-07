@@ -49,6 +49,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, Object> findBoardListByCategory(String category, Pageable pageable) {
         Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndCommunityType(category, pageable);
 
@@ -62,7 +63,11 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public BoardRespDto findBoardById(Long id, Long userId) {
-        return boardRepository.findBoardByBoardIdWithUser(id, userId);
+        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id, userId);
+        if (boardRespDto == null) {
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        }
+        return boardRespDto;
     }
 
     @Override

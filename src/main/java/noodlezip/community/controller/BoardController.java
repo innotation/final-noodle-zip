@@ -16,7 +16,6 @@ import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
-import noodlezip.community.entity.Board;
 import noodlezip.community.service.BoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,7 +29,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 import java.util.Optional;
@@ -61,9 +59,7 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "게시글 등록 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public void registBoard() {
-        // Thymeleaf 템플릿 이름이 요청 경로와 동일할 경우 반환 값 없음
-    }
+    public void registBoard() {}
 
     @PostMapping("/regist")
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
@@ -152,7 +148,6 @@ public class BoardController {
                 map = boardService.findBoardList(pageable);
             }
 
-            log.info("map: {}", map.toString());
             model.addAttribute("board", map.get("list"));
             model.addAttribute("page", map.get("page"));
             model.addAttribute("beginPage", map.get("beginPage"));
@@ -238,7 +233,7 @@ public class BoardController {
                     schema = @Schema(type = "integer", format = "int64")),
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
     })
-    public String deleteBoard(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
+    public String deleteBoard(@PathVariable("boardId") Long boardId) {
         boardService.deleteBoard(boardId);
         return "redirect:/board/list";
     }
