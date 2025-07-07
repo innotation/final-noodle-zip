@@ -36,10 +36,6 @@ public class SaveStoreCategoryController {
         User user = myUserDetails.getUser();
         saveStoreCategoryService.updateSavedCategoryList(user.getId(), requestList);
 
-
-        for(SavedStoreCategoryUpdateRequest updateRequest : requestList) {
-            System.out.println(updateRequest);
-        }
         return SavedStoreApiResponse.builder()
                 .success(true)
                 .message(SavedStoreSuccessStatus._OK_UPDATE_SAVED_STORE_CATEGORY.getMessage())
