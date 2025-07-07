@@ -7,6 +7,7 @@ import noodlezip.mypage.dto.response.savedstore.SavedStoreListResponse;
 import noodlezip.mypage.dto.response.savedstore.SavedStorePageResponse;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 import noodlezip.savedstore.service.SavedStoreService;
+import noodlezip.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Service
 public class MySavedStoreServiceImpl implements MySavedStoreService {
 
+    private final UserService userService;
     private final SavedStoreService savedStoreService;
 
     @Override
@@ -45,6 +47,8 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
     @Override
     @Transactional(readOnly = true)
     public SavedStorePageResponse getSavedStoreInitPage(Long userId) {
+        userService.validateMyPageExistingUserByUserId(userId);
+
         List<SavedStoreCategoryResponse> searchFilter =
                 savedStoreService.getSaveCategoryListForSearch(userId, false);
         SavedStoreListResponse savedStoreList =
