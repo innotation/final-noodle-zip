@@ -129,25 +129,27 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String list(
-            @PathVariable("category") Optional<String> category,
+            @PathVariable(value = "category", required = false) Optional<String> categoryOptional,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
+        String category = null;
+
         try {
             Map<String, Object> map;
-            if (category.isPresent()) {
-                // 특정 카테고리 게시글 조회
-                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category.get());
-                map = boardService.findBoardListByCategory(category.get(), pageable);
-                model.addAttribute("category", category.get());
+            if (categoryOptional.isPresent() && !categoryOptional.get().isEmpty()) {
+                category = categoryOptional.get();
+                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category);
+                map = boardService.findBoardListByCategory(category, pageable);
             } else {
                 // 전체 게시글 목록 조회
                 log.info("전체 게시글 목록 조회 요청");
                 map = boardService.findBoardList(pageable);
             }
 
+            model.addAttribute("category", category);
             model.addAttribute("board", map.get("list"));
             model.addAttribute("page", map.get("page"));
             model.addAttribute("beginPage", map.get("beginPage"));
