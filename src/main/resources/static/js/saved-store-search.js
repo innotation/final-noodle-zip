@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function fetchAndRender(page) {
         const selectedCategories = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
-            .map(cb => cb.value);
+          .map(cb => cb.value);
         const isAllCategory = selectedCategories.length === 0;
 
         const params = new URLSearchParams();
@@ -13,18 +13,25 @@ document.addEventListener("DOMContentLoaded", function() {
         params.append('page', page);
 
         fetch(`/mypage/${path}/saved-store/list/category-filter-search?${params.toString()}`)
-            .then(response => response.json())
-            .then(data => {
-                renderStoreList(data.savedStoreList);
-                renderPagination(data.page, data.totalPage);
+          .then(response => response.json())
+          .then(data => {
+              renderStoreList(data.savedStoreList);
+              // 페이지네이션 정보 전달
+              renderPagination(
+                data.page,
+                data.totalPage,
+                data.beginPage,
+                data.endPage
+              );
 
-                window.scrollTo({
-                    top: document.querySelector("#store-list").offsetTop,
-                    behavior: "smooth"
-                });
-            })
-            .catch(err => console.error('오류 발생:', err));
+              window.scrollTo({
+                  top: document.querySelector("#store-list").offsetTop,
+                  behavior: "smooth"
+              });
+          })
+          .catch(err => console.error('오류 발생:', err));
     }
+
 
     function renderStoreList(storeList) {
         const container = document.querySelector("#store-list");
@@ -62,19 +69,20 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function renderPagination(currentPage, totalPage) {
+    function renderPagination(currentPage, totalPage, beginPage, endPage) {
         const container = document.querySelector(".pagination_fg");
         container.innerHTML = '';
 
-        // <<
+        // << 이전 버튼
         const prev = document.createElement('a');
         prev.href = "#";
         prev.setAttribute("data-page", currentPage > 1 ? currentPage - 1 : 1);
+        if (currentPage === 1) prev.classList.add("disabled");
         prev.innerHTML = "&laquo;";
         container.appendChild(prev);
 
-        // 페이지 숫자
-        for (let i = 1; i <= totalPage; i++) {
+        // 페이지 숫자 - beginPage부터 endPage까지
+        for (let i = beginPage; i <= endPage; i++) {
             const page = document.createElement('a');
             page.href = "#";
             page.setAttribute("data-page", i);
@@ -83,10 +91,11 @@ document.addEventListener("DOMContentLoaded", function() {
             container.appendChild(page);
         }
 
-        // >>
+        // >> 다음 버튼
         const next = document.createElement('a');
         next.href = "#";
         next.setAttribute("data-page", currentPage < totalPage ? currentPage + 1 : totalPage);
+        if (currentPage === totalPage) next.classList.add("disabled");
         next.innerHTML = "&raquo;";
         container.appendChild(next);
 
