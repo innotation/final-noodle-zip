@@ -28,7 +28,7 @@ public class Comment extends BaseTimeEntity {
 //    @JoinColumn(name = "community_id", nullable = false)
 //    private Board board;
 
-    //        @NotNull
+//        @NotNull
 //        @Column(name = "user_id", nullable = false)
 //        private Long userId;
     @ManyToOne(fetch = FetchType.LAZY)

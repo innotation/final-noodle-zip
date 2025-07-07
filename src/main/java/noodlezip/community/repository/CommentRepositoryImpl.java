@@ -39,7 +39,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 //                .fetch();
 
         // Comment Dto로 프로젝션 하는 방식, 현재의 댓글이 level1만 있는 경우 유용
-        QueryResults<CommentRespDto> results = queryFactory
+        List<CommentRespDto> results = queryFactory
                 .select(new QCommentRespDto(
                         comment.id,
                         comment.user.userName,
@@ -48,7 +48,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                         comment.content,
                         comment.createdAt,
                         comment.updatedAt
-                ))
+                        ))
                 .from(comment)
                 .leftJoin(comment.user, user)
                 .where(
@@ -57,24 +57,21 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .orderBy(comment.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
+                .fetch();
 
-        // fetchResults로 변경 이전 코드, totalCount 가져옴
-//        Long total = queryFactory
-//                .select(comment.count())
-//                .from(comment)
-//                .where(
-//                        comment.communityId.eq(boardId)
-//                )
-//                .fetchOne();
-        List<CommentRespDto> content = results.getResults().stream()
+        Long total = queryFactory
+                .select(comment.count())
+                .from(comment)
+                .where(
+                        comment.communityId.eq(boardId)
+                )
+                .fetchOne();
+        List<CommentRespDto> content = results.stream()
                 .peek(dto -> {
-                    // isAuthor 필드에 boolean 값을 설정합니다.
-                    // currentUserId가 null이 아닐 때만 비교를 수행합니다.
                     dto.setWriter(userId != null && dto.getUserId().equals(userId));
                 })
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(content, pageable, results.getTotal());
+        return new PageImpl<>(content, pageable, total);
     }
 }
