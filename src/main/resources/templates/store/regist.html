@@ -41,7 +41,7 @@
 		<!-- ❗regist.html용 Spring 연동 폼❗ -->
 
 		<!-- form 태그 시작 -->
-		<form method="post" action="/store/regist" enctype="multipart/form-data" id="register" autocomplete="off">
+	<form method="post" action="/store/regist" enctype="multipart/form-data" id="register" autocomplete="off">
 			<div class="card mb-4">
 				<h2 class="form_title">가게 등록</h2>
 				<div class="card-body">
@@ -175,7 +175,7 @@
 
 						<!-- ⑦ 사장님 한 줄 소개 -->
 						<div class="owner-intro-wrapper" style="width: 100%;">
-							<label for="owner-intro" style="font-weight: bold; color: #2c3e50;">ㄹ
+							<label for="owner-intro" style="font-weight: bold; color: #2c3e50;">
 								사장님 한 줄 소개
 							</label>
 							<textarea
@@ -267,7 +267,7 @@
 									<div class="col-md-12 mb-2 d-flex gap-3 align-items-start">
 										<!-- 메뉴 설명 -->
 										<div class="col-md-6 mt-2">
-											<textarea name="menus[0].menuDescription" class="form-control" rows="2" placeholder="설명"></textarea>
+											<textarea name="menus[0].menuDescription" class="form-control" rows="2" placeholder="설명" lang="ko"></textarea>
 										</div>
 
 										<!-- 기본 토핑 선택 -->
@@ -373,8 +373,12 @@
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ roadAddress })
 					})
-							.then(res => res.json())
+							.then(res => {
+								console.log("Response status:", res.status, res.headers.get("content-type"));
+								return res.json();
+							})
 							.then(data => {
+								console.log("Location data:", data);
 								document.getElementById("storeLat").value = data.storeLat || '';
 								document.getElementById("storeLng").value = data.storeLng || '';
 								document.getElementById("storeLegalCode").value = data.storeLegalCode || '';
@@ -383,6 +387,7 @@
 				}
 			}).open();
 		}
+
 		document.getElementById("searchAddressBtn").addEventListener("click", openPostcode);
 		document.getElementById("address-api").addEventListener("click", openPostcode);
 
@@ -433,21 +438,20 @@
 
 		// 폼 제출 시 유효성 검사 및 전화번호 합치기
 		document.getElementById('register').addEventListener('submit', e => {
+			// 전화번호 유효성 먼저 검사
 			const prefix = phonePrefix.value || phonePrefixInput.value;
-
 			if (!prefix) {
 				alert('전화번호 앞자리를 입력해주세요.');
 				if (phonePrefix.value === '') phonePrefixInput.focus();
 				else phonePrefix.focus();
 				e.preventDefault();
-				return false;
+				return;
 			}
-
 			if (!phoneRest.value || phoneRest.value.replace(/-/g, '').length < 7) {
 				alert('전화번호 뒷자리를 확인해주세요.');
 				phoneRest.focus();
 				e.preventDefault();
-				return false;
+				return;
 			}
 
 			phoneHidden.value = prefix + '-' + phoneRest.value;
@@ -457,56 +461,37 @@
 		document.getElementById('register').addEventListener('submit', e => {
 			let isValid = true;
 			const menus = document.querySelectorAll('.menu-item');
-
-			menus.forEach((menu, i) => {
+			for (let i = 0; i < menus.length; i++) {
+				const menu = menus[i];
 				const menuName = menu.querySelector(`[name="menus[${i}].menuName"]`);
 				const price = menu.querySelector(`[name="menus[${i}].price"]`);
 				const category = menu.querySelector(`[name="menus[${i}].ramenCategoryId"]`);
 				const soup = menu.querySelector(`[name="menus[${i}].ramenSoupId"]`);
 
-				const phonePrefix = document.getElementById('phonePrefix');
-				const phoneRest = document.getElementById('phoneRest');
-				const phoneHidden = document.getElementById('phone');
-
-				phoneHidden.value = phonePrefix.value + '-' + phoneRest.value;
-
 				if (!menuName.value.trim()) {
 					alert(`메뉴 이름을 입력해주세요. (메뉴 ${i+1})`);
 					menuName.focus();
 					e.preventDefault();
-					return false;
+					return;
 				}
 				if (!price.value || price.value <= 0) {
 					alert(`가격을 입력해주세요. (메뉴 ${i+1})`);
 					price.focus();
 					e.preventDefault();
-					return false;
+					return;
 				}
 				if (!category.value) {
 					alert(`카테고리를 선택해주세요. (메뉴 ${i+1})`);
 					category.focus();
 					e.preventDefault();
-					return false;
+					return;
 				}
 				if (!soup.value) {
 					alert(`육수를 선택해주세요. (메뉴 ${i+1})`);
 					soup.focus();
 					e.preventDefault();
-					return false;
+					return;
 				}
-			});
-
-			if (!phonePrefix.value) {
-				alert('전화번호 앞자리를 입력해주세요.');
-				phonePrefix.focus();
-				e.preventDefault();
-				return false;
-			}
-			if (!phoneRest.value || phoneRest.value.replace(/-/g, '').length < 7) {
-				alert('전화번호 뒷자리를 확인해주세요.');
-				phoneRest.focus();
-				e.preventDefault();
-				return false;
 			}
 		});
 
@@ -537,23 +522,21 @@
 		const addButton = document.getElementById('add-menu');
 
 		/* ========== 메뉴 추가 버튼 클릭 시 ========== */
+		
 		addButton.addEventListener('click', () => {
 			const clone = template.cloneNode(true);
-			// 이미지 미리보기 초기화
+
 			const previewImg = clone.querySelector('.menu-preview-image');
 			if (previewImg) {
 				previewImg.src = '';
 				previewImg.style.display = 'none';
 			}
 
-			// 이미지 업로드 안내 텍스트 보이기
 			const uploadText = clone.querySelector('.menu-image-upload p');
 			if (uploadText) {
 				uploadText.style.display = 'block';
 			}
 
-
-			// name, id, value 초기화
 			clone.querySelectorAll('input, textarea').forEach(input => {
 				if (input.name) input.name = input.name.replace(/\d+/, menuIndex);
 				if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
@@ -565,7 +548,6 @@
 				select.value = "";
 			});
 
-			// 토핑 관련 인덱스 업데이트
 			clone.querySelectorAll('.topping-tags, .default-toppings-container').forEach(el => {
 				el.dataset.menuIndex = menuIndex;
 			});
@@ -573,12 +555,18 @@
 			const extraContainer = clone.querySelector('[id^="extra-toppings-container-"]');
 			if (extraContainer) {
 				extraContainer.id = `extra-toppings-container-${menuIndex}`;
-				extraContainer.style.display = 'none';
-				while (extraContainer.firstChild) {
-					extraContainer.removeChild(extraContainer.firstChild);
-				}
+				extraContainer.innerHTML = '';          // 내용 완전 삭제
+				extraContainer.style.display = 'none';  // 감추기
 			}
 
+			const defaultToppingContainer = clone.querySelector('.default-toppings-container');
+			if (defaultToppingContainer) {
+				defaultToppingContainer.innerHTML = '';
+			}
+
+			clone.querySelectorAll('.topping-tag.selected').forEach(tag => {
+				tag.classList.remove('selected');
+			});
 
 			// 기능 재등록
 			setupMenuImageUpload(clone);
@@ -849,6 +837,163 @@
 			container.innerHTML = html;
 		}
 		document.addEventListener("DOMContentLoaded", renderOpeningSchedule);
+
+		<!-- 예외처리 -->
+		document.addEventListener('DOMContentLoaded', () => {
+			const form = document.getElementById('register');
+			const submitBtn = form.querySelector('button[type="submit"]');
+			let isValidating = false;
+
+			form.addEventListener('submit', function(e) {
+				if (isValidating) {
+					e.preventDefault();
+					return false;
+				}
+
+				isValidating = true;
+				submitBtn.disabled = true;  // 버튼 비활성화
+
+				if (!validateForm()) {
+					e.preventDefault();
+					isValidating = false;
+					submitBtn.disabled = false; // 실패하면 다시 활성화
+					return false;
+				}
+				// 성공시 버튼은 disabled 된 채로 제출 진행
+			});
+
+			function validateForm() {
+				// 가게명
+				const storeName = document.querySelector('[name="storeName"]');
+				if (!storeName.value.trim()) {
+					alert('가게명을 입력하세요.');
+					storeName.focus();
+					return false;
+				}
+				// 도로명 주소
+				const address = document.querySelector('[name="address"]');
+				if (!address.value.trim()) {
+					alert('도로명 주소를 입력하세요.');
+					address.focus();
+					return false;
+				}
+
+				// 전화번호 앞자리
+				const phonePrefix = document.getElementById('phonePrefix');
+				const phonePrefixInput = document.getElementById('phonePrefixInput');
+				let prefixValue = phonePrefix.value || phonePrefixInput.value;
+				if (!prefixValue) {
+					alert('전화번호 앞자리를 입력하세요.');
+					if (phonePrefix.value === '') phonePrefixInput.focus();
+					else phonePrefix.focus();
+					return false;
+				}
+
+				// 전화번호 뒷자리
+				const phoneRest = document.getElementById('phoneRest');
+				if (!phoneRest.value.trim() || phoneRest.value.replace(/-/g, '').length < 7) {
+					alert('전화번호 뒷자리를 정확히 입력하세요.');
+					phoneRest.focus();
+					return false;
+				}
+
+				// 전화번호 hidden 필드에 저장
+				document.getElementById('phone').value = prefixValue + '-' + phoneRest.value;
+
+				// 주차 (radio)
+				const parkingOptions = document.getElementsByName('hasParking');
+				let parkingChecked = false;
+				for (let opt of parkingOptions) {
+					if (opt.checked) {
+						parkingChecked = true;
+						break;
+					}
+				}
+				if (!parkingChecked) {
+					alert('주차 옵션을 선택하세요.');
+					parkingOptions[0].focus();
+					return false;
+				}
+
+				// 요일별 영업시간 검사
+				const dayNames = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+
+				for (let i = 0; i < daysCount; i++) {
+					const openSelect = document.querySelector(`[name="weekSchedule[${i}].openingAt"]`);
+					const closeSelect = document.querySelector(`[name="weekSchedule[${i}].closingAt"]`);
+					const closedInput = document.getElementById(`closed-day-${i}`);
+
+					// 영업 안 하는 날 체크 시 검사 패스
+					if (closedInput && closedInput.value === 'true') {
+						continue;
+					}
+
+					if (!openSelect || !closeSelect) {
+						alert('영업시간 입력란이 없습니다.');
+						return false;
+					}
+
+					const dayLabel = dayNames[i];
+
+					if (!openSelect.value) {
+						alert(`${dayLabel} 오픈 시간을 선택하세요.`);
+						openSelect.focus();
+						return false;
+					}
+					if (!closeSelect.value) {
+						alert(`${dayLabel} 마감 시간을 선택하세요.`);
+						closeSelect.focus();
+						return false;
+					}
+				}
+
+				// 사장님 한 줄 소개
+				const ownerIntro = document.querySelector('[name="ownerComment"]');
+				if (!ownerIntro.value.trim()) {
+					alert('사장님 한 줄 소개를 입력하세요.');
+					ownerIntro.focus();
+					return false;
+				}
+
+				// 메뉴 항목 검사
+				const menus = document.querySelectorAll('.menu-item');
+				for (let i = 0; i < menus.length; i++) {
+					const menuName = menus[i].querySelector(`[name="menus[${i}].menuName"]`);
+					const price = menus[i].querySelector(`[name="menus[${i}].price"]`);
+					const category = menus[i].querySelector(`[name="menus[${i}].ramenCategoryId"]`);
+					const soup = menus[i].querySelector(`[name="menus[${i}].ramenSoupId"]`);
+
+					if (!menuName || !price || !category || !soup) {
+						alert(`메뉴 ${i + 1}의 입력 필드가 부족합니다.`);
+						return false;
+					}
+
+					if (!menuName.value.trim()) {
+						alert(`메뉴 ${i + 1}의 이름을 입력하세요.`);
+						menuName.focus();
+						return false;
+					}
+					if (!price.value || Number(price.value) <= 0) {
+						alert(`메뉴 ${i + 1}의 가격을 입력하세요.`);
+						price.focus();
+						return false;
+					}
+					if (!category.value) {
+						alert(`메뉴 ${i + 1}의 카테고리를 선택하세요.`);
+						category.focus();
+						return false;
+					}
+					if (!soup.value) {
+						alert(`메뉴 ${i + 1}의 육수를 선택하세요.`);
+						soup.focus();
+						return false;
+					}
+				}
+
+				return true;
+			}
+		});
+
 	</script>
 
 </body>
