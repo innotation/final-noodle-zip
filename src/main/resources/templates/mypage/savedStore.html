@@ -29,7 +29,7 @@
 </head>
 
 <!--<body th:attr="data-path=${isOwner} ? 'my' : ${userId}">-->
-<body th:attr="data-path=${dataPath}">
+<body th:attr="data-path=${authorityContext.dataPath}">
 <div th:replace="/fragments/subHeader::subHeader"></div>
 <main>
 
@@ -64,7 +64,7 @@
                             <a href="#filter_1" data-bs-toggle="collapse" class="opened">저장 카테고리 조회</a>
                         </h4>
                         <div class="collapse show" id="filter_1">
-                            <ul th:if="${isOwner}">
+                            <ul th:if="${authorityContext.isOwner}">
                                 <li th:each="category : ${mySavedStorePageInfo.searchFilter}">
                                     <label class="container_check">
                                         <span th:text="${category.categoryName}"></span>
@@ -74,7 +74,7 @@
                                     </label>
                                 </li>
                             </ul>
-                            <ul th:unless="${isOwner}">
+                            <ul th:unless="${authorityContext.isOwner}">
                                 <li th:each="category : ${savedStorePageInfo.searchFilter}">
                                     <label class="container_check">
                                         <span th:text="${category.categoryName}"></span>
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                     <!-- 자기 자신에게만 보이는 카테고리 수정 영역-->
-                    <div class="filter_type" th:if="${isOwner}">
+                    <div class="filter_type" th:if="${authorityContext.isOwner}">
                         <h4>
                             <a href="#filter_2" data-bs-toggle="collapse" class="closed">카테고리 정보 수정</a>
                         </h4>
@@ -121,7 +121,9 @@
             <div class="col-lg-9">
                 <div class="row" id="store-list">
                     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6"
-                         th:each="store : ${(isOwner ? mySavedStorePageInfo.savedStoreList.savedStoreList : savedStorePageInfo.savedStoreList.savedStoreList)}">
+                         th:each="store : ${(authorityContext.isOwner
+                                                ? mySavedStorePageInfo.savedStoreList.savedStoreList
+                                                : savedStorePageInfo.savedStoreList.savedStoreList)}">
                         <div class="strip">
                             <figure>
                                 <img src="/img/lazy-placeholder.png"
@@ -147,7 +149,7 @@
                     </div>
                 </div>
 
-                <div th:with="pageInfo=${isOwner} ? ${mySavedStorePageInfo.savedStoreList} : ${savedStorePageInfo.savedStoreList}">
+                <div th:with="pageInfo=${authorityContext.isOwner } ? ${mySavedStorePageInfo.savedStoreList} : ${savedStorePageInfo.savedStoreList}">
                     <div class="pagination_fg">
                         <a href="#"
                            th:attr="data-page=${pageInfo.page > 1 ? pageInfo.page - 1 : 1}"
