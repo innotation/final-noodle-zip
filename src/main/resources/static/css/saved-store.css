@@ -6,3 +6,15 @@
     text-overflow: ellipsis;
     vertical-align: bottom;
 }
+
+.pagination_fg a.disabled {
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.pagination_fg a.disabled:hover {
+    background-color: transparent !important;
+    color: #ccc !important;
+}
