@@ -7,6 +7,7 @@ import noodlezip.ramen.entity.Category;
 import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.CategoryRepository;
 import noodlezip.ramen.repository.ToppingRepository;
+import noodlezip.store.dto.MenuDetailDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,5 +34,26 @@ public class RamenService {
         return categories.stream()
                 .map(c -> new CategoryResponseDto(c.getId(), c.getCategoryName()))
                 .collect(Collectors.toList());
+    }
+
+    public List<String> extractUniqueCategories(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .map(MenuDetailDto::getCategoryName)
+                .distinct()
+                .toList();
+    }
+
+    public List<String> extractUniqueSoups(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .map(MenuDetailDto::getSoupName)
+                .distinct()
+                .toList();
+    }
+
+    public List<String> extractUniqueToppings(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .flatMap(menu -> menu.getToppingNames().stream())
+                .distinct()
+                .toList();
     }
 }

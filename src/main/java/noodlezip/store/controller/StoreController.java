@@ -50,23 +50,21 @@ public class StoreController {
 
     }
 
-    // 프론트 테스트용
-    @GetMapping("/detail")
-    public void detailPage(){}
-
     // 매장 상세페이지 진입
-    @GetMapping("/detail.page")
-    public String showDetailPage(Long no, Model model) {
+    @GetMapping("/detail/{no}")
+    public String showDetailPage(@PathVariable Long no, Model model) {
         StoreDto store = storeService.getStore(no);
         model.addAttribute("store", store);
         return "store/detail";
     }
 
     // 매장 메뉴 조회 (비동기)
-    @GetMapping("/detail/menuList")
-    @ResponseBody
-    public List<MenuDetailDto> showDetailMenuList(Long storeId) {
-        return storeService.getMenus(storeId);
+    @GetMapping("/detail/{no}/menuList")
+    public String showDetailMenuList(@PathVariable Long no, Model model) {
+
+        MenuDetailResponseDto menuDetail = storeService.getMenuDetail(no);
+        model.addAttribute("menuDetail", menuDetail);
+        return "store/fragment :: menu-tab";
     }
 
 
