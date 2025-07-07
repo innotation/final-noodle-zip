@@ -49,7 +49,7 @@ public class SaveStoreCategoryController {
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public SavedStoreApiResponse deleteCategory(@AuthenticationPrincipal MyUserDetails myUserDetails,
+    public SavedStoreApiResponse deleteCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
                                                 @RequestBody List<Long> categoryIdList) {
         User user = myUserDetails.getUser();
         saveStoreCategoryService.deleteSavedCategoryList(user.getId(), categoryIdList);
