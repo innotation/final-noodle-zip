@@ -233,8 +233,8 @@ public class BoardController {
                     schema = @Schema(type = "integer", format = "int64")),
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
     })
-    public String deleteBoard(@PathVariable("boardId") Long boardId) {
-        boardService.deleteBoard(boardId);
+    public String deleteBoard(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
+        boardService.deleteBoard(boardId, user.getUser().getId());
         return "redirect:/board/list";
     }
 }

@@ -93,8 +93,13 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+        if(!board.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorStatus._FORBIDDEN);
+        }
+
         boardRepository.delete(board);
     }
 }

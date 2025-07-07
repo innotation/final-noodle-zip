@@ -40,10 +40,13 @@ class BoardServiceImplTest {
 
     @Mock
     private BoardRepository boardRepository;
+
     @Mock
     private PageUtil pageUtil;
+
     @Mock
     private ModelMapper modelMapper;
+
     @Mock
     private FileUtil fileUtil;
 
@@ -266,7 +269,7 @@ class BoardServiceImplTest {
         doNothing().when(boardRepository).delete(any(Board.class)); // delete는 void 메서드이므로 doNothing 사용
 
         // When
-        boardService.deleteBoard(boardId);
+        boardService.deleteBoard(boardId, testUser.getId());
 
         // Then
         verify(boardRepository, times(1)).findById(boardId);
@@ -284,11 +287,31 @@ class BoardServiceImplTest {
 
         // When & Then
         CustomException exception = assertThrows(CustomException.class, () -> {
-            boardService.deleteBoard(boardId);
+            boardService.deleteBoard(boardId, testUser.getId());
         });
 
         assertThat(exception.getErrorCode()).isEqualTo(ErrorStatus._DATA_NOT_FOUND);
 
+        verify(boardRepository, times(1)).findById(boardId);
+        verify(boardRepository, never()).delete(any(Board.class));
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 실패 - 유저 정보 불일치")
+    void deleteBoard_Forbidden() {
+        // Given
+        Long boardId = 1L;
+        Long requestingUserId = 99L;
+
+        when(boardRepository.findById(anyLong())).thenReturn(Optional.of(testBoard));
+
+        // When & Then
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            boardService.deleteBoard(boardId, requestingUserId); // userId 파라미터 전달
+        });
+        assertThat(exception.getErrorCode()).isEqualTo(ErrorStatus._FORBIDDEN);
+
+        // verify
         verify(boardRepository, times(1)).findById(boardId);
         verify(boardRepository, never()).delete(any(Board.class));
     }
