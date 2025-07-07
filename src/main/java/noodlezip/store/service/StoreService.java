@@ -1,8 +1,10 @@
 package noodlezip.store.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.FileUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
@@ -22,13 +24,8 @@ import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.user.entity.User;
-import org.springframework.beans.factory.annotation.Value;
-import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
 import noodlezip.common.util.PageUtil;
-import noodlezip.store.dto.*;
-import noodlezip.store.entity.*;
-import noodlezip.store.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -37,19 +34,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Slf4j
 public class StoreService {
 
     private final StoreRepository storeRepository;
@@ -66,7 +57,6 @@ public class StoreService {
     private final ReviewToppingRepository reviewToppingRepository;
     private final StoreExtraToppingRepository storeExtraToppingRepository;
 
-
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, MultipartFile storeMainImage, User user) {
         String storeMainImageUrl = null;
@@ -75,15 +65,13 @@ public class StoreService {
         if (storeMainImage != null && !storeMainImage.isEmpty()) {
             try {
                 Map<String, String> uploadResult = fileUtil.fileupload("store", storeMainImage);
-                storeMainImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
-                log.info("Store main image uploaded for user {}: {}", user.getId(), storeMainImageUrl);
+                storeMainImageUrl = uploadResult.get("fileUrl");
             } catch (CustomException ce) {
-                throw ce; // 확장자, 용량 등 오류
+                throw ce;
             } catch (Exception e) {
-                log.error("Failed to upload store main image for user {}: {}", user.getId(), e.getMessage(), e);
                 throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
             }
-            log.warn("대표 이미지가 첨부되지 않았습니다.");
+        } else {
             throw new CustomException(ErrorStatus._FILE_REQUIRED);
         }
 
@@ -138,19 +126,18 @@ public class StoreService {
                     try {
                         Map<String, String> uploadResult = fileUtil.fileupload("menu", menuImageFile);
                         menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
-                        log.info("Menu image uploaded for menu {}: {}", m.getMenuName(), menuImageUrl);
                     } catch (CustomException ce) {
                         throw ce;
                     } catch (Exception e) {
-                        log.error("Failed to upload menu image for menu {}: {}", m.getMenuName(), e.getMessage(), e);
                         throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
                     }
                 }
 
                 // 클라이언트에서 직접 URL 보낸 경우 사용
                 if (menuImageUrl == null) {
-                    menuImageUrl = m.getMenuImageUrl();
+                    throw new CustomException(ErrorStatus._FILE_REQUIRED);
                 }
+
 
                 // 카테고리/육수 매핑
                 Category category = new Category();
@@ -188,12 +175,18 @@ public class StoreService {
                     for (String toppingName : m.getExtraToppings()) {
                         if (toppingName == null || toppingName.isBlank()) continue;
 
-                        Topping topping = Topping.builder()
-                                .toppingName(toppingName)
-                                .isActive(true)
-                                .build();
-                        toppingRepository.save(topping);
+                        // 기존 토핑 찾기
+                        Topping topping = toppingRepository.findByToppingName(toppingName)
+                                .orElseGet(() -> {
+                                    // 없으면 새로 생성
+                                    Topping newTopping = Topping.builder()
+                                            .toppingName(toppingName)
+                                            .isActive(true)
+                                            .build();
+                                    return toppingRepository.save(newTopping);
+                                });
 
+                        // Store-ExtraTopping 연결
                         StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
                         storeExtraTopping.setStore(savedStore);
                         storeExtraTopping.setTopping(topping);
