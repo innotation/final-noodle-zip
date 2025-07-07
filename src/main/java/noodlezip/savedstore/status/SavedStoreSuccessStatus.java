@@ -17,7 +17,7 @@ public enum SavedStoreSuccessStatus implements BaseCode {
     _OK_DELETED_SAVED_STORE_CATEGORY(HttpStatus.OK,
             "MYPAGE-SAVED-STORE-003", "저장 가게 카테고리가 성공적으로 삭제되었습니다."),
     _OK_UPDATE_SAVED_STORE_CATEGORY(HttpStatus.OK,
-            "MYPAGE-SAVED-STORE-004", "저장 가개 카테고리가 업데이트 되었습니다.");
+            "MYPAGE-SAVED-STORE-004", "저장 가게 카테고리가 업데이트 되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
