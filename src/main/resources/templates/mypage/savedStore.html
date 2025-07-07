@@ -28,7 +28,8 @@
     <link th:href="@{/css/saved-store.css}" rel="stylesheet">
 </head>
 
-<body th:attr="data-path=${isOwner} ? 'my' : ${userId}">
+<!--<body th:attr="data-path=${isOwner} ? 'my' : ${userId}">-->
+<body th:attr="data-path=${dataPath}">
 <div th:replace="/fragments/subHeader::subHeader"></div>
 <main>
 
@@ -149,16 +150,18 @@
                 <div th:with="pageInfo=${isOwner} ? ${mySavedStorePageInfo.savedStoreList} : ${savedStorePageInfo.savedStoreList}">
                     <div class="pagination_fg">
                         <a href="#"
-                           th:attr="data-page=${pageInfo.page > 1 ? pageInfo.page - 1 : 1}">&laquo;
+                           th:attr="data-page=${pageInfo.page > 1 ? pageInfo.page - 1 : 1}"
+                           th:classappend="${pageInfo.page == 1} ? 'disabled'">&laquo;
                         </a>
                         <a href="#"
-                           th:each="i : ${#numbers.sequence(1, pageInfo.totalPage)}"
+                           th:each="i : ${#numbers.sequence(pageInfo.beginPage, pageInfo.endPage)}"
                            th:attr="data-page=${i}"
                            th:classappend="${pageInfo.page == i} ? 'active'">
                             <span th:text="${i}">1</span>
                         </a>
                         <a href="#"
-                           th:attr="data-page=${pageInfo.page < pageInfo.totalPage ? pageInfo.page + 1 : pageInfo.totalPage}">&raquo;
+                           th:attr="data-page=${pageInfo.page < pageInfo.totalPage ? pageInfo.page + 1 : pageInfo.totalPage}"
+                           th:classappend="${pageInfo.page == pageInfo.totalPage} ? 'disabled'">&raquo;
                         </a>
                     </div>
                 </div>
@@ -332,7 +335,7 @@
 <script src="/js/sticky_sidebar.min.js"></script>
 <script src="/js/specific_listing.js"></script>
 <script src="/js/saved-store-search.js"></script>
-<script src="/js/saved-store-cateory-update.js"></script>
+<script src="/js/saved-store-category-update.js"></script>
 
 <!-- Map -->
 </body>
