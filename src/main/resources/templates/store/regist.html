@@ -67,7 +67,7 @@
 								<label for="phonePrefix" style="font-weight: normal;">전화번호</label>
 								<div class="d-flex gap-2">
 									<!-- 앞자리 선택 -->
-									<select id="phonePrefix" name="phonePrefix" class="form-select" style="max-width: 100px;" required>
+									<select id="phonePrefix" name="phonePrefix" class="form-select" style="max-width: 100px;">
 										<option value="" disabled selected>선택</option>
 										<option value="02">02</option>
 										<option value="031">031</option>
@@ -89,6 +89,7 @@
 									</select>
 
 									<!-- 나머지 번호 입력 -->
+									<input type="text" id="phonePrefixInput" name="phonePrefixInput" class="form-control" placeholder="직접입력" style="max-width: 100px;" maxlength="4" />
 									<input type="text" id="phoneRest" name="phoneRest" class="form-control" placeholder="1234-5678" maxlength="9" required />
 								</div>
 								<!-- 합친 전화번호를 form submit 시 hidden 필드로 만들기 -->
@@ -236,7 +237,7 @@
 									<div class="col-md-8 mb-2 d-flex gap-2">
 										<!-- 카테고리 드롭다운 -->
 										<select name="menus[0].ramenCategoryId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
-											<option disabled selected>카테고리 선택</option>
+											<option value="" disabled selected>카테고리 선택</option>
 											<option value="돈코츠">돈코츠 (Tonkotsu, 돼지뼈 육수)</option>
 											<option value="쇼유">쇼유 (Shoyu, 간장 베이스)</option>
 											<option value="미소">미소 (Miso, 된장 베이스)</option>
@@ -250,7 +251,7 @@
 
 										<!-- 육수 선택 드롭다운 -->
 										<select name="menus[0].ramenSoupId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
-											<option disabled selected>육수 선택</option>
+											<option value="" disabled selected>육수 선택</option>
 											<option value="1">돈코츠 (돼지뼈)</option>
 											<option value="2">소유 (간장)</option>
 											<option value="3">미소 (된장)</option>
@@ -389,14 +390,30 @@
 
 
 		/* ========== 전화번호 입력 처리 ========== */
-		const phonePrefix = document.getElementById('phonePrefix');
-		const phoneRest = document.getElementById('phoneRest');
-		const phoneHidden = document.getElementById('phone');
+		document.getElementById('register').addEventListener('submit', e => {
+			const phonePrefix = document.getElementById('phonePrefix');
+			const phonePrefixInput = document.getElementById('phonePrefixInput');
+			const phoneRest = document.getElementById('phoneRest');
+			const phoneHidden = document.getElementById('phone');
 
-		phoneRest.addEventListener('input', e => {
-			let val = e.target.value.replace(/[^0-9]/g, '');
-			if (val.length > 4) val = val.slice(0, 4) + '-' + val.slice(4, 8);
-			e.target.value = val;
+			const prefix = phonePrefix.value || phonePrefixInput.value;
+
+			if (!prefix) {
+				alert('전화번호 앞자리를 입력해주세요.');
+				if (phonePrefix.value === '') phonePrefixInput.focus();
+				else phonePrefix.focus();
+				e.preventDefault();
+				return false;
+			}
+
+			if (!phoneRest.value || phoneRest.value.replace(/-/g, '').length < 7) {
+				alert('전화번호 뒷자리를 확인해주세요.');
+				phoneRest.focus();
+				e.preventDefault();
+				return false;
+			}
+
+			phoneHidden.value = prefix + '-' + phoneRest.value;
 		});
 
 		/* ========== 등록 전 유효성 검사 ========== */
@@ -485,18 +502,30 @@
 		/* ========== 메뉴 추가 버튼 클릭 시 ========== */
 		addButton.addEventListener('click', () => {
 			const clone = template.cloneNode(true);
+			// 이미지 미리보기 초기화
+			const previewImg = clone.querySelector('.menu-preview-image');
+			if (previewImg) {
+				previewImg.src = '';         
+				previewImg.style.display = 'none';
+			}
+
+			// 이미지 업로드 안내 텍스트 보이기
+			const uploadText = clone.querySelector('.menu-image-upload p');
+			if (uploadText) {
+				uploadText.style.display = 'block';
+			}
+
 
 			// name, id, value 초기화
-			clone.querySelectorAll('input, select, textarea').forEach(input => {
+			clone.querySelectorAll('input, textarea').forEach(input => {
 				if (input.name) input.name = input.name.replace(/\d+/, menuIndex);
-				if (input.id) {
-					const newId = input.id.replace(/\d+/, menuIndex);
-					const label = clone.querySelector(`label[for="${input.id}"]`);
-					input.id = newId;
-					if (label) label.setAttribute("for", newId);
-				}
 				if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
 				else input.value = '';
+			});
+
+			clone.querySelectorAll('select').forEach(select => {
+				if (select.name) select.name = select.name.replace(/\d+/, menuIndex);
+				select.value = "";
 			});
 
 			// 토핑 관련 인덱스 업데이트
@@ -504,9 +533,15 @@
 				el.dataset.menuIndex = menuIndex;
 			});
 
-			// extra-toppings-container ID 수정
 			const extraContainer = clone.querySelector('[id^="extra-toppings-container-"]');
-			if (extraContainer) extraContainer.id = `extra-toppings-container-${menuIndex}`;
+			if (extraContainer) {
+				extraContainer.id = `extra-toppings-container-${menuIndex}`;
+				extraContainer.style.display = 'none';
+				while (extraContainer.firstChild) {
+					extraContainer.removeChild(extraContainer.firstChild);
+				}
+			}
+
 
 			// 기능 재등록
 			setupMenuImageUpload(clone);

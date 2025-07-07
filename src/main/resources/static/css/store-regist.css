@@ -101,22 +101,21 @@ textarea#owner-intro {
 }
 
 .menu-image-upload {
+    position: relative;
+    height: 180px;
+    padding: 30px 20px;
+    border: 2px dashed #ccc;
+    text-align: center;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 180px;
-    border: 2px dashed #ccc;
-    cursor: pointer;
-    padding: 30px 20px;
-    text-align: center
+}
+.menu-image-upload p {
+    margin-top: 0;
 }
 
-.menu-image-upload p {
-    margin-top: 10px;
-    width: 100%;
-    text-align: center;
-}
 
 .menu-preview-image {
     max-width: 100%;
