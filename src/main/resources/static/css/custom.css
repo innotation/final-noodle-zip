@@ -2,3 +2,35 @@
 /* Your custom styles below */
 /*============================================================================================*/
 
+.search-bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.search-bar .search-trigger {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 250px;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.search-bar i {
+  font-size: 1.2rem;
+  color: #888;
+  margin-left: 8px;
+}
