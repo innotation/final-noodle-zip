@@ -3,7 +3,7 @@ package noodlezip.mypage.service;
 import lombok.RequiredArgsConstructor;
 import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
 import noodlezip.mypage.dto.response.savedstore.MySavedStorePageResponse;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreListResponse;
+import noodlezip.mypage.dto.response.savedstore.SavedStoreListWithPageInfoResponse;
 import noodlezip.mypage.dto.response.savedstore.SavedStorePageResponse;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 import noodlezip.savedstore.service.SavedStoreService;
@@ -27,7 +27,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
                 savedStoreService.getSaveCategoryListForSearch(userId, true);
         List<SavedStoreCategoryResponse> updateCategoryList =
                 savedStoreService.getSavedCategoryList(userId);
-        SavedStoreListResponse savedStoreList =
+        SavedStoreListWithPageInfoResponse savedStoreList =
                 savedStoreService.getSavedStoreListWithPaging(
                         userId,
                         SavedStoreCategoryFilterRequest.builder()
@@ -51,7 +51,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
 
         List<SavedStoreCategoryResponse> searchFilter =
                 savedStoreService.getSaveCategoryListForSearch(userId, false);
-        SavedStoreListResponse savedStoreList =
+        SavedStoreListWithPageInfoResponse savedStoreList =
                 savedStoreService.getSavedStoreListWithPaging(
                         userId,
                         SavedStoreCategoryFilterRequest.builder()

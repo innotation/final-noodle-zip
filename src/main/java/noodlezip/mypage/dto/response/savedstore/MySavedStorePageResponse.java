@@ -14,6 +14,6 @@ public class MySavedStorePageResponse {
     /// my, {userId}
     private List<SavedStoreCategoryResponse> searchFilter;
     private List<SavedStoreCategoryResponse> updateCategoryList;
-    private SavedStoreListResponse savedStoreList;
+    private SavedStoreListWithPageInfoResponse savedStoreList;
 
 }

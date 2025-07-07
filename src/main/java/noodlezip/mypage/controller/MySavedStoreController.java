@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
 import noodlezip.mypage.dto.response.savedstore.MySavedStorePageResponse;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreListResponse;
+import noodlezip.mypage.dto.response.savedstore.SavedStoreListWithPageInfoResponse;
 import noodlezip.mypage.dto.response.savedstore.SavedStorePageResponse;
 import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
 import noodlezip.mypage.service.MySavedStoreService;
@@ -62,10 +62,10 @@ public class MySavedStoreController extends MyBaseController { /// todo savedSto
             "/{userId}/saved-store/list/category-filter-search"
     })
     @ResponseBody
-    public SavedStoreListResponse getMySavedStoreListByCategory(@AuthenticationPrincipal MyUserDetails userDetails,
-                                                                @PathVariable(required = false) String userId,
-                                                                @ModelAttribute SavedStoreCategoryFilterRequest filter,
-                                                                @RequestParam(defaultValue =
+    public SavedStoreListWithPageInfoResponse getMySavedStoreListByCategory(@AuthenticationPrincipal MyUserDetails userDetails,
+                                                                            @PathVariable(required = false) String userId,
+                                                                            @ModelAttribute SavedStoreCategoryFilterRequest filter,
+                                                                            @RequestParam(defaultValue =
                                                                         SavedStorePagePolicy.DEFAULT_PAGE) int page
     ) {
         UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);

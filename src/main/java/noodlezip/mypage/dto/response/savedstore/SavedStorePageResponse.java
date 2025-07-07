@@ -12,6 +12,6 @@ import java.util.List;
 public class SavedStorePageResponse {
 
     private List<SavedStoreCategoryResponse> searchFilter;
-    private SavedStoreListResponse savedStoreList;
+    private SavedStoreListWithPageInfoResponse savedStoreList;
 
 }

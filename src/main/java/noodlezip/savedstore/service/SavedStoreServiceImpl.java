@@ -172,17 +172,17 @@ public class SavedStoreServiceImpl implements SavedStoreService {
 
     @Override
     @Transactional(readOnly = true)
-    public SavedStoreListResponse getSavedStoreListWithPaging(Long userId,
-                                                              SavedStoreCategoryFilterRequest filter,
-                                                              int page,
-                                                              boolean isOwner
+    public SavedStoreListWithPageInfoResponse getSavedStoreListWithPaging(Long userId,
+                                                                          SavedStoreCategoryFilterRequest filter,
+                                                                          int page,
+                                                                          boolean isOwner
     ) {
         Pageable pageable = SavedStorePagePolicy.getPageable(page);
         Page<SavedStoreResponse> storePage =
                 saveStoreRepository.findSavedStoreByCategoryWithPaging(userId, filter, isOwner, pageable);
 
         Map<String, Object> pageInfo = pageUtil.getPageInfo(storePage, SavedStorePagePolicy.PAGE_PER_BLOCK);
-        SavedStoreListResponse response = SavedStoreListResponse.of(pageInfo);
+        SavedStoreListWithPageInfoResponse response = SavedStoreListWithPageInfoResponse.of(pageInfo);
         response.setSavedStoreList(storePage.getContent());
 
         return response;
