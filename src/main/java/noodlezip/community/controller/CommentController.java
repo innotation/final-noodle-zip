@@ -17,7 +17,6 @@ import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.CommentReqDto;
 import noodlezip.community.service.CommentService;
-import noodlezip.community.status.BoardErrorStatus; // 댓글 관련 에러 상태 추가 (가정)
 import noodlezip.community.status.BoardSuccessStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
