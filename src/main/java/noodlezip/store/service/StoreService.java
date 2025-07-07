@@ -1,8 +1,10 @@
 package noodlezip.store.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.FileUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
@@ -193,7 +195,7 @@ public class StoreService {
     // 등록요청매장 조회
     public Map<String, Object> findWaitingStores(Pageable pageable) {
         Page<RegistListDto> resultPage = storeRepository.findWaitingStores(pageable);
-        Map<String, Object> map = pageUtil.getPageInfo(resultPage, resultPage.getSize());
+        Map<String, Object> map = pageUtil.getPageInfo(resultPage, 5);
         map.put("registList", resultPage.getContent());
         return map;
     }
