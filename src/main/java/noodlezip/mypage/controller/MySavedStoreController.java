@@ -9,6 +9,7 @@ import noodlezip.mypage.dto.response.savedstore.SavedStoreListResponse;
 import noodlezip.mypage.dto.response.savedstore.SavedStorePageResponse;
 import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
 import noodlezip.mypage.service.MySavedStoreService;
+import noodlezip.mypage.util.MyPageUrlPolicy;
 import noodlezip.mypage.util.SavedStorePagePolicy;
 import noodlezip.mypage.util.UserAccessInfo;
 import noodlezip.savedstore.service.SavedStoreService;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @Controller
-public class MySavedStoreController extends MyBaseController {
+public class MySavedStoreController extends MyBaseController { /// todo savedStore 도메인으로 이동
 
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
@@ -36,6 +37,7 @@ public class MySavedStoreController extends MyBaseController {
 
         model.addAttribute("userId", user.getId());
         model.addAttribute("isOwner", true);
+        model.addAttribute("dataPath", MyPageUrlPolicy.MY_PAGE_KEY);
         model.addAttribute("mySavedStorePageInfo", mySavedStorePageInfo);
 
         return "mypage/savedStore";
@@ -47,6 +49,7 @@ public class MySavedStoreController extends MyBaseController {
 
         model.addAttribute("userId", userId);
         model.addAttribute("isOwner", false);
+        model.addAttribute("dataPath", userId.toString());
         model.addAttribute("savedStorePageInfo", savedStorePageInfo);
 
         return "mypage/savedStore";
@@ -65,8 +68,6 @@ public class MySavedStoreController extends MyBaseController {
                                                                 @RequestParam(defaultValue =
                                                                         SavedStorePagePolicy.DEFAULT_PAGE) int page
     ) {
-
-
         UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 
         return savedStoreService.getSavedStoreListWithPaging(
@@ -83,7 +84,6 @@ public class MySavedStoreController extends MyBaseController {
                                                               @PathVariable(required = false) String userId,
                                                               @ModelAttribute SavedStoreCategoryFilterRequest filter
     ) {
-
         UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 
         return savedStoreService.getStoreLocationList(
