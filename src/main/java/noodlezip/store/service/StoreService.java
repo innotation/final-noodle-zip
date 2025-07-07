@@ -1,13 +1,8 @@
 package noodlezip.store.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import noodlezip.admin.dto.RegistListDto;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
-import noodlezip.common.util.FileUtil;
-import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
@@ -27,6 +22,13 @@ import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.user.entity.User;
+import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
+import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.util.PageUtil;
+import noodlezip.store.dto.*;
+import noodlezip.store.entity.*;
+import noodlezip.store.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,7 +37,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -217,6 +224,13 @@ public class StoreService {
         return map;
     }
 
+    // 등록 요청 매장 상태 변경
+    public void changeStatus(Long id, ApprovalStatus status) {
+        Store store = storeRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+        store.setApprovalStatus(status);
+        storeRepository.save(store);
+    }
     // ID로 활성화 된 매장 찾기
     public StoreDto getStore(Long storeId) {
         Store store = storeRepository.findById(storeId)

@@ -14,5 +14,5 @@ public interface BoardService {
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
     BoardRespDto findBoardById(Long id, Long userId);
     void registBoard(BoardReqDto boardReqDto, User user, MultipartFile boardImage);
-    void deleteBoard(Long boardId);
+    void deleteBoard(Long boardId, Long userId);
 }
