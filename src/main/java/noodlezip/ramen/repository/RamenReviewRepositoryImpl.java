@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.entity.QRamenReview;
+import noodlezip.store.dto.ReviewSummaryDto;
 import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.entity.QMenu;
 import org.springframework.data.domain.Page;
@@ -59,5 +60,37 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, count);
+    }
+
+    @Override
+    public ReviewSummaryDto getSummaryByStoreId(Long storeId) {
+        // QRamenReview 사용
+        QRamenReview review = QRamenReview.ramenReview;
+
+        ReviewSummaryDto summary = queryFactory
+                .select(Projections.fields(
+                        ReviewSummaryDto.class,
+                        review.noodleThickness.avg().as("noodleThickness"),
+                        review.noodleTexture.avg().as("noodleTexture"),
+                        review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupTemperature.avg().as("soupTemperature"),
+                        review.soupSaltiness.avg().as("soupSaltiness"),
+                        review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
+                        review.soupOiliness.avg().as("soupOiliness"),
+                        review.id.count().intValue().as("totalCount"),
+                        review.noodleThickness.avg()
+                                .add(review.noodleTexture.avg())
+                                .add(review.noodleBoilLevel.avg())
+                                .add(review.soupTemperature.avg())
+                                .add(review.soupSaltiness.avg())
+                                .add(review.soupSpicinessLevel.avg())
+                                .add(review.soupOiliness.avg())
+                                .divide(7.0).as("overall")
+                ))
+                .from(review)
+                .where(review.menu.store.id.eq(storeId))
+                .fetchOne();
+
+        return summary;
     }
 }
