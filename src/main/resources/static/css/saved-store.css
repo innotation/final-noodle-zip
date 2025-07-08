@@ -72,3 +72,73 @@
     width: 100%;
     height: 500px;
 }
+
+
+
+
+
+
+
+
+
+
+
+.marker_info {
+    max-width: 220px;
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+.marker_header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.marker_header em {
+    display: block;
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.infobox_badge {
+    display: inline-block;
+    background: #ff6f61;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.marker_memo strong {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin: 6px 0;
+}
+
+.marker_image img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 6px 0;
+}
+
+.marker_actions {
+    margin-top: 8px;
+}
+
+.marker_actions a {
+    display: inline-block;
+    background: #ff6f61;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    text-decoration: none;
+}
