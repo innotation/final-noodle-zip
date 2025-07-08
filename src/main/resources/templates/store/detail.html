@@ -322,6 +322,7 @@
 					.then(html => {
 						paneB.innerHTML = html;
 						initLoadMore();
+						initReviewMenuFilter(); // 새로운 필터 초기화 함수 호출
 						reviewLoaded = true;
 					})
 					.catch(err => console.error("리뷰 탭 로딩 실패", err));
@@ -351,8 +352,79 @@
 							loadMoreWrapper.remove(); // 기존 버튼 제거
 							if (newWrapper) container.after(newWrapper); // 새 버튼 삽입
 
+							// 새로운 리뷰가 로드될 때마다 필터링 다시 적용
+							filterReviewsByMenu();
 						})
 						.catch(err => console.error("더보기 실패", err));
+				});
+			}
+
+			function initReviewMenuFilter() {
+				const menuFilterTagsContainer = document.getElementById("menu-filter-tags");
+				const reviewCards = document.querySelectorAll("#reviews .review_card");
+
+				// 모든 메뉴 이름 추출 및 중복 제거
+				const allMenuNames = new Set();
+				reviewCards.forEach(card => {
+					const menuName = card.dataset.menuName;
+					if (menuName) {
+						allMenuNames.add(menuName);
+					}
+				});
+
+				// 기존 태그 초기화
+				menuFilterTagsContainer.innerHTML = '';
+
+				// '모두 보기' 태그 추가
+				const allTag = document.createElement('a');
+				allTag.href = '#0';
+				allTag.classList.add('filter-tag', 'active');
+				allTag.textContent = '모두 보기';
+				allTag.dataset.menuName = 'all';
+				menuFilterTagsContainer.appendChild(allTag);
+
+				// 각 메뉴 이름에 대한 태그 추가
+				allMenuNames.forEach(menuName => {
+					const tag = document.createElement('a');
+					tag.href = '#0';
+					tag.classList.add('filter-tag');
+					tag.textContent = menuName;
+					tag.dataset.menuName = menuName;
+					menuFilterTagsContainer.appendChild(tag);
+				});
+
+				// 태그 클릭 이벤트 리스너
+				menuFilterTagsContainer.addEventListener('click', (e) => {
+					const clickedTag = e.target.closest('.filter-tag');
+					if (!clickedTag) return;
+
+					// 모든 태그의 active 상태 초기화
+					menuFilterTagsContainer.querySelectorAll('.filter-tag').forEach(tag => {
+						tag.classList.remove('active');
+					});
+
+					// 클릭된 태그 활성화
+					clickedTag.classList.add('active');
+
+					filterReviewsByMenu();
+				});
+
+				// 초기 필터링 적용
+				filterReviewsByMenu();
+			}
+
+			function filterReviewsByMenu() {
+				const activeMenuTag = document.querySelector('#menu-filter-tags .filter-tag.active');
+				const selectedMenuName = activeMenuTag ? activeMenuTag.dataset.menuName : 'all';
+				const reviewCards = document.querySelectorAll('#reviews .review_card');
+
+				reviewCards.forEach(card => {
+					const cardMenuName = card.dataset.menuName;
+					if (selectedMenuName === 'all' || cardMenuName === selectedMenuName) {
+						card.style.display = '';
+					} else {
+						card.style.display = 'none';
+					}
 				});
 			}
 		});

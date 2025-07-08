@@ -121,15 +121,26 @@
   </div>
 
   <!-- ✅ 리뷰 카드 목록 -->
+  <div class="menu-filter-container mb-4">
+    <h6>메뉴별 리뷰 보기</h6>
+    <div class="tags" id="menu-filter-tags">
+      <!-- 메뉴 태그들이 여기에 동적으로 추가됩니다. -->
+    </div>
+  </div>
+
   <div id="reviews">
-    <div class="review_card" th:each="review : ${reviewList}">
+    <div class="review_card" th:each="review : ${reviewList}" th:data-menu-name="${review.menuName}">
       <div class="row">
         <div class="col-md-2 user_info">
-          <figure>
-            <img th:src="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/avatar.jpg'}"
-                 onerror="this.onerror=null;this.src='/img/avatar.jpg'" alt="review image">
+          <figure class="menu-image-thumb">
+            <img th:src="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/menu-thumb-2.jpg'}"
+                 onerror="this.onerror=null;this.src='/img/menu-thumb-2.jpg'" alt="menu image">
           </figure>
-          <h5 th:text="${review.menuName}">메뉴명</h5>
+          <div class="menu-name-tags">
+            <ul class="tags">
+              <li><a href="#0" class="menu-filter-tag" th:data-menu-name="${review.menuName}" th:text="${review.menuName}">메뉴명</a></li>
+            </ul>
+          </div>
         </div>
         <div class="col-md-10 review_content">
           <div class="clearfix add_bottom_15">
@@ -231,8 +242,8 @@
             </div>
             <!-- /row -->
           </div>
-          <ul class="mt-2" th:if="${not #lists.isEmpty(review.toppingNames)}">
-            <li th:each="t : ${review.toppingNames}" th:text="'토핑: ' + ${t}">토핑</li>
+          <ul class="tags mt-2" th:if="${not #lists.isEmpty(review.toppingNames)}">
+            <li th:each="t : ${review.toppingNames}"><a href="#0" th:text="${t}">토핑</a></li>
           </ul>
         </div>
       </div>
