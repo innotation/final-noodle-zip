@@ -17,18 +17,18 @@ public class ViewCountService {
     private final RedisRepository redisRepository;
 
     // redis 접두사 및 만료 시간 세팅
-    private static final String BOARD_TOTAL_VIEW_KEY_PREFIX = "board:views:";
-    private static final String USER_BOARD_VIEWED_CHECK_KEY_PREFIX = "user:viewed:board:";
+    private static final String TOTAL_VIEW_KEY_SUFFIX = ":views:";
+    private static final String VIEWED_CHECK_KEY_SUFFIX = ":viewed:";
 
     // TTL value
     private static final Integer DUPLICATE_BOARD_VIEW_CHECK_TTL = 1;
 
-    public void increaseViewCount(Long boardId, String userIdOrIp) {
+    public void increaseViewCount(TargetType type,Long targetId, String userIdOrIp) {
 
-        String userViewedCheckKey = USER_BOARD_VIEWED_CHECK_KEY_PREFIX + userIdOrIp;
+        String userViewedCheckKey = type.getValue() + VIEWED_CHECK_KEY_SUFFIX + targetId + ":" + userIdOrIp;
 
         if (redisRepository.setIfAbsent(userViewedCheckKey, "1", DUPLICATE_BOARD_VIEW_CHECK_TTL, TimeUnit.HOURS)) {
-            String totalViewCheckKey = BOARD_TOTAL_VIEW_KEY_PREFIX + boardId;
+            String totalViewCheckKey = type.getValue() + TOTAL_VIEW_KEY_SUFFIX + targetId;
             Long viewedCount = redisRepository.increase(totalViewCheckKey);
             log.debug("viewedCount: {}", viewedCount);
             log.debug("totalViewCheckKey: {}", totalViewCheckKey);
@@ -37,8 +37,8 @@ public class ViewCountService {
         }
     }
 
-    public Long getViewCount(Long boardId) {
-        String totalViewCheckKey = BOARD_TOTAL_VIEW_KEY_PREFIX + boardId;
+    public Long getViewCount(TargetType type, Long targetId) {
+        String totalViewCheckKey = type.getValue() + TOTAL_VIEW_KEY_SUFFIX + targetId;
 
         return Long.getLong(redisRepository.get(totalViewCheckKey).orElseThrow(() -> new RuntimeException("totalViewCheckKey not found")));
     }

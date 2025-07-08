@@ -12,7 +12,7 @@ import java.util.Map;
 public interface BoardService {
     Map<String, Object> findBoardList(Pageable pageable);
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
-    BoardRespDto findBoardById(Long id, Long userId);
+    BoardRespDto findBoardById(Long id, String userIdOrIp);
     void registBoard(BoardReqDto boardReqDto, User user, MultipartFile boardImage);
     void deleteBoard(Long boardId, Long userId);
 }

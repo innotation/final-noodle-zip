@@ -169,10 +169,10 @@ class BoardServiceImplTest {
         Long userId = 1L;
 
         // Mocking behavior
-        when(boardRepository.findBoardByBoardIdWithUser(anyLong(), anyLong())).thenReturn(testBoardRespDto);
+        when(boardRepository.findBoardByBoardIdWithUser(anyLong())).thenReturn(testBoardRespDto);
 
         // When
-        BoardRespDto result = boardService.findBoardById(boardId, userId);
+        BoardRespDto result = boardService.findBoardById(boardId, userId.toString());
 
         // Then
         assertThat(result).isNotNull();
@@ -180,7 +180,7 @@ class BoardServiceImplTest {
         assertThat(result.getTitle()).isEqualTo("테스트 게시글");
 
         // Verify
-        verify(boardRepository, times(1)).findBoardByBoardIdWithUser(boardId, userId);
+        verify(boardRepository, times(1)).findBoardByBoardIdWithUser(boardId);
     }
 
     @Test
@@ -191,17 +191,17 @@ class BoardServiceImplTest {
         Long userId = 1L;
 
         // Mocking
-        when(boardRepository.findBoardByBoardIdWithUser(anyLong(), anyLong())).thenReturn(null);
+        when(boardRepository.findBoardByBoardIdWithUser(anyLong())).thenReturn(null);
 
         // When & Then
         CustomException exception = assertThrows(CustomException.class, () -> {
-            boardService.findBoardById(boardId, userId);
+            boardService.findBoardById(boardId, userId.toString());
         });
 
         assertThat(exception.getErrorCode()).isEqualTo(ErrorStatus._DATA_NOT_FOUND);
 
         // Verify
-        verify(boardRepository, times(1)).findBoardByBoardIdWithUser(boardId, userId);
+        verify(boardRepository, times(1)).findBoardByBoardIdWithUser(boardId);
     }
 
     @Test

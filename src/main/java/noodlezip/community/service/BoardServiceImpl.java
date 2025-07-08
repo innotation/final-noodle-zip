@@ -33,6 +33,7 @@ public class BoardServiceImpl implements BoardService {
     private final PageUtil pageUtil;
     private final ModelMapper modelMapper;
     private final FileUtil fileUtil;
+    private final ViewCountService viewCountService;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
 
@@ -62,11 +63,18 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardRespDto findBoardById(Long id, Long userId) {
-        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id, userId);
+    public BoardRespDto findBoardById(Long id, String userIdOrIp) {
+
+        log.info("userIdOrIp {}", userIdOrIp);
+
+        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id);
+
         if (boardRespDto == null) {
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
         }
+
+        viewCountService.increaseViewCount(TargetType.BOARD, id, userIdOrIp);
+
         return boardRespDto;
     }
 

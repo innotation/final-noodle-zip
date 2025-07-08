@@ -207,7 +207,8 @@
                                 Ipsum.</p>
                         </div>
                     </div>
-                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post" th:if="${board.userId == #authentication.principal?.user.id}">
+                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"
+                          th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
                         <button type="submit" class="btn btn-sm btn-danger"
                                 onclick="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">게시글 삭제</button>
                     </form>
@@ -240,7 +241,7 @@
                 const boardId = /*[[${board.boardId}]]*/ null;
 
                 // 현재 로그인한 사용자 ID (서버에서 주입)
-                const currentLoggedInUserId = [[${#authentication.principal?.user.id}]] || null;
+                const currentLoggedInUserId = /*[[${#authentication.isAuthenticated() ? (#authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) ? #authentication.principal.user.id : null) : null}]]*/ null;
                 console.log(currentLoggedInUserId)
 
                 const commentsList = document.getElementById('comments-list');

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
@@ -189,6 +190,7 @@ public class BoardController {
     public String board(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal MyUserDetails user,
+            HttpServletRequest request,
             Model model) {
 
         if (id == null || id <= 0) {
@@ -196,8 +198,15 @@ public class BoardController {
             throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
+        String userIdOrIp;
+
+        if (user != null) {
+            userIdOrIp = "user:" + user.getUser().getId();
+        } else {
+            userIdOrIp = "ip:" + getClientIp(request);
+        }
         try {
-            BoardRespDto board = boardService.findBoardById(id, user.getUser().getId());
+            BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
             if (board == null) {
                 log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
                 throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
@@ -238,5 +247,25 @@ public class BoardController {
     public String deleteBoard(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
         boardService.deleteBoard(boardId, user.getUser().getId());
         return "redirect:/board/list";
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }
