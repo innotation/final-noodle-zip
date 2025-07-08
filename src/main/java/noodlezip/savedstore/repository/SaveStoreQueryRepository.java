@@ -2,7 +2,7 @@ package noodlezip.savedstore.repository;
 
 import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
 import noodlezip.mypage.dto.response.savedstore.SavedStoreResponse;
-import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
+import noodlezip.mypage.dto.response.savedstore.SavedStoreMapResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,8 +15,8 @@ public interface SaveStoreQueryRepository {
                                                                 boolean isOwner,
                                                                 Pageable pageable);
 
-    List<StoreLocationResponse> getStoreLocationList(Long userId,
-                                                     List<Long> categoryIdList,
-                                                     boolean isOwner);
+    SavedStoreMapResponse getStoreLocationList(Long userId,
+                                               List<Long> categoryIdList,
+                                               boolean isOwner);
 
 }
