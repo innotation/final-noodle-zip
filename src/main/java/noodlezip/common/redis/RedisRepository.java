@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
@@ -17,6 +18,10 @@ public class RedisRepository {
 
     public Long increase(String key) {
         return redisTemplate.opsForValue().increment(key);
+    }
+
+    public Set<String> getKeys(String key) {
+        return redisTemplate.keys(key + "*");
     }
 
     public void set(String key, String value) {
