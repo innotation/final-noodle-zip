@@ -21,6 +21,7 @@ public class MyBadgeController {
 
     private final MyBadgeService myBadgeService;
 
+
     @GetMapping("/{userId}/badges/list")
     public String badge(@PathVariable Long userId, Model model) {
         List<MyBadgeBadgeResponse> userBadgeList = myBadgeService.getUserBadgeListByGroup(userId);
@@ -30,6 +31,7 @@ public class MyBadgeController {
 
         return "mypage/badge";
     }
+
 
     @PostMapping(value = "/badges/detail", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

@@ -29,6 +29,7 @@ public class SaveStoreCategoryController {
 
     private final SavedStoreCategoryService saveStoreCategoryService;
 
+
     @PostMapping(value = "/my/saved-store/categories/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SavedStoreApiResponse updateCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
@@ -41,6 +42,7 @@ public class SaveStoreCategoryController {
                 .message(SavedStoreSuccessStatus._OK_UPDATE_SAVED_STORE_CATEGORY.getMessage())
                 .build();
     }
+
 
     @PostMapping(value = "/my/saved-store/categories/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

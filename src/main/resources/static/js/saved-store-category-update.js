@@ -53,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-
   // === 삭제 ===
   deleteBtn?.addEventListener('click', function (evt) {
     evt.preventDefault();

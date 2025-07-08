@@ -26,8 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @Controller
-public class MySavedStoreController extends MyBaseController {
-    /// todo savedStore 도메인으로 이동
+public class MySavedStoreController extends MyBaseController { /// todo savedStore 도메인으로 이동
 
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
@@ -58,8 +57,6 @@ public class MySavedStoreController extends MyBaseController {
     }
 
 
-
-    /// 카테고리 조회 + 페이지네이션
     @GetMapping({
             "/my/saved-store/list/category-filter-search",
             "/{userId}/saved-store/list/category-filter-search"
@@ -77,6 +74,7 @@ public class MySavedStoreController extends MyBaseController {
                 userAccessInfo.targetUserId(), filter, page, userAccessInfo.isOwner()
         );
     }
+
 
     @GetMapping({
             "/my/saved-store/list/map",
