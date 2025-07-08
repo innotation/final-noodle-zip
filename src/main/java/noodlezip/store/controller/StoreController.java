@@ -68,7 +68,7 @@ public class StoreController {
         MenuDetailResponseDto menuDetail = storeService.getMenuDetail(no);
         model.addAttribute("menuDetail", menuDetail);
 
-        return "store/fragment/tab-menu :: menu-tab";
+        return "store/fragments/tab-menu :: menu-tab";
     }
 
 /*
@@ -107,12 +107,12 @@ public class StoreController {
             model.addAttribute("summary", ramenService.getSummaryByStoreId(no));
             model.addAttribute("reviewList", reviewPage.getContent());
             model.addAttribute("hasMore", reviewPage.hasNext());
-            return "store/fragment/tab-review :: review-tab";  // 전체 탭 fragment
+            return "store/fragments/tab-review :: review-tab";  // 전체 탭 fragment
         } else {
             // 2페이지 이상부터는 리뷰 카드 목록만 더보기 fragment 로 반환
             model.addAttribute("reviewList", reviewPage.getContent());
             model.addAttribute("hasMore", reviewPage.hasNext());
-            return "store/fragment/tab-review :: moreReviews";  // 더보기 fragment
+            return "store/fragments/tab-review :: moreReviews";  // 더보기 fragment
         }
     }
 

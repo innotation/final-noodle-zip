@@ -42,9 +42,7 @@
 
       <!-- 썸네일 이미지 -->
       <figure class="menu_thumb">
-        <img th:src="@{|${menu.menuImageUrl} ?: '/img/menu-thumb-1.jpg'|}"
-             alt="메뉴 이미지"
-             onerror="this.onerror=null;this.src='/img/menu-thumb-1.jpg';">
+        <img th:src="@{|/images/menu/${menu.menuImageUrl}|}" alt="메뉴 이미지">
       </figure>
 
       <!-- 메뉴 정보 -->
