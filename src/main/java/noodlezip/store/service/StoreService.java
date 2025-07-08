@@ -2,10 +2,12 @@ package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
+import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
 import noodlezip.ramen.entity.RamenSoup;
@@ -39,6 +41,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class StoreService {
@@ -59,21 +62,27 @@ public class StoreService {
 
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, MultipartFile storeMainImage, User user) {
+        log.info("==== [등록 요청 진입] ====");
+        log.info("대표 이미지: isNull? {}, isEmpty? {}", storeMainImage == null, storeMainImage != null && storeMainImage.isEmpty());
+
         String storeMainImageUrl = null;
 
         // ① 대표 이미지 업로드 및 유효성 검사
         if (storeMainImage != null && !storeMainImage.isEmpty()) {
             try {
-                Map<String, String> uploadResult = fileUtil.fileupload("store", storeMainImage);
+                Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", storeMainImage);
                 storeMainImageUrl = uploadResult.get("fileUrl");
+                log.info("파일 업로드 성공: {}", storeMainImageUrl);
             } catch (CustomException ce) {
                 throw ce;
             } catch (Exception e) {
-                throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+                throw new CustomException(ErrorStatus._FILE_UPLOAD_FAILED);
             }
         } else {
             throw new CustomException(ErrorStatus._FILE_REQUIRED);
         }
+
+        log.info("S3 업로드 완료. 저장된 URL: {}", storeMainImageUrl);
 
         // ② Store 엔티티 생성 및 저장
         Store store = Store.builder()
@@ -94,6 +103,7 @@ public class StoreService {
         store.setStoreLegalCode(dto.getStoreLegalCode() != null ? dto.getStoreLegalCode().longValue() : null);
 
         Store savedStore = storeRepository.save(store);
+        log.info("[Store 저장 완료] ID: {}", savedStore.getId());
 
         // ③ 영업시간 저장
         if (dto.getWeekSchedule() != null) {
@@ -124,8 +134,9 @@ public class StoreService {
                 // 메뉴 이미지 업로드
                 if (menuImageFile != null && !menuImageFile.isEmpty()) {
                     try {
-                        Map<String, String> uploadResult = fileUtil.fileupload("menu", menuImageFile);
+                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", menuImageFile);
                         menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
+                        log.info("파일 업로드 성공: {}", menuImageUrl);
                     } catch (CustomException ce) {
                         throw ce;
                     } catch (Exception e) {
@@ -197,6 +208,11 @@ public class StoreService {
         }
 
         return savedStore.getId();
+    }
+
+    // 라멘 육수 목록 조회
+    public List<RamenSoupResponseDto> getAllSoups() {
+        return ramenService.getAllSoups();
     }
 
     // 라멘 카테고리 목록 조회

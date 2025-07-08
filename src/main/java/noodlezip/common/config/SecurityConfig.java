@@ -42,7 +42,8 @@ public class SecurityConfig {
                             "/fragments/**",
                             "/search/**",
                             "/store/**",
-                            "/location/**"
+                            "/location/**",
+                            "/ramen/**"
                     ).permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")

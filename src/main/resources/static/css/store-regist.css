@@ -220,3 +220,56 @@ textarea#owner-intro {
     max-height: 50px;
     overflow-y: auto;
 }
+
+/* 메뉴 추가 버튼 (왼쪽, 파랑 계열) */
+#add-menu {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 6px rgba(74, 144, 226, 0.4);
+    transition: background-color 0.3s ease;
+}
+
+#add-menu:hover {
+    background-color: #357ABD;
+    color: white;
+    box-shadow: 0 4px 12px rgba(53, 122, 189, 0.6);
+}
+
+/* 추가 토핑 버튼 (왼쪽, 초록 계열) */
+.add-extra-topping {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
+    transition: background-color 0.3s ease;
+}
+
+.add-extra-topping:hover {
+    background-color: #1e7e34;
+    color: white;
+    box-shadow: 0 4px 12px rgba(30, 126, 52, 0.6);
+}
+
+/* 메뉴 삭제 버튼 (오른쪽, 빨강 계열) */
+.remove-menu {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.4);
+    transition: background-color 0.3s ease;
+}
+
+.remove-menu:hover {
+    background-color: #a71d2a;
+    color: white;
+    box-shadow: 0 4px 12px rgba(167, 29, 42, 0.6);
+}
+
+/* 공통 버튼 스타일(모서리 둥글게, 폰트 크기 등) */
+#add-menu, .add-extra-topping, .remove-menu {
+    border-radius: 6px;
+    font-weight: 600;
+    padding: 6px 14px;
+    font-size: 0.875rem;
+}

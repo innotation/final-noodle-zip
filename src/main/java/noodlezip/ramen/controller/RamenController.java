@@ -2,6 +2,7 @@ package noodlezip.ramen.controller;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.dto.CategoryResponseDto;
+import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.service.RamenService;
 import org.springframework.stereotype.Controller;
@@ -16,17 +17,25 @@ import java.util.List;
 @RequestMapping("/ramen")
 public class RamenController {
 
-    private final RamenService ramenService;
+    private final RamenService toppingService;
+    private final RamenService categoryService;
+    private final RamenService soupService;
 
-    @GetMapping("/categories")
     @ResponseBody
-    public List<CategoryResponseDto> getCategories() {
-        return ramenService.getAllCategories();
+    @GetMapping("/toppings")
+    public List<ToppingResponseDto> getToppings() {
+        return toppingService.getAllToppings();
     }
 
-    @GetMapping("/toppings")
     @ResponseBody
-    public List<ToppingResponseDto> getToppings() {
-        return ramenService.getAllToppings();
+    @GetMapping("/categories")
+    public List<CategoryResponseDto> getCategories() {
+        return categoryService.getAllCategories();
+    }
+
+    @ResponseBody
+    @GetMapping("/soups")
+    public List<RamenSoupResponseDto> getSoups() {
+        return soupService.getAllSoups();
     }
 }
