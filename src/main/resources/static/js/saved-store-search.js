@@ -34,10 +34,6 @@ function renderStoreList(storeList) {
   container.innerHTML = '';
 
   storeList.forEach(store => {
-    const memo = store.memo.length > 20
-      ? store.memo.substring(0, 20) + "..."
-      : store.memo;
-
     const div = document.createElement('div');
     div.className = "col-xl-4 col-lg-6 col-md-6 col-sm-6";
     div.innerHTML = `
@@ -53,7 +49,7 @@ function renderStoreList(storeList) {
                           </figure>
                           <ul>
                                <li>
-                                  <span class="memo-tooltip" title="${store.memo}">${memo}</span>
+                                  <span class="memo-tooltip" title="${store.memo}">${store.memo}</span>
                               </li>
                               <li>
                                   <div class="score"></div>
