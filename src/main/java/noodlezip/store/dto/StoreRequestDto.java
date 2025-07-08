@@ -4,6 +4,7 @@ import lombok.*;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.store.status.OperationStatus;
 import noodlezip.store.status.ParkingType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

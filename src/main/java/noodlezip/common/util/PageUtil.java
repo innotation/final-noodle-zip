@@ -9,27 +9,25 @@ import java.util.Map;
 @Component
 public class PageUtil {
 
-    public Map<String, Object> getPageInfo(Page page, int pagePerBlock) {
+    public Map<String, Object> getPageInfo(Page page, int pagePerBlock){
 
-        int currentPage = page.getNumber() + 1; // 현재 요청한 페이지 번호
-        int beginPage = (currentPage - 1) / pagePerBlock * pagePerBlock + 1;
-        int endPage = Math.min( beginPage + pagePerBlock -1, page.getTotalPages() );
+        int currPage = page.getNumber() + 1;
+        int beginPage = (currPage - 1) / pagePerBlock * pagePerBlock + 1;
+        int endPage = Math.min( beginPage + pagePerBlock - 1, page.getTotalPages());
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("totalCount", page.getTotalElements());
-        map.put("page", currentPage);
-        map.put("size", page.getSize());
-        map.put("pagePerBlock", pagePerBlock);
-        map.put("totalPage", page.getTotalPages());
-        map.put("beginPage", beginPage);
-        map.put("endPage", endPage);
-        map.put("isFirst", page.isFirst());
-        map.put("isLast", page.isLast());
+        Map<String, Object> paginationData = new HashMap<>();
 
-        return map;
+        paginationData.put("page", currPage);
+        paginationData.put("beginPage", beginPage);
+        paginationData.put("endPage", endPage);
+        paginationData.put("totalCount", page.getTotalElements());
+        paginationData.put("size", page.getSize());
+        paginationData.put("pagePerBlock", pagePerBlock);
+        paginationData.put("totalPage", page.getTotalPages());
+        paginationData.put("isFirst", page.isFirst());
+        paginationData.put("isLast", page.isLast());
 
-
+        return paginationData;
     }
 
 }
-

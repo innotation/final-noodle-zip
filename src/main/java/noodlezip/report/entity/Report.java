@@ -5,6 +5,7 @@ import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.report.status.ReportStatus;
 import noodlezip.report.status.ReportType;
+import noodlezip.user.entity.User;
 
 
 @Entity
@@ -27,8 +28,9 @@ public class Report extends BaseTimeEntity {
     @Column(name = "report_id")
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId; // 신고한 사용자 ID
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // 신고한 사용자
 
     @Enumerated(EnumType.STRING)
     @Column(name = "report_type", nullable = false, length = 30)
