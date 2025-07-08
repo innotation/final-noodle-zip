@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
 import noodlezip.mypage.dto.response.savedstore.SavedStoreMapResponse;
+import noodlezip.mypage.dto.response.savedstore.SavedStoreResponse;
 import noodlezip.mypage.util.UserAccessInfo;
 import noodlezip.savedstore.service.SavedStoreLocationService;
 import noodlezip.savedstore.service.SavedStoreService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,11 +34,21 @@ public class MySavedStoreMapController extends MyBaseController {
                                                               @PathVariable(required = false) String userId,
                                                               @ModelAttribute SavedStoreCategoryFilterRequest filter
     ) {
+
         UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 
-        return savedStoreLocationService.getStoreLocationList(
+        SavedStoreMapResponse result = savedStoreLocationService.getStoreLocationList(
                 userAccessInfo.targetUserId(), filter, userAccessInfo.isOwner()
         );
+//        Map<Integer, List<SavedStoreResponse>> locationListByCategoryId = result.getLocationListByCategoryId();
+//        for(Map.Entry<Integer, List<SavedStoreResponse>> entry : locationListByCategoryId.entrySet()) {
+//            System.out.println(entry.getKey());
+//            for(SavedStoreResponse savedStoreResponse : entry.getValue()) {
+//                System.out.println(savedStoreResponse);
+//            }
+//            System.out.println();
+//        }
+        return result;
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@ToString
 /// 저장 가게 필터 조회 요청, 지도 좌표 찍을 카테고리
 public class SavedStoreCategoryFilterRequest {
 
