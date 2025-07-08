@@ -12,5 +12,7 @@ public class ViewCountService {
 
     private final RedisRepository redisRepository;
 
+    public void incrementViewCount(String viewName) {
 
+    }
 }
