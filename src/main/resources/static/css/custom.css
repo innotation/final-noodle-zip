@@ -2,3 +2,37 @@
 /* Your custom styles below */
 /*============================================================================================*/
 
+/* 태그 필터 활성화/비활성화 스타일 */
+.filter-tag.active {
+    background-color: #589442; /* blog.css의 hover 색상 */
+    color: #fff;
+}
+
+.filter-tag.inactive {
+    opacity: 0.5; /* 비활성화된 느낌을 주기 위해 투명도 조절 */
+    background-color: #f0f0f0; /* 기본 배경색 */
+    color: #333; /* 기본 글씨색 */
+}
+
+/* 메뉴 카드 내 태그 스타일 (필터와 동일하게) */
+.review_card .tags a.active {
+    background-color: #589442;
+    color: #fff;
+}
+
+.review_card .tags a.inactive {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* 태그 간 간격 추가 */
+.tags a {
+    margin-right: 5px; /* 태그 간 오른쪽 여백 */
+    margin-bottom: 5px; /* 태그 간 아래쪽 여백 */
+    cursor: pointer; /* 마우스 오버 시 손가락 모양 */
+}
+
+.filter-tag {
+    cursor: pointer; /* 마우스 오버 시 손가락 모양 */
+}

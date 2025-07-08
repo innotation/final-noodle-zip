@@ -224,58 +224,84 @@
 			});
 
 			function initMenuFilter() {
-				const tagEls = paneC.querySelectorAll(".filter-tag");
-				const menuEls = paneC.querySelectorAll(".menu_card");
+					const tagEls = paneC.querySelectorAll(".filter-tag");
+					const menuEls = paneC.querySelectorAll(".review_card");
 
-				if (tagEls.length === 0 || menuEls.length === 0) return;
+					if (tagEls.length === 0 || menuEls.length === 0) return;
 
-				const activeFilters = {
-					category: new Set(),
-					soup: new Set(),
-					topping: new Set()
-				};
+					const activeFilters = {
+						category: new Set(),
+						soup: new Set(),
+						topping: new Set()
+					};
 
-				tagEls.forEach(tag => {
-					const type = tag.dataset.type;
-					const value = tag.dataset.value;
-					activeFilters[type].add(value);
-				});
-
-				tagEls.forEach(tag => {
-					tag.addEventListener("click", () => {
+					// 초기 활성화 상태 설정 (모든 태그가 기본적으로 활성화)
+					tagEls.forEach(tag => {
 						const type = tag.dataset.type;
 						const value = tag.dataset.value;
-
-						tag.classList.toggle("inactive");
-
-						if (activeFilters[type].has(value)) {
-							activeFilters[type].delete(value);
-						} else {
-							activeFilters[type].add(value);
-						}
-
-						filterMenus();
+						activeFilters[type].add(value);
+						tag.classList.add("active"); // 모든 필터 태그를 초기에 active 상태로 설정
+						tag.classList.remove("inactive"); // inactive 클래스 제거
 					});
-				});
 
-				function filterMenus() {
-					menuEls.forEach(menu => {
-						const category = menu.dataset.category;
-						const soup = menu.dataset.soup;
-						const toppings = (menu.dataset.toppings || "").split(",");
 
-						const categoryMatch = activeFilters.category.size === 0 || activeFilters.category.has(category);
-						const soupMatch = activeFilters.soup.size === 0 || activeFilters.soup.has(soup);
-						const toppingMatch = activeFilters.topping.size === 0 || toppings.some(t => activeFilters.topping.has(t.trim()));
+					tagEls.forEach(tag => {
+						tag.addEventListener("click", () => {
+							const type = tag.dataset.type;
+							const value = tag.dataset.value;
 
-						if (categoryMatch && soupMatch && toppingMatch) {
-							menu.style.display = "";
-						} else {
-							menu.style.display = "none";
-						}
+							// active 클래스 토글
+							tag.classList.toggle("active");
+							if (tag.classList.contains("active")) {
+								tag.classList.remove("inactive");
+							} else {
+								tag.classList.add("inactive");
+							}
+
+							if (activeFilters[type].has(value)) {
+								activeFilters[type].delete(value);
+							} else {
+								activeFilters[type].add(value);
+							}
+
+							filterMenus();
+						});
 					});
+
+					function filterMenus() {
+						menuEls.forEach(menu => {
+							const category = menu.dataset.category;
+							const soup = menu.dataset.soup;
+							const toppings = (menu.dataset.toppings || "").split(",");
+
+							const categoryMatch = activeFilters.category.size === 0 || activeFilters.category.has(category);
+							const soupMatch = activeFilters.soup.size === 0 || activeFilters.soup.has(soup);
+							const toppingMatch = activeFilters.topping.size === 0 || toppings.some(t => activeFilters.topping.has(t.trim()));
+
+							if (categoryMatch && soupMatch && toppingMatch) {
+								menu.style.display = "";
+							} else {
+								menu.style.display = "none";
+							}
+
+							// 메뉴 카드 내 태그들의 활성화/비활성화 상태 업데이트
+							const menuTags = menu.querySelectorAll(".widget.tags a");
+							menuTags.forEach(menuTag => {
+								const tagType = menuTag.dataset.type;
+								const tagValue = menuTag.dataset.value;
+
+								if (activeFilters[tagType] && activeFilters[tagType].has(tagValue)) {
+									menuTag.classList.add("active");
+									menuTag.classList.remove("inactive"); // Ensure inactive is removed
+								} else {
+									menuTag.classList.remove("active");
+									menuTag.classList.add("inactive"); // Add inactive class
+								}
+							});
+						});
+					}
+					filterMenus(); // Call filterMenus initially to set the correct display state
 				}
-			}
 		});
 	</script>
 	<!-- menu-tab 실행 -->
