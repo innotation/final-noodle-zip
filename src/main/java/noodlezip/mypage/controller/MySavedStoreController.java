@@ -8,9 +8,7 @@ import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
 import noodlezip.mypage.dto.response.savedstore.MySavedStorePageResponse;
 import noodlezip.mypage.dto.response.savedstore.SavedStoreListWithPageInfoResponse;
 import noodlezip.mypage.dto.response.savedstore.SavedStorePageResponse;
-import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
 import noodlezip.mypage.service.MySavedStoreService;
-import noodlezip.mypage.util.MyPageUrlPolicy;
 import noodlezip.mypage.util.SavedStorePagePolicy;
 import noodlezip.mypage.util.UserAccessInfo;
 import noodlezip.savedstore.service.SavedStoreService;
@@ -20,13 +18,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @Controller
-public class MySavedStoreController extends MyBaseController { /// todo savedStore 도메인으로 이동
+public class MySavedStoreController extends MyBaseController {
+    /// todo savedStore 도메인으로 이동
 
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
@@ -76,21 +73,21 @@ public class MySavedStoreController extends MyBaseController { /// todo savedSto
     }
 
 
-    @GetMapping({
-            "/my/saved-store/list/map",
-            "/{userId}/saved-store/list/map"
-    })
-    @ResponseBody
-    public List<StoreLocationResponse> getMySavedStoreListMap(@AuthenticationPrincipal MyUserDetails userDetails,
-                                                              @PathVariable(required = false) String userId,
-                                                              @ModelAttribute SavedStoreCategoryFilterRequest filter
-    ) {
-        UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
-
-        return savedStoreService.getStoreLocationList(
-                userAccessInfo.targetUserId(), filter, userAccessInfo.isOwner()
-        );
-    }
+//    @GetMapping({
+//            "/my/saved-store/list/map",
+//            "/{userId}/saved-store/list/map"
+//    })
+//    @ResponseBody
+//    public List<StoreLocationResponse> getMySavedStoreListMap(@AuthenticationPrincipal MyUserDetails userDetails,
+//                                                              @PathVariable(required = false) String userId,
+//                                                              @ModelAttribute SavedStoreCategoryFilterRequest filter
+//    ) {
+//        UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
+//
+//        return savedStoreService.getStoreLocationList(
+//                userAccessInfo.targetUserId(), filter, userAccessInfo.isOwner()
+//        );
+//    }
 
 }
 
