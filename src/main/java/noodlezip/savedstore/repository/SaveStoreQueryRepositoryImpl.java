@@ -82,12 +82,17 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
 
     @Override
     public SavedStoreMapResponse getStoreLocationList(Long userId,
-                                                      List<Long> categoryIdList,
+                                                      SavedStoreCategoryFilterRequest filter,
                                                       boolean isOwner
     ) {
         QSavedStoreCategory savedStoreCategory = QSavedStoreCategory.savedStoreCategory;
         QSavedStore savedStore = QSavedStore.savedStore;
         QStore store = QStore.store;
+
+        List<Long> categoryIdList = filter.getCategoryIdList();
+        if (categoryIdList == null || categoryIdList.isEmpty()) {
+            return SavedStoreMapResponse.builder().build();
+        }
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(savedStore.user.id.eq(userId));

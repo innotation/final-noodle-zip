@@ -16,7 +16,7 @@ public interface SaveStoreQueryRepository {
                                                                 Pageable pageable);
 
     SavedStoreMapResponse getStoreLocationList(Long userId,
-                                               List<Long> categoryIdList,
+                                               SavedStoreCategoryFilterRequest filter,
                                                boolean isOwner);
 
 }

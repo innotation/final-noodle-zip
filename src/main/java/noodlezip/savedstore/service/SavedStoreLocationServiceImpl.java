@@ -19,7 +19,7 @@ public class SavedStoreLocationServiceImpl implements SavedStoreLocationService 
                                                       SavedStoreCategoryFilterRequest filter,
                                                       boolean isOwner
     ) {
-        return savedStoreRepository.getStoreLocationList(userId, filter.getCategoryIdList(), isOwner);
+        return savedStoreRepository.getStoreLocationList(userId, filter, isOwner);
     }
 
 }
