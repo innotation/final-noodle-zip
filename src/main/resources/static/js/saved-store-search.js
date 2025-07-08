@@ -1,3 +1,5 @@
+let collapseMap;
+
 function fetchAndRender(page) {
   const path = document.body.getAttribute('data-path');
 
@@ -103,10 +105,14 @@ function bindPagination() {
 
 // 페이지 로드 후 최초 동작
 document.addEventListener("DOMContentLoaded", function () {
+  collapseMap = new bootstrap.Collapse(document.getElementById('collapseMap'), {
+    toggle: false
+  });
+
   document.querySelector("#search").addEventListener("click", function (evt) {
     evt.preventDefault();
     fetchAndRender(1);
+    collapseMap.hide();
   });
-
   bindPagination();
 });
