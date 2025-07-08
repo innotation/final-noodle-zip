@@ -25,10 +25,22 @@ public class ViewCountService {
     // redis 접두사 및 만료 시간 세팅
     private static final String TOTAL_VIEW_KEY_SUFFIX = ":views:";
     private static final String VIEWED_CHECK_KEY_SUFFIX = ":viewed:";
-    private static final Pattern BOARD_ID_REGEX = Pattern.compile(TargetType.BOARD.getValue() + TOTAL_VIEW_KEY_SUFFIX + "(\\d+)");
-
+    private static final String BOARD_TOTAL_VIEW_KEY_PREFIX = "BOARD" + TOTAL_VIEW_KEY_SUFFIX;
+    private static final Pattern BOARD_ID_REGEX = Pattern.compile(BOARD_TOTAL_VIEW_KEY_PREFIX + "(\\d+)");
     // TTL value
     private static final Integer DUPLICATE_BOARD_VIEW_CHECK_TTL = 1;
+
+    public static String getTotalViewKeySuffix() {
+        return TOTAL_VIEW_KEY_SUFFIX;
+    }
+
+    public static String getViewedCheckKeySuffix() {
+        return VIEWED_CHECK_KEY_SUFFIX;
+    }
+
+    public static Integer getDuplicateBoardViewCheckTtl() {
+        return DUPLICATE_BOARD_VIEW_CHECK_TTL;
+    }
 
     public void increaseViewCount(TargetType type,Long targetId, String userIdOrIp) {
 
