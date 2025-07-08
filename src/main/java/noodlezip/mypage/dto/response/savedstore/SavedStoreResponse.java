@@ -45,8 +45,8 @@ public class SavedStoreResponse {
     public SavedStoreResponse(Long savedStoreId,
                               Long saveStoreCategoryId,
                               Long storeId,
-                              String address,
                               String storeName,
+                              String address,
                               String storeMainImageUrl,
                               String memo
     ) {
