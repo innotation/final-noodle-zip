@@ -1,0 +1,62 @@
+.memo-tooltip {
+    display: inline-block;
+    max-width: 250px;  /* 메모 글자수 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
+
+.pagination_fg a.disabled {
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.pagination_fg a.disabled:hover {
+    background-color: transparent !important;
+    color: #ccc !important;
+}
+
+
+
+.category-item {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.container_check span#checkmark-update {
+    margin-top: 9px;
+    margin-right: 5px;
+}
+
+.category-item .category-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.category-item .category_name_input {
+    min-width: 220px;
+    padding: 6px 10px;
+}
+
+.category-item .radio-group {
+    font-size: 14px;
+}
+
+.category-item .radio-group label {
+    margin-right: 6px;
+}
+
+.category-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.category-buttons .btn_1 {
+    flex: 1;
+}

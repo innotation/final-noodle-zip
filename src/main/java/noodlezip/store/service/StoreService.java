@@ -1,8 +1,10 @@
 package noodlezip.store.service;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.FileUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;

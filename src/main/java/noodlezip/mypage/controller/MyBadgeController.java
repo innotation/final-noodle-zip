@@ -2,9 +2,9 @@ package noodlezip.mypage.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.mypage.dto.request.BadgeDetailRequest;
-import noodlezip.mypage.dto.response.BadgeDetailResponse;
-import noodlezip.mypage.dto.response.MyBadgeBadgeResponse;
+import noodlezip.mypage.dto.request.badge.BadgeDetailRequest;
+import noodlezip.mypage.dto.response.badge.BadgeDetailResponse;
+import noodlezip.mypage.dto.response.badge.MyBadgeBadgeResponse;
 import noodlezip.mypage.service.MyBadgeService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -21,6 +21,7 @@ public class MyBadgeController {
 
     private final MyBadgeService myBadgeService;
 
+
     @GetMapping("/{userId}/badges/list")
     public String badge(@PathVariable Long userId, Model model) {
         List<MyBadgeBadgeResponse> userBadgeList = myBadgeService.getUserBadgeListByGroup(userId);
@@ -30,6 +31,7 @@ public class MyBadgeController {
 
         return "mypage/badge";
     }
+
 
     @PostMapping(value = "/badges/detail", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
