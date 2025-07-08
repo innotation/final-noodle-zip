@@ -129,4 +129,16 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
 
         return new PageImpl<>(results, pageable, total);
     }
+
+    @Override
+    public Long increaseViewCount(Long boardId, Long viewCount) {
+        QBoard board = QBoard.board;
+
+        Long result = queryFactory
+                .update(board)
+                .set(board.viewsCount, board.viewsCount.add(viewCount))
+                .where(board.id.eq(boardId))
+                .execute();
+        return result;
+    }
 }

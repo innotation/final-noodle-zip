@@ -8,4 +8,5 @@ public interface BoardRepositoryCustom {
     BoardRespDto findBoardByBoardIdWithUser(Long boardId);
     Page<BoardRespDto> findBoardWithPagination(Pageable pageable);
     Page<BoardRespDto> findBoardWithPaginationAndCommunityType(String category, Pageable pageable);
+    Long increaseViewCount(Long boardId, Long viewCount);
 }

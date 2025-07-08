@@ -60,7 +60,8 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "게시글 등록 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public void registBoard() {}
+    public void registBoard() {
+    }
 
     @PostMapping("/regist")
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
@@ -205,23 +206,13 @@ public class BoardController {
         } else {
             userIdOrIp = "ip:" + getClientIp(request);
         }
-        try {
-            BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
-            if (board == null) {
-                log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
-                throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
-            }
-            model.addAttribute("board", board);
-            return "/board/detail";
-        } catch (CustomException e) {
-            log.error("게시글 상세 조회 중 비즈니스 로직 오류 발생 (ID: {}): {}", id, e.getMessage(), e);
-            model.addAttribute("errorMessage", e.getMessage());
-            return "/error/general-error";
-        } catch (Exception e) {
-            log.error("게시글 상세 조회 중 예상치 못한 서버 오류 발생 (ID: {}): {}", id, e.getMessage(), e);
-            model.addAttribute("errorMessage", "게시글을 불러오는 중 예상치 못한 오류가 발생했습니다.");
-            return "/error/general-error";
+        BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
+        if (board == null) {
+            log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
         }
+        model.addAttribute("board", board);
+        return "/board/detail";
     }
 
     @PostMapping("/delete/{boardId}")
