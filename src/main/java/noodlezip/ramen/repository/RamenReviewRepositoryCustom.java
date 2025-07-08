@@ -11,4 +11,6 @@ public interface RamenReviewRepositoryCustom {
 
     ReviewSummaryDto getSummaryByStoreId(Long storeId);
 
+    ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName);
+
 }

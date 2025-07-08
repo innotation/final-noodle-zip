@@ -66,4 +66,10 @@ public class RamenService {
     public ReviewSummaryDto getSummaryByStoreId(Long storeId) {
         return ramenReviewRepository.getSummaryByStoreId(storeId);
     }
+
+    public ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName) {
+        return ramenReviewRepository.getSummaryByStoreIdAndMenuName(storeId, menuName);
+    }
+
 }
+

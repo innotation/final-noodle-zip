@@ -426,6 +426,54 @@
 						card.style.display = 'none';
 					}
 				});
+
+				// 리뷰 요약 업데이트
+				updateReviewSummary(selectedMenuName);
+			}
+
+			function updateReviewSummary(menuName) {
+				const storeId = document.getElementById("store-id").value;
+				let url = `/store/detail/${storeId}/reviews/summary/all`; // 기본은 전체 요약
+
+				if (menuName !== 'all') {
+					url = `/store/detail/${storeId}/reviews/summary?menuName=${encodeURIComponent(menuName)}`;
+				}
+
+				fetch(url)
+					.then(response => {
+						if (!response.ok) throw new Error("리뷰 요약 로드 실패");
+						return response.json();
+					})
+					.then(summary => {
+						// 리뷰 요약 영역 업데이트
+						document.querySelector('#review_summary strong').textContent = summary.totalCount;
+						document.querySelector('#review_summary em').textContent = '리뷰 수'; // 텍스트 고정
+						document.querySelector('#review_summary small').textContent = '각 항목 별 리뷰 평균'; // 텍스트 고정
+
+						// 각 항목별 평균 업데이트
+						document.querySelector('.noodle-thickness-progress').style.width = (summary.noodleThickness * 10) + '%';
+						document.querySelector('.noodle-thickness-value').textContent = summary.noodleThickness.toFixed(1);
+
+						document.querySelector('.noodle-texture-progress').style.width = (summary.noodleTexture * 10) + '%';
+						document.querySelector('.noodle-texture-value').textContent = summary.noodleTexture.toFixed(1);
+
+						document.querySelector('.noodle-boil-level-progress').style.width = (summary.noodleBoilLevel * 10) + '%';
+						document.querySelector('.noodle-boil-level-value').textContent = summary.noodleBoilLevel.toFixed(1);
+
+						document.querySelector('.soup-temperature-progress').style.width = (summary.soupTemperature * 10) + '%';
+						document.querySelector('.soup-temperature-value').textContent = summary.soupTemperature.toFixed(1);
+
+						document.querySelector('.soup-saltiness-progress').style.width = (summary.soupSaltiness * 10) + '%';
+						document.querySelector('.soup-saltiness-value').textContent = summary.soupSaltiness.toFixed(1);
+
+						document.querySelector('.soup-spiciness-level-progress').style.width = (summary.soupSpicinessLevel * 10) + '%';
+						document.querySelector('.soup-spiciness-level-value').textContent = summary.soupSpicinessLevel.toFixed(1);
+
+						document.querySelector('.soup-oiliness-progress').style.width = (summary.soupOiliness * 10) + '%';
+						document.querySelector('.soup-oiliness-value').textContent = summary.soupOiliness.toFixed(1);
+
+					})
+					.catch(err => console.error("리뷰 요약 업데이트 실패", err));
 			}
 		});
 	</script>

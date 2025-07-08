@@ -92,6 +92,7 @@ public class StoreController {
     public String getReviewTab(
             @PathVariable Long no,
             @RequestParam(defaultValue = "1") int page,  // 페이지는 1부터 시작한다고 가정
+            @RequestParam(required = false) String menuName, // 메뉴 이름 추가
             Model model
     ) {
         int size = 5;  // 한 페이지당 리뷰 개수
@@ -104,7 +105,11 @@ public class StoreController {
 
         if (page == 1) {
             // 첫 페이지일 때는 리뷰 요약과 함께 전체 탭 내용을 로드
-            model.addAttribute("summary", ramenService.getSummaryByStoreId(no));
+            if (menuName != null && !menuName.isEmpty()) {
+                model.addAttribute("summary", ramenService.getSummaryByStoreIdAndMenuName(no, menuName));
+            } else {
+                model.addAttribute("summary", ramenService.getSummaryByStoreId(no));
+            }
             model.addAttribute("reviewList", reviewPage.getContent());
             model.addAttribute("hasMore", reviewPage.hasNext());
             return "store/fragments/tab-review :: review-tab";  // 전체 탭 fragment
@@ -116,4 +121,22 @@ public class StoreController {
         }
     }
 
+    @GetMapping("/detail/{storeId}/reviews/summary")
+    @ResponseBody
+    public ReviewSummaryDto getReviewSummaryByMenuName(
+            @PathVariable Long storeId,
+            @RequestParam String menuName
+    ) {
+        return ramenService.getSummaryByStoreIdAndMenuName(storeId, menuName);
+    }
+
+    @GetMapping("/detail/{storeId}/reviews/summary/all")
+    @ResponseBody
+    public ReviewSummaryDto getReviewSummaryAll(
+            @PathVariable Long storeId
+    ) {
+        return ramenService.getSummaryByStoreId(storeId);
+    }
+
 }
+

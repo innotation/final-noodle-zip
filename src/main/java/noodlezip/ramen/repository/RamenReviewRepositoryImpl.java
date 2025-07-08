@@ -93,4 +93,37 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
 
         return summary;
     }
+
+    @Override
+    public ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName) {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+
+        ReviewSummaryDto summary = queryFactory
+                .select(Projections.fields(
+                        ReviewSummaryDto.class,
+                        review.noodleThickness.avg().as("noodleThickness"),
+                        review.noodleTexture.avg().as("noodleTexture"),
+                        review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupTemperature.avg().as("soupTemperature"),
+                        review.soupSaltiness.avg().as("soupSaltiness"),
+                        review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
+                        review.soupOiliness.avg().as("soupOiliness"),
+                        review.id.count().intValue().as("totalCount"),
+                        review.noodleThickness.avg()
+                                .add(review.noodleTexture.avg())
+                                .add(review.noodleBoilLevel.avg())
+                                .add(review.soupTemperature.avg())
+                                .add(review.soupSaltiness.avg())
+                                .add(review.soupSpicinessLevel.avg())
+                                .add(review.soupOiliness.avg())
+                                .divide(7.0).as("overall")
+                ))
+                .from(review)
+                .join(review.menu, menu)
+                .where(review.menu.store.id.eq(storeId).and(menu.menuName.eq(menuName)))
+                .fetchOne();
+
+        return summary;
+    }
 }
