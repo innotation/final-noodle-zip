@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelector("#search").addEventListener("click", function (evt) {
     evt.preventDefault();
     fetchAndRender(1);
-    collapseMap.hide();
+    collapseMap.hide(); ///이거 없어도 될 거같다
   });
   bindPagination();
 });

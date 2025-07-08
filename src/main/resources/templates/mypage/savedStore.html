@@ -33,6 +33,7 @@
 
             <div class="collapse" id="collapseMap">
                 <div id="map" class="map"></div>
+                </div>
             </div>
             <!-- /Map -->
 
@@ -42,7 +43,7 @@
                     <aside class="col-lg-3" id="sidebar_fixed">
                         <div class="clearfix">
                             <a class="btn_map d-flex align-items-center justify-content-center" data-bs-toggle="collapse" href="#collapseMap" aria-expanded="false" aria-controls="collapseMap">
-                                <span class="btn_map_txt" data-text-swap="Hide Map" data-text-original="View on Map">지도 보기</span>
+                                <span class="btn_map_txt" data-text-swap="지도 숨기기" data-text-original="지도 보기">지도 보기</span>
                             </a>
                             <a class="btn_map mobile btn_filters" data-bs-toggle="collapse" href="#collapseMap">
                                 <i class="icon_pin_alt"></i>
@@ -340,5 +341,24 @@
         <script src="/js/saved-store-search.js"></script>
         <script src="/js/saved-store-category-update.js"></script>
         <!-- Map -->
+        <script type="text/javascript"
+                th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='
+					+ ${@environment.getProperty('naver.maps.client.id')}
+					+ '&submodules=geocoder,markerclusterer'}">
+        </script>
+        <script src="/js/saved-store-map.js"></script>
+
+<!--        <script>-->
+<!--            var map = new naver.maps.Map('map', {-->
+<!--                center: new naver.maps.LatLng(36.5, 127.5),-->
+<!--                zoom: 7-->
+<!--            });-->
+
+<!--            document.getElementById('collapseMap').addEventListener('shown.bs.collapse', function () {-->
+<!--                naver.maps.Event.trigger(map, 'resize');-->
+<!--                map.setCenter(new naver.maps.LatLng(36.5, 127.5));-->
+<!--            });-->
+<!--        </script>-->
+
     </body>
 </html>
