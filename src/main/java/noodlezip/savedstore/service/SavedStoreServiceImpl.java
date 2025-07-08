@@ -188,13 +188,13 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         return response;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<StoreLocationResponse> getStoreLocationList(Long userId,
-                                                            SavedStoreCategoryFilterRequest filter,
-                                                            boolean isOwner
-    ) {
-        return saveStoreRepository.getStoreLocationList(userId, filter.getCategoryIdList(), isOwner);
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<SavedStoreMapResponse> getStoreLocationList(Long userId,
+//                                                            SavedStoreCategoryFilterRequest filter,
+//                                                            boolean isOwner
+//    ) {
+//        return saveStoreRepository.getStoreLocationList(userId, filter.getCategoryIdList(), isOwner);
+//    }
 
 }
