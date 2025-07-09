@@ -28,6 +28,8 @@ public class StoreReviewDto {
     private String reviewImageUrl;
     private Boolean isReceiptReview;
     private List<String> toppingNames;
+    private String userName;
+    private Long userId;
 
     public StoreReviewDto(
             Long id,
@@ -39,12 +41,14 @@ public class StoreReviewDto {
             Integer noodleBoilLevel,
             Integer soupTemperature,
             Integer soupSaltiness,
-            Integer soupSpiciness,
+            Integer soupSpicinessLevel,
             Integer soupOiliness,
             String soupFlavorKeywords,
             String content,
             String reviewImageUrl,
-            Boolean isReceiptReview
+            Boolean isReceiptReview,
+            String userName,
+            Long userId
     ) {
         this.id = id;
         this.communityId = communityId;
@@ -55,12 +59,14 @@ public class StoreReviewDto {
         this.noodleBoilLevel = noodleBoilLevel;
         this.soupTemperature = soupTemperature;
         this.soupSaltiness = soupSaltiness;
-        this.soupSpicinessLevel = soupSpiciness;
+        this.soupSpicinessLevel = soupSpicinessLevel;
         this.soupOiliness = soupOiliness;
         this.soupFlavorKeywords = soupFlavorKeywords;
         this.content = content;
         this.reviewImageUrl = reviewImageUrl;
         this.isReceiptReview = isReceiptReview;
+        this.userName = userName;
+        this.userId = userId;
     }
 
 }

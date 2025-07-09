@@ -7,6 +7,7 @@ import noodlezip.ramen.entity.QRamenReview;
 import noodlezip.store.dto.ReviewSummaryDto;
 import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.entity.QMenu;
+import noodlezip.community.entity.QBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
     public Page<StoreReviewDto> findReviewsByStoreId(Long storeId, Pageable pageable) {
         QRamenReview review = QRamenReview.ramenReview;
         QMenu menu = QMenu.menu;
+        QBoard board = QBoard.board;
 
         List<StoreReviewDto> content = queryFactory
                 .select(Projections.constructor(
@@ -42,10 +44,13 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.soupFlavorKeywords,
                         review.content,
                         review.reviewImageUrl,
-                        review.isReceiptReview
+                        review.isReceiptReview,
+                        board.user.userName, // 작성자 이름
+                        board.user.id        // 작성자 id
                 ))
                 .from(review)
                 .join(review.menu, menu)
+                .join(board).on(review.communityId.eq(board.id))
                 .where(menu.store.id.eq(storeId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

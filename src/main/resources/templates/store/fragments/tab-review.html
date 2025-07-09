@@ -146,7 +146,7 @@
         <div class="col-md-9 review_content">
           <div class="clearfix add_bottom_15">
             <span class="badge bg-light text-dark me-2" th:text="${review.menuName}">메뉴명</span>
-            <em th:text="'리뷰 ID: ' + ${review.id}">작성일</em>
+            <em>작성자 <a th:href="@{/mypage/{userId}(userId=${review.userId})}" th:text="${review.userName}"></a></em>
             <span th:if="${review.isReceiptReview}" class="badge bg-success ms-2">영수증 인증</span>
           </div>
           <h4 th:text="${review.soupFlavorKeywords}">맛 키워드</h4>

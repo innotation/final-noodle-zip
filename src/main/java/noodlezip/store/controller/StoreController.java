@@ -87,7 +87,7 @@ public class StoreController {
                 .build();
     }
 */
-
+    // 매장 리뷰 조회
     @GetMapping("/detail/{no}/reviews")
     public String getReviewTab(
             @PathVariable Long no,
@@ -121,6 +121,7 @@ public class StoreController {
         }
     }
 
+    // 메뉴 별 리뷰 평균조회
     @GetMapping("/detail/{storeId}/reviews/summary")
     @ResponseBody
     public ReviewSummaryDto getReviewSummaryByMenuName(
@@ -130,6 +131,7 @@ public class StoreController {
         return ramenService.getSummaryByStoreIdAndMenuName(storeId, menuName);
     }
 
+    // 전체 메뉴 리뷰 평균 조회
     @GetMapping("/detail/{storeId}/reviews/summary/all")
     @ResponseBody
     public ReviewSummaryDto getReviewSummaryAll(
