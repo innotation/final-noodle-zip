@@ -516,6 +516,24 @@
 	<!-- Sign In Modal -->
 	<th:block th:replace="~{store/signin-modal :: signin-modal}"></th:block>
 
+    <!-- 로그인 안내 모달 삭제 -->
+    <!--
+    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginRequiredModalLabel">로그인 필요</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            이 기능은 로그인 후 이용하실 수 있습니다.<br>
+            <a href="/login" class="btn btn-primary mt-3 w-100">로그인 하러 가기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    -->
+
 	    <!-- COMMON SCRIPTS -->
     <script src="/js/common_scripts.min.js"></script>
     <script src="/js/common_func.js"></script>
@@ -578,6 +596,12 @@
         #pane-B .magnific-gallery a:hover::after {
             opacity: 1;
         }
+      /* 템플릿 포인트 컬러에 맞춘 위시리스트 버튼 활성화 스타일 */
+      .wishlist.active, .wishlist.wishlist-active {
+        color: #007bff !important;
+        border-color: #007bff !important;
+        background: #eaf4ff !important;
+      }
     </style>
 
     <!-- Store Map Script -->
@@ -634,6 +658,182 @@
                 infoWindow.open(map, marker);
             }, 1000);
         });
+    </script>
+
+    <!-- 로그인 여부 hidden input 수정 -->
+    <input type="hidden" id="is-logged-in"
+      th:value="${#authentication.authenticated and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails)}" />
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const wishlistBtn = document.querySelector('.wishlist');
+      const storeIdInput = document.getElementById('store-id');
+      const storeId = storeIdInput ? storeIdInput.value : null;
+
+      if (wishlistBtn) {
+        wishlistBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var isLoggedIn = document.getElementById('is-logged-in').value === 'true';
+          if (!isLoggedIn) {
+            $.magnificPopup.open({
+              items: {
+                src: '#sign-in-dialog',
+                type: 'inline'
+              },
+              removalDelay: 500,
+              mainClass: 'my-mfp-zoom-in'
+            });
+            return;
+          }
+
+          // 로그인 상태: 위시리스트 카테고리 목록 불러오기
+          fetch(`/stores/${storeId}/saved-store/info`)
+            .then(res => res.json())
+            .then(data => {
+              // data: [{categoryId, categoryName, isSaved}, ...]
+              const listDiv = document.getElementById('wishlist-category-list');
+              listDiv.innerHTML = '';
+              data.forEach(cat => {
+                const checked = cat.isSaved ? 'checked' : '';
+                listDiv.innerHTML += `
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${cat.categoryId}" id="wishlist-cat-${cat.categoryId}" ${checked}>
+                    <label class="form-check-label" for="wishlist-cat-${cat.categoryId}">
+                      ${cat.categoryName}
+                    </label>
+                  </div>
+                `;
+              });
+              // 모달 오픈(Bootstrap)
+              var wishlistModal = new bootstrap.Modal(document.getElementById('wishlistModal'));
+              wishlistModal.show();
+            })
+            .catch(err => {
+              alert('위시리스트 정보를 불러오지 못했습니다.');
+            });
+        });
+      }
+    });
+    </script>
+
+    <!-- 위시리스트(저장 카테고리) 모달 -->
+    <div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="wishlistModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="wishlistModalLabel">위시리스트에 저장</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+          </div>
+          <div class="modal-body">
+            <form id="wishlistForm">
+              <div id="wishlist-category-list">
+                <!-- 체크박스 목록이 JS로 동적으로 들어감 -->
+              </div>
+              <div class="input-group my-3">
+                <input type="text" class="form-control" id="newWishlistCategory" placeholder="새 카테고리명">
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="newCategoryActive" id="newCategoryPublic" value="true" checked>
+                <label class="form-check-label" for="newCategoryPublic">공개</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="newCategoryActive" id="newCategoryPrivate" value="false">
+                <label class="form-check-label" for="newCategoryPrivate">비공개</label>
+              </div>
+              <button class="btn btn-outline-secondary mt-2" type="button" id="addWishlistCategoryBtn">추가</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="saveWishlistBtn">저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    function loadWishlistCategories() {
+      const storeId = document.getElementById('store-id').value;
+      fetch(`/stores/${storeId}/saved-store/info`)
+        .then(res => res.json())
+        .then(data => {
+          const listDiv = document.getElementById('wishlist-category-list');
+          listDiv.innerHTML = '';
+          data.forEach(cat => {
+            const checked = cat.isSaved ? 'checked' : '';
+            listDiv.innerHTML += `
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="${cat.categoryId}" id="wishlist-cat-${cat.categoryId}" ${checked}>
+                <label class="form-check-label" for="wishlist-cat-${cat.categoryId}">
+                  ${cat.categoryName}
+                </label>
+              </div>
+            `;
+          });
+        });
+    }
+
+    document.getElementById('addWishlistCategoryBtn').addEventListener('click', function() {
+      const newCategoryName = document.getElementById('newWishlistCategory').value.trim();
+      const isActive = document.querySelector('input[name="newCategoryActive"]:checked').value === 'true';
+      if (!newCategoryName) {
+        showWishlistError('카테고리명을 입력해주세요!');
+        return;
+      }
+      fetch('/mypage/my/saved-store/categories/update', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify([{ categoryId: null, categoryName: newCategoryName, isActive: isActive }])
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById('newWishlistCategory').value = '';
+          loadWishlistCategories();
+        } else {
+          showWishlistError('카테고리 추가에 실패했습니다.');
+        }
+      })
+      .catch(() => showWishlistError('카테고리 추가 중 오류가 발생했습니다.'));
+    });
+
+    document.getElementById('saveWishlistBtn').addEventListener('click', function() {
+      const storeId = document.getElementById('store-id').value;
+      const checkedBoxes = document.querySelectorAll('#wishlist-category-list input[type="checkbox"]:checked');
+      const categoryIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+      if (categoryIds.length === 0) {
+        showWishlistError('카테고리를 하나 이상 선택해주세요!');
+        return;
+      }
+
+      Promise.all(categoryIds.map(catId =>
+        fetch(`/stores/${storeId}/saved-store/save`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ storeId: storeId, saveStoreCategoryId: catId })
+        })
+      )).then(results => {
+        if (results.every(res => res.ok)) {
+          var wishlistModal = bootstrap.Modal.getInstance(document.getElementById('wishlistModal'));
+          wishlistModal.hide();
+          const wishlistBtn = document.querySelector('.wishlist');
+          if (wishlistBtn) wishlistBtn.classList.add('active');
+        } else {
+          showWishlistError('저장에 실패한 카테고리가 있습니다.');
+        }
+      }).catch(() => showWishlistError('저장 중 오류가 발생했습니다.'));
+    });
+
+    function showWishlistError(msg) {
+      let errMsg = document.getElementById('wishlist-error-msg');
+      if (!errMsg) {
+        errMsg = document.createElement('div');
+        errMsg.id = 'wishlist-error-msg';
+        errMsg.style.color = 'red';
+        errMsg.style.marginTop = '10px';
+        document.getElementById('wishlistForm').appendChild(errMsg);
+      }
+      errMsg.textContent = msg;
+    }
     </script>
 
 </body>
