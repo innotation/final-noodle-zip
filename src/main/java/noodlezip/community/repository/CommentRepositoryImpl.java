@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.community.dto.CommentRespDto;
 import noodlezip.community.dto.QCommentRespDto;
+import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.entity.QComment;
 import noodlezip.user.entity.QUser;
 import org.springframework.data.domain.Page;
@@ -63,7 +64,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .select(comment.count())
                 .from(comment)
                 .where(
-                        comment.communityId.eq(boardId)
+                        comment.communityId.eq(boardId).and(comment.commentStatus.eq(CommunityActiveStatus.POSTED))
                 )
                 .fetchOne();
         List<CommentRespDto> content = results.stream()

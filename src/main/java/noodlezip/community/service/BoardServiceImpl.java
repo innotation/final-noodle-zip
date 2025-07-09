@@ -33,6 +33,7 @@ public class BoardServiceImpl implements BoardService {
     private final PageUtil pageUtil;
     private final ModelMapper modelMapper;
     private final FileUtil fileUtil;
+    private final ViewCountService viewCountService;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
 
@@ -49,6 +50,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, Object> findBoardListByCategory(String category, Pageable pageable) {
         Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndCommunityType(category, pageable);
 
@@ -61,8 +63,19 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardRespDto findBoardById(Long id, Long userId) {
-        return boardRepository.findBoardByBoardIdWithUser(id, userId);
+    public BoardRespDto findBoardById(Long id, String userIdOrIp) {
+
+        log.info("userIdOrIp {}", userIdOrIp);
+
+        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id);
+
+        if (boardRespDto == null) {
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        }
+
+        viewCountService.increaseViewCount(TargetType.BOARD, id, userIdOrIp);
+
+        return boardRespDto;
     }
 
     @Override
@@ -88,8 +101,13 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+        if(!board.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorStatus._FORBIDDEN);
+        }
+
         boardRepository.delete(board);
     }
 }

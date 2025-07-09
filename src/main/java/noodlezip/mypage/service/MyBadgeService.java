@@ -1,7 +1,7 @@
 package noodlezip.mypage.service;
 
-import noodlezip.mypage.dto.response.BadgeDetailResponse;
-import noodlezip.mypage.dto.response.MyBadgeBadgeResponse;
+import noodlezip.mypage.dto.response.badge.BadgeDetailResponse;
+import noodlezip.mypage.dto.response.badge.MyBadgeBadgeResponse;
 
 import java.util.List;
 

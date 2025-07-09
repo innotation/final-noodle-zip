@@ -19,17 +19,20 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 public class MyPageMainController {
 
-    @GetMapping("/")
-    public String myPage(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) { /// 자기 자신의 마이페이지로 이동
+    @GetMapping("/my")
+    public String myPage(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) { /// 자기 자신의 마이페이지로 이동 - url 경로가 유일함
         User user = myUserDetails.getUser();
 
         model.addAttribute("userId", user.getId()); ///마이페이지 내부에서 하위 페이지 이동시 herf에 필요
-//        return "index";
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        model.addAttribute("isOwner", true);
+        return "index";
     }
+
 
     @GetMapping("/{userId}")
     public String userMyPage(@PathVariable String userId, Model model) { /// 특정 사용자의 마이페이지로 이동
+
+        model.addAttribute("isOwner", false);
         return "index";
     }
 
