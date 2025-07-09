@@ -7,11 +7,14 @@ import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.entity.Board;
+import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.entity.CommunityActiveStatus;
+import noodlezip.community.entity.Like;
 import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.repository.ImageRepository;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
+import noodlezip.community.repository.LikeRepository;
 import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -21,7 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,7 @@ public class BoardServiceImpl implements BoardService {
     private final ModelMapper modelMapper;
     private final FileUtil fileUtil;
     private final ViewCountService viewCountService;
+    private final LikeRepository likeRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
 
@@ -65,12 +71,20 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(readOnly = true)
     public BoardRespDto findBoardById(Long id, String userIdOrIp) {
 
-        log.info("userIdOrIp {}", userIdOrIp);
+        String[] infoAndIdOrIp = userIdOrIp.split(":");
+
+        boolean isLike = false;
+
+        if (infoAndIdOrIp[0].equals("user")) {
+            isLike = likeRepository.existsById(BoardUserId.builder().userId(Long.parseLong(infoAndIdOrIp[1])).communityId(id).build());
+        }
 
         BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id);
 
         if (boardRespDto == null) {
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        } else {
+            boardRespDto.setIsLike(isLike);
         }
 
         viewCountService.increaseViewCount(TargetType.BOARD, id, userIdOrIp);
@@ -109,5 +123,38 @@ public class BoardServiceImpl implements BoardService {
         }
 
         boardRepository.delete(board);
+    }
+
+    @Override
+    public boolean toggleLike(BoardUserId boardUserId) {
+        Board board = boardRepository.findById(boardUserId.getCommunityId())
+                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+        boolean isLiked;
+        Optional<Like> existingLike = likeRepository.findById(boardUserId);
+
+        if (existingLike.isPresent()) {
+            likeRepository.delete(existingLike.get());
+            board.setLikesCount(board.getLikesCount() - 1);
+            isLiked = false;
+        } else {
+            Like newLike = Like.builder()
+                    .id(boardUserId)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            likeRepository.save(newLike);
+            board.setLikesCount(board.getLikesCount() + 1);
+            isLiked = true;
+        }
+
+        boardRepository.save(board);
+        return isLiked;
+    }
+
+    @Override
+    public Integer getLikeCount(Long boardId) {
+        return boardRepository.findById(boardId)
+                .map(Board::getLikesCount)
+                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
     }
 }

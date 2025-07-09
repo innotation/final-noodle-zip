@@ -21,7 +21,7 @@ public class CommunityScheduler {
 
     private final ViewCountService viewCountService;
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void updateBoardViewCountsFromRedis() {
         log.info("--- 게시글 조회수 DB 반영 스케줄러 시작 ---");
         long startTime = System.currentTimeMillis();
