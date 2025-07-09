@@ -8,19 +8,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.RequestParserUtil;
 import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.LikeResponseDto;
+import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
+import noodlezip.community.status.BoardSuccessStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,6 +49,7 @@ import java.util.stream.Collectors;
 public class BoardController {
 
     private final BoardService boardService;
+    private final RequestParserUtil requestParserUtil;
 
     @GetMapping("/review")
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
@@ -59,7 +67,8 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "게시글 등록 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public void registBoard() {}
+    public void registBoard() {
+    }
 
     @PostMapping("/regist")
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
@@ -129,25 +138,27 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String list(
-            @PathVariable("category") Optional<String> category,
+            @PathVariable(value = "category", required = false) Optional<String> categoryOptional,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
+        String category = null;
+
         try {
             Map<String, Object> map;
-            if (category.isPresent()) {
-                // 특정 카테고리 게시글 조회
-                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category.get());
-                map = boardService.findBoardListByCategory(category.get(), pageable);
-                model.addAttribute("category", category.get());
+            if (categoryOptional.isPresent() && !categoryOptional.get().isEmpty()) {
+                category = categoryOptional.get();
+                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category);
+                map = boardService.findBoardListByCategory(category, pageable);
             } else {
                 // 전체 게시글 목록 조회
                 log.info("전체 게시글 목록 조회 요청");
                 map = boardService.findBoardList(pageable);
             }
 
+            model.addAttribute("category", category);
             model.addAttribute("board", map.get("list"));
             model.addAttribute("page", map.get("page"));
             model.addAttribute("beginPage", map.get("beginPage"));
@@ -187,6 +198,7 @@ public class BoardController {
     public String board(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal MyUserDetails user,
+            HttpServletRequest request,
             Model model) {
 
         if (id == null || id <= 0) {
@@ -194,23 +206,21 @@ public class BoardController {
             throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
-        try {
-            BoardRespDto board = boardService.findBoardById(id, user.getUser().getId());
-            if (board == null) {
-                log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
-                throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
-            }
-            model.addAttribute("board", board);
-            return "/board/detail";
-        } catch (CustomException e) {
-            log.error("게시글 상세 조회 중 비즈니스 로직 오류 발생 (ID: {}): {}", id, e.getMessage(), e);
-            model.addAttribute("errorMessage", e.getMessage());
-            return "/error/general-error";
-        } catch (Exception e) {
-            log.error("게시글 상세 조회 중 예상치 못한 서버 오류 발생 (ID: {}): {}", id, e.getMessage(), e);
-            model.addAttribute("errorMessage", "게시글을 불러오는 중 예상치 못한 오류가 발생했습니다.");
-            return "/error/general-error";
+        String userIdOrIp;
+
+        if (user != null) {
+            userIdOrIp = "user:" + user.getUser().getId();
+        } else {
+            userIdOrIp = "ip:" + requestParserUtil.getClientIp(request);
         }
+        BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
+        log.info("board: {}", board);
+        if (board == null) {
+            log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        }
+        model.addAttribute("board", board);
+        return "/board/detail";
     }
 
     @PostMapping("/delete/{boardId}")
@@ -236,5 +246,40 @@ public class BoardController {
     public String deleteBoard(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
         boardService.deleteBoard(boardId, user.getUser().getId());
         return "redirect:/board/list";
+    }
+
+    @PostMapping("/like/{boardId}")
+    @Operation(summary = "게시글 좋아요/취소", description = "지정된 게시글에 좋아요를 추가하거나 취소합니다. 로그인된 사용자만 가능합니다.",
+            method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "좋아요 상태 변경 성공",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = LikeResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자 (로그인 필요)",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
+    })
+    @Parameters({
+            @Parameter(name = "boardId", description = "좋아요를 누를 게시글의 ID", required = true, example = "1",
+                    schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
+    })
+    @ResponseBody
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> toggleLike(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
+
+        if (user == null || user.getUser() == null) {
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._UNAUTHORIZED);
+        }
+
+        Long userId = user.getUser().getId();
+        boolean isLiked = boardService.toggleLike(BoardUserId.builder().userId(userId).communityId(boardId).build());
+
+        long totalLikes = boardService.getLikeCount(boardId);
+        LikeResponseDto response = LikeResponseDto.builder().isLiked(isLiked).totalLikes(totalLikes).build();
+
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_LIKED_CHANGED, response);
     }
 }

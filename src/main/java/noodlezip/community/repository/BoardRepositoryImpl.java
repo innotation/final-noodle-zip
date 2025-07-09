@@ -19,7 +19,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public BoardRespDto findBoardByBoardIdWithUser(Long boardId, Long userId) {
+    public BoardRespDto findBoardByBoardIdWithUser(Long boardId) {
         QBoard board = QBoard.board;
         QUser user = QUser.user;
 
@@ -41,7 +41,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 .from(board)
                 .leftJoin(board.user, user)
                 .where(
-                        board.id.eq(boardId)
+                        board.id.eq(boardId).and(board.postStatus.eq(CommunityActiveStatus.POSTED))
                 )
                 .fetchOne();
         return result;
@@ -128,5 +128,17 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 .fetchOne();
 
         return new PageImpl<>(results, pageable, total);
+    }
+
+    @Override
+    public Long increaseViewCount(Long boardId, Long viewCount) {
+        QBoard board = QBoard.board;
+
+        Long result = queryFactory
+                .update(board)
+                .set(board.viewsCount, board.viewsCount.add(viewCount))
+                .where(board.id.eq(boardId))
+                .execute();
+        return result;
     }
 }
