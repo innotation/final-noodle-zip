@@ -86,109 +86,34 @@
 		        </div>
 		        <!-- /col -->
 
-		        <div class="col-lg-4" id="sidebar_fixed">
-		            <div class="box_booking">
-		                <div class="head">
-		                    <h3>Book your table</h3>
-		                    <div class="offer">Up to -40% off</div>
-		                </div>
-		                <!-- /head -->
-		                <div class="main">
-		                    <input type="text" id="datepicker_field">
-		                    <div id="DatePicker"></div>
-		                    <div class="dropdown time">
-		                        <a href="#" data-bs-toggle="dropdown">Hour <span id="selected_time"></span></a>
-		                        <div class="dropdown-menu">
-		                            <div class="dropdown-menu-content">
-		                                <h4>Lunch</h4>
-		                                <div class="radio_select add_bottom_15">
-		                                    <ul>
-		                                        <li>
-		                                            <input type="radio" id="time_1" name="time" value="12.00am">
-		                                            <label for="time_1">12.00<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="time_2" name="time" value="08.30pm">
-		                                            <label for="time_2">12.30<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="time_3" name="time" value="09.00pm">
-		                                            <label for="time_3">1.00<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="time_4" name="time" value="09.30pm">
-		                                            <label for="time_4">1.30<em>-40%</em></label>
-		                                        </li>
-		                                    </ul>
-		                                </div>
-		                                <!-- /time_select -->
-		                                <h4>Dinner</h4>
-		                                <div class="radio_select">
-		                                    <ul>
-		                                        <li>
-		                                            <input type="radio" id="time_5" name="time" value="08.00pm">
-		                                            <label for="time_1">20.00<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="time_6" name="time" value="08.30pm">
-		                                            <label for="time_2">20.30<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="time_7" name="time" value="09.00pm">
-		                                            <label for="time_3">21.00<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="time_8" name="time" value="09.30pm">
-		                                            <label for="time_4">21.30<em>-40%</em></label>
-		                                        </li>
-		                                    </ul>
-		                                </div>
-		                                <!-- /time_select -->
-		                            </div>
-		                        </div>
-		                    </div>
-		                    <!-- /dropdown -->
-		                    <div class="dropdown people">
-		                        <a href="#" data-bs-toggle="dropdown">People <span id="selected_people"></span></a>
-		                        <div class="dropdown-menu">
-		                            <div class="dropdown-menu-content">
-		                                <h4>How many people?</h4>
-		                                <div class="radio_select">
-		                                    <ul>
-		                                        <li>
-		                                            <input type="radio" id="people_1" name="people" value="1">
-		                                            <label for="people_1">1<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="people_2" name="people" value="2">
-		                                            <label for="people_2">2<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="people_3" name="people" value="3">
-		                                            <label for="people_3">3<em>-40%</em></label>
-		                                        </li>
-		                                        <li>
-		                                            <input type="radio" id="people_4" name="people" value="4">
-		                                            <label for="people_4">4<em>-40%</em></label>
-		                                        </li>
-		                                    </ul>
-		                                </div>
-		                                <!-- /people_select -->
-		                            </div>
-		                        </div>
-		                    </div>
-		                    <!-- /dropdown -->
-		                    <a href="#0" class="btn_1 full-width mb_5">Reserve Now</a>
-		                    <a href="wishlist.html" class="btn_1 full-width outline wishlist"><i class="icon_heart"></i> Add to wishlist</a>
-		                </div>
-		            </div>
-		            <!-- /box_booking -->
-		            <ul class="share-buttons">
-		                <li><a class="fb-share" href="#0"><i class="social_facebook"></i> Share</a></li>
-		                <li><a class="twitter-share" href="#0"><i class="social_twitter"></i> Share</a></li>
-		                <li><a class="gplus-share" href="#0"><i class="social_googleplus"></i> Share</a></li>
-		            </ul>
-		        </div>
+		                <div class="col-lg-4" id="sidebar_fixed">
+            <div class="box_booking">
+                <div class="head">
+                    <h3>매장 위치</h3>
+                    <div class="offer">현재 위치</div>
+                </div>
+                <!-- /head -->
+                <div class="main">
+                    <div id="store_map" style="width: 100%; height: 300px; border-radius: 5px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+                    <div class="store_info" style="padding: 15px 0; border-top: 1px solid #eee;">
+                        <h5 th:text="${store.storeName}" style="margin: 0 0 10px 0; color: #333; font-weight: 600;">매장명</h5>
+                        <p th:text="${store.address}" style="margin: 0 0 8px 0; color: #666; font-size: 14px;">주소</p>
+                        <p th:if="${store.phone}" th:text="'전화: ' + ${store.phone}" style="margin: 0; color: #666; font-size: 14px;">전화번호</p>
+                    </div>
+                    <a th:href="'https://map.naver.com/v5/search/' + ${store.storeName} + '?c=' + ${store.storeLng} + ',' + ${store.storeLat} + ',16,0,0'"
+                       target="_blank" class="btn_1 full-width mb_5">
+                        <i class="icon_location"></i> 네이버 지도에서 보기
+                    </a>
+                    <a href="wishlist.html" class="btn_1 full-width outline wishlist"><i class="icon_heart"></i> 위시리스트에 추가</a>
+                </div>
+            </div>
+            <!-- /box_booking -->
+            <ul class="share-buttons">
+                <li><a class="fb-share" href="#0"><i class="social_facebook"></i> Share</a></li>
+                <li><a class="twitter-share" href="#0"><i class="social_twitter"></i> Share</a></li>
+                <li><a class="gplus-share" href="#0"><i class="social_googleplus"></i> Share</a></li>
+            </ul>
+        </div>
 
 		    </div>
 		    <!-- /row -->
@@ -491,7 +416,7 @@
 	<!-- Sign In Modal -->
 	<th:block th:replace="~{store/signin-modal :: signin-modal}"></th:block>
 
-	<!-- COMMON SCRIPTS -->
+	    <!-- COMMON SCRIPTS -->
     <script src="/js/common_scripts.min.js"></script>
     <script src="/js/common_func.js"></script>
     <script src="/assets/validate.js"></script>
@@ -501,6 +426,69 @@
     <script src="/js/specific_detail.js"></script>
 	<script src="/js/datepicker.min.js"></script>
 	<script src="/js/datepicker_func_1.js"></script>
+
+    <!-- Naver Map API -->
+    <script type="text/javascript"
+            th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='
+            + ${@environment.getProperty('naver.maps.client.id')}
+            + '&submodules=geocoder,markerclusterer'}">
+    </script>
+
+    <!-- Store Map Script -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // 매장 위치 정보
+            const storeLat = /*[[${store.storeLat}]]*/ 37.5665;
+            const storeLng = /*[[${store.storeLng}]]*/ 126.9780;
+            const storeName = /*[[${store.storeName}]]*/ '매장명';
+            const storeAddress = /*[[${store.address}]]*/ '주소';
+            
+            // 지도 초기화
+            const map = new naver.maps.Map('store_map', {
+                center: new naver.maps.LatLng(storeLat, storeLng),
+                zoom: 16,
+                mapTypeControl: false,
+                scaleControl: false,
+                logoControl: false,
+                mapDataControl: false,
+                zoomControl: true,
+                zoomControlOptions: {
+                    position: naver.maps.Position.TOP_RIGHT
+                }
+            });
+            
+            // 매장 마커 생성
+            const marker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(storeLat, storeLng),
+                map: map,
+                title: storeName
+            });
+            
+            // 인포 윈도우 생성
+            const infoWindow = new naver.maps.InfoWindow({
+                content: `
+                    <div style="padding: 10px; min-width: 200px;">
+                        <h6 style="margin: 0 0 5px 0; font-weight: bold;">${storeName}</h6>
+                        <p style="margin: 0; font-size: 12px; color: #666;">${storeAddress}</p>
+                    </div>
+                `
+            });
+            
+            // 마커 클릭 시 인포 윈도우 표시
+            naver.maps.Event.addListener(marker, 'click', function() {
+                if (infoWindow.getMap()) {
+                    infoWindow.close();
+                } else {
+                    infoWindow.open(map, marker);
+                }
+            });
+            
+            // 페이지 로드 시 인포 윈도우 자동 표시
+            setTimeout(() => {
+                infoWindow.open(map, marker);
+            }, 1000);
+        });
+    </script>
 
 </body>
 </html>
