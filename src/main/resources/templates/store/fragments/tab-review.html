@@ -131,25 +131,21 @@
   <div id="reviews">
     <div class="review_card" th:each="review : ${reviewList}" th:data-menu-name="${review.menuName}">
       <div class="row">
-        <div class="col-md-2 user_info">
-          <figure class="menu-image-thumb">
+        <div class="col-md-3 d-flex align-items-center justify-content-center">
+          <figure class="menu-image-thumb mb-0">
             <a th:href="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/menu-thumb-2.jpg'}" 
                th:title="${review.menuName + ' 리뷰 이미지'}" 
                data-effect="mfp-zoom-in">
               <img th:src="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/menu-thumb-2.jpg'}"
                    onerror="this.onerror=null;this.src='/img/menu-thumb-2.jpg'" 
                    alt="menu image"
-                   style="cursor: pointer;">
+                   style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;">
             </a>
           </figure>
-          <div class="menu-name-tags">
-            <ul class="tags">
-              <li><a href="#0" class="menu-filter-tag" th:data-menu-name="${review.menuName}" th:text="${review.menuName}">메뉴명</a></li>
-            </ul>
-          </div>
         </div>
-        <div class="col-md-10 review_content">
+        <div class="col-md-9 review_content">
           <div class="clearfix add_bottom_15">
+            <span class="badge bg-light text-dark me-2" th:text="${review.menuName}">메뉴명</span>
             <em th:text="'리뷰 ID: ' + ${review.id}">작성일</em>
             <span th:if="${review.isReceiptReview}" class="badge bg-success ms-2">영수증 인증</span>
           </div>
