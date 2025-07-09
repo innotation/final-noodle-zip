@@ -3,16 +3,43 @@ document.addEventListener('DOMContentLoaded', function () {
   const allMarkers = [];
   const infoWindows = [];
   let cluster = null;
-  let currentMapCenter = new naver.maps.LatLng(37.5665, 126.9780);
+  // let currentMapCenter = new naver.maps.LatLng(37.5665, 126.9780);
+  let currentMapCenter = new naver.maps.LatLng(36.5670, 126.9780);
   let currentZoom = 7;
-  let currentOpenInfoWindow = null; // 현재 열린 인포윈도우 추적
+  let currentOpenInfoWindow = null;
+  let previousCategories = []; // 이전 선택된 카테고리 기억
+
+  window.closeInfoWindow = function (buttonElement) {
+    try {
+      if (currentOpenInfoWindow) {
+        currentOpenInfoWindow.close();
+        currentOpenInfoWindow = null;
+      }
+    } catch (error) {
+      console.error('인포윈도우 닫기 오류:', error);
+    }
+  };
+
+  window.closeCurrentInfoWindow = function () {
+    try {
+      if (currentOpenInfoWindow) {
+        currentOpenInfoWindow.close();
+        currentOpenInfoWindow = null;
+      }
+    } catch (error) {
+      console.error('인포윈도우 닫기 오류:', error);
+    }
+  };
+
+  window.goToStoreDetail = function (storeId) {
+    window.location.href = `/store/${storeId}`;
+  };
 
   const map = new naver.maps.Map('map', {
     center: currentMapCenter,
     zoom: currentZoom
   });
 
-  // 지도 중심점과 줌 레벨 변경 시 저장
   naver.maps.Event.addListener(map, 'center_changed', function () {
     currentMapCenter = map.getCenter();
   });
@@ -21,77 +48,115 @@ document.addEventListener('DOMContentLoaded', function () {
     currentZoom = map.getZoom();
   });
 
-  // collapse가 열릴 때 지도 리사이즈 & 중심 이동
   const collapseMapEl = document.getElementById('collapseMap');
-  if (collapseMapEl) {
-    collapseMapEl.addEventListener('shown.bs.collapse', function () {
-      naver.maps.Event.trigger(map, 'resize');
-      map.setCenter(currentMapCenter);
-      map.setZoom(currentZoom);
-    });
-  }
+  const collapseMap = new bootstrap.Collapse(collapseMapEl, {
+    toggle: false
+  });
 
-  // 지도 보기 버튼 클릭 시 데이터 로드
+  collapseMapEl.addEventListener('shown.bs.collapse', function () {
+    naver.maps.Event.trigger(map, 'resize');
+    map.setCenter(currentMapCenter);
+    map.setZoom(currentZoom);
+
+    const selectedCategories = getSelectedCategories();
+    if (selectedCategories.length === 0) {
+      alert("조회할 카테고리를 선택하세요.");
+      return;
+    }
+
+    // 이전 선택과 비교
+    if (arraysEqual(selectedCategories, previousCategories)) {
+      return;
+    }
+    loadSavedStoreMapData(selectedCategories);
+
+    // 현재 카테고리 기억
+    previousCategories = [...selectedCategories];
+  });
+
   const btnMap = document.querySelector(".btn_map");
   if (btnMap) {
-    const collapseMap = new bootstrap.Collapse(document.getElementById('collapseMap'), {
-      toggle: false // 자동으로 열리지 않도록
-    });
-
     btnMap.addEventListener("click", function (evt) {
       evt.preventDefault();
 
-      const selectedCategories = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
-        .map(cb => cb.value);
-      if (selectedCategories.length === 0) {
-        alert("조회할 카테고리를 검색하세요.");
-        return; // collapse 아예 열리지 않음
+      if (!collapseMapEl.classList.contains('show')) {
+        collapseMap.show();
       }
-
-      collapseMap.show(); // 여기서만 collapse 열기
-      loadSavedStoreMapData();
     });
   }
 
-  function loadSavedStoreMapData() {
-    const path = document.body.getAttribute('data-path');
-
-    // 카테고리 선택된 것 가져오기
-    const selectedCategories = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
-      .map(cb => cb.value);
-    const isAllCategory = selectedCategories.length === 0;
-
-    // if(selectedCategories.length === 0){
-    //   alert("조회할 카테고리를 검색하세요.");
-    //   return;
-    // }
-    // URLSearchParams 구성
-    const params = new URLSearchParams();
-    selectedCategories.forEach(id => params.append('categoryIdList', id));
-    params.append('isAllCategory', isAllCategory);
-
-    fetch(`/mypage/${path}/saved-store/list/map?${params.toString()}`)
-      .then(response => response.json())
-      .then(data => {
-        renderMapMarkers(data.locationListByCategoryId);
-      })
-      .catch(err => console.error('지도 데이터 불러오기 실패:', err));
+  function getSelectedCategories() {
+    return Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
+      .map(cb => cb.value)
+      .filter(val => val && val.trim() !== '');
   }
 
+  function arraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) return false;
+    const sorted1 = [...arr1].sort();
+    const sorted2 = [...arr2].sort();
+    return sorted1.every((val, idx) => val === sorted2[idx]);
+  }
 
-  function renderMapMarkers(locationListByCategoryId) {
-    // 기존 마커 & 인포윈도우 제거
+  function clearAllMarkers() {
     Object.values(markersByCategory).flat().forEach(marker => marker.setMap(null));
     infoWindows.forEach(iw => iw.close());
     if (cluster) cluster.clear();
     allMarkers.length = 0;
     infoWindows.length = 0;
+    for (const categoryId in markersByCategory) {
+      markersByCategory[categoryId] = [];
+    }
+  }
 
-    // 데이터 순회하여 마커 생성
+  function loadSavedStoreMapData(selectedCategories) {
+    const path = document.body.getAttribute('data-path');
+
+    if (!selectedCategories || selectedCategories.length === 0) {
+      console.warn('선택된 카테고리가 없습니다.');
+      return;
+    }
+
+    const params = new URLSearchParams();
+    selectedCategories.forEach(id => params.append('categoryIdList', id));
+    params.append('isAllCategory', false);
+
+    fetch(`/mypage/${path}/saved-store/list/map?${params.toString()}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data && data.locationListByCategoryId) {
+          renderMapMarkers(data.locationListByCategoryId);
+        } else {
+          console.warn('받은 데이터가 예상 형식과 다릅니다:', data);
+          alert('지도 데이터를 불러올 수 없습니다.');
+        }
+      })
+      .catch(err => {
+        console.error('지도 데이터 불러오기 실패:', err);
+        alert('지도 데이터를 불러오는 중 오류가 발생했습니다.');
+      });
+  }
+
+  function renderMapMarkers(locationListByCategoryId) {
+    clearAllMarkers();
+
     for (const categoryId in locationListByCategoryId) {
       markersByCategory[categoryId] = [];
       const stores = locationListByCategoryId[categoryId];
+
+      if (!stores || stores.length === 0) continue;
+
       stores.forEach(store => {
+        if (!store.storeLat || !store.storeLng) {
+          console.warn('좌표가 없는 매장:', store);
+          return;
+        }
+
         const position = new naver.maps.LatLng(store.storeLat, store.storeLng);
         const marker = new naver.maps.Marker({
           position: position,
@@ -100,20 +165,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         const infoWindow = new naver.maps.InfoWindow({
-          content: `  
-            <div class="marker_info" id="marker_info">              <img src="${store.storeMainImageUrl || '/img/lazy-placeholder.png'}" alt=""/>  
-              <span>                <span class="infobox_rate">${store.saveStoreCategoryId || ''}</span>  
-                <h3>${store.storeName}</h3>  
-                <em>${store.address}</em>  
-                <strong>${store.memo || ''}</strong>  
-                <a href="/store/${store.storeId}" class="btn_infobox_detail">상세보기</a>  
-                <form action="https://maps.google.com/maps" method="get" target="_blank">                  <input name="saddr" value="내 위치" type="hidden">                  <input type="hidden" name="daddr" value="${store.storeLat},${store.storeLng}">  
-                  <button type="submit" class="btn_infobox_get_directions">길찾기</button>                </form>                <a href="tel://01012345678" class="btn_infobox_phone">전화하기</a>              </span>            
-                  </div>          `
+          content: createInfoWindowContent(store)
         });
 
         naver.maps.Event.addListener(marker, 'click', function () {
           infoWindows.forEach(iw => iw.close());
+          currentOpenInfoWindow = infoWindow;
           infoWindow.open(map, marker);
         });
 
@@ -124,35 +181,36 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (allMarkers.length > 0) {
-      cluster = new naver.maps.Marker({
-        position: new naver.maps.LatLng(store.storeLat, store.storeLng),
-        map: map,
-        title: store.storeName
-      });
-
-      // 첫 번째 마커가 있는 경우에만 중심 이동 (최초 로드 시에만)
-      if (currentMapCenter.lat() === 37.5665 && currentMapCenter.lng() === 126.9780) {
-        currentMapCenter = allMarkers[0].getPosition();
-        currentZoom = 14;
-        map.setCenter(currentMapCenter);
-        map.setZoom(currentZoom);
-      }
+      map.setCenter(currentMapCenter);
+      map.setZoom(currentZoom);
     }
   }
 
-  // 전역 함수들
-  window.closeCurrentInfoWindow = function () {
-    if (currentOpenInfoWindow) {
-      currentOpenInfoWindow.close();
-      currentOpenInfoWindow = null;
-    }
-  };
+  function createInfoWindowContent(store) {
+    return `
+      <div class="map_infowindow">
+        <button class="info_close_btn" onclick="closeInfoWindow(this)">×</button>
+        <div class="info_image ${store.storeMainImageUrl ? '' : 'no_image'}">
+          ${store.storeMainImageUrl
+            ? `<img src="${store.storeMainImageUrl}" alt="${store.storeName}"
+                      onerror="this.parentElement.classList.add('no_image');
+                               this.style.display='none';
+                               this.parentElement.innerHTML='이미지 없음';" />`
+            : '이미지 없음'}
+        </div>
+        <div class="info_content">
+          <span class="info_category">${store.saveStoreCategoryName || ''}</span>
+          <h3 class="info_title">${store.storeName}</h3>
+          <em class="info_address">${store.address}</em>
+          ${store.memo
+            ? `<div class="info_memo">${store.memo}</div>`
+            : ''}
+          <a href="/store/detail/${store.storeId}" class="info_detail_btn">상세보기</a>
+        </div>
+      </div>
+    `;
+  }
 
-  window.goToStoreDetail = function (storeId) {
-    window.location.href = `/store/${storeId}`;
-  };
-
-  // 지도 클릭 시 인포윈도우 닫기
   naver.maps.Event.addListener(map, 'click', function () {
     window.closeCurrentInfoWindow();
   });
