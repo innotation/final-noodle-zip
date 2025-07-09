@@ -25,8 +25,6 @@ public class OcrController {
         Map<String, Object> result = new HashMap<>();
         try {
             result = ocrService.analyzeAndPrepareResponse(file);
-            System.out.println(result);
-            System.out.println(result.get("ocrKeyHash"));
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             result.put("error", "인식에 실패했습니다. 영수증을 다시 업로드 해주세요.");
