@@ -247,13 +247,10 @@
         const current = data.page;         // 1
         const total = data.totalPage;      // 1
 
-        const start = Math.max(1, current - 2);
-        const end = Math.min(total, current + 2);
-
         // 이전 버튼
         if (!data.isFirst) {
           html += `<li class="page-item">
-              <a class="page-link" href="#" onclick="loadStoreList(${current - 1}); return false;">이전</a>
+              <a class="page-link" href="#" onclick="loadStoreList(${current - 2}); return false;">이전</a>
            </li>`;
         } else {
           html += `<li class="page-item disabled">
@@ -262,7 +259,7 @@
         }
 
 // 페이지 번호
-        for (let i = start; i <= end; i++) {
+        for (let i = 1; i <= total; i++) {
           html += `<li class="page-item ${i === current ? 'active' : ''}">
               <a class="page-link" href="#" onclick="loadStoreList(${i-1}); return false;">${i}</a>
            </li>`;
@@ -271,7 +268,7 @@
 // 다음 버튼
         if (!data.isLast) {
           html += `<li class="page-item">
-              <a class="page-link" href="#" onclick="loadStoreList(${current + 1}); return false;">다음</a>
+              <a class="page-link" href="#" onclick="loadStoreList(${current}); return false;">다음</a>
            </li>`;
         } else {
           html += `<li class="page-item disabled">
@@ -280,6 +277,14 @@
         }
 
         pagination.innerHTML = html;
+
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth' // 부드럽게 이동
+        });
+      })
+      .catch(error => {
+        console.error("비동기 요청 실패:", error);
       });
   }
 

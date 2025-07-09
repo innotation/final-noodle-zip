@@ -195,7 +195,7 @@ public class StoreService {
     // 등록요청매장 조회
     public Map<String, Object> findWaitingStores(Pageable pageable) {
         Page<RegistListDto> resultPage = storeRepository.findWaitingStores(pageable);
-        Map<String, Object> map = pageUtil.getPageInfo(resultPage, resultPage.getSize());
+        Map<String, Object> map = pageUtil.getPageInfo(resultPage, 5);
         map.put("registList", resultPage.getContent());
         return map;
     }
