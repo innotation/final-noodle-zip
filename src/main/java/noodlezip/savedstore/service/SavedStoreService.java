@@ -1,5 +1,6 @@
 package noodlezip.savedstore.service;
 
+import noodlezip.savedstore.dto.request.AddCategoryRequest;
 import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
 import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
@@ -34,4 +35,6 @@ public interface SavedStoreService {
 //                                                     SavedStoreCategoryFilterRequest filter,
 //                                                     boolean isOwner);
 
+    // 새 카테고리 추가 (위시리스트 모달에서 사용)
+    void addSavedStoreCategory(Long userId, AddCategoryRequest addCategoryRequest);
 }
