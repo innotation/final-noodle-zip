@@ -1,7 +1,7 @@
 package noodlezip.savedstore.service;
 
-import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreMapResponse;
+import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
+import noodlezip.savedstore.dto.response.SavedStoreMapResponse;
 
 public interface SavedStoreLocationService {
 

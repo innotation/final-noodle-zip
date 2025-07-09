@@ -1,8 +1,7 @@
 package noodlezip.savedstore.service;
 
-import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreListWithPageInfoResponse;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreMapResponse;
+import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
+import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 

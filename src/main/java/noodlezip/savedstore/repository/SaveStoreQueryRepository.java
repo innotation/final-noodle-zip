@@ -1,12 +1,10 @@
 package noodlezip.savedstore.repository;
 
-import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreResponse;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreMapResponse;
+import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
+import noodlezip.savedstore.dto.response.SavedStoreResponse;
+import noodlezip.savedstore.dto.response.SavedStoreMapResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface SaveStoreQueryRepository {
 

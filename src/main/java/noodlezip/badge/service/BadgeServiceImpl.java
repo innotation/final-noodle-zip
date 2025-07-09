@@ -1,10 +1,10 @@
 package noodlezip.badge.service;
 
 import lombok.RequiredArgsConstructor;
-import noodlezip.badge.exception.BadgeErrorStatus;
+import noodlezip.badge.dto.response.LevelBadgeDetailResponse;
+import noodlezip.badge.status.BadgeErrorStatus;
 import noodlezip.badge.repository.BadgeRepository;
 import noodlezip.common.exception.CustomException;
-import noodlezip.mypage.dto.response.badge.LevelBadgeDetailResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

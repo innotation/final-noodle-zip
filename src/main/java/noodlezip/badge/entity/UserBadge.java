@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import noodlezip.badge.constants.BadgeStrategyType;
 import noodlezip.badge.constants.PostStatusType;
 import noodlezip.common.entity.BaseTimeEntity;
 

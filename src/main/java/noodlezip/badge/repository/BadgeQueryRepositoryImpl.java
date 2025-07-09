@@ -4,10 +4,10 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import noodlezip.badge.dto.response.LevelBadgeDetailResponse;
 import noodlezip.badge.entity.Badge;
 import noodlezip.badge.entity.QBadge;
 import noodlezip.badge.entity.QUserBadge;
-import noodlezip.mypage.dto.response.badge.LevelBadgeDetailResponse;
 import noodlezip.ramen.entity.Category;
 import org.springframework.stereotype.Repository;
 

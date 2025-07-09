@@ -1,7 +1,7 @@
 package noodlezip.mypage.dto;
 
 import lombok.*;
-import noodlezip.mypage.util.MyPageUrlPolicy;
+import noodlezip.mypage.constant.MyPageUrlPolicy;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,7 +13,6 @@ public class MyPageAuthorityContext {
     private Long userId;
     private Boolean isOwner;
     private String dataPath;
-
 
     public MyPageAuthorityContext(Long userId, Boolean isOwner) {
         this.userId = userId;

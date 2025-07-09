@@ -1,8 +1,8 @@
 package noodlezip.savedstore.service;
 
 import lombok.RequiredArgsConstructor;
-import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreMapResponse;
+import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
+import noodlezip.savedstore.dto.response.SavedStoreMapResponse;
 import noodlezip.savedstore.repository.SavedStoreRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
