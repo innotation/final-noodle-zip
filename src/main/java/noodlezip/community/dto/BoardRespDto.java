@@ -28,5 +28,6 @@ public class BoardRespDto {
     private LocalDateTime updatedAt;
     private String imageUrl;
     private Boolean isWriter;
+    private Boolean isLike;
 
 }

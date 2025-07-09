@@ -18,8 +18,8 @@ import java.io.Serializable;
 public class BoardUserId implements Serializable {
 
   @Column(name = "user_id")
-  private String userId;
+  private Long userId;
 
   @Column(name = "community_id")
-  private String communityId;
+  private Long communityId;
 }

@@ -207,6 +207,7 @@ public class BoardController {
             userIdOrIp = "ip:" + getClientIp(request);
         }
         BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
+        log.info("board: {}", board);
         if (board == null) {
             log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);

@@ -19,9 +19,9 @@ public class QBoardUserId extends BeanPath<BoardUserId> {
 
     public static final QBoardUserId boardUserId = new QBoardUserId("boardUserId");
 
-    public final StringPath communityId = createString("communityId");
+    public final NumberPath<Long> communityId = createNumber("communityId", Long.class);
 
-    public final StringPath userId = createString("userId");
+    public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
     public QBoardUserId(String variable) {
         super(BoardUserId.class, forVariable(variable));

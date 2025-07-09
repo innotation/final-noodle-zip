@@ -7,11 +7,13 @@ import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.entity.Board;
+import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.repository.ImageRepository;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
+import noodlezip.community.repository.LikeRepository;
 import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -34,6 +36,7 @@ public class BoardServiceImpl implements BoardService {
     private final ModelMapper modelMapper;
     private final FileUtil fileUtil;
     private final ViewCountService viewCountService;
+    private final LikeRepository likeRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
 
@@ -67,10 +70,21 @@ public class BoardServiceImpl implements BoardService {
 
         log.info("userIdOrIp {}", userIdOrIp);
 
+        String[] infoAndIdOrIp = userIdOrIp.split(":");
+
+        boolean isLike = false;
+
+        if (infoAndIdOrIp[0].equals("user")) {
+            isLike = likeRepository.existsById(BoardUserId.builder().userId(Long.parseLong(infoAndIdOrIp[1])).communityId(id).build());
+        }
+
+        log.info("isLike {}, id {}, userId {}", isLike, id, infoAndIdOrIp[1]);
         BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id);
 
         if (boardRespDto == null) {
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        } else {
+            boardRespDto.setIsLike(isLike);
         }
 
         viewCountService.increaseViewCount(TargetType.BOARD, id, userIdOrIp);
