@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
@@ -59,7 +60,8 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "게시글 등록 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public void registBoard() {}
+    public void registBoard() {
+    }
 
     @PostMapping("/regist")
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
@@ -129,25 +131,27 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String list(
-            @PathVariable("category") Optional<String> category,
+            @PathVariable(value = "category", required = false) Optional<String> categoryOptional,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
+        String category = null;
+
         try {
             Map<String, Object> map;
-            if (category.isPresent()) {
-                // 특정 카테고리 게시글 조회
-                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category.get());
-                map = boardService.findBoardListByCategory(category.get(), pageable);
-                model.addAttribute("category", category.get());
+            if (categoryOptional.isPresent() && !categoryOptional.get().isEmpty()) {
+                category = categoryOptional.get();
+                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category);
+                map = boardService.findBoardListByCategory(category, pageable);
             } else {
                 // 전체 게시글 목록 조회
                 log.info("전체 게시글 목록 조회 요청");
                 map = boardService.findBoardList(pageable);
             }
 
+            model.addAttribute("category", category);
             model.addAttribute("board", map.get("list"));
             model.addAttribute("page", map.get("page"));
             model.addAttribute("beginPage", map.get("beginPage"));
@@ -187,6 +191,7 @@ public class BoardController {
     public String board(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal MyUserDetails user,
+            HttpServletRequest request,
             Model model) {
 
         if (id == null || id <= 0) {
@@ -194,23 +199,20 @@ public class BoardController {
             throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
-        try {
-            BoardRespDto board = boardService.findBoardById(id, user.getUser().getId());
-            if (board == null) {
-                log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
-                throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
-            }
-            model.addAttribute("board", board);
-            return "/board/detail";
-        } catch (CustomException e) {
-            log.error("게시글 상세 조회 중 비즈니스 로직 오류 발생 (ID: {}): {}", id, e.getMessage(), e);
-            model.addAttribute("errorMessage", e.getMessage());
-            return "/error/general-error";
-        } catch (Exception e) {
-            log.error("게시글 상세 조회 중 예상치 못한 서버 오류 발생 (ID: {}): {}", id, e.getMessage(), e);
-            model.addAttribute("errorMessage", "게시글을 불러오는 중 예상치 못한 오류가 발생했습니다.");
-            return "/error/general-error";
+        String userIdOrIp;
+
+        if (user != null) {
+            userIdOrIp = "user:" + user.getUser().getId();
+        } else {
+            userIdOrIp = "ip:" + getClientIp(request);
         }
+        BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
+        if (board == null) {
+            log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        }
+        model.addAttribute("board", board);
+        return "/board/detail";
     }
 
     @PostMapping("/delete/{boardId}")
@@ -236,5 +238,25 @@ public class BoardController {
     public String deleteBoard(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
         boardService.deleteBoard(boardId, user.getUser().getId());
         return "redirect:/board/list";
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }
