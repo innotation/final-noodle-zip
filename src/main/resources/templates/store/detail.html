@@ -141,6 +141,10 @@
 					.then(html => {
 						paneC.innerHTML = html;
 						initMenuFilter();
+						// DOM 렌더링 완료 후 갤러리 초기화
+						setTimeout(() => {
+							initMenuGallery(); // 메뉴 갤러리 초기화 추가
+						}, 100);
 						menuLoaded = true;
 					})
 					.catch(err => {
@@ -227,6 +231,50 @@
 					}
 					filterMenus(); // Call filterMenus initially to set the correct display state
 				}
+
+				// 메뉴 갤러리 초기화 함수
+				function initMenuGallery() {
+					console.log('메뉴 갤러리 초기화 시작');
+					
+					// 메뉴 탭 내의 모든 이미지 링크에 대해 직접 클릭 이벤트 추가
+					const menuImageLinks = paneC.querySelectorAll('a[data-effect="mfp-zoom-in"]');
+					console.log('찾은 이미지 링크:', menuImageLinks.length);
+					
+					menuImageLinks.forEach((link, index) => {
+						console.log(`링크 ${index} 설정:`, link.href);
+						
+						// 기존 클릭 이벤트 제거
+						link.removeEventListener('click', link._magnificHandler);
+						
+						// 새로운 클릭 이벤트 추가
+						link._magnificHandler = function(e) {
+							e.preventDefault();
+							console.log('이미지 클릭됨:', this.href);
+							
+							// Magnific Popup으로 이미지 열기
+							$.magnificPopup.open({
+								items: {
+									src: this.href
+								},
+								type: 'image',
+								preloader: true,
+								removalDelay: 500,
+								callbacks: {
+									beforeOpen: function () {
+										this.st.image.markup = this.st.image.markup.replace('mfp-figure', 'mfp-figure mfp-with-anim');
+										this.st.mainClass = 'mfp-zoom-in';
+									}
+								},
+								closeOnContentClick: true,
+								midClick: true
+							});
+						};
+						
+						link.addEventListener('click', link._magnificHandler);
+					});
+					
+					console.log('메뉴 갤러리 초기화 완료');
+				}
 		});
 	</script>
 	<!-- menu-tab 실행 -->
@@ -248,6 +296,10 @@
 						paneB.innerHTML = html;
 						initLoadMore();
 						initReviewMenuFilter(); // 새로운 필터 초기화 함수 호출
+						// DOM 렌더링 완료 후 갤러리 초기화
+						setTimeout(() => {
+							initReviewGallery(); // 리뷰 갤러리 초기화 추가
+						}, 100);
 						reviewLoaded = true;
 					})
 					.catch(err => console.error("리뷰 탭 로딩 실패", err));
@@ -279,6 +331,11 @@
 
 							// 새로운 리뷰가 로드될 때마다 필터링 다시 적용
 							filterReviewsByMenu();
+							
+							// DOM 렌더링 완료 후 갤러리 초기화
+							setTimeout(() => {
+								initReviewGallery(); // 새로운 리뷰에 대해서도 갤러리 초기화
+							}, 100);
 						})
 						.catch(err => console.error("더보기 실패", err));
 				});
@@ -400,6 +457,50 @@
 					})
 					.catch(err => console.error("리뷰 요약 업데이트 실패", err));
 			}
+
+			// 리뷰 갤러리 초기화 함수
+			function initReviewGallery() {
+				console.log('리뷰 갤러리 초기화 시작');
+				
+				// 리뷰 탭 내의 모든 이미지 링크에 대해 직접 클릭 이벤트 추가
+				const reviewImageLinks = paneB.querySelectorAll('a[data-effect="mfp-zoom-in"]');
+				console.log('찾은 리뷰 이미지 링크:', reviewImageLinks.length);
+				
+				reviewImageLinks.forEach((link, index) => {
+					console.log(`리뷰 링크 ${index} 설정:`, link.href);
+					
+					// 기존 클릭 이벤트 제거
+					link.removeEventListener('click', link._magnificHandler);
+					
+					// 새로운 클릭 이벤트 추가
+					link._magnificHandler = function(e) {
+						e.preventDefault();
+						console.log('리뷰 이미지 클릭됨:', this.href);
+						
+						// Magnific Popup으로 이미지 열기
+						$.magnificPopup.open({
+							items: {
+								src: this.href
+							},
+							type: 'image',
+							preloader: true,
+							removalDelay: 500,
+							callbacks: {
+								beforeOpen: function () {
+									this.st.image.markup = this.st.image.markup.replace('mfp-figure', 'mfp-figure mfp-with-anim');
+									this.st.mainClass = 'mfp-zoom-in';
+								}
+							},
+							closeOnContentClick: true,
+							midClick: true
+						});
+					};
+					
+					link.addEventListener('click', link._magnificHandler);
+				});
+				
+				console.log('리뷰 갤러리 초기화 완료');
+			}
 		});
 	</script>
 <!--	<script th:src="@{/js/store_review_tab.js}"></script>-->
@@ -433,6 +534,52 @@
             + ${@environment.getProperty('naver.maps.client.id')}
             + '&submodules=geocoder,markerclusterer'}">
     </script>
+
+    <!-- Custom CSS for Gallery -->
+    <style>
+        /* 메뉴와 리뷰 이미지에만 돋보기 효과 적용 */
+        #pane-C .magnific-gallery img,
+        #pane-B .magnific-gallery img {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        #pane-C .magnific-gallery img:hover,
+        #pane-B .magnific-gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        #pane-C .magnific-gallery a,
+        #pane-B .magnific-gallery a {
+            display: block;
+            position: relative;
+        }
+        
+        #pane-C .magnific-gallery a::after,
+        #pane-B .magnific-gallery a::after {
+            content: '🔍';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        #pane-C .magnific-gallery a:hover::after,
+        #pane-B .magnific-gallery a:hover::after {
+            opacity: 1;
+        }
+    </style>
 
     <!-- Store Map Script -->
     <script th:inline="javascript">
