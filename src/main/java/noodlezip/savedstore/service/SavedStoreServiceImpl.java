@@ -84,7 +84,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
     @Transactional
     public void saveSavedStore(Long userId, Long storeId, SaveStoreRequest saveStoreRequest) {
         Long categoryId = saveStoreRequest.getSaveStoreCategoryId();
-        String newCategoryName = saveStoreRequest.getNewSavedStoreCategoryName().trim();
+        String newCategoryName = saveStoreRequest.getNewSavedStoreCategoryName();
         String memo = saveStoreRequest.getMemo();
         User user = entityManager.getReference(User.class, userId);
         SavedStoreCategory saveStoreCategory = getSavedCategory(user, categoryId, newCategoryName);
@@ -128,7 +128,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
 
     private SavedStoreCategory getSavedCategory(User user, Long categoryId, String newCategoryName) {
         if (isNewCategory(categoryId, newCategoryName)) {
-            return createNewCategory(user, newCategoryName);
+            return createNewCategory(user, newCategoryName.trim());
         }
         return entityManager.getReference(SavedStoreCategory.class, categoryId);
     }
@@ -187,14 +187,5 @@ public class SavedStoreServiceImpl implements SavedStoreService {
 
         return response;
     }
-
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<SavedStoreMapResponse> getStoreLocationList(Long userId,
-//                                                            SavedStoreCategoryFilterRequest filter,
-//                                                            boolean isOwner
-//    ) {
-//        return saveStoreRepository.getStoreLocationList(userId, filter.getCategoryIdList(), isOwner);
-//    }
 
 }
