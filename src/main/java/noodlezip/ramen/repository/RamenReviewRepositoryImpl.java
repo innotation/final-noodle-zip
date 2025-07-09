@@ -60,4 +60,16 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
 
         return new PageImpl<>(content, pageable, count);
     }
+
+    @Override
+    public boolean existsByOcrKeyHash(String ocrKeyHash) {
+        QRamenReview review = QRamenReview.ramenReview;
+        Long count = queryFactory
+                .select(review.count())
+                .from(review)
+                .where(review.ocrKeyHash.eq(ocrKeyHash))
+                .fetchOne();
+
+        return count > 0;
+    }
 }

@@ -41,9 +41,12 @@ public class SecurityConfig {
                                  "/send-verification-code",
                                  "/fragments/**",
                                  "/search/**",
-                                 "/store/**"
+                                 "/store/**",
+                                 "/admin_section/**",
+                                 "/admin/**",
+                                 "/receipt"
                                   ).permitAll()
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+//                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
                     .requestMatchers("/board/**", "/comments/**").permitAll()
                     .anyRequest().authenticated();
