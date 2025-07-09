@@ -32,7 +32,7 @@
   <button type="button"
           class="btn btn-sm btn-outline-danger report-btn"
           th:data-user-id="1"
-          th:data-type="'POST'"
+          th:data-type="'게시글'"
           th:data-target-id="123"
           data-toggle="modal"
           data-target="#reportModal">
@@ -171,7 +171,7 @@
   <i class="fa fa-angle-up"></i>
 </a>
 
-<div th:replace="~{fragments/reportModal::reportModalFragment}"></div>
+<div th:replace="fragments/reportModal::reportModalFragment"></div>
 
 <!-- Logout Modal-->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

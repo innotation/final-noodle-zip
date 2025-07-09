@@ -187,12 +187,13 @@
                     <h1><span th:text="${board.title}"></span></h1>
                     <div class="postmeta">
                         <ul>
-                            <li><a href="#"><i class="icon_folder-alt"></i><span
+                            <li><a th:href="@{/board/{communityType}/list(communityType=${board.communityType})}"><i class="icon_folder-alt"></i><span
                                     th:text="${board.communityType}">카테고리</span></a></li>
                             <li><i class="icon_calendar"></i> <span
                                     th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
                             <li><a href="#"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
                             <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
+                            <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
                         </ul>
                     </div>
                     <div class="post-content">
@@ -207,7 +208,8 @@
                                 Ipsum.</p>
                         </div>
                     </div>
-                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post" th:if="${board.userId == #authentication.principal?.user.id}">
+                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"
+                          th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
                         <button type="submit" class="btn btn-sm btn-danger"
                                 onclick="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">게시글 삭제</button>
                     </form>
@@ -240,7 +242,7 @@
                 const boardId = /*[[${board.boardId}]]*/ null;
 
                 // 현재 로그인한 사용자 ID (서버에서 주입)
-                const currentLoggedInUserId = [[${#authentication.principal?.user.id}]] || null;
+                const currentLoggedInUserId = /*[[${#authentication.isAuthenticated() ? (#authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) ? #authentication.principal.user.id : null) : null}]]*/ null;
                 console.log(currentLoggedInUserId)
 
                 const commentsList = document.getElementById('comments-list');
@@ -445,6 +447,49 @@
                     } else {
                         console.error("Board ID not found for fetching comments.");
                     }
+                });
+
+                const likeButton = document.getElementById('likeButton');
+                const likeIcon = likeButton.querySelector('i');
+                const likesCountSpan = document.getElementById('likes-count');
+
+                likeButton.addEventListener('click', function(event) {
+                    event.preventDefault(); // 기본 링크 동작 방지
+
+                    fetch(`/board/like/${boardId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                if (response.status === 401) {
+                                    alert('로그인이 필요합니다.');
+                                    window.location.href = '/login';
+                                } else if (response.status === 404) {
+                                    alert('게시글을 찾을 수 없습니다.');
+                                } else {
+                                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                                }
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert(data.message);
+                            if (data.payload.liked) {
+                                likeIcon.classList.remove('icon_heart_alt');
+                                likeIcon.classList.add('icon_heart');
+                            } else {
+                                likeIcon.classList.remove('icon_heart');
+                                likeIcon.classList.add('icon_heart_alt');
+                            }
+                            likesCountSpan.textContent = data.payload.totalLikes;
+                        })
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                        });
                 });
 
                 /*]]>*/

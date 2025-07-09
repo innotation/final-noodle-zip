@@ -5,7 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BoardRepositoryCustom {
-    BoardRespDto findBoardByBoardIdWithUser(Long boardId, Long userId);
+    BoardRespDto findBoardByBoardIdWithUser(Long boardId);
     Page<BoardRespDto> findBoardWithPagination(Pageable pageable);
     Page<BoardRespDto> findBoardWithPaginationAndCommunityType(String category, Pageable pageable);
+    Long increaseViewCount(Long boardId, Long viewCount);
 }

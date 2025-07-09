@@ -2,7 +2,7 @@ package noodlezip.badge.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.entity.BadgeCategory;
-import noodlezip.badge.exception.BadgeErrorStatus;
+import noodlezip.badge.status.BadgeErrorStatus;
 import noodlezip.badge.repository.BadgeCategoryRepository;
 import noodlezip.common.exception.CustomException;
 import org.springframework.stereotype.Service;

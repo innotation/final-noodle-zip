@@ -9,6 +9,8 @@ public interface RamenReviewRepositoryCustom {
 
     Page<StoreReviewDto> findReviewsByStoreId(Long storeId, Pageable pageable);
 
+    boolean existsByOcrKeyHash(String ocrKeyHash);
+
     ReviewSummaryDto getSummaryByStoreId(Long storeId);
 
     ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName);

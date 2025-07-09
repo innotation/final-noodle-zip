@@ -2,9 +2,8 @@ package noodlezip.report.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.report.dto.ReportDto;
+import noodlezip.report.dto.ReportRequestDto;
 import noodlezip.report.service.ReportService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +19,11 @@ public class ReportController {
     @PostMapping("/report")
     @ResponseBody
     public String submitReport(
-            @ModelAttribute ReportDto dto,
+            @ModelAttribute ReportRequestDto dto,
             @RequestParam(required = false) List<String> reasons,
             @RequestParam(required = false) String content
     ) {
+
         // 여러 체크박스 사유 + 추가 텍스트를 content로 합침
         StringBuilder finalContent = new StringBuilder();
 

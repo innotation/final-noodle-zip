@@ -41,9 +41,12 @@ public class SecurityConfig {
                                  "/send-verification-code",
                                  "/fragments/**",
                                  "/search/**",
-                                 "/store/**"
+                                 "/store/**",
+                                 "/admin_section/**",
+                                 "/admin/**",
+                                 "/receipt"
                                   ).permitAll()
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+//                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
                     .requestMatchers("/board/**", "/comments/**").permitAll()
                     .anyRequest().authenticated();
@@ -80,6 +83,11 @@ public class SecurityConfig {
         http.csrf(csrf -> {
             csrf.disable();
         });
+
+        // 동일 도메인에서 iframe 접근 가능 설정
+        http
+                .headers()
+                .frameOptions().sameOrigin();
 
         return http.build();
 

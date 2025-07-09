@@ -2,16 +2,27 @@ package noodlezip.common.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-@Component
 @RequiredArgsConstructor
+@Repository
+@Transactional
 public class RedisRepository {
 
     private final StringRedisTemplate redisTemplate;
+
+    public Long increase(String key) {
+        return redisTemplate.opsForValue().increment(key);
+    }
+
+    public Set<String> getKeys(String key) {
+        return redisTemplate.keys(key + "*");
+    }
 
     public void set(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
@@ -28,6 +39,10 @@ public class RedisRepository {
         redisTemplate.opsForValue().set(key, value, expire, timeUnit);
     }
 
+    public Boolean setIfAbsent(String key, String value, long expire, TimeUnit timeUnit) {
+        return redisTemplate.opsForValue().setIfAbsent(key, value, expire, timeUnit);
+    }
+
     public Optional<String> get(String key) {
         return Optional.ofNullable(redisTemplate.opsForValue().get(key));
     }
@@ -38,7 +53,7 @@ public class RedisRepository {
      * @return 삭제 성공 여부
      */
     public boolean delete(String key) {
-        return Boolean.TRUE.equals(redisTemplate.delete(key));
+        return redisTemplate.delete(key);
     }
 
     /**
@@ -47,6 +62,6 @@ public class RedisRepository {
      * @return 존재 여부
      */
     public boolean hasKey(String key) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+        return redisTemplate.hasKey(key);
     }
 }
