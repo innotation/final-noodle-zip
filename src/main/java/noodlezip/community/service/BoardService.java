@@ -3,6 +3,7 @@ package noodlezip.community.service;
 
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.entity.BoardUserId;
 import noodlezip.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,4 +16,6 @@ public interface BoardService {
     BoardRespDto findBoardById(Long id, String userIdOrIp);
     void registBoard(BoardReqDto boardReqDto, User user, MultipartFile boardImage);
     void deleteBoard(Long boardId, Long userId);
+    boolean toggleLike(BoardUserId boardUserId);
+    Integer getLikeCount(Long boardId);
 }

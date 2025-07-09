@@ -14,14 +14,20 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.RequestParserUtil;
 import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.LikeResponseDto;
+import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
+import noodlezip.community.status.BoardSuccessStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +49,7 @@ import java.util.stream.Collectors;
 public class BoardController {
 
     private final BoardService boardService;
+    private final RequestParserUtil requestParserUtil;
 
     @GetMapping("/review")
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
@@ -204,9 +211,10 @@ public class BoardController {
         if (user != null) {
             userIdOrIp = "user:" + user.getUser().getId();
         } else {
-            userIdOrIp = "ip:" + getClientIp(request);
+            userIdOrIp = "ip:" + requestParserUtil.getClientIp(request);
         }
         BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
+        log.info("board: {}", board);
         if (board == null) {
             log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
@@ -240,23 +248,38 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
+    @PostMapping("/like/{boardId}")
+    @Operation(summary = "게시글 좋아요/취소", description = "지정된 게시글에 좋아요를 추가하거나 취소합니다. 로그인된 사용자만 가능합니다.",
+            method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "좋아요 상태 변경 성공",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = LikeResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자 (로그인 필요)",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
+    })
+    @Parameters({
+            @Parameter(name = "boardId", description = "좋아요를 누를 게시글의 ID", required = true, example = "1",
+                    schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
+    })
+    @ResponseBody
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> toggleLike(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
+
+        if (user == null || user.getUser() == null) {
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._UNAUTHORIZED);
         }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
+
+        Long userId = user.getUser().getId();
+        boolean isLiked = boardService.toggleLike(BoardUserId.builder().userId(userId).communityId(boardId).build());
+
+        long totalLikes = boardService.getLikeCount(boardId);
+        LikeResponseDto response = LikeResponseDto.builder().isLiked(isLiked).totalLikes(totalLikes).build();
+
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_LIKED_CHANGED, response);
     }
 }
