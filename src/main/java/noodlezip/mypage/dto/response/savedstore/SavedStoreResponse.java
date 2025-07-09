@@ -11,6 +11,7 @@ public class SavedStoreResponse {
 
     private Long savedStoreId;
     private Long saveStoreCategoryId;
+    private String saveStoreCategoryName;
     private Long storeId;
     private String storeName;
     private String address;
@@ -23,6 +24,7 @@ public class SavedStoreResponse {
 
     public SavedStoreResponse(Long savedStoreId,
                               Long saveStoreCategoryId,
+                              String saveStoreCategoryName,
                               Long storeId,
                               String storeName,
                               String address,
@@ -33,6 +35,7 @@ public class SavedStoreResponse {
     ) {
         this.savedStoreId = savedStoreId;
         this.saveStoreCategoryId = saveStoreCategoryId;
+        this.saveStoreCategoryName = saveStoreCategoryName;
         this.storeId = storeId;
         this.storeName = storeName;
         this.address = address;
@@ -44,6 +47,7 @@ public class SavedStoreResponse {
 
     public SavedStoreResponse(Long savedStoreId,
                               Long saveStoreCategoryId,
+                              String saveStoreCategoryName,
                               Long storeId,
                               String storeName,
                               String address,
@@ -52,6 +56,7 @@ public class SavedStoreResponse {
     ) {
         this.savedStoreId = savedStoreId;
         this.saveStoreCategoryId = saveStoreCategoryId;
+        this.saveStoreCategoryName = saveStoreCategoryName;
         this.storeId = storeId;
         this.address = address;
         this.storeName = storeName;

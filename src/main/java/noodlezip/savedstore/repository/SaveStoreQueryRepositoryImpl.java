@@ -56,6 +56,7 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
                 .select(Projections.constructor(SavedStoreResponse.class,
                         savedStore.id,
                         savedStoreCategory.id,
+                        savedStoreCategory.categoryName,
                         store.id,
                         store.storeName,
                         store.address,
@@ -105,6 +106,7 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
                 .select(
                         savedStore.id,
                         savedStoreCategory.id,
+                        savedStoreCategory.categoryName,
                         store.id,
                         store.storeName,
                         store.address,
@@ -126,6 +128,7 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
                                 tuple -> SavedStoreResponse.builder()
                                         .savedStoreId(tuple.get(savedStore.id))
                                         .saveStoreCategoryId(tuple.get(savedStoreCategory.id))
+                                        .saveStoreCategoryName(tuple.get(savedStoreCategory.categoryName))
                                         .storeId(tuple.get(store.id))
                                         .storeName(tuple.get(store.storeName))
                                         .address(tuple.get(store.address))
