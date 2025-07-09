@@ -45,27 +45,23 @@ public class OcrParser {
             JsonNode root = mapper.readTree(json);
             JsonNode result = root.at("/images/0/receipt/result");
             String raw = "";
-
-            String bizNum = tryGetText(result, "/storeInfo/bizNum/text").orElse("").replaceAll("-", "");
-            String confirmNum = tryGetText(result, "/paymentInfo/confirmNum/text").orElse("").replaceAll("-", "");
-            String dateTime = tryGetText(result, "/paymentInfo/date/text").orElse("") + " " + tryGetText(result, "/paymentInfo/time/text").orElse("");
-            String storeName = tryGetText(result, "/storeInfo/name/text").orElse("").replaceAll("[^가-힣a-zA-Z0-9\\s]", "");
-            String totalPrice = tryGetText(result, "/totalPrice/price/text").orElse("/subResult/price/text");
-
-            if(!bizNum.isEmpty() && !confirmNum.isEmpty()){
-                raw = bizNum + "|" + confirmNum;
-                System.out.println("raw1 : " + raw);
-                return hash(raw);
-            } else if (!bizNum.isEmpty() && !dateTime.isBlank()) {
-                raw = bizNum + "|" + dateTime;
-                System.out.println("raw2 : " + raw);
-                return hash(raw);
-            } else if (!storeName.isEmpty() && !totalPrice.isBlank() && !dateTime.isBlank()) {
-                raw = storeName + "|" + totalPrice + "|" + dateTime;
-                System.out.println("raw3 : " + raw);
-                return hash(raw);
-            }else {
+            if (result.isArray()) {
                 throw new Exception("OCR 결과로 고유 키를 생성할 수 없습니다.");
+            }else {
+                String bizNum = tryGetText(result, "/storeInfo/bizNum/text").orElse("").replaceAll("-", "");
+                String confirmNum = tryGetText(result, "/paymentInfo/confirmNum/text").orElse("").replaceAll("-", "");
+                String dateTime = tryGetText(result, "/paymentInfo/date/text").orElse("") + " " + tryGetText(result, "/paymentInfo/time/text").orElse("");
+                String storeName = tryGetText(result, "/storeInfo/name/text").orElse("").replaceAll("[^가-힣a-zA-Z0-9\\s]", "");
+                String totalPrice = tryGetText(result, "/totalPrice/price/text").orElse("/subResult/price/text");
+
+                if (!bizNum.isEmpty() && !confirmNum.isEmpty()) {
+                    raw = bizNum + "|" + confirmNum;
+                } else if (!bizNum.isEmpty() && !dateTime.isBlank()) {
+                    raw = bizNum + "|" + dateTime;
+                } else if (!storeName.isEmpty() && !totalPrice.isBlank() && !dateTime.isBlank()) {
+                    raw = storeName + "|" + totalPrice + "|" + dateTime;
+                }
+                return hash(raw);
             }
         } catch (Exception e) {
             throw new RuntimeException("OCR 키 정보 추출 실패.",e);

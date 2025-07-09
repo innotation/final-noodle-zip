@@ -158,7 +158,15 @@
           $('#previewWrapper').hide();
           $('#preview').attr('src', '#');
           stopScanning();
+          return;
+        }
 
+        if (data.isDuplicate) {
+          alert("이미 등록된 영수증입니다.");
+          $('#ocrForm')[0].reset();
+          $('#previewWrapper').hide();
+          $('#preview').attr('src', '#');
+          stopScanning();
           return;
         }
 

@@ -21,14 +21,15 @@ public class OcrService {
     public Map<String, Object> analyzeAndPrepareResponse(MultipartFile file) {
         String ocrJson = ocrUtil.process(file);
         String hashKey = ocrParser.hashKeyInfo(ocrJson);
-        System.out.println("ocrJson : " + ocrJson);
+
+        boolean isDuplicate = reviewRepository.existsByOcrKeyHash(hashKey);
 
         visitCheckingDto checkingDto = ocrParser.visitCheckingInfo(ocrJson);
-        System.out.println(checkingDto);
 
         Map<String, Object> result = new HashMap<>();
         result.put("ocrKeyHash", hashKey);
         result.put("ocrData", checkingDto);
+        result.put("isDuplicate", isDuplicate);
 
         return result;
     }

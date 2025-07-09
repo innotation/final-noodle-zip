@@ -8,4 +8,6 @@ public interface RamenReviewRepositoryCustom {
 
     Page<StoreReviewDto> findReviewsByStoreId(Long storeId, Pageable pageable);
 
+    boolean existsByOcrKeyHash(String ocrKeyHash);
+
 }
