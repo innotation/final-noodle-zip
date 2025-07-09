@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>영수증 OCR 업로드</title>
+
+  <!-- Bootstrap 3 & jQuery -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <style>
+    /* ── 미리보기 + 스캔 애니메이션 ─────────────────────────────── */
+    .preview-wrapper {                /* 이미지·스캔라인 감싸는 컨테이너 */
+      position: relative;
+      display: none;                  /* 파일 선택 전에는 숨김 */
+      max-width: 100%;
+      margin-top: 10px;
+    }
+    #preview {                         /* 실제 미리보기 이미지 */
+      max-width: 100%;
+    }
+    #scan-filter { /* 스캔 필터 배경 */
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 255, 0, 0.08); /* 약간 연한 초록빛 */
+      pointer-events: none; /* 마우스 이벤트 무시 */
+      display: none;
+      z-index: 1;
+    }
+    #scan-line {                       /* 스캔 라인 */
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 5px;
+      background: rgba(0,255,0,.35);  /* 연녹색 */
+      display: none;                  /* 분석 중일 때만 보임 */
+      z-index: 2;
+      animation: scanMove 2s linear infinite alternate;
+    }
+    @keyframes scanMove {
+      0%   { top: 0; }
+      100% { top: 100%; }
+    }
+  </style>
+</head>
+
+<body class="container">
+<h2>영수증 OCR 업로드</h2>
+
+<!-- 리뷰 작성 버튼 -->
+<button type="button"
+        class="btn btn-primary"
+        data-toggle="modal"
+        data-target="#ocrModal">
+  리뷰 작성하기
+</button>
+
+<!-- ───────────────────── ① 업로드 모달 ───────────────────── -->
+<div id="ocrModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ocrModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="ocrForm" enctype="multipart/form-data">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="ocrModalLabel">영수증 업로드</h4>
+        </div>
+
+        <div class="modal-body">
+          <input type="file" id="file" name="file" accept="image/*"
+                 class="form-control" required>
+
+          <!-- 미리보기 + 스캔라인 -->
+          <div class="preview-wrapper" id="previewWrapper">
+            <img id="preview" src="#" alt="미리보기">
+            <div id="scan-filter"></div>
+            <div id="scan-line"></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+          <button type="submit" class="btn btn-primary">분석하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────── ② 결과 모달 ───────────────────── -->
+<div id="ocrResultModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="resultModalLabel">OCR 결과 확인</h4>
+      </div>
+
+      <div class="modal-body">
+        <p><strong>매장명:</strong> <span id="storeName"></span></p>
+        <p><strong>방문일:</strong> <span id="date"></span></p>
+        <p><strong>주문메뉴:</strong> <span id="menuNames"></span></p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+                data-dismiss="modal">닫기</button>
+        <button type="button" class="btn btn-success"
+                onclick="proceedToReview()">맞아요! 리뷰 작성</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────── 스크립트 ───────────────────── -->
+<script>
+  /* ========== 1) 파일 선택 → 미리보기 표시 ========== */
+  $('#file').on('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      $('#preview').attr('src', e.target.result);
+      $('#previewWrapper').show();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* 스캔 애니메이션 */
+  function startScanning() { $('#scan-line').show(); $('#scan-filter').show(); }
+  function stopScanning()  { $('#scan-line').hide(); $('#scan-filter').hide(); }
+
+  /* ========== 2) OCR 요청 ========== */
+  $('#ocrForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const file = $('#file')[0].files[0];
+    if (!file) { alert("파일을 선택해주세요."); return; }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    startScanning();   // 스캔 애니메이션 시작
+
+    fetch("/receipt", { method: "POST", body: formData })
+      .then(res => res.json())
+      .then(data => {
+        stopScanning();
+
+        if (data.error) {
+          alert(data.error);
+          $('#ocrForm')[0].reset();
+          $('#previewWrapper').hide();
+          $('#preview').attr('src', '#');
+          stopScanning();
+
+          return;
+        }
+
+        const ocr = data.ocrData || {};
+        $('#storeName').text(ocr.storeName || "없음");
+        $('#date').text(ocr.date || "없음");
+        $('#menuNames').text((ocr.menuNames || []).join(', ') || "없음");
+
+        /* 모달 전환 */
+        $('#ocrModal').modal('hide');
+        $('#ocrResultModal').modal('show');
+      })
+      .catch(err => {
+        stopScanning();
+        console.error("❌ 오류 발생:", err);
+        alert("분석 중 오류가 발생했습니다.");
+      });
+  });
+
+  /* ========== 3) 업로드 모달 닫힐 때 초기화 ========== */
+  $('#ocrModal').on('hidden.bs.modal', function () {
+    $('#ocrForm')[0].reset();
+    $('#previewWrapper').hide();
+    $('#preview').attr('src', '#');
+    stopScanning();
+  });
+
+  /* ========== 4) 리뷰 작성 페이지로 이동 ========== */
+  function proceedToReview() {
+    window.location.href = "/review/write";  // 실제 경로로 수정
+  }
+</script>
+</body>
+</html>
