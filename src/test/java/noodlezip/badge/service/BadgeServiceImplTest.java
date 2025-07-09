@@ -1,9 +1,9 @@
 package noodlezip.badge.service;
 
-import noodlezip.badge.exception.BadgeErrorStatus;
+import noodlezip.badge.status.BadgeErrorStatus;
 import noodlezip.badge.repository.BadgeRepository;
 import noodlezip.common.exception.CustomException;
-import noodlezip.mypage.dto.response.badge.LevelBadgeDetailResponse;
+import noodlezip.badge.dto.response.LevelBadgeDetailResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

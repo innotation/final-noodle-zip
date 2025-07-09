@@ -1,8 +1,7 @@
 package noodlezip.savedstore.service;
 
-import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreListWithPageInfoResponse;
-import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
+import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
+import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 
@@ -31,8 +30,8 @@ public interface SavedStoreService {
                                                                    int page,
                                                                    boolean isOwner);
 
-    List<StoreLocationResponse> getStoreLocationList(Long userId,
-                                                     SavedStoreCategoryFilterRequest filter,
-                                                     boolean isOwner);
+//    List<SavedStoreMapResponse> getStoreLocationList(Long userId,
+//                                                     SavedStoreCategoryFilterRequest filter,
+//                                                     boolean isOwner);
 
 }

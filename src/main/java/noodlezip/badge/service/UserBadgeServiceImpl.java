@@ -2,11 +2,11 @@ package noodlezip.badge.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.badge.constants.LevelBadgeCategoryType;
-import noodlezip.badge.repository.BadgeGroupRepository;
-import noodlezip.badge.repository.UserBadgeRepository;
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
-import noodlezip.mypage.dto.response.badge.BadgeGroupResponse;
+import noodlezip.badge.dto.response.BadgeGroupResponse;
+import noodlezip.badge.repository.BadgeGroupRepository;
+import noodlezip.badge.repository.UserBadgeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +21,7 @@ public class UserBadgeServiceImpl implements UserBadgeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BadgeGroupResponse> getBadgeGroupIds() {
+    public List<BadgeGroupResponse> getBadgeGroupList() {
         return badgeGroupRepository.getBadgeGroups();
     }
 

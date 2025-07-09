@@ -1,7 +1,7 @@
 package noodlezip.badge.repository;
 
+import noodlezip.badge.dto.response.LevelBadgeDetailResponse;
 import noodlezip.badge.entity.Badge;
-import noodlezip.mypage.dto.response.badge.LevelBadgeDetailResponse;
 
 import java.util.List;
 import java.util.Optional;

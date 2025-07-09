@@ -2,13 +2,13 @@ package noodlezip.badge.service;
 
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
-import noodlezip.mypage.dto.response.badge.BadgeGroupResponse;
+import noodlezip.badge.dto.response.BadgeGroupResponse;
 
 import java.util.List;
 
 public interface UserBadgeService {
 
-    List<BadgeGroupResponse> getBadgeGroupIds();
+    List<BadgeGroupResponse> getBadgeGroupList();
 
     List<UserNoOptionBadgeDto> getNoOptionUserBadgeList(Long userId);
 

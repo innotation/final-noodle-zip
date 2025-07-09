@@ -1,8 +1,8 @@
 package noodlezip.badge.repository;
 
-import noodlezip.badge.entity.UserBadge;
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
+import noodlezip.badge.entity.UserBadge;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,12 +1,13 @@
 package noodlezip.savedstore.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
-import noodlezip.mypage.dto.response.savedstore.SavedStoreResponse;
-import noodlezip.mypage.dto.response.savedstore.StoreLocationResponse;
+import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
+import noodlezip.savedstore.dto.response.SavedStoreMapResponse;
+import noodlezip.savedstore.dto.response.SavedStoreResponse;
 import noodlezip.savedstore.entity.QSavedStore;
 import noodlezip.savedstore.entity.QSavedStoreCategory;
 import noodlezip.store.entity.QStore;
@@ -16,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
@@ -51,6 +55,7 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
                 .select(Projections.constructor(SavedStoreResponse.class,
                         savedStore.id,
                         savedStoreCategory.id,
+                        savedStoreCategory.categoryName,
                         store.id,
                         store.storeName,
                         store.address,
@@ -76,12 +81,18 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
     }
 
     @Override
-    public List<StoreLocationResponse> getStoreLocationList(Long userId,
-                                                            List<Long> categoryIdList,
-                                                            boolean isOwner
+    public SavedStoreMapResponse getStoreLocationList(Long userId,
+                                                      SavedStoreCategoryFilterRequest filter,
+                                                      boolean isOwner
     ) {
-        QSavedStore savedStore = QSavedStore.savedStore;
         QSavedStoreCategory savedStoreCategory = QSavedStoreCategory.savedStoreCategory;
+        QSavedStore savedStore = QSavedStore.savedStore;
+        QStore store = QStore.store;
+
+        List<Long> categoryIdList = filter.getCategoryIdList();
+        if (categoryIdList == null || categoryIdList.isEmpty()) {
+            return SavedStoreMapResponse.builder().build();
+        }
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(savedStore.user.id.eq(userId));
@@ -90,17 +101,48 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
             where.and(savedStoreCategory.isPublic.eq(true));
         }
 
-        return queryFactory
-                .select(Projections.constructor(StoreLocationResponse.class,
-                        savedStore.store.id,
+        List<Tuple> resultList = queryFactory
+                .select(
                         savedStore.id,
-                        savedStore.location.storeLat,
-                        savedStore.location.storeLng
-                ))
+                        savedStoreCategory.id,
+                        savedStoreCategory.categoryName,
+                        store.id,
+                        store.storeName,
+                        store.address,
+                        store.storeMainImageUrl,
+                        savedStore.memo,
+                        store.storeLat,
+                        store.storeLng
+                )
                 .from(savedStore)
                 .join(savedStore.saveStoreCategory, savedStoreCategory)
+                .join(savedStore.store, store)
                 .where(where)
                 .fetch();
+
+        Map<Integer, List<SavedStoreResponse>> grouped = resultList.stream()
+                .collect(Collectors.groupingBy(
+                        tuple -> Objects.requireNonNull(tuple.get(savedStoreCategory.id)).intValue(),
+                        Collectors.mapping(
+                                tuple -> SavedStoreResponse.builder()
+                                        .savedStoreId(tuple.get(savedStore.id))
+                                        .saveStoreCategoryId(tuple.get(savedStoreCategory.id))
+                                        .saveStoreCategoryName(tuple.get(savedStoreCategory.categoryName))
+                                        .storeId(tuple.get(store.id))
+                                        .storeName(tuple.get(store.storeName))
+                                        .address(tuple.get(store.address))
+                                        .storeMainImageUrl(tuple.get(store.storeMainImageUrl))
+                                        .memo(tuple.get(savedStore.memo))
+                                        .storeLat(tuple.get(store.storeLat))
+                                        .storeLng(tuple.get(store.storeLng))
+                                        .build(),
+                                Collectors.toList()
+                        )
+                ));
+
+        return SavedStoreMapResponse.builder()
+                .locationListByCategoryId(grouped)
+                .build();
     }
 
 }

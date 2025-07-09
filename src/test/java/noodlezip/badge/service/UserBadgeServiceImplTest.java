@@ -5,7 +5,7 @@ import noodlezip.badge.repository.BadgeGroupRepository;
 import noodlezip.badge.repository.UserBadgeRepository;
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
-import noodlezip.mypage.dto.response.badge.BadgeGroupResponse;
+import noodlezip.badge.dto.response.BadgeGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +38,7 @@ class UserBadgeServiceImplTest {
         when(badgeGroupRepository.getBadgeGroups()).thenReturn(groupList);
 
         // when
-        List<BadgeGroupResponse> result = userBadgeService.getBadgeGroupIds();
+        List<BadgeGroupResponse> result = userBadgeService.getBadgeGroupList();
 
         // then
         assertThat(result).hasSize(1);

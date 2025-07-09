@@ -4,11 +4,12 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.util.PageUtil;
-import noodlezip.mypage.dto.request.savedstore.SavedStoreCategoryFilterRequest;
-import noodlezip.mypage.dto.response.savedstore.*;
-import noodlezip.mypage.util.SavedStorePagePolicy;
+import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
+import noodlezip.savedstore.util.SavedStorePagePolicy;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
+import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
+import noodlezip.savedstore.dto.response.SavedStoreResponse;
 import noodlezip.savedstore.entity.SavedStore;
 import noodlezip.savedstore.entity.SavedStoreCategory;
 import noodlezip.savedstore.entity.SavedStoreLocation;
@@ -84,7 +85,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
     @Transactional
     public void saveSavedStore(Long userId, Long storeId, SaveStoreRequest saveStoreRequest) {
         Long categoryId = saveStoreRequest.getSaveStoreCategoryId();
-        String newCategoryName = saveStoreRequest.getNewSavedStoreCategoryName().trim();
+        String newCategoryName = saveStoreRequest.getNewSavedStoreCategoryName();
         String memo = saveStoreRequest.getMemo();
         User user = entityManager.getReference(User.class, userId);
         SavedStoreCategory saveStoreCategory = getSavedCategory(user, categoryId, newCategoryName);
@@ -128,7 +129,7 @@ public class SavedStoreServiceImpl implements SavedStoreService {
 
     private SavedStoreCategory getSavedCategory(User user, Long categoryId, String newCategoryName) {
         if (isNewCategory(categoryId, newCategoryName)) {
-            return createNewCategory(user, newCategoryName);
+            return createNewCategory(user, newCategoryName.trim());
         }
         return entityManager.getReference(SavedStoreCategory.class, categoryId);
     }
@@ -186,15 +187,6 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         response.setSavedStoreList(storePage.getContent());
 
         return response;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<StoreLocationResponse> getStoreLocationList(Long userId,
-                                                            SavedStoreCategoryFilterRequest filter,
-                                                            boolean isOwner
-    ) {
-        return saveStoreRepository.getStoreLocationList(userId, filter.getCategoryIdList(), isOwner);
     }
 
 }
