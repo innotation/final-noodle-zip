@@ -3,6 +3,7 @@ package noodlezip.savedstore.dto.response;
 import lombok.*;
 
 import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

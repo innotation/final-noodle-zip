@@ -37,9 +37,9 @@ class SavedStoreLocationServiceImplTest {
 
         boolean isOwner = true;
 
-        Map<Integer, List<SavedStoreResponse>> dummyMap = new HashMap<>();
-        dummyMap.put(100, List.of(dummyResponse(1L, 37.1, 127.2)));
-        dummyMap.put(200, List.of(dummyResponse(2L, 37.2, 127.3)));
+        Map<Long, List<SavedStoreResponse>> dummyMap = new HashMap<>();
+        dummyMap.put(100L, List.of(dummyResponse(1L, 37.1, 127.2)));
+        dummyMap.put(200L, List.of(dummyResponse(2L, 37.2, 127.3)));
 
         SavedStoreMapResponse mockResponse = new SavedStoreMapResponse();
         mockResponse.setLocationListByCategoryId(dummyMap);
@@ -52,9 +52,9 @@ class SavedStoreLocationServiceImplTest {
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.getLocationListByCategoryId()).containsKey(100);
-        assertThat(result.getLocationListByCategoryId().get(100)).hasSize(1);
-        assertThat(result.getLocationListByCategoryId().get(100).get(0).getStoreLat()).isEqualTo(37.1);
+        assertThat(result.getLocationListByCategoryId()).containsKey(100L);
+        assertThat(result.getLocationListByCategoryId().get(100L)).hasSize(1);
+        assertThat(result.getLocationListByCategoryId().get(100L).get(0).getStoreLat()).isEqualTo(37.1);
 
         verify(savedStoreRepository).getStoreLocationList(userId, filter, isOwner);
     }
