@@ -87,6 +87,10 @@ public class Store extends BaseTimeEntity {
     @Column(name = "store_legal_code", nullable = false)
     private Integer storeLegalCode;
 
+    @NotNull
+    @Column(name = "biz_num", nullable = false)
+    private Long bizNum;
+
     /* 양방향 연관관계 매핑. 필요없을 듯 하다
     // 메뉴 리스트 (1:N)
     @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
