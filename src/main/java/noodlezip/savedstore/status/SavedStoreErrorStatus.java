@@ -19,8 +19,11 @@ public enum SavedStoreErrorStatus implements BaseErrorCode {
     _FAIL_UPDATE_SAVED_STORE_CATEGORY(HttpStatus.BAD_REQUEST,
             "MYPAGE-SAVED-STORE-003", "저장 가게 카테고리 수정에 실패하였습니다."),
     _FAIL_DELETE_SAVED_STORE_CATEGORY(HttpStatus.BAD_REQUEST,
-            "MYPAGE-SAVED-STORE-004", "저장 가게 카테고리 삭제에 실패하였습니다.")
-    ;
+            "MYPAGE-SAVED-STORE-004", "저장 가게 카테고리 삭제에 실패하였습니다."),
+    _FAIL_SAVED_STORE_MAP(HttpStatus.BAD_REQUEST,
+            "MYPAGE-SAVED-STORE-005", "저장 가게 지도 조회에 실패했습니다."),
+    _FAIL_SAVED_STORE_SAVE_PAGE_LOAD(HttpStatus.BAD_REQUEST,
+            "MYPAGE-SAVED-STORE-006", "저장 가게 등록 페이지 로드에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
