@@ -114,11 +114,25 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(data => {
         renderStores(data.content);
         renderPagination(data);
+        updateSearchResultCount(data);
       })
       .catch(error => {
         console.error('매장 검색 실패: ', error);
         document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
+        document.getElementById('search-result-count').textContent = '검색 중 오류가 발생했습니다.';
       });
+  }
+
+  // 검색 결과 수 업데이트 함수
+  function updateSearchResultCount(data) {
+    const resultCountElement = document.getElementById('search-result-count');
+    const totalElements = data.totalElements;
+    
+    if (totalElements === 0) {
+      resultCountElement.textContent = '검색 결과가 없습니다.';
+    } else {
+      resultCountElement.textContent = `총 ${totalElements}개의 매장을 찾았습니다.`;
+    }
   }
 
   // 페이징 렌더링 함수
@@ -249,10 +263,12 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
           renderStores(data.content);
           renderPagination(data);
+          updateSearchResultCount(data);
         })
         .catch(error => {
           console.error('필터링된 매장 검색 실패: ', error);
           document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
+          document.getElementById('search-result-count').textContent = '검색 중 오류가 발생했습니다.';
         });
     } else {
       // 일반 검색
