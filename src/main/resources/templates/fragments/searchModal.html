@@ -13,7 +13,7 @@
         </div>
 
         <div class="modal-body">
-          <form id="detailedSearchForm" method="get" action="search">
+          <form id="detailedSearchForm" method="get" action="/search/list">
             <!-- 검색 키워드 -->
             <div class="mb-3">
               <label class="form-label fw-bold">검색</label>
@@ -87,7 +87,7 @@
 
       // 필터 옵션 로드 함수
       function loadModalFilterOptions() {
-        fetch('/store/search/filter-options')
+        fetch('/search/filter-options')
           .then(response => response.json())
           .then(data => {
             renderModalFilterOptions(data);
