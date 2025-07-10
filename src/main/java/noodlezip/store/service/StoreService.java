@@ -3,9 +3,11 @@ package noodlezip.store.service;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.admin.dto.RegistListDto;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
+import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
@@ -26,8 +28,6 @@ import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.user.entity.User;
-import noodlezip.admin.dto.RegistListDto;
-import noodlezip.common.util.PageUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import noodlezip.store.status.StoreErrorCode;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -312,5 +313,23 @@ public class StoreService {
         return new PageImpl<>(dtoList, pageable, page.getTotalElements());
     }
 
-
+    // 매장 토핑 조회
+    public List<ToppingResponseDto> getStoreToppings(Long storeId) {
+        Store store = em.getReference(Store.class, storeId);
+        List<ToppingResponseDto> result = new ArrayList<>();
+        storeExtraToppingRepository.findStoreExtraToppingByStore(store)
+                .forEach(topping -> {
+                    try {
+                        result.add(new ToppingResponseDto(
+                                        topping.getId(),
+                                        topping.getTopping().getToppingName(),
+                                        topping.getPrice()
+                                )
+                        );
+                    } catch (NullPointerException e) {
+                        throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+                    }
+                });
+        return result;
+    }
 }

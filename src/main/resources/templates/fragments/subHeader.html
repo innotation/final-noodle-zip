@@ -65,71 +65,8 @@
     </div>
   </header>
 
-  <!-- 상세 검색 모달 -->
-  <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-
-        <div class="modal-header">
-          <h5 class="modal-title" id="searchModalLabel">라멘 상세 검색</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-        </div>
-
-        <div class="modal-body">
-          <form id="detailedSearchForm" method="get" action="search">
-            <!-- 육수 -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">육수</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="broth" value="돼지뼈" id="broth1">
-                <label class="form-check-label" for="broth1">돼지뼈</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="broth" value="닭뼈" id="broth2">
-                <label class="form-check-label" for="broth2">닭뼈</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="broth" value="어류" id="broth3">
-                <label class="form-check-label" for="broth3">어류</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="broth" value="채소" id="broth4">
-                <label class="form-check-label" for="broth4">채소</label>
-              </div>
-            </div>
-
-            <!-- 양념 -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">양념</label>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="seasoning" value="간장" id="seasoning1">
-                <label class="form-check-label" for="seasoning1">간장</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="seasoning" value="소금" id="seasoning2">
-                <label class="form-check-label" for="seasoning2">소금</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="seasoning" value="된장" id="seasoning3">
-                <label class="form-check-label" for="seasoning3">된장</label>
-              </div>
-            </div>
-
-            <!-- 토핑 -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">토핑</label>
-              <input type="text" class="form-control" name="topping" placeholder="예: 차슈, 계란, 김 등 (쉼표로 구분)">
-            </div>
-          </form>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-          <button type="submit" class="btn btn-primary" form="detailedSearchForm">검색하기</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- 검색모달 include -->
+  <div th:replace="~{fragments/searchModal :: searchModal}"></div>
 
   <!-- 로그인 모달 -->
   <div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
