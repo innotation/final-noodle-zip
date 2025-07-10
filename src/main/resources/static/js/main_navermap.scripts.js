@@ -311,14 +311,58 @@ document.addEventListener('DOMContentLoaded', function () {
       const address = store.address || '';
       const phone = store.phone || '';
       const hasParking = store.hasParking || '';
+      const distance = store.distance ? Math.round(store.distance) : null;
+
+      // 태그 생성 함수
+      function createTags() {
+        let tags = '';
+        
+        // 주차 태그
+        if (hasParking && hasParking !== 'NOT_AVAILABLE') {
+          const parkingText = hasParking === 'FREE' ? '무료주차' : '유료주차';
+          const parkingColor = hasParking === 'FREE' ? '#28a745' : '#fd7e14';
+          tags += `<li><a href="#0" style="border: 1px solid ${parkingColor}; color: ${parkingColor}; background-color: transparent;">
+            <i class="icon_cart" style="margin-right: 4px;"></i>${parkingText}
+          </a></li>`;
+        }
+        
+        // 지역카드 태그
+        if (store.isLocalCard) {
+          tags += `<li><a href="#0" style="border: 1px solid #007bff; color: #007bff; background-color: transparent;">
+            <i class="icon_creditcard" style="margin-right: 4px;"></i>지역카드
+          </a></li>`;
+        }
+        
+        // 어린이동반 태그
+        if (store.isChildAllowed) {
+          tags += `<li><a href="#0" style="border: 1px solid #ffc107; color: #ffc107; background-color: transparent;">
+            <i class="icon_gift" style="margin-right: 4px;"></i>어린이동반
+          </a></li>`;
+        }
+        
+        // 거리 태그 (회색으로 표시)
+        if (distance !== null) {
+          const distanceText = distance < 1000 ? `${distance}m` : `${(distance/1000).toFixed(1)}km`;
+          tags += `<li><a href="#0" style="color: #6c757d; background-color: transparent; border: none;">
+            <i class="icon_pin_alt" style="margin-right: 4px;"></i>${distanceText}
+          </a></li>`;
+        }
+        
+        return tags;
+      }
+
+      // 소유자 코멘트 표시
+      const ownerCommentHtml = store.ownerComment ? 
+        `<div class="owner-comment">
+          <strong><i class="icon_comment" style="margin-right: 4px;"></i>사장님 한마디:</strong> ${store.ownerComment}
+        </div>` : '';
 
       item.innerHTML = `
-      <div class="strip">
+      <div class="strip store-list">
         <figure>
           <img src="${imgUrl}" class="img-fluid lazy" alt="${store.storeName}" 
                onerror="this.onerror=null; this.src='${contextPath}img/lazy-placeholder.png';">
           <a href="${contextPath}store/detail/${store.id}" class="strip_info">
-            <small>${phone}</small>
             <div class="item_title">
               <h3>${store.storeName}</h3>
               <small>${address}</small>
@@ -327,8 +371,12 @@ document.addEventListener('DOMContentLoaded', function () {
         </figure>
         <ul>
           <li><a href="#0" onclick="showMarkerOnMap(${idx})" class="address">맵에서 확인</a></li>
-          <li><div class="score"><span>${phone}</span></div></li>
+          <li><div class="score"><span><i class="icon_phone" style="margin-right: 4px;"></i>${phone}</span></div></li>
         </ul>
+        <ul class="tags">
+          ${createTags()}
+        </ul>
+        ${ownerCommentHtml}
       </div>
       `;
       list.appendChild(item);
