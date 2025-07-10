@@ -234,7 +234,7 @@ public class StoreService {
     // 등록요청매장 조회
     public Map<String, Object> findWaitingStores(Pageable pageable) {
         Page<RegistListDto> resultPage = storeRepository.findWaitingStores(pageable);
-        Map<String, Object> map = pageUtil.getPageInfo(resultPage, resultPage.getSize());
+        Map<String, Object> map = pageUtil.getPageInfo(resultPage, 5);
         map.put("registList", resultPage.getContent());
         return map;
     }
@@ -258,7 +258,8 @@ public class StoreService {
     }
 
     // 매장에서 메뉴 조회
-    public List<MenuDetailDto> getMenus(Long storeId) {
+    public MenuDetailResponseDto getMenuDetail(Long storeId) {
+
         List<MenuDetailDto> menuList = menuRepository.findMenuDetailByStoreId(storeId);
         Map<Long, List<String>> toppingMap = ramenToppingRepository.findToppingNamesByStoreGroupedByMenuId(storeId);
 
@@ -268,7 +269,16 @@ public class StoreService {
             dto.setToppingNames(toppings);
         }
 
-        return menuList;
+        List<String> categories = ramenService.extractUniqueCategories(menuList);
+        List<String> soups = ramenService.extractUniqueSoups(menuList);
+        List<String> toppings = ramenService.extractUniqueToppings(menuList);
+
+        return MenuDetailResponseDto.builder()
+                .menus(menuList)
+                .categoryNames(categories)
+                .soupNames(soups)
+                .toppingNames(toppings)
+                .build();
     }
 
     // 매장 리뷰 조회

@@ -58,6 +58,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         distanceExpr.as("distance")
                 ))
                 .from(store)
+                .where(store.approvalStatus.eq(ApprovalStatus.APPROVED))
                 .orderBy(distanceExpr.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -68,6 +69,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         long total = queryFactory
                 .select(store.count())
                 .from(store)
+                .where(store.approvalStatus.eq(ApprovalStatus.APPROVED))
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);
@@ -241,6 +243,57 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total == null ? 0 : total);
+    }
+
+    @Override
+    public List<String> findDistinctCategories() {
+        QStore store = QStore.store;
+        QMenu menu = QMenu.menu;
+        QCategory category = QCategory.category;
+
+        return queryFactory
+                .select(category.categoryName)
+                .from(store)
+                .join(menu).on(menu.store.id.eq(store.id))
+                .join(category).on(menu.category.id.eq(category.id))
+                .where(store.approvalStatus.eq(ApprovalStatus.APPROVED))
+                .distinct()
+                .fetch();
+    }
+
+    @Override
+    public List<String> findDistinctSoups() {
+        QStore store = QStore.store;
+        QMenu menu = QMenu.menu;
+        QRamenSoup ramenSoup = QRamenSoup.ramenSoup;
+
+        return queryFactory
+                .select(ramenSoup.soupName)
+                .from(store)
+                .join(menu).on(menu.store.id.eq(store.id))
+                .join(ramenSoup).on(menu.ramenSoup.id.eq(ramenSoup.id))
+                .where(store.approvalStatus.eq(ApprovalStatus.APPROVED))
+                .distinct()
+                .fetch();
+    }
+
+    @Override
+    public List<String> findDistinctToppings() {
+        QStore store = QStore.store;
+        QMenu menu = QMenu.menu;
+        QRamenTopping ramenTopping = QRamenTopping.ramenTopping;
+        QTopping topping = QTopping.topping;
+
+        return queryFactory
+                .select(topping.toppingName)
+                .from(store)
+                .join(menu).on(menu.store.id.eq(store.id))
+                .leftJoin(ramenTopping).on(ramenTopping.menu.id.eq(menu.id))
+                .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
+                .where(store.approvalStatus.eq(ApprovalStatus.APPROVED)
+                        .and(topping.isActive.isTrue()))
+                .distinct()
+                .fetch();
     }
 
 }

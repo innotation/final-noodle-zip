@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="basic-info-tab" class="card-body info_content">
+    <h2 th:text="${store.storeName} + ' 정보'">Store Info</h2>
+    <h3>기본정보</h3>
+    <div class="menu_item">
+        <em>전화번호</em>
+        <h4>매장 전화번호</h4>
+        <p th:text="${store.phone}">phone number</p>
+    </div>
+    <div class="menu_item">
+        <em>주소</em>
+        <h4>매장 주소</h4>
+        <p th:text="${store.address}">address</p>
+    </div>
+    <hr>
+    <h3>편의사항</h3>
+    <div class="menu_item">
+        <em>local card</em>
+        <h4>지역카드</h4>
+        <p th:text="${store.isLocalCard}">가능여부</p>
+    </div>
+    <div class="menu_item">
+        <em>child</em>
+        <h4>유아동반</h4>
+        <p th:text="${store.isChildAllowed}">가능여부</p>
+    </div>
+    <div class="menu_item">
+        <em>parking</em>
+        <h4>주차여부</h4>
+        <p th:text="${store.hasParking}">가능여부</p>
+    </div>
+    <hr>
+    <h3>매장소개</h3>
+    <div class="menu_item">
+        <em></em>
+        <h4>사장님 한마디</h4>
+        <p th:text="${store.ownerComment}">한마디</p>
+    </div>
+</div>
+</body>
+</html>

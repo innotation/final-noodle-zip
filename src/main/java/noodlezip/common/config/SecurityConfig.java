@@ -26,26 +26,29 @@ public class SecurityConfig {
         // URL 접근 제어( 인가 설정 )
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/",
-                            "/check-login-id",
-                            "/check-email",
-                            "/verify-email",
-                            "/signup",
-                            "/login",
-                            "/images/**",
-                            "/css/**",
-                            "/img/**",
-                            "/js/**",
-                            "/assets/**",
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/send-verification-code",
-                            "/fragments/**",
-                            "/search/**",
-                            "/store/**",
+                                 "/check-login-id",
+                                 "/check-email",
+                                 "/verify-email",
+                                 "/signup",
+                                 "/login",
+                                 "/images/**",
+                                 "/css/**",
+                                 "/img/**",
+                                 "/js/**",
+                                 "/assets/**",
+                                 "/v3/api-docs/**",
+                                 "/swagger-ui/**",
+                                 "/send-verification-code",
+                                 "/fragments/**",
+                                 "/search/**",
+                                 "/store/**",
+                                 "/admin_section/**",
+                                 "/admin/**",
+                                 "/receipt",
                             "/location/**",
                             "/ramen/**"
-                    ).permitAll()
-                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                                  ).permitAll()
+//                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
                     .requestMatchers("/board/**", "/comments/**").permitAll()
                     .anyRequest().authenticated();
@@ -83,12 +86,10 @@ public class SecurityConfig {
             csrf.disable();
         });
 
-/*
         // 동일 도메인에서 iframe 접근 가능 설정
         http
                 .headers()
                 .frameOptions().sameOrigin();
-*/
 
         return http.build();
 

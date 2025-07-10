@@ -2,15 +2,17 @@ package noodlezip.ramen.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.dto.CategoryResponseDto;
+import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
+import noodlezip.ramen.entity.RamenSoup;
 import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.CategoryRepository;
-import noodlezip.ramen.repository.RamenSoupRepository;
+import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ToppingRepository;
+import noodlezip.store.dto.MenuDetailDto;
+import noodlezip.store.dto.ReviewSummaryDto;
 import org.springframework.stereotype.Service;
-import noodlezip.ramen.dto.RamenSoupResponseDto;
-import noodlezip.ramen.entity.RamenSoup;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +23,7 @@ public class RamenService {
 
     private final ToppingRepository toppingRepository;
     private final CategoryRepository categoryRepository;
-    private final RamenSoupRepository ramenSoupRepository;
+    private final RamenReviewRepository ramenReviewRepository;
 
     // 전체 토핑 목록 조회
     public List<ToppingResponseDto> getAllToppings() {
@@ -39,6 +41,38 @@ public class RamenService {
                 .collect(Collectors.toList());
     }
 
+    // 현재 매장의 메뉴가 포함한 카테고리 조회
+    public List<String> extractUniqueCategories(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .map(MenuDetailDto::getCategoryName)
+                .distinct()
+                .toList();
+    }
+
+    // 현재 매장의 메뉴가 포함한 육수 조회
+    public List<String> extractUniqueSoups(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .map(MenuDetailDto::getSoupName)
+                .distinct()
+                .toList();
+    }
+
+    // 현재 매장의 메뉴가 포함한 토핑 조회
+    public List<String> extractUniqueToppings(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .flatMap(menu -> menu.getToppingNames().stream())
+                .distinct()
+                .toList();
+    }
+
+    public ReviewSummaryDto getSummaryByStoreId(Long storeId) {
+        return ramenReviewRepository.getSummaryByStoreId(storeId);
+    }
+
+    public ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName) {
+        return ramenReviewRepository.getSummaryByStoreIdAndMenuName(storeId, menuName);
+    }
+
     // 전체 육수 목록 조회
     public List<RamenSoupResponseDto> getAllSoups() {
         List<RamenSoup> soups = ramenSoupRepository.findAll();
@@ -48,3 +82,4 @@ public class RamenService {
     }
 
 }
+

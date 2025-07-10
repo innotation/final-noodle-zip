@@ -4,8 +4,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.entity.QRamenReview;
+import noodlezip.store.dto.ReviewSummaryDto;
 import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.entity.QMenu;
+import noodlezip.community.entity.QBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
     public Page<StoreReviewDto> findReviewsByStoreId(Long storeId, Pageable pageable) {
         QRamenReview review = QRamenReview.ramenReview;
         QMenu menu = QMenu.menu;
+        QBoard board = QBoard.board;
 
         List<StoreReviewDto> content = queryFactory
                 .select(Projections.constructor(
@@ -41,10 +44,13 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.soupFlavorKeywords,
                         review.content,
                         review.reviewImageUrl,
-                        review.isReceiptReview
+                        review.isReceiptReview,
+                        board.user.userName, // 작성자 이름
+                        board.user.id        // 작성자 id
                 ))
                 .from(review)
                 .join(review.menu, menu)
+                .join(board).on(review.communityId.eq(board.id))
                 .where(menu.store.id.eq(storeId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -59,5 +65,82 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, count);
+    }
+
+    @Override
+    public ReviewSummaryDto getSummaryByStoreId(Long storeId) {
+        // QRamenReview 사용
+        QRamenReview review = QRamenReview.ramenReview;
+
+        ReviewSummaryDto summary = queryFactory
+                .select(Projections.fields(
+                        ReviewSummaryDto.class,
+                        review.noodleThickness.avg().as("noodleThickness"),
+                        review.noodleTexture.avg().as("noodleTexture"),
+                        review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupTemperature.avg().as("soupTemperature"),
+                        review.soupSaltiness.avg().as("soupSaltiness"),
+                        review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
+                        review.soupOiliness.avg().as("soupOiliness"),
+                        review.id.count().intValue().as("totalCount"),
+                        review.noodleThickness.avg()
+                                .add(review.noodleTexture.avg())
+                                .add(review.noodleBoilLevel.avg())
+                                .add(review.soupTemperature.avg())
+                                .add(review.soupSaltiness.avg())
+                                .add(review.soupSpicinessLevel.avg())
+                                .add(review.soupOiliness.avg())
+                                .divide(7.0).as("overall")
+                ))
+                .from(review)
+                .where(review.menu.store.id.eq(storeId))
+                .fetchOne();
+
+        return summary;
+    }
+
+    @Override
+    public ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName) {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+
+        ReviewSummaryDto summary = queryFactory
+                .select(Projections.fields(
+                        ReviewSummaryDto.class,
+                        review.noodleThickness.avg().as("noodleThickness"),
+                        review.noodleTexture.avg().as("noodleTexture"),
+                        review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupTemperature.avg().as("soupTemperature"),
+                        review.soupSaltiness.avg().as("soupSaltiness"),
+                        review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
+                        review.soupOiliness.avg().as("soupOiliness"),
+                        review.id.count().intValue().as("totalCount"),
+                        review.noodleThickness.avg()
+                                .add(review.noodleTexture.avg())
+                                .add(review.noodleBoilLevel.avg())
+                                .add(review.soupTemperature.avg())
+                                .add(review.soupSaltiness.avg())
+                                .add(review.soupSpicinessLevel.avg())
+                                .add(review.soupOiliness.avg())
+                                .divide(7.0).as("overall")
+                ))
+                .from(review)
+                .join(review.menu, menu)
+                .where(review.menu.store.id.eq(storeId).and(menu.menuName.eq(menuName)))
+                .fetchOne();
+
+        return summary;
+    }
+
+    @Override
+    public boolean existsByOcrKeyHash(String ocrKeyHash) {
+        QRamenReview review = QRamenReview.ramenReview;
+        Long count = queryFactory
+                .select(review.count())
+                .from(review)
+                .where(review.ocrKeyHash.eq(ocrKeyHash))
+                .fetchOne();
+
+        return count > 0;
     }
 }

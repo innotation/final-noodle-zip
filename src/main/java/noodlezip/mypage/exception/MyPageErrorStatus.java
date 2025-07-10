@@ -11,8 +11,7 @@ import org.springframework.http.HttpStatus;
 public enum MyPageErrorStatus implements BaseErrorCode {
 
     _NOT_FOUND_USER_MY_PAGE(HttpStatus.NOT_FOUND,
-            "MYPAGE-001", "페이지를 찾을 수 없습니다.")
-    ;
+            "MYPAGE-001", "페이지를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

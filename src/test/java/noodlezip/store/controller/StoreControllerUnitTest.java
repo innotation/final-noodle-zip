@@ -68,7 +68,7 @@ public class StoreControllerUnitTest {
                         .build()
         );
 
-        given(storeService.getMenus(storeId)).willReturn(menuList);
+        given(storeService.getMenuDetail(storeId)).willReturn(menuList);
 
         mockMvc.perform(get("/store/detail/menuList").param("storeId", storeId.toString()))
                 .andExpect(status().isOk())

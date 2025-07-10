@@ -187,12 +187,13 @@
                     <h1><span th:text="${board.title}"></span></h1>
                     <div class="postmeta">
                         <ul>
-                            <li><a href="#"><i class="icon_folder-alt"></i><span
+                            <li><a th:href="@{/board/{communityType}/list(communityType=${board.communityType})}"><i class="icon_folder-alt"></i><span
                                     th:text="${board.communityType}">카테고리</span></a></li>
                             <li><i class="icon_calendar"></i> <span
                                     th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
                             <li><a href="#"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
                             <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
+                            <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
                         </ul>
                     </div>
                     <div class="post-content">
@@ -207,7 +208,8 @@
                                 Ipsum.</p>
                         </div>
                     </div>
-                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post" th:if="${board.userId == #authentication.principal?.user.id}">
+                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"
+                          th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
                         <button type="submit" class="btn btn-sm btn-danger"
                                 onclick="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">게시글 삭제</button>
                     </form>
@@ -240,7 +242,7 @@
                 const boardId = /*[[${board.boardId}]]*/ null;
 
                 // 현재 로그인한 사용자 ID (서버에서 주입)
-                const currentLoggedInUserId = [[${#authentication.principal?.user.id}]] || null;
+                const currentLoggedInUserId = /*[[${#authentication.isAuthenticated() ? (#authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) ? #authentication.principal.user.id : null) : null}]]*/ null;
                 console.log(currentLoggedInUserId)
 
                 const commentsList = document.getElementById('comments-list');
@@ -438,6 +440,62 @@
                     }
                 }
 
+                function initializeRecentBoardsWidget() {
+                    const listContainer = document.getElementById('recent-boards-list-container');
+                    const loadingMessage = document.getElementById('loading-message');
+                    const noBoardsMessage = document.getElementById('no-boards-message');
+                    if (!listContainer || !loadingMessage || !noBoardsMessage) {
+                        console.warn("Recent boards widget elements not found. Skipping initialization.");
+                        return; // 필수 DOM 요소가 없으면 함수 종료
+                    }
+
+                    // 이전에 추가된 게시글 목록 초기화
+                    listContainer.innerHTML = ''; // 기존 내용을 모두 지움
+                    listContainer.appendChild(loadingMessage); // 로딩 메시지 다시 삽입 (만약 HTML 구조상 제거되었다면)
+                    loadingMessage.style.display = 'block';
+                    noBoardsMessage.style.display = 'none';
+
+                    fetch('/board/recent')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(boards => {
+                            loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
+                            if (boards.payload && boards.payload.length > 0) {
+                                // 게시글 목록이 있을 경우, 각 게시글에 대해 li 요소를 생성하여 추가
+                                boards.payload.forEach(board => {
+                                    const li = document.createElement('li');
+                                    li.innerHTML = `
+                        <div class="alignleft">
+                            <a href="/board/detail/${board.id}">
+                                <img src="${board.imageUrl ? board.imageUrl : '/img/blog-1.jpg'}" alt="게시글 이미지">
+                            </a>
+                        </div>
+                        <small>
+                            ${board.category ? board.category : 'General'} -
+                            ${board.createdAt ? new Date(board.createdAt).toLocaleDateString('ko-KR') : 'N/A'}
+                        </small>
+                        <h3><a href="/board/detail/${board.id}" title="${board.title}">${board.title}</a></h3>
+                    `;
+                                    listContainer.appendChild(li);
+                                });
+                            } else {
+                                noBoardsMessage.style.display = 'block';
+                                listContainer.appendChild(noBoardsMessage);
+                            }
+                        })
+                        .catch(error => {
+                            loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
+                            noBoardsMessage.style.display = 'block'; // 메시지 표시
+                            noBoardsMessage.textContent = '최근 본 게시글을 불러오는 데 실패했습니다.';
+                            listContainer.appendChild(noBoardsMessage);
+                            console.error('Error fetching recent boards:', error);
+                        });
+                }
+
                 // 페이지 로드 시 댓글 가져오기
                 document.addEventListener('DOMContentLoaded', () => {
                     if (boardId) {
@@ -445,6 +503,50 @@
                     } else {
                         console.error("Board ID not found for fetching comments.");
                     }
+                    initializeRecentBoardsWidget();
+                });
+
+                const likeButton = document.getElementById('likeButton');
+                const likeIcon = likeButton.querySelector('i');
+                const likesCountSpan = document.getElementById('likes-count');
+
+                likeButton.addEventListener('click', function(event) {
+                    event.preventDefault(); // 기본 링크 동작 방지
+
+                    fetch(`/board/like/${boardId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                if (response.status === 401) {
+                                    alert('로그인이 필요합니다.');
+                                    window.location.href = '/login';
+                                } else if (response.status === 404) {
+                                    alert('게시글을 찾을 수 없습니다.');
+                                } else {
+                                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                                }
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert(data.message);
+                            if (data.payload.liked) {
+                                likeIcon.classList.remove('icon_heart_alt');
+                                likeIcon.classList.add('icon_heart');
+                            } else {
+                                likeIcon.classList.remove('icon_heart');
+                                likeIcon.classList.add('icon_heart_alt');
+                            }
+                            likesCountSpan.textContent = data.payload.totalLikes;
+                        })
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                        });
                 });
 
                 /*]]>*/
@@ -452,33 +554,11 @@
             <aside class="col-lg-3">
                 <div class="widget">
                     <div class="widget-title first">
-                        <h4>Latest Post</h4>
+                        <h4>최근 본 게시글</h4>
                     </div>
-                    <ul class="comments-list">
-                        <li>
-                            <div class="alignleft">
-                                <a href="#0"><img src="/img/blog-5.jpg" alt=""></a>
-                            </div>
-                            <small>Category - 11.08.2016</small>
-                            <h3><a href="#" title="">Verear qualisque ex minimum...</a></h3>
-                        </li>
-                        <li>
-                            <div class="alignleft">
-                                <a href="#0"><img src="/img/blog-6.jpg" alt=""></a>
-                            </div>
-                            <small>Category - 11.08.2016</small>
-                            <h3><a href="#" title="">Verear qualisque ex minimum...</a></h3>
-                        </li>
-                        <li>
-                            <div class="alignleft">
-                                <a href="#0"><img src="/img/blog-4.jpg" alt=""></a>
-                            </div>
-                            <small>Category - 11.08.2016</small>
-                            <h3><a href="#" title="">Verear qualisque ex minimum...</a></h3>
-                        </li>
-                    </ul>
+                    <ul class="comments-list" id="recent-boards-list-container">
+                        <li id="loading-message">로딩 중...</li> <li id="no-boards-message" style="display:none;">최근 본 게시글이 없습니다.</li> </ul>
                 </div>
-                <!-- /widget -->
                 <div class="widget">
                     <div class="widget-title">
                         <h4>Categories</h4>

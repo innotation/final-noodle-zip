@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<!-- store/fragments/tab-review.html -->
+<div th:fragment="review-tab" class="card-body reviews">
+  <!-- ✅ 리뷰 평균 영역 -->
+  <div class="row add_bottom_45 add_top_30 d-flex align-items-center">
+    <div class="col-md-3">
+      <div id="review_summary" class="d-flex flex-column justify-content-center">
+        <strong th:text="${summary.totalCount}">리뷰 수</strong>
+        <em>리뷰 수</em>
+        <small>각 항목 별 리뷰 평균</small>
+      </div>
+    </div>
+    <div class="col-md-9 reviews_sum_details">
+      <div class="row">
+        <div class="col-md-6">
+          <h6>면 굵기</h6>
+          <div class="row">
+            <div class="col-xl-10 col-lg-9 col-9">
+              <div class="progress">
+                <div class="progress-bar noodle-thickness-progress" role="progressbar"
+                     th:style="'width:' + ${summary.noodleThickness * 10} + '%'"
+                     th:attr="aria-valuenow=${summary.noodleThickness * 10}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-3"><strong class="noodle-thickness-value" th:text="${#numbers.formatDecimal(summary.noodleThickness, 1, 1)}"></strong></div>
+          </div>
+          <!-- /row -->
+
+          <h6>면 식감</h6>
+          <div class="row">
+            <div class="col-xl-10 col-lg-9 col-9">
+              <div class="progress">
+                <div class="progress-bar noodle-texture-progress" role="progressbar"
+                     th:style="'width:' + ${summary.noodleTexture * 10} + '%'"
+                     th:attr="aria-valuenow=${summary.noodleTexture * 10}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-3"><strong class="noodle-texture-value" th:text="${#numbers.formatDecimal(summary.noodleTexture, 1, 1)}"></strong></div>
+          </div>
+          <!-- /row -->
+
+          <h6>면 삶기 정도</h6>
+          <div class="row">
+            <div class="col-xl-10 col-lg-9 col-9">
+              <div class="progress">
+                <div class="progress-bar noodle-boil-level-progress" role="progressbar"
+                     th:style="'width:' + ${summary.noodleBoilLevel * 10} + '%'"
+                     th:attr="aria-valuenow=${summary.noodleBoilLevel * 10}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-3"><strong class="noodle-boil-level-value" th:text="${#numbers.formatDecimal(summary.noodleBoilLevel, 1, 1)}"></strong></div>
+          </div>
+          <!-- /row -->
+        </div>
+        <div class="col-md-6">
+          <h6>육수 온도</h6>
+          <div class="row">
+            <div class="col-xl-10 col-lg-9 col-9">
+              <div class="progress">
+                <div class="progress-bar soup-temperature-progress" role="progressbar"
+                     th:style="'width:' + ${summary.soupTemperature * 10} + '%'"
+                     th:attr="aria-valuenow=${summary.soupTemperature * 10}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-3"><strong class="soup-temperature-value" th:text="${#numbers.formatDecimal(summary.soupTemperature, 1, 1)}"></strong></div>
+          </div>
+          <!-- /row -->
+
+          <h6>육수 염도</h6>
+          <div class="row">
+            <div class="col-xl-10 col-lg-9 col-9">
+              <div class="progress">
+                <div class="progress-bar soup-saltiness-progress" role="progressbar"
+                     th:style="'width:' + ${summary.soupSaltiness * 10} + '%'"
+                     th:attr="aria-valuenow=${summary.soupSaltiness * 10}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-3"><strong class="soup-saltiness-value" th:text="${#numbers.formatDecimal(summary.soupSaltiness, 1, 1)}"></strong></div>
+          </div>
+          <!-- /row -->
+
+          <h6>육수 매운맛</h6>
+          <div class="row">
+            <div class="col-xl-10 col-lg-9 col-9">
+              <div class="progress">
+                <div class="progress-bar soup-spiciness-level-progress" role="progressbar"
+                     th:style="'width:' + ${summary.soupSpicinessLevel * 10} + '%'"
+                     th:attr="aria-valuenow=${summary.soupSpicinessLevel * 10}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-3"><strong class="soup-spiciness-level-value" th:text="${#numbers.formatDecimal(summary.soupSpicinessLevel, 1, 1)}"></strong></div>
+          </div>
+          <!-- /row -->
+
+          <h6>육수 기름진 정도</h6>
+          <div class="row">
+            <div class="col-xl-10 col-lg-9 col-9">
+              <div class="progress">
+                <div class="progress-bar soup-oiliness-progress" role="progressbar"
+                     th:style="'width:' + ${summary.soupOiliness * 10} + '%'"
+                     th:attr="aria-valuenow=${summary.soupOiliness * 10}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-3"><strong class="soup-oiliness-value" th:text="${#numbers.formatDecimal(summary.soupOiliness, 1, 1)}"></strong></div>
+          </div>
+        </div>
+      </div>
+      <!-- /row -->
+    </div>
+  </div>
+
+  <!-- ✅ 리뷰 카드 목록 -->
+  <div class="menu-filter-container mb-4">
+    <h6>메뉴별 리뷰 보기</h6>
+    <div class="tags" id="menu-filter-tags">
+      <!-- 메뉴 태그들이 여기에 동적으로 추가됩니다. -->
+    </div>
+  </div>
+
+  <div id="reviews">
+    <div class="review_card" th:each="review : ${reviewList}" th:data-menu-name="${review.menuName}">
+      <div class="row">
+        <div class="col-md-3 d-flex align-items-center justify-content-center">
+          <figure class="menu-image-thumb mb-0">
+            <a th:href="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/menu-thumb-2.jpg'}" 
+               th:title="${review.menuName + ' 리뷰 이미지'}" 
+               data-effect="mfp-zoom-in">
+              <img th:src="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/menu-thumb-2.jpg'}"
+                   onerror="this.onerror=null;this.src='/img/menu-thumb-2.jpg'" 
+                   alt="menu image"
+                   style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;">
+            </a>
+          </figure>
+        </div>
+        <div class="col-md-9 review_content">
+          <div class="clearfix add_bottom_15">
+            <span class="badge bg-light text-dark me-2" th:text="${review.menuName}">메뉴명</span>
+            <em>작성자 <a th:href="@{/mypage/{userId}(userId=${review.userId})}" th:text="${review.userName}"></a></em>
+            <span th:if="${review.isReceiptReview}" class="badge bg-success ms-2">영수증 인증</span>
+          </div>
+          <h4 th:text="${review.soupFlavorKeywords}">맛 키워드</h4>
+          <p th:text="${review.content}">리뷰 본문</p>
+          <div class="reviews_sum_details mt-2"> <!-- Use reviews_sum_details for consistent styling -->
+            <div class="row">
+              <div class="col-md-6">
+                <h6>면 굵기</h6>
+                <div class="row">
+                  <div class="col-xl-10 col-lg-9 col-9">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar"
+                           th:style="'width:' + ${review.noodleThickness * 10} + '%'"
+                           th:attr="aria-valuenow=${review.noodleThickness * 10}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.noodleThickness}"></strong></div>
+                </div>
+                <!-- /row -->
+                <h6>면 식감</h6>
+                <div class="row">
+                  <div class="col-xl-10 col-lg-9 col-9">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar"
+                           th:style="'width:' + ${review.noodleTexture * 10} + '%'"
+                           th:attr="aria-valuenow=${review.noodleTexture * 10}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.noodleTexture}"></strong></div>
+                </div>
+                <!-- /row -->
+                <h6>면 삶기 정도</h6>
+                <div class="row">
+                  <div class="col-xl-10 col-lg-9 col-9">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar"
+                           th:style="'width:' + ${review.noodleBoilLevel * 10} + '%'"
+                           th:attr="aria-valuenow=${review.noodleBoilLevel * 10}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.noodleBoilLevel}"></strong></div>
+                </div>
+                <!-- /row -->
+              </div>
+              <div class="col-md-6">
+                <h6>육수 온도</h6>
+                <div class="row">
+                  <div class="col-xl-10 col-lg-9 col-9">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar"
+                           th:style="'width:' + ${review.soupTemperature * 10} + '%'"
+                           th:attr="aria-valuenow=${review.soupTemperature * 10}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupTemperature}"></strong></div>
+                </div>
+                <!-- /row -->
+                <h6>육수 염도</h6>
+                <div class="row">
+                  <div class="col-xl-10 col-lg-9 col-9">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar"
+                           th:style="'width:' + ${review.soupSaltiness * 10} + '%'"
+                           th:attr="aria-valuenow=${review.soupSaltiness * 10}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupSaltiness}"></strong></div>
+                </div>
+                <!-- /row -->
+                <h6>육수 매운맛</h6>
+                <div class="row">
+                  <div class="col-xl-10 col-lg-9 col-9">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar"
+                           th:style="'width:' + ${review.soupSpicinessLevel * 10} + '%'"
+                           th:attr="aria-valuenow=${review.soupSpicinessLevel * 10}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupSpicinessLevel}"></strong></div>
+                </div>
+                <!-- /row -->
+                <h6>육수 기름진 정도</h6>
+                <div class="row">
+                  <div class="col-xl-10 col-lg-9 col-9">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar"
+                           th:style="'width:' + ${review.soupOiliness * 10} + '%'"
+                           th:attr="aria-valuenow=${review.soupOiliness * 10}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupOiliness}"></strong></div>
+                </div>
+                <!-- /row -->
+              </div>
+            </div>
+            <!-- /row -->
+          </div>
+          <ul class="tags mt-2" th:if="${not #lists.isEmpty(review.toppingNames)}">
+            <li th:each="t : ${review.toppingNames}"><a href="#0" th:text="${t}">토핑</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 더보기 버튼 -->
+  <div id="load-more-review-wrapper" class="text-center mt-3" th:if="${hasMore}">
+    <button id="load-more-review-btn" class="btn btn-outline-primary" th:attr="data-next-page=${param.page + 1}">더보기</button>
+  </div>
+</div>
+
+</html>
