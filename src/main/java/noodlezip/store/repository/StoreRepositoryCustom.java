@@ -6,6 +6,8 @@ import noodlezip.search.dto.SearchStoreDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface StoreRepositoryCustom {
 
     Page<SearchStoreDto> findStoreOrderByDistance(double lat, double lng, Pageable pageable);
@@ -13,4 +15,10 @@ public interface StoreRepositoryCustom {
     Page<SearchStoreDto> searchStoresByFilter(SearchFilterDto filter, Pageable pageable);
 
     Page<RegistListDto> findWaitingStores(Pageable pageable);
+
+    List<String> findDistinctCategories();
+
+    List<String> findDistinctSoups();
+
+    List<String> findDistinctToppings();
 }
