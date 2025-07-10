@@ -398,10 +398,32 @@
 			}
 		});
 
+		function isMenuNameDuplicated() {
+			const nameInputs = Array.from(document.querySelectorAll('input[name$=".menuName"]'));
+			const names = nameInputs.map(input => input.value.trim()).filter(Boolean);
+
+			const nameCount = {};
+			for (let name of names) {
+				if (!nameCount[name]) nameCount[name] = 1;
+				else nameCount[name]++;
+			}
+
+			const duplicates = Object.entries(nameCount).filter(([name, count]) => count > 1);
+			if (duplicates.length > 0) {
+				alert(`메뉴 이름 "${duplicates[0][0]}" 이(가) 중복됩니다. 다른 이름으로 바꿔주세요.`);
+				return true;
+			}
+			return false;
+		}
+
 		// SUBMIT 여기가 제출 버튼임!!
 
 		document.getElementById('register').addEventListener('submit', async function(e) {
 			e.preventDefault();
+
+			if (isMenuNameDuplicated()) {
+				return; // 중복되면 제출 중단
+			}
 
 			// 1. 전화번호 앞자리 유효성 검사
 			let phonePrefix = document.getElementById('phonePrefix').value;
@@ -599,20 +621,32 @@
 				container.style.display = 'block';
 			}
 
-			const existingInputs = container.querySelectorAll('.extra-topping-item').length;
+			const existingItems = container.querySelectorAll('.extra-topping-item').length;
 
 			const wrapper = document.createElement('div');
 			wrapper.className = 'extra-topping-item d-flex align-items-center mb-2';
 
-			const input = document.createElement('input');
-			input.type = 'text';
-			input.name = `menus[${menuIndex}].extraToppings[${existingInputs}]`;
-			input.className = 'form-control form-control-sm';
-			input.placeholder = '추가 토핑 (예: 매운 멘마)';
+			// 추가 토핑 이름 input
+			const inputName = document.createElement('input');
+			inputName.type = 'text';
+			inputName.name = `menus[${menuIndex}].extraToppings[${existingItems}].name`;
+			inputName.className = 'form-control form-control-sm';
+			inputName.placeholder = '추가 토핑 (예: 매운 멘마)';
+			inputName.lang = 'ko';
 
+			// 추가 토핑 가격 input
+			const inputPrice = document.createElement('input');
+			inputPrice.type = 'number';
+			inputPrice.name = `menus[${menuIndex}].extraToppings[${existingItems}].price`;
+			inputPrice.className = 'form-control form-control-sm';
+			inputPrice.placeholder = '가격';
+			inputPrice.min = 0;
+			inputPrice.step = 100;
+
+			// 삭제 버튼
 			const btn = document.createElement('button');
 			btn.type = 'button';
-			btn.className = 'btn btn-sm btn-outline-danger ms-2';
+			btn.className = 'btn btn-sm btn-outline-danger';
 			btn.textContent = '삭제';
 			btn.onclick = () => {
 				container.removeChild(wrapper);
@@ -621,7 +655,8 @@
 				}
 			};
 
-			wrapper.appendChild(input);
+			wrapper.appendChild(inputName);
+			wrapper.appendChild(inputPrice);
 			wrapper.appendChild(btn);
 			container.appendChild(wrapper);
 		}
@@ -671,6 +706,47 @@
 
 			setupExtraToppingButtons();
 		}
+
+		/* ========== 메뉴 추가 버튼 클릭 시 ========== */
+
+		addButton.addEventListener('click', () => {
+			const clone = template.cloneNode(true);
+
+			// 메뉴 폼 초기화
+			clone.querySelectorAll('input, textarea').forEach(input => {
+				if (input.type === 'file') {
+					input.value = null;
+				} else {
+					input.value = '';
+				}
+			});
+
+			clone.querySelectorAll('select').forEach(select => {
+				select.selectedIndex = 0;
+			});
+
+			// 이미지 미리보기 초기화
+			const preview = clone.querySelector('.menu-preview-image');
+			const uploadText = clone.querySelector('.menu-image-upload p');
+			if (preview && uploadText) {
+				preview.src = '';
+				preview.style.display = 'none';
+				uploadText.style.display = 'block';
+			}
+
+			// 토핑 초기화
+			clone.querySelectorAll('.topping-tag.selected').forEach(tag => tag.classList.remove('selected'));
+			const toppingContainer = clone.querySelector('.default-toppings-container');
+			if (toppingContainer) toppingContainer.innerHTML = '';
+
+			menuList.appendChild(clone);
+
+			// 인덱스 재정렬 & 각종 이벤트 재설정
+			updateMenuIndices();
+			setupToppingTags();
+			setupExtraToppingButtons();
+			setupMenuImageUpload(clone);
+		});
 
 		/* ========== 메뉴 삭제 버튼 클릭 시 ========== */
 		function updateRemoveMenuButtons(context = document) {
@@ -773,6 +849,8 @@
 			});
 		}
 
+
+
 		/* ========== 초기 실행 ========== */
 		updateRemoveMenuButtons();
 		setupToppingTags();
@@ -873,29 +951,6 @@
 		}
 
 		document.addEventListener("DOMContentLoaded", renderOpeningSchedule);
-
-		// add-menu 버튼 클릭 이벤트
-		document.getElementById('add-menu').addEventListener('click', () => {
-			const menuList = document.getElementById('menu-items');
-			const template = document.querySelector('.menu-item');
-			const clone = template.cloneNode(true);
-
-			clone.querySelectorAll('input, select, textarea').forEach(input => {
-				if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
-				else input.value = '';
-			});
-
-			menuList.appendChild(clone);
-
-			updateMenuIndices();
-
-			const newMenu = menuList.lastElementChild;
-
-			setupToppingTags(newMenu);
-			setupExtraToppingButtons(newMenu);
-			setupMenuImageUpload(newMenu);
-			updateRemoveMenuButtons(newMenu);
-		});
 
 			document.addEventListener('DOMContentLoaded', () => {
 			const imageInputs = document.querySelectorAll('.menu-image-input');

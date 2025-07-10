@@ -35,6 +35,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import noodlezip.store.status.StoreErrorCode;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -63,8 +64,11 @@ public class StoreService {
 
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, MultipartFile storeMainImage, User user) {
-        log.info("==== [등록 요청 진입] ====");
-        log.info("대표 이미지: isNull? {}, isEmpty? {}", storeMainImage == null, storeMainImage != null && storeMainImage.isEmpty());
+
+        List<String> defaultToppingNames = toppingRepository.findAll().stream()
+                .filter(Topping::getIsActive)
+                .map(Topping::getToppingName)
+                .toList();
 
         String storeMainImageUrl = null;
 
@@ -73,7 +77,6 @@ public class StoreService {
             try {
                 Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", storeMainImage);
                 storeMainImageUrl = uploadResult.get("fileUrl");
-                log.info("파일 업로드 성공: {}", storeMainImageUrl);
             } catch (CustomException ce) {
                 throw ce;
             } catch (Exception e) {
@@ -82,8 +85,6 @@ public class StoreService {
         } else {
             throw new CustomException(ErrorStatus._FILE_REQUIRED);
         }
-
-        log.info("S3 업로드 완료. 저장된 URL: {}", storeMainImageUrl);
 
         // ② Store 엔티티 생성 및 저장
         Store store = Store.builder()
@@ -105,7 +106,6 @@ public class StoreService {
         store.setStoreLegalCode(dto.getStoreLegalCode() != null ? dto.getStoreLegalCode().longValue() : null);
 
         Store savedStore = storeRepository.save(store);
-        log.info("[Store 저장 완료] ID: {}", savedStore.getId());
 
         // ③ 영업시간 저장
         if (dto.getWeekSchedule() != null) {
@@ -134,6 +134,11 @@ public class StoreService {
         // ④ 메뉴 및 기본 토핑, 추가 토핑 저장
         if (dto.getMenus() != null) {
             for (MenuRequestDto m : dto.getMenus()) {
+                // 메뉴 이름 중복 체크 (해당 매장(store) 내에 중복 이름 있는지 검사)
+                boolean exists = menuRepository.existsByStoreIdAndMenuName(savedStore.getId(), m.getMenuName());
+                if (exists) {
+                    throw new CustomException(StoreErrorCode._DUPLICATE_MENU_NAME);
+                }
                 String menuImageUrl = null;
                 MultipartFile menuImageFile = m.getMenuImageFile();
 
@@ -142,7 +147,6 @@ public class StoreService {
                     try {
                         Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", menuImageFile);
                         menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
-                        log.info("파일 업로드 성공: {}", menuImageUrl);
                     } catch (CustomException ce) {
                         throw ce;
                     } catch (Exception e) {
@@ -192,21 +196,26 @@ public class StoreService {
                     for (String toppingName : m.getExtraToppings()) {
                         if (toppingName == null || toppingName.isBlank()) continue;
 
-                        // 기존 토핑 찾기
-                        Topping topping = toppingRepository.findByToppingName(toppingName)
-                                .orElseGet(() -> {
-                                    // 없으면 새로 생성
-                                    Topping newTopping = Topping.builder()
-                                            .toppingName(toppingName)
-                                            .isActive(true)
-                                            .build();
-                                    return toppingRepository.save(newTopping);
-                                });
+                        // 기본 토핑이면 예외 발생
+                        if (defaultToppingNames.contains(toppingName)) {
+                            throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
+                        }
 
-                        // Store-ExtraTopping 연결
+                        // 중복 방지: 기존 비활성화 토핑 재사용 or 새로 저장
+                        Topping topping = toppingRepository.findByToppingName(toppingName)
+                                .orElseGet(() -> toppingRepository.save(
+                                        Topping.builder()
+                                                .toppingName(toppingName)
+                                                .isActive(false)
+                                                .build()
+                                ));
+
+                        // StoreExtraTopping 저장
                         StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
                         storeExtraTopping.setStore(savedStore);
                         storeExtraTopping.setTopping(topping);
+                        // 가격 정보가 없으면 기본 0 또는 적절히 처리
+                        storeExtraTopping.setPrice(0);
                         storeExtraToppingRepository.save(storeExtraTopping);
                     }
                 }
