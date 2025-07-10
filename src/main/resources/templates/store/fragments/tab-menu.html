@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="menu-tab">
+    <!-- 태그 필터 (태그 스타일 적용) -->
+    <div id="menu-tag-filters" class="filter-bar" style="padding: 20px; background-color: #f8f8f8; border-radius: 5px; margin-bottom: 20px;">
+        <div class="tag-group">
+            <span class="filter-label">카테고리:</span>
+            <div class="tags"> <!-- blog-post.html의 태그 스타일 적용을 위해 div.tags 추가 -->
+                <a class="filter-tag active"
+                   th:each="c : ${menuDetail.categoryNames}"
+                   th:text="${c}" data-type="category"
+                   th:attr="data-value=${c}">Category</a>
+            </div>
+        </div>
+        <div class="tag-group">
+            <span class="filter-label">국물:</span>
+            <div class="tags"> <!-- blog-post.html의 태그 스타일 적용을 위해 div.tags 추가 -->
+                <a class="filter-tag active"
+                   th:each="s : ${menuDetail.soupNames}"
+                   th:text="${s}" data-type="soup"
+                   th:attr="data-value=${s}">Soup</a>
+            </div>
+        </div>
+        <div class="tag-group">
+            <span class="filter-label">토핑:</span>
+            <div class="tags"> <!-- blog-post.html의 태그 스타일 적용을 위해 div.tags 추가 -->
+                <a class="filter-tag active"
+                   th:each="t : ${menuDetail.toppingNames}"
+                   th:text="${t}" data-type="topping"
+                   th:attr="data-value=${t}">Topping</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메뉴 리스트 (리뷰 카드 스타일 + 블로그 태그 스타일 적용) -->
+    <div id="menu-list">
+        <div th:each="menu : ${menuDetail.menus}"
+             class="review_card"
+             th:attr="data-category=${menu.categoryName},
+                      data-soup=${menu.soupName},
+                      data-toppings=${#strings.arrayJoin(menu.toppingNames, ',')}">
+            <div class="row">
+                <div class="col-md-3">
+                    <figure>
+                        <a th:href="${menu.menuImageUrl != null ? menu.menuImageUrl : '/img/menu-thumb-1.jpg'}" 
+                           th:title="${menu.menuName}" 
+                           data-effect="mfp-zoom-in">
+                            <img th:src="${menu.menuImageUrl != null ? menu.menuImageUrl : '/img/menu-thumb-1.jpg'}"
+                                 th:alt="${menu.menuName}"
+                                 onerror="this.onerror=null;this.src='/img/menu-thumb-1.jpg';"
+                                 style="width: 100%; height: auto; border-radius: 5px; cursor: pointer;">
+                        </a>
+                    </figure>
+                </div>
+                <div class="col-md-9">
+                    <div class="review_content">
+                        <div class="clearfix add_bottom_15">
+                            <em th:text="${#numbers.formatInteger(menu.price, 3, 'COMMA')} + '원'">12,000원</em>
+                        </div>
+                        <h4 th:text="${menu.menuName}">메뉴 이름</h4>
+                        <p th:text="${menu.menuDescription}">메뉴 설명</p>
+                        <!-- blog-post.html의 태그 스타일 적용 -->
+                        <div class="widget tags">
+                            <a th:text="${menu.categoryName}" data-type="category" th:attr="data-value=${menu.categoryName}"></a>
+                            <a th:text="${menu.soupName}" data-type="soup" th:attr="data-value=${menu.soupName}"></a>
+                            <a th:each="t : ${menu.toppingNames}" th:text="${t}" data-type="topping" th:attr="data-value=${t}"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

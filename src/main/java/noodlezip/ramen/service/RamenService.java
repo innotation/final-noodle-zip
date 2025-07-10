@@ -6,7 +6,10 @@ import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
 import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.CategoryRepository;
+import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ToppingRepository;
+import noodlezip.store.dto.MenuDetailDto;
+import noodlezip.store.dto.ReviewSummaryDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,7 @@ public class RamenService {
 
     private final ToppingRepository toppingRepository;
     private final CategoryRepository categoryRepository;
+    private final RamenReviewRepository ramenReviewRepository;
 
     // 전체 토핑 목록 조회
     public List<ToppingResponseDto> getAllToppings() {
@@ -34,4 +38,38 @@ public class RamenService {
                 .map(c -> new CategoryResponseDto(c.getId(), c.getCategoryName()))
                 .collect(Collectors.toList());
     }
+
+    // 현재 매장의 메뉴가 포함한 카테고리 조회
+    public List<String> extractUniqueCategories(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .map(MenuDetailDto::getCategoryName)
+                .distinct()
+                .toList();
+    }
+
+    // 현재 매장의 메뉴가 포함한 육수 조회
+    public List<String> extractUniqueSoups(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .map(MenuDetailDto::getSoupName)
+                .distinct()
+                .toList();
+    }
+
+    // 현재 매장의 메뉴가 포함한 토핑 조회
+    public List<String> extractUniqueToppings(List<MenuDetailDto> menus) {
+        return menus.stream()
+                .flatMap(menu -> menu.getToppingNames().stream())
+                .distinct()
+                .toList();
+    }
+
+    public ReviewSummaryDto getSummaryByStoreId(Long storeId) {
+        return ramenReviewRepository.getSummaryByStoreId(storeId);
+    }
+
+    public ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName) {
+        return ramenReviewRepository.getSummaryByStoreIdAndMenuName(storeId, menuName);
+    }
+
 }
+
