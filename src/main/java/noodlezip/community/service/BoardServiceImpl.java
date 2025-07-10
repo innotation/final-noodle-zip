@@ -16,6 +16,9 @@ import noodlezip.common.util.PageUtil;
 import noodlezip.community.repository.LikeRepository;
 import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Safelist;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -78,7 +81,15 @@ public class BoardServiceImpl implements BoardService {
             isLike = likeRepository.existsById(BoardUserId.builder().userId(Long.parseLong(infoAndIdOrIp[1])).communityId(id).build());
         }
 
-        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id);
+        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id).orElseThrow( () -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+        String sanitizedContentHtml = boardRespDto.getContent();
+
+        Document doc = Jsoup.parse(boardRespDto.getContent());
+
+        sanitizedContentHtml = Jsoup.clean(doc.body().html(), Safelist.relaxed());
+
+        boardRespDto.setContent(sanitizedContentHtml);
 
         if (boardRespDto == null) {
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
