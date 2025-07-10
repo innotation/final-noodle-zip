@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.util.PageUtil;
+import noodlezip.savedstore.dto.request.AddCategoryRequest;
 import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
 import noodlezip.savedstore.util.SavedStorePagePolicy;
 import noodlezip.savedstore.dto.request.SaveStoreRequest;
@@ -55,26 +56,28 @@ public class SavedStoreServiceImpl implements SavedStoreService {
             return categoryList;
         }
 
-        Optional<SavedStore> savedStore = saveStoreRepository.findByUserIdAndStoreId(userId, storeId);
-        if (savedStore.isPresent()) {
-            SavedStore oldSavedStore = savedStore.get();
-            checkCategorySavedStore(oldSavedStore, categoryList);
+        // 여러 저장된 매장들을 가져와서 각각의 카테고리를 체크
+        List<SavedStore> savedStores = saveStoreRepository.findAllByUserIdAndStoreId(userId, storeId);
+        if (!savedStores.isEmpty()) {
+            checkCategorySavedStoreMultiple(savedStores, categoryList);
         } else {
             categoryList.get(0).setActive(true);
         }
         return categoryList;
     }
 
-    private void checkCategorySavedStore(SavedStore oldSavedStore,
+    private void checkCategorySavedStoreMultiple(List<SavedStore> savedStores,
                                          List<SavedStoreCategoryResponse> categoryList
     ) {
-        SavedStoreCategory oldCategory = oldSavedStore.getSaveStoreCategory();
-        Long oldCategoryId = oldCategory.getId();
+        for (SavedStore savedStore : savedStores) {
+            SavedStoreCategory savedCategory = savedStore.getSaveStoreCategory();
+            Long savedCategoryId = savedCategory.getId();
 
-        for (SavedStoreCategoryResponse category : categoryList) {
-            boolean isSameCategory = category.getCategoryId().equals(oldCategoryId);
-            if (isSameCategory) {
-                category.setActive(true);
+            for (SavedStoreCategoryResponse category : categoryList) {
+                boolean isSameCategory = category.getCategoryId().equals(savedCategoryId);
+                if (isSameCategory) {
+                    category.setActive(true);
+                }
             }
         }
     }
@@ -84,19 +87,33 @@ public class SavedStoreServiceImpl implements SavedStoreService {
     @Override
     @Transactional
     public void saveSavedStore(Long userId, Long storeId, SaveStoreRequest saveStoreRequest) {
-        Long categoryId = saveStoreRequest.getSaveStoreCategoryId();
-        String newCategoryName = saveStoreRequest.getNewSavedStoreCategoryName();
+        List<Long> categoryIds = saveStoreRequest.getSaveStoreCategoryIds();
+        List<String> newCategoryNames = saveStoreRequest.getNewSavedStoreCategoryNames();
         String memo = saveStoreRequest.getMemo();
         User user = entityManager.getReference(User.class, userId);
-        SavedStoreCategory saveStoreCategory = getSavedCategory(user, categoryId, newCategoryName);
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_SAVED_STORE));
 
-        Optional<SavedStore> savedStore = saveStoreRepository.findByUserIdAndStoreId(userId, storeId);
-        if (savedStore.isPresent()) {
-            SavedStore oldSavedStore = savedStore.get();
-            updateExistingSavedStore(oldSavedStore, saveStoreCategory, memo);
-            return;
+        // 기존 저장된 매장들 삭제
+        saveStoreRepository.deleteByUserIdAndStoreId(userId, storeId);
+
+        // 기존 카테고리들에 저장
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            for (Long categoryId : categoryIds) {
+                SavedStoreCategory category = entityManager.getReference(SavedStoreCategory.class, categoryId);
+                createNewSavedStore(user, storeId, category, memo);
+            }
         }
-        createNewSavedStore(user, storeId, saveStoreCategory, memo);
+
+        // 새 카테고리들 생성 후 저장
+        if (newCategoryNames != null && !newCategoryNames.isEmpty()) {
+            for (String newCategoryName : newCategoryNames) {
+                if (newCategoryName != null && !newCategoryName.trim().isEmpty()) {
+                    SavedStoreCategory newCategory = createNewCategory(user, newCategoryName.trim());
+                    createNewSavedStore(user, storeId, newCategory, memo);
+                }
+            }
+        }
     }
 
     private void updateExistingSavedStore(SavedStore oldSavedStore, SavedStoreCategory category, String memo) {
@@ -170,7 +187,6 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         return saveStoreCategoryRepository.findUserSavedCategoryList(userId);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public SavedStoreListWithPageInfoResponse getSavedStoreListWithPaging(Long userId,
@@ -187,6 +203,19 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         response.setSavedStoreList(storePage.getContent());
 
         return response;
+    }
+
+    @Override
+    @Transactional
+    public void addSavedStoreCategory(Long userId, AddCategoryRequest addCategoryRequest) {
+        User user = entityManager.getReference(User.class, userId);
+        SavedStoreCategory newCategory = SavedStoreCategory.builder()
+                .user(user)
+                .categoryName(addCategoryRequest.getCategoryName())
+                .isPublic(addCategoryRequest.isPublic())
+                .categoryOrder(0)
+                .build();
+        saveStoreCategoryRepository.save(newCategory);
     }
 
 }

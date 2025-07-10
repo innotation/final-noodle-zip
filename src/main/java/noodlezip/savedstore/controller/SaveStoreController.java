@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import noodlezip.savedstore.dto.request.AddCategoryRequest;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,6 +35,16 @@ public class SaveStoreController {
     ) {
         User user = myUserDetails.getUser();
         return saveStoreService.getUserSaveCategoryList(user.getId(), storeId);
+    }
+
+    /// 위시리스트 버튼 활성화 여부 확인
+    @GetMapping(value = "/{storeId}/saved-store/check", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public boolean checkSavedStore(@AuthenticationPrincipal MyUserDetails myUserDetails,
+                                   @PathVariable Long storeId
+    ) {
+        User user = myUserDetails.getUser();
+        return saveStoreService.isSavedStore(user.getId(), storeId);
     }
 
 
@@ -59,4 +70,13 @@ public class SaveStoreController {
         saveStoreService.deleteSavedStore(user.getId(), storeId);
     }
 
+    /// 새 카테고리 추가 (위시리스트 모달에서 사용)
+    @PostMapping(value = "/{storeId}/saved-store/add-category", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void addSavedStoreCategory(@AuthenticationPrincipal MyUserDetails myUserDetails,
+                                      @PathVariable Long storeId,
+                                      @RequestBody AddCategoryRequest addCategoryRequest) {
+        User user = myUserDetails.getUser();
+        saveStoreService.addSavedStoreCategory(user.getId(), addCategoryRequest);
+    }
 }
