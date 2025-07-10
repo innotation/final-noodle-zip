@@ -44,7 +44,7 @@ public class SecurityConfig {
                                  "/store/**",
                                  "/admin_section/**",
                                  "/admin/**",
-                                 "/receipt"
+                                 "/receipt/**"
                                   ).permitAll()
 //                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
