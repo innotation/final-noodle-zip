@@ -21,14 +21,12 @@ import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.dto.LikeResponseDto;
-import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.status.BoardSuccessStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -88,7 +86,6 @@ public class BoardController {
             @Validated(ValidationGroups.OnCreate.class) @ModelAttribute BoardReqDto boardReqDto,
             BindingResult bindingResult) {
 
-        // 1. 사용자 인증 확인
         if (user == null || user.getUser() == null) {
             log.warn("비로그인 사용자가 게시글 등록 시도.");
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
@@ -124,7 +121,8 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String boardList(
-            @PathVariable(value = "category", required = false) Optional<String> categoryOptional,
+            @RequestParam(value = "category", required = false) String queryCommunityType,
+            @RequestParam(value = "search", required = false) String searchKeyword,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
@@ -132,36 +130,31 @@ public class BoardController {
 
         String category = null;
 
-        try {
-            Map<String, Object> map;
-            if (categoryOptional.isPresent() && !categoryOptional.get().isEmpty()) {
-                category = categoryOptional.get();
-                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category);
-                map = boardService.findBoardListByCategory(category, pageable);
-            } else {
-                // 전체 게시글 목록 조회
-                log.info("전체 게시글 목록 조회 요청");
-                map = boardService.findBoardList(pageable);
-            }
 
-            model.addAttribute("category", category);
-            model.addAttribute("board", map.get("list"));
-            model.addAttribute("page", map.get("page"));
-            model.addAttribute("beginPage", map.get("beginPage"));
-            model.addAttribute("endPage", map.get("endPage"));
-            model.addAttribute("isFirst", map.get("isFirst"));
-            model.addAttribute("isLast", map.get("isLast"));
+        boolean hasSearchKeyword = searchKeyword != null && !searchKeyword.trim().isEmpty();
 
-            return "/board/list"; // HTML 템플릿 경로 반환
-        } catch (CustomException e) {
-            log.error("게시글 목록 조회 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", e.getMessage());
-            return "/error/general-error"; // 오류 발생 시 보여줄 HTML 템플릿 (적절히 변경 필요)
-        } catch (Exception e) {
-            log.error("게시글 목록 조회 중 예상치 못한 서버 오류 발생: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", "게시글 목록을 불러오는 중 예상치 못한 오류가 발생했습니다.");
-            return "/error/general-error"; // 오류 발생 시 보여줄 HTML 템플릿
+        boolean hasCommunityType = queryCommunityType != null && !queryCommunityType.trim().isEmpty();
+
+        Map<String, Object> map;
+        if (hasCommunityType && hasSearchKeyword) {
+            map = boardService.searchBoardsByCommunityTypeAndKeyword(queryCommunityType, searchKeyword, pageable);
+        } else if (hasCommunityType) {
+            map = boardService.findBoardListByCategory(category, pageable);
+        } else if (hasSearchKeyword) {
+            map = boardService.searchBoards(searchKeyword, pageable);
+        } else {
+            map = boardService.findBoardList(pageable);
         }
+
+        model.addAttribute("category", category);
+        model.addAttribute("board", map.get("list"));
+        model.addAttribute("page", map.get("page"));
+        model.addAttribute("beginPage", map.get("beginPage"));
+        model.addAttribute("endPage", map.get("endPage"));
+        model.addAttribute("isFirst", map.get("isFirst"));
+        model.addAttribute("isLast", map.get("isLast"));
+
+        return "/board/list";
     }
 
     @GetMapping("/detail/{id}")
@@ -170,7 +163,7 @@ public class BoardController {
             @Parameter(name = "id", description = "조회할 게시글의 ID", required = true, example = "1"),
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
-    public String getBoardDetail (
+    public String getBoardDetail(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal MyUserDetails user,
             HttpServletRequest request,

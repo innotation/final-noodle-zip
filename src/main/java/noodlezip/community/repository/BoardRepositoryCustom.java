@@ -11,4 +11,6 @@ public interface BoardRepositoryCustom {
     Page<BoardRespDto> findBoardWithPagination(Pageable pageable);
     Page<BoardRespDto> findBoardWithPaginationAndCommunityType(String category, Pageable pageable);
     Long increaseViewCount(Long boardId, Long viewCount);
+    Page<BoardRespDto> findBoardWithPaginationAndCommunityTypeAndKeyword(String category, String keyword, Pageable pageable);
+    Page<BoardRespDto> findBoardWithPaginationAndKeyword(String keyword, Pageable pageable);
 }
