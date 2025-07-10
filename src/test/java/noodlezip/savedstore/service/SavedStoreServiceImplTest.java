@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,11 +55,10 @@ class SavedStoreServiceImplTest {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
                 .memo("첫 방문")
-                .newSavedStoreCategoryName("데이트")
                 .build();
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(saveStoreRepository.findByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
         when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
         SavedStoreCategory newCategory = SavedStoreCategory.builder().id(101L).user(user).categoryName("데이트").build();
@@ -77,8 +77,7 @@ class SavedStoreServiceImplTest {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
                 .memo("재방문")
-                .newSavedStoreCategoryName(null)
-                .saveStoreCategoryId(100L)
+                .saveStoreCategoryIds(List.of(100L))
                 .build();
 
         SavedStore existingSavedStore = SavedStore.builder()
@@ -92,7 +91,7 @@ class SavedStoreServiceImplTest {
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
         when(entityManager.getReference(SavedStoreCategory.class, 100L)).thenReturn(category);
-        when(saveStoreRepository.findByUserIdAndStoreId(user.getId(), store.getId()))
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId()))
                 .thenReturn(Optional.of(existingSavedStore));
 
         // when
@@ -110,12 +109,11 @@ class SavedStoreServiceImplTest {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
                 .memo("처음 저장")
-                .saveStoreCategoryId(null)
-                .newSavedStoreCategoryName("데이트")
+                .saveStoreCategoryIds(List.of(100L))
                 .build();
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(saveStoreRepository.findByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
         when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
         SavedStoreCategory newCategory = SavedStoreCategory.builder().id(101L).user(user).categoryName("데이트").build();
@@ -134,13 +132,12 @@ class SavedStoreServiceImplTest {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
                 .memo("처음 저장")
-                .saveStoreCategoryId(100L)
-                .newSavedStoreCategoryName(null)
+                .saveStoreCategoryIds(List.of(100L))
                 .build();
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
         when(entityManager.getReference(SavedStoreCategory.class, 100L)).thenReturn(category);
-        when(saveStoreRepository.findByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
         when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
         // when
@@ -156,8 +153,7 @@ class SavedStoreServiceImplTest {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
                 .memo("수정된 메모")
-                .saveStoreCategoryId(100L)
-                .newSavedStoreCategoryName(null)
+                .saveStoreCategoryIds(List.of(100L))
                 .build();
 
         SavedStore existingSavedStore = SavedStore.builder()
@@ -171,7 +167,7 @@ class SavedStoreServiceImplTest {
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
         when(entityManager.getReference(SavedStoreCategory.class, 100L)).thenReturn(category);
-        when(saveStoreRepository.findByUserIdAndStoreId(user.getId(), store.getId()))
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId()))
                 .thenReturn(Optional.of(existingSavedStore));
 
         // when
@@ -188,12 +184,11 @@ class SavedStoreServiceImplTest {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
                 .memo("메모")
-                .saveStoreCategoryId(null)
-                .newSavedStoreCategoryName("   데이트   ")
+                .saveStoreCategoryIds(List.of(100L))
                 .build();
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(saveStoreRepository.findByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
         when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
         // when
