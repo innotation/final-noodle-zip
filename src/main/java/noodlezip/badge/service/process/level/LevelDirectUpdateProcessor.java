@@ -7,7 +7,7 @@ import noodlezip.badge.constants.PostStatusType;
 import noodlezip.badge.entity.Badge;
 import noodlezip.badge.entity.BadgeCategory;
 import noodlezip.badge.entity.UserBadge;
-import noodlezip.badge.exception.BadgeErrorStatus;
+import noodlezip.badge.status.BadgeErrorStatus;
 import noodlezip.badge.repository.BadgeCategoryRepository;
 import noodlezip.badge.repository.BadgeRepository;
 import noodlezip.badge.repository.UserBadgeRepository;

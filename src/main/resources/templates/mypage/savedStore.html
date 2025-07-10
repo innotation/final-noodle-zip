@@ -33,6 +33,7 @@
 
             <div class="collapse" id="collapseMap">
                 <div id="map" class="map"></div>
+                </div>
             </div>
             <!-- /Map -->
 
@@ -42,7 +43,7 @@
                     <aside class="col-lg-3" id="sidebar_fixed">
                         <div class="clearfix">
                             <a class="btn_map d-flex align-items-center justify-content-center" data-bs-toggle="collapse" href="#collapseMap" aria-expanded="false" aria-controls="collapseMap">
-                                <span class="btn_map_txt" data-text-swap="Hide Map" data-text-original="View on Map">지도 보기</span>
+                                <span class="btn_map_txt" data-text-swap="지도 보기" data-text-original="지도 숨기기">지도 보기</span>
                             </a>
                             <a class="btn_map mobile btn_filters" data-bs-toggle="collapse" href="#collapseMap">
                                 <i class="icon_pin_alt"></i>
@@ -130,7 +131,8 @@
                                     <figure>
                                         <img src="/img/lazy-placeholder.png"
                                              th:attr="data-src=${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
-                                        <a th:href="@{'/store/' + ${store.storeId}}" class="strip_info">
+                                        <a th:href="@{'/store/detail/' + ${store.storeId}}" class="strip_info">
+                                            <small th:text="${store.saveStoreCategoryName}"></small>
                                             <div class="item_title">
                                                 <h3 th:text="${store.storeName}">가게명</h3>
                                                 <small th:text="${store.address}">주소</small>
@@ -340,5 +342,12 @@
         <script src="/js/saved-store-search.js"></script>
         <script src="/js/saved-store-category-update.js"></script>
         <!-- Map -->
+        <script type="text/javascript"
+                th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='
+					+ ${@environment.getProperty('naver.maps.client.id')}
+					+ '&submodules=geocoder,markerclusterer'}">
+        </script>
+        <script src="/js/saved-store-map.js"></script>
+
     </body>
 </html>

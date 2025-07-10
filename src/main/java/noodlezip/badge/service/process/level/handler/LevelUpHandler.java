@@ -6,7 +6,6 @@ import noodlezip.badge.constants.BadgeStrategyType;
 import noodlezip.badge.constants.PostStatusType;
 import noodlezip.badge.entity.Badge;
 import noodlezip.badge.entity.UserBadge;
-import noodlezip.badge.repository.BadgeRepository;
 import noodlezip.badge.repository.UserBadgeRepository;
 import org.springframework.stereotype.Component;
 

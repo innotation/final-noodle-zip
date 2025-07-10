@@ -16,7 +16,6 @@ import noodlezip.store.repository.StoreWeekScheduleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
@@ -85,7 +84,7 @@ class StoreServiceTest {
         given(ramenToppingRepository.findToppingNamesByStoreGroupedByMenuId(storeId)).willReturn(toppingMap);
 
         // when
-        List<MenuDetailDto> result = storeService.getMenus(storeId);
+        List<MenuDetailDto> result = storeService.getMenuDetail(storeId);
 
         // then
         assertThat(result).hasSize(1);

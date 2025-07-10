@@ -1,8 +1,10 @@
 package noodlezip.mypage.controller;
 
 import noodlezip.common.auth.MyUserDetails;
-import noodlezip.mypage.util.MyPageUrlPolicy;
-import noodlezip.mypage.util.UserAccessInfo;
+import noodlezip.common.exception.CustomException;
+import noodlezip.mypage.constant.MyPageUrlPolicy;
+import noodlezip.mypage.dto.UserAccessInfo;
+import noodlezip.mypage.exception.MyPageErrorStatus;
 import noodlezip.user.entity.User;
 
 public abstract class MyBaseController {
@@ -13,7 +15,11 @@ public abstract class MyBaseController {
         if (userId == null || MyPageUrlPolicy.MY_PAGE_KEY.equals(userId)) {
             return new UserAccessInfo(user.getId(), true);
         } else {
-            return new UserAccessInfo(Long.valueOf(userId), false);
+            try {
+                return new UserAccessInfo(Long.valueOf(userId), false);
+            } catch (NumberFormatException e) {
+                throw new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE);
+            }
         }
     }
 

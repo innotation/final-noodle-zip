@@ -1,8 +1,21 @@
-function fetchAndRender(page) {
+let collapseMap;
+let lastSearchedCategories = []; // 마지막 검색 시점의 카테고리 상태 저장
+let isSearchPerformed = true; // 검색이 실행되었는지 확인
+
+function fetchAndRender(page, useLastSearchedCategories = false) {
   const path = document.body.getAttribute('data-path');
 
-  const selectedCategories = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
-    .map(cb => cb.value);
+  let selectedCategories;
+
+  if (useLastSearchedCategories && isSearchPerformed) {
+    // 페이지네이션 시에는 마지막 검색 카테고리 사용
+    selectedCategories = lastSearchedCategories;
+  } else {
+    // 검색 시에는 현재 체크박스 상태 사용
+    selectedCategories = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
+      .map(cb => cb.value);
+  }
+
   const isAllCategory = selectedCategories.length === 0;
 
   const params = new URLSearchParams();
@@ -34,17 +47,14 @@ function renderStoreList(storeList) {
   container.innerHTML = '';
 
   storeList.forEach(store => {
-    const memo = store.memo.length > 20
-      ? store.memo.substring(0, 20) + "..."
-      : store.memo;
-
     const div = document.createElement('div');
     div.className = "col-xl-4 col-lg-6 col-md-6 col-sm-6";
     div.innerHTML = `
                       <div class="strip">
                           <figure>
                               <img src="img/lazy-placeholder.png" data-src="${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
-                              <a href="/store/${store.storeId}" class="strip_info">
+                              <a href="/store/detail/${store.storeId}" class="strip_info">
+                                  <small>${store.saveStoreCategoryName}</small>
                                   <div class="item_title">
                                       <h3>${store.storeName}</h3>
                                       <small>${store.address}</small>
@@ -53,7 +63,7 @@ function renderStoreList(storeList) {
                           </figure>
                           <ul>
                                <li>
-                                  <span class="memo-tooltip" title="${store.memo}">${memo}</span>
+                                  <span class="memo-tooltip" title="${store.memo}">${store.memo}</span>
                               </li>
                               <li>
                                   <div class="score"></div>
@@ -99,17 +109,36 @@ function bindPagination() {
   document.querySelectorAll('.pagination_fg a[data-page]').forEach(function (pageBtn) {
     pageBtn.addEventListener("click", function (evt) {
       evt.preventDefault();
+
+      // 검색이 한 번도 실행되지 않았다면 페이지네이션 실행하지 않음
+      if (!isSearchPerformed) {
+        alert("먼저 검색을 실행해주세요.");
+        return;
+      }
+
       const page = parseInt(this.getAttribute('data-page'));
-      fetchAndRender(page);
+      fetchAndRender(page, true); // 페이지네이션 시에는 true 전달
     });
   });
 }
 
 // 페이지 로드 후 최초 동작
 document.addEventListener("DOMContentLoaded", function () {
+  collapseMap = new bootstrap.Collapse(document.getElementById('collapseMap'), {
+    toggle: false
+  });
+
   document.querySelector("#search").addEventListener("click", function (evt) {
     evt.preventDefault();
-    fetchAndRender(1);
+
+    // 검색 시점의 카테고리 상태 저장 (빈 배열이어도 전체조회로 처리)
+    lastSearchedCategories = Array.from(document.querySelectorAll('input[type=checkbox]:checked'))
+      .map(cb => cb.value);
+
+    isSearchPerformed = true; // 검색 실행 플래그 설정
+
+    fetchAndRender(1, false); // 검색 시에는 false 전달
+    collapseMap.hide();
   });
 
   bindPagination();

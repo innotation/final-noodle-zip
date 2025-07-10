@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.savedstore.status.SavedStoreErrorStatus;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,11 +18,7 @@ public class SaveStoreRequest {
     @NotNull(message = SavedStoreErrorStatus._DTO_FAIL_SAVED_STORE)
     private Long storeId;
 
-    @NotNull(message = SavedStoreErrorStatus._DTO_FAIL_SAVED_STORE)
-    private Long saveStoreCategoryId;
-
-    @Size(max = 30, message = SavedStoreErrorStatus._DTO_INVALID_SAVED_STORE_CATEGORY_NAME)
-    private String newSavedStoreCategoryName;
+    private List<Long> saveStoreCategoryIds;
 
     @Size(max = 300, message = SavedStoreErrorStatus._DTO_INVALID_SAVED_STORE_CATEGORY_MEMO)
     private String memo;
