@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -156,5 +157,10 @@ public class BoardServiceImpl implements BoardService {
         return boardRepository.findById(boardId)
                 .map(Board::getLikesCount)
                 .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+    }
+
+    @Override
+    public List<Board> getBoardsByIds(List<Long> recentBoardIds) {
+        return boardRepository.findAllById(recentBoardIds);
     }
 }

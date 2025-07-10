@@ -9,16 +9,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.CookieUtil;
 import noodlezip.common.util.RequestParserUtil;
 import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.dto.LikeResponseDto;
+import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.status.BoardSuccessStatus;
@@ -37,6 +40,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,6 +54,9 @@ public class BoardController {
 
     private final BoardService boardService;
     private final RequestParserUtil requestParserUtil;
+
+    private static final String RECENT_VIEWED_BOARDS = "recentViewedBoards";
+    private static final int MAX_RECENT_BOARDS = 3;
 
     @GetMapping("/review")
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
@@ -195,10 +202,11 @@ public class BoardController {
                     schema = @Schema(type = "integer", format = "int64")),
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
-    public String board(
+    public String getBoardDetail (
             @PathVariable("id") Long id,
             @AuthenticationPrincipal MyUserDetails user,
             HttpServletRequest request,
+            HttpServletResponse response,
             Model model) {
 
         if (id == null || id <= 0) {
@@ -219,6 +227,7 @@ public class BoardController {
             log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
         }
+        CookieUtil.updateRecentViewedItemsCookie(id, RECENT_VIEWED_BOARDS, MAX_RECENT_BOARDS, request, response);
         model.addAttribute("board", board);
         return "/board/detail";
     }
@@ -281,5 +290,12 @@ public class BoardController {
         LikeResponseDto response = LikeResponseDto.builder().isLiked(isLiked).totalLikes(totalLikes).build();
 
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_LIKED_CHANGED, response);
+    }
+
+    @GetMapping("/recent")
+    @ResponseBody
+    public ResponseEntity<?> getRecentViewedBoards(HttpServletRequest request) {
+        List<Long> recentBoardIds = CookieUtil.getRecentViewedItemIds(request, RECENT_VIEWED_BOARDS);
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, boardService.getBoardsByIds(recentBoardIds));
     }
 }
