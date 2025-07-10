@@ -9,6 +9,7 @@ import noodlezip.ramen.entity.RamenSoup;
 import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.CategoryRepository;
 import noodlezip.ramen.repository.RamenReviewRepository;
+import noodlezip.ramen.repository.RamenSoupRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.store.dto.MenuDetailDto;
 import noodlezip.store.dto.ReviewSummaryDto;
@@ -24,6 +25,7 @@ public class RamenService {
     private final ToppingRepository toppingRepository;
     private final CategoryRepository categoryRepository;
     private final RamenReviewRepository ramenReviewRepository;
+    private final RamenSoupRepository ramenSoupRepository;
 
     // 전체 토핑 목록 조회
     public List<ToppingResponseDto> getAllToppings() {

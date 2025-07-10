@@ -45,8 +45,8 @@ public class SecurityConfig {
                                  "/admin_section/**",
                                  "/admin/**",
                                  "/receipt",
-                            "/location/**",
-                            "/ramen/**"
+                                 "/location/**",
+                                 "/ramen/**"
                                   ).permitAll()
 //                    .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
