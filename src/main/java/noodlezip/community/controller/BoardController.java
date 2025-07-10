@@ -97,11 +97,10 @@ public class BoardController {
             @Parameter(name = "boardImage", description = "게시글에 첨부할 이미지 파일 (선택 사항)", required = false,
                     content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
     })
-    public String regist(
+    public String registBoard(
             @AuthenticationPrincipal MyUserDetails user,
             @Validated(ValidationGroups.OnCreate.class) @ModelAttribute BoardReqDto boardReqDto,
-            BindingResult bindingResult,
-            @RequestParam(value = "boardImage", required = false) MultipartFile boardImage) {
+            BindingResult bindingResult) {
 
         // 1. 사용자 인증 확인
         if (user == null || user.getUser() == null) {
@@ -118,7 +117,7 @@ public class BoardController {
         }
 
         try {
-            boardService.registBoard(boardReqDto, user.getUser(), boardImage);
+            boardService.registBoard(boardReqDto, user.getUser());
             return "redirect:/board/list";
         } catch (CustomException e) {
             log.error("게시글 등록 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
@@ -144,7 +143,7 @@ public class BoardController {
             @Parameter(name = "sort", description = "정렬 기준 (예: id, createdAt). 기본값은 id,desc", example = "id,desc", hidden = true),
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
-    public String list(
+    public String boardList(
             @PathVariable(value = "category", required = false) Optional<String> categoryOptional,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
@@ -298,4 +297,11 @@ public class BoardController {
         List<Long> recentBoardIds = CookieUtil.getRecentViewedItemIds(request, RECENT_VIEWED_BOARDS);
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, boardService.getBoardsByIds(recentBoardIds));
     }
+
+    @PostMapping("/imageUpload")
+    @ResponseBody
+    public ResponseEntity<?> uploadImage(@RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED,boardService.uploadImages(uploadFiles));
+    }
+
 }

@@ -239,7 +239,7 @@ class BoardServiceImplTest {
         when(boardRepository.save(any(Board.class))).thenReturn(testBoard); // save 호출 시 testBoard 반환
 
         // When
-        boardService.registBoard(testBoardReqDto, testUser, mockImage);
+        boardService.registBoard(testBoardReqDto, testUser);
 
         // Then
         verify(boardRepository, times(1)).save(testBoard);
@@ -271,7 +271,7 @@ class BoardServiceImplTest {
         when(boardRepository.save(any(Board.class))).thenReturn(testBoard);
 
         // When
-        boardService.registBoard(testBoardReqDto, testUser, mockImage);
+        boardService.registBoard(testBoardReqDto, testUser);
 
         // Then
         verify(modelMapper, times(1)).map(testBoardReqDto, Board.class);

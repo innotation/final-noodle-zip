@@ -16,9 +16,10 @@ public interface BoardService {
     Map<String, Object> findBoardList(Pageable pageable);
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
     BoardRespDto findBoardById(Long id, String userIdOrIp);
-    void registBoard(BoardReqDto boardReqDto, User user, MultipartFile boardImage);
+    void registBoard(BoardReqDto boardReqDto, User user);
     void deleteBoard(Long boardId, Long userId);
     boolean toggleLike(BoardUserId boardUserId);
     Integer getLikeCount(Long boardId);
     List<Board> getBoardsByIds(List<Long> recentBoardIds);
+    List<Map<String, String>> uploadImages(List<MultipartFile> uploadFiles);
 }
