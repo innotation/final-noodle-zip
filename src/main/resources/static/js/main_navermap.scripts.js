@@ -182,6 +182,33 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.content-left').scrollTop = 0;
   };
 
+  // 맵에서 확인 함수 (전역 함수로 등록)
+  window.showMarkerOnMap = function(index) {
+    if (index >= 0 && index < markers.length) {
+      const marker = markers[index];
+      const infoWindow = infoWindows[index];
+      
+      // 지도를 해당 마커 위치로 이동
+      map.setCenter(marker.getPosition());
+      map.setZoom(16); // 상세 줌 레벨
+      
+      // 다른 인포윈도우들 닫기
+      infoWindows.forEach(iw => iw.close());
+      
+      // 해당 인포윈도우 열기
+      infoWindow.open(map, marker);
+      
+      // 부드러운 애니메이션을 위한 약간의 지연
+      setTimeout(() => {
+        // 마커에 깜빡임 효과 추가 (선택사항)
+        marker.setAnimation(naver.maps.Animation.BOUNCE);
+        setTimeout(() => {
+          marker.setAnimation(null);
+        }, 1000);
+      }, 300);
+    }
+  };
+
   // 필터 적용 함수
   function applyFilters() {
     const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
@@ -299,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
           </a>
         </figure>
         <ul>
-          <li><a href="#0" onclick="onHtmlClick('Marker', ${idx})" class="address">맵에서 확인</a></li>
+          <li><a href="#0" onclick="showMarkerOnMap(${idx})" class="address">맵에서 확인</a></li>
           <li><div class="score"><span>${phone}</span></div></li>
         </ul>
       </div>
