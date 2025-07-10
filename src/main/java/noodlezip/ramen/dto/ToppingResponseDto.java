@@ -8,4 +8,5 @@ import lombok.Getter;
 public class ToppingResponseDto {
     private Long id;
     private String name;
+    private Integer price;
 }

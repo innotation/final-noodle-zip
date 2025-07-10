@@ -2,9 +2,12 @@ package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import noodlezip.admin.dto.RegistListDto;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
+import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
@@ -22,17 +25,11 @@ import noodlezip.store.entity.Store;
 import noodlezip.store.entity.StoreWeekSchedule;
 import noodlezip.store.entity.StoreWeekScheduleId;
 import noodlezip.store.repository.MenuRepository;
+import noodlezip.store.repository.StoreExtraToppingRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.user.entity.User;
-import org.springframework.beans.factory.annotation.Value;
-import lombok.extern.slf4j.Slf4j;
-import noodlezip.admin.dto.RegistListDto;
-import noodlezip.common.util.PageUtil;
-import noodlezip.store.dto.*;
-import noodlezip.store.entity.*;
-import noodlezip.store.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -41,12 +38,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -68,6 +61,7 @@ public class StoreService {
     private final EntityManager em;
     private final RamenReviewRepository ramenReviewRepository;
     private final ReviewToppingRepository reviewToppingRepository;
+    private final StoreExtraToppingRepository storeExtraToppingRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, MultipartFile storeMainImage, User user) {
@@ -265,4 +259,22 @@ public class StoreService {
     }
 
 
+    public List<ToppingResponseDto> getStoreToppings(Long storeId) {
+        Store store = em.getReference(Store.class, storeId);
+        List<ToppingResponseDto> result = new ArrayList<>();
+        storeExtraToppingRepository.findStoreExtraToppingByStore(store)
+                .forEach(topping -> {
+                    try {
+                        result.add(new ToppingResponseDto(
+                                        topping.getId(),
+                                        topping.getTopping().getToppingName(),
+                                        topping.getPrice()
+                                )
+                        );
+                    } catch (NullPointerException e) {
+                        throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+                    }
+                });
+        return result;
+    }
 }
