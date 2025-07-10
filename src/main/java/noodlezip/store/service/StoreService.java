@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -96,7 +97,7 @@ public class StoreService {
                 .storeMainImageUrl(storeMainImageUrl)
                 .storeLat(dto.getStoreLat())
                 .storeLng(dto.getStoreLng())
-                .approvalStatus(dto.getApprovalStatus())
+                .approvalStatus(ApprovalStatus.WAITING)
                 .operationStatus(dto.getOperationStatus())
                 .userId(user.getId())
                 .build();
@@ -114,14 +115,18 @@ public class StoreService {
                         schedule.setId(id);
                         schedule.setIsClosedDay(s.getIsClosedDay());
                         if (Boolean.TRUE.equals(s.getIsClosedDay())) {
-                            schedule.setOpeningAt(null);
-                            schedule.setClosingAt(null);
+                            schedule.setOpeningAt(LocalTime.MIN); // 00:00
+                            schedule.setClosingAt(LocalTime.MIN); // 00:00
                         } else {
                             schedule.setOpeningAt(s.getOpeningAt());
                             schedule.setClosingAt(s.getClosingAt());
                         }
+
+                        schedule.setStoreId(savedStore);
+
                         return schedule;
                     }).collect(Collectors.toList());
+
             scheduleRepository.saveAll(schedules);
         }
 

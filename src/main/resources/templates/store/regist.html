@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="매장등록페이지">
     <meta name="author" content="Seoyeon">
-    <title>Foogra - Discover & Book the best restaurants at the best price</title>
+    <title>매장등록페이지</title>
 
     <!-- Favicons-->
     <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
@@ -45,8 +45,8 @@
 
 					<!-- ① 이미지 업로드 -->
 					<label for="image-input" id="image-upload-area" style="border: 2px dashed #ccc; padding: 40px 30px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
-						<p id="upload-text">Drop files here to upload</p>
-						<img id="preview-image" src="" style="max-width: 100%; display: none; margin-top: 10px;" />
+						<span id="upload-text">Drop files here to upload</span>
+						<img id="preview-image" src="" alt="업로드 미리보기 이미지" style="max-width: 100%; display: none; margin-top: 10px;" />
 					</label>
 
 					<input type="file" id="image-input" name="storeMainImage" accept="image/*"
@@ -57,8 +57,8 @@
 					<div class="row mb-3">
 						<div class="col-md-6 position-relative">
 							<!-- 가게명 -->
-							<input type="text" name="storeName" class="form-control mb-3" placeholder="가게명" required />
-							<!-- 전화번호 -->
+							<label for="storeName" class="form-label visually-hidden">가게명</label>
+							<input type="text" id="storeName" name="storeName" class="form-control mb-3" placeholder="가게명" required />
 							<!-- 전화번호 -->
 							<div class="form-group mb-0">
 								<label for="phonePrefix" style="font-weight: normal;">전화번호</label>
@@ -86,7 +86,10 @@
 									</select>
 
 									<!-- 나머지 번호 입력 -->
+									<label for="phonePrefixInput" class="visually-hidden">전화번호 직접입력</label>
 									<input type="text" id="phonePrefixInput" name="phonePrefixInput" class="form-control" placeholder="직접입력" style="max-width: 100px;" maxlength="4" />
+
+									<label for="phoneRest" class="visually-hidden">전화번호 뒷자리</label>
 									<input type="text" id="phoneRest" name="phoneRest" class="form-control" placeholder="1234-5678" maxlength="9" required />
 								</div>
 								<!-- 합친 전화번호를 form submit 시 hidden 필드로 만들기 -->
@@ -98,10 +101,12 @@
 							<!-- 주소 입력 영역 -->
 							<div class="address-group">
 								<!-- 도로명 주소 -->
+								<label for="address-api" class="visually-hidden">도로명 주소</label>
 								<input type="text" id="address-api" name="address" class="form-control" placeholder="도로명 주소" readonly />
 								<!-- 우편번호 (hidden) -->
 								<input type="hidden" id="zipcode" name="zipcode" />
 								<!-- 상세주소 -->
+								<label for="store_detail_input" class="visually-hidden">상세 주소 입력</label>
 								<input
 										type="text"
 										id="store_detail_input"
@@ -109,11 +114,9 @@
 										class="form-control mt-2"
 										placeholder="상세 주소 입력"
 										autocomplete="off"
-										autocorrect="off"
 										spellcheck="false"
 										inputmode="text"
 								/>
-
 								<!-- 숨김 필드: 위도, 경도, 법정코드 -->
 								<input type="hidden" id="storeLat" name="storeLat" />
 								<input type="hidden" id="storeLng" name="storeLng" />
@@ -126,6 +129,13 @@
 							</div>
 						</div>
 					</div>
+
+
+				<!-- 사업자등록번호 입력 -->
+				<div class="mb-3">
+					<label for="businessRegistrationNumber" class="form-label">사업자등록번호</label>
+					<input type="text" id="businessRegistrationNumber" name="businessRegistrationNumber" class="form-control" placeholder="사업자등록번호 입력" maxlength="10" pattern="\d{10}" title="숫자 10자리 입력" required />
+				</div>
 
 				<!-- ⑤ 요일별 영업시간 -->
 						<div class="box_general padding_bottom">
@@ -140,15 +150,16 @@
 
 						<!-- 지역카드 사용 가능 -->
 						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="localCard">
+							<input type="checkbox" class="form-check-input" id="localCard" name="isLocalCard">
 							<label class="form-check-label" for="localCard">지역카드 사용 가능</label>
 						</div>
 
 						<!-- 유아 동반 가능 -->
 						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="childAllowed">
+							<input type="checkbox" class="form-check-input" id="childAllowed" name="isChildAllowed">
 							<label class="form-check-label" for="childAllowed">유아 동반 가능</label>
 						</div>
+
 
 						<input type="hidden" name="isLocalCard" id="isLocalCardValue">
 						<input type="hidden" name="isChildAllowed" id="isChildAllowedValue">
@@ -214,8 +225,8 @@
 									<div class="col-md-4">
 										<div class="menu-image-upload" style="border: 2px dashed #ccc; padding: 30px 20px; text-align: center; cursor: pointer; height: 180px;">
 											<p style="margin-top: 10px;">Drop files here to upload</p>
-											<input type="file" name="menuImageFile" class="menu-image-input" />
-											<img class="menu-preview-image" src="" style="max-width: 100%; max-height: 120px; display: none; margin-top: 10px;" />
+											<input type="file" name="menus[0].menuImageFile" class="menu-image-input" />
+											<img class="menu-preview-image" src="" alt="메뉴 이미지 미리보기" style="max-width: 100%; max-height: 120px; display: none; margin-top: 10px;" />
 										</div>
 									</div>
 
@@ -223,22 +234,26 @@
 									<div class="col-md-8">
 										<div class="row">
 											<div class="col-md-4">
-												<input type="text" name="menus[0].menuName" class="form-control" placeholder="메뉴 이름" required />
+												<label for="menuName0" class="visually-hidden">메뉴 이름</label>
+												<input type="text" id="menuName0" name="menus[0].menuName" class="form-control" placeholder="메뉴 이름" required />
 											</div>
 
 											<div class="col-md-6 mb-2">
 												<div class="input-group">
-													<input type="number" name="menus[0].price" class="form-control" placeholder="가격" min="0" step="500" required>
+													<label for="price0" class="visually-hidden">가격</label>
+													<input type="number" id="price0" name="menus[0].price" class="form-control" placeholder="가격" min="0" step="500" required />
 													<span class="input-group-text">원</span>
 												</div>
 											</div>
 
 											<div class="col-md-8 mb-2 d-flex gap-2">
-												<select name="menus[0].ramenCategoryId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
+												<label for="ramenCategoryId0" class="visually-hidden">카테고리 선택</label>
+												<select id="ramenCategoryId0" name="menus[0].ramenCategoryId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
 													<option value="" disabled selected>카테고리 선택</option>
 													<!-- 카테고리 옵션들 -->
 												</select>
-												<select name="menus[0].ramenSoupId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
+												<label for="ramenSoupId0" class="visually-hidden">육수 선택</label>
+												<select id="ramenSoupId0" name="menus[0].ramenSoupId" class="form-select form-select-sm scrollable-select" style="flex: 1;">
 													<option value="" disabled selected>육수 선택</option>
 													<!-- 육수 옵션들 -->
 												</select>
@@ -246,7 +261,8 @@
 
 											<div class="col-md-12 mb-2 d-flex gap-3 align-items-start">
 												<div class="col-md-6 mt-2">
-													<textarea name="menus[0].menuDescription" class="form-control" rows="2" placeholder="설명" lang="ko"></textarea>
+													<label for="menuDescription0" class="visually-hidden">메뉴 설명</label>
+													<textarea id="menuDescription0" name="menus[0].menuDescription" class="form-control" rows="2" placeholder="설명" lang="ko"></textarea>
 												</div>
 												<div>
 													<label class="form-label d-block">기본 토핑 선택</label>
@@ -256,10 +272,7 @@
 											</div>
 
 											<div id="extra-toppings-container-0" style="display:none;">
-												<div class="extra-topping-item d-flex align-items-center mb-2">
-													<input type="text" name="menus[0].extraToppings[0]" class="form-control form-control-sm" placeholder="추가 토핑 (예: 매운 멘마)">
-													<button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeExtraTopping(this)">삭제</button>
-												</div>
+
 											</div>
 
 											<div class="col-12 text-start mt-2">
@@ -288,8 +301,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
 	</form>
 
 	<!--/footer-->
@@ -330,11 +341,9 @@
 						body: JSON.stringify({ roadAddress })
 					})
 							.then(res => {
-								console.log("Response status:", res.status, res.headers.get("content-type"));
 								return res.json();
 							})
 							.then(data => {
-								console.log("Location data:", data);
 								document.getElementById("storeLat").value = data.storeLat || '';
 								document.getElementById("storeLng").value = data.storeLng || '';
 								document.getElementById("storeLegalCode").value = data.storeLegalCode || '';
@@ -354,19 +363,17 @@
 		const phoneRest = document.getElementById('phoneRest');
 		const phoneHidden = document.getElementById('phone');
 
+		// 전화번호 입력 필드 활성/비활성 토글 함수
 		function togglePrefixInputs() {
 			if (phonePrefix.value && phonePrefix.value !== "") {
-				// 실제 번호 선택된 경우
 				phonePrefixInput.value = '';
 				phonePrefixInput.disabled = true;
 				phonePrefix.disabled = false;
 			} else if (phonePrefixInput.value.trim() !== '') {
-				// 직접 입력 값 있으면 select 비활성화
 				phonePrefix.value = '';
 				phonePrefix.disabled = true;
 				phonePrefixInput.disabled = false;
 			} else {
-				// 둘 다 빈 상태 혹은 "선택"이 선택된 상태
 				phonePrefix.disabled = false;
 				phonePrefixInput.disabled = false;
 			}
@@ -375,13 +382,12 @@
 		phonePrefix.addEventListener('change', togglePrefixInputs);
 		phonePrefixInput.addEventListener('input', togglePrefixInputs);
 
-		// 초기 상태 반영
 		togglePrefixInputs();
 
-		// 자동 하이픈 함수 (뒷번호 input에 연결)
+		// 자동 하이픈 함수
 		phoneRest.addEventListener('input', function(e) {
 			const input = e.target;
-			let numbers = input.value.replace(/\D/g, ''); // 숫자만 추출
+			let numbers = input.value.replace(/\D/g, '');
 
 			if (numbers.length <= 3) {
 				input.value = numbers;
@@ -392,70 +398,155 @@
 			}
 		});
 
-		// 폼 제출 시 유효성 검사 및 전화번호 합치기
-		document.getElementById('register').addEventListener('submit', e => {
-			// 전화번호 유효성 먼저 검사
-			const prefix = phonePrefix.value || phonePrefixInput.value;
-			if (!prefix) {
-				alert('전화번호 앞자리를 입력해주세요.');
-				if (phonePrefix.value === '') phonePrefixInput.focus();
-				else phonePrefix.focus();
-				e.preventDefault();
-				return;
-			}
-			if (!phoneRest.value || phoneRest.value.replace(/-/g, '').length < 7) {
-				alert('전화번호 뒷자리를 확인해주세요.');
-				phoneRest.focus();
-				e.preventDefault();
+		// SUBMIT 여기가 제출 버튼임!!
+
+		document.getElementById('register').addEventListener('submit', async function(e) {
+			e.preventDefault();
+
+			// 1. 전화번호 앞자리 유효성 검사
+			let phonePrefix = document.getElementById('phonePrefix').value;
+			let phonePrefixInput = document.getElementById('phonePrefixInput').value;
+			if (!phonePrefix && !phonePrefixInput) {
+				alert('전화번호 앞자리를 선택하거나 입력해주세요.');
+				if (!phonePrefix) document.getElementById('phonePrefix').focus();
+				else document.getElementById('phonePrefixInput').focus();
 				return;
 			}
 
-			phoneHidden.value = prefix + '-' + phoneRest.value;
-		});
+			// 2. 전화번호 뒷자리 유효성 검사
+			let phoneRest = document.getElementById('phoneRest').value;
+			if (!phoneRest || !/^\d{4,8}$/.test(phoneRest.replace(/-/g, ''))) {
+				alert('전화번호 뒷자리를 올바르게 입력해주세요.');
+				document.getElementById('phoneRest').focus();
+				return;
+			}
 
-		/* ========== 등록 전 유효성 검사 ========== */
-		document.getElementById('register').addEventListener('submit', e => {
-			const menus = document.querySelectorAll('.menu-item');
-			for (let i = 0; i < menus.length; i++) {
-				const menu = menus[i];
-				const menuName = menu.querySelector(`[name="menus[${i}].menuName"]`);
-				const price = menu.querySelector(`[name="menus[${i}].price"]`);
-				const category = menu.querySelector(`[name="menus[${i}].ramenCategoryId"]`);
-				const soup = menu.querySelector(`[name="menus[${i}].ramenSoupId"]`);
+			// 3. 가게명 유효성 검사
+			let storeName = document.getElementById('storeName').value.trim();
+			if (!storeName) {
+				alert('가게명을 입력해주세요.');
+				document.getElementById('storeName').focus();
+				return;
+			}
 
-				if (!menuName.value.trim()) {
-					alert(`메뉴 이름을 입력해주세요. (메뉴 ${i+1})`);
-					menuName.focus();
-					e.preventDefault();
-					return;
+			// 4. 주소 유효성 검사
+			let address = document.getElementById('address-api').value.trim();
+			if (!address) {
+				alert('도로명 주소를 검색해주세요.');
+				document.getElementById('searchAddressBtn').focus();
+				return;
+			}
+
+			// 5. 전화번호 hidden 필드 세팅
+			let fullPhone = (phonePrefix || '') + (phonePrefixInput || '') + phoneRest;
+			document.getElementById('phone').value = fullPhone;
+
+			// 6. 체크박스 hidden 필드 세팅
+			document.getElementById('isLocalCardValue').value = document.getElementById('localCard').checked;
+			document.getElementById('isChildAllowedValue').value = document.getElementById('childAllowed').checked;
+
+			// 7. FormData 생성
+			const formData = new FormData();
+
+			// 7-1. 대표 이미지 첨부
+			const storeMainImageInput = document.querySelector('input[name="storeMainImage"]');
+			if (storeMainImageInput?.files[0]) {
+				formData.append("storeMainImage", storeMainImageInput.files[0]);
+			}
+
+			// 7-2. 메뉴 이미지 첨부 (여러 개)
+			const menuImageInputs = document.querySelectorAll('input[name^="menus["][name$="].menuImageFile"]');
+			menuImageInputs.forEach(input => {
+				if (input.files[0]) {
+					formData.append("menuImageFiles", input.files[0]);
 				}
-				if (!price.value || price.value <= 0) {
-					alert(`가격을 입력해주세요. (메뉴 ${i+1})`);
-					price.focus();
-					e.preventDefault();
-					return;
+			});
+
+			// 7-3. JSON DTO 데이터 생성
+			const storeData = {
+				storeName: document.querySelector('input[name="storeName"]').value,
+				address: document.querySelector('input[name="address"]').value,
+				phone: document.querySelector('input[name="phone"]').value,
+				isLocalCard: document.querySelector('input[name="isLocalCard"]').checked,
+				isChildAllowed: document.querySelector('input[name="isChildAllowed"]').checked,
+				hasParking: document.querySelector('input[name="hasParking"]:checked').value,
+				ownerComment: document.querySelector('textarea[name="ownerComment"]').value,
+				storeLat: parseFloat(document.getElementById('storeLat').value),
+				storeLng: parseFloat(document.getElementById('storeLng').value),
+				approvalStatus: "WAITING",
+				operationStatus: "OPEN",
+				storeLegalCode: parseInt(document.getElementById('storeLegalCode').value),
+				menus: [],
+				weekSchedule: []
+			};
+
+			// 7-4. 메뉴 데이터 수집
+			const menuItems = document.querySelectorAll('.menu-item');
+			menuItems.forEach((menu, i) => {
+				const priceVal = menu.querySelector(`[name="menus[${i}].price"]`).value;
+				const categoryVal = menu.querySelector(`[name="menus[${i}].ramenCategoryId"]`).value;
+				const soupVal = menu.querySelector(`[name="menus[${i}].ramenSoupId"]`).value;
+
+				storeData.menus.push({
+					menuName: menu.querySelector(`[name="menus[${i}].menuName"]`).value,
+					price: priceVal ? parseInt(priceVal) : null,
+					menuDescription: menu.querySelector(`[name="menus[${i}].menuDescription"]`).value,
+					ramenCategoryId: categoryVal ? parseInt(categoryVal) : null,
+					ramenSoupId: soupVal ? parseInt(soupVal) : null,
+					defaultToppingIds: Array.from(menu.querySelectorAll('.topping-tag.selected'))
+							.map(tag => parseInt(tag.dataset.id))
+							.filter(id => !isNaN(id)),
+					extraToppings: Array.from(menu.querySelectorAll(`input[name^="menus[${i}].extraToppings"]`))
+							.map(t => t.value)
+				});
+			});
+
+			function formatTime(timeStr) {
+				if (!timeStr || timeStr === "CLOSED") return null;
+				return `${timeStr}:00`;
+			}
+
+
+			// 7-5. 영업시간 수집
+			const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+			for (let i = 0; i < 7; i++) {
+				const isClosed = document.getElementById(`closed-day-${i}`).value === 'true';
+				const openVal = document.querySelector(`[name="weekSchedule[${i}].openingAt"]`).value;
+				const closeVal = document.querySelector(`[name="weekSchedule[${i}].closingAt"]`).value;
+
+				storeData.weekSchedule.push({
+					dayOfWeek: days[i],
+					isClosedDay: isClosed,
+					openingAt: isClosed ? null : formatTime(openVal),
+					closingAt: isClosed ? null : formatTime(closeVal)
+				});
+			}
+
+			// 7-6. JSON Blob으로 만들어서 FormData에 첨부
+			formData.append("store", new Blob([JSON.stringify(storeData)], { type: "application/json" }));
+
+			// 8. 서버로 전송
+			try {
+				const response = await fetch("/store/regist", {
+					method: "POST",
+					body: formData
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					alert("등록 성공!");
+					window.location.href = `/store/detail.page?no=${data.storeId}`;
+				} else {
+					const text = await response.text();
+					alert("등록 실패: " + text);
 				}
-				if (!category.value) {
-					alert(`카테고리를 선택해주세요. (메뉴 ${i+1})`);
-					category.focus();
-					e.preventDefault();
-					return;
-				}
-				if (!soup.value) {
-					alert(`육수를 선택해주세요. (메뉴 ${i+1})`);
-					soup.focus();
-					e.preventDefault();
-					return;
-				}
+			} catch (err) {
+				console.error("등록 중 오류 발생", err);
+				alert("서버 요청 중 오류가 발생했습니다.");
 			}
 		});
-
 
 		/* ========== 대표 이미지 업로드 미리보기 ========== */
-		// 대표 이미지 업로드 영역 클릭 시 input 열기
-		document.getElementById('image-upload-area').addEventListener('click', () => {
-			document.getElementById('image-input').click();
-		});
 
 		// 대표 이미지 선택 시 미리보기 띄우기
 		document.getElementById('image-input').addEventListener('change', (event) => {
@@ -478,6 +569,19 @@
 		const template = document.querySelector('.menu-item');
 		const addButton = document.getElementById('add-menu');
 
+		/* ========== 영업시간 closed ========== */
+
+		document.querySelectorAll('select[name^="weekSchedule"]').forEach(select => {
+			select.addEventListener('change', e => {
+				const name = e.target.name;
+				const match = name.match(/\[(\d+)\]/);
+				if (match) {
+					const idx = Number(match[1]);
+					checkClosed(idx);
+				}
+			});
+		});
+
 		/* ========== 메뉴 추가 버튼 클릭 시 ========== */
 
 		addButton.addEventListener('click', () => {
@@ -494,15 +598,18 @@
 				uploadText.style.display = 'block';
 			}
 
-			clone.querySelectorAll('input, textarea').forEach(input => {
-				if (input.name) input.name = input.name.replace(/\d+/, menuIndex);
-				if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
-				else input.value = '';
-			});
+			clone.querySelectorAll('input, select, textarea').forEach(el => {
+				if (el.name) {
+					el.name = el.name.replace(/\[\d+\]/g, `[${menuIndex}]`);
+				}
 
-			clone.querySelectorAll('select').forEach(select => {
-				if (select.name) select.name = select.name.replace(/\d+/, menuIndex);
-				select.value = "";
+				if (el.tagName === 'SELECT') {
+					el.selectedIndex = 0;
+				} else if (el.type === 'checkbox' || el.type === 'radio') {
+					el.checked = false;
+				} else {
+					el.value = "";
+				}
 			});
 
 			clone.querySelectorAll('.topping-tags, .default-toppings-container').forEach(el => {
@@ -547,7 +654,6 @@
 			}
 
 			const existingInputs = container.querySelectorAll('.extra-topping-item').length;
-			if (existingInputs > 0) return; // 이미 추가 input이 있으면 더 생성하지 않음
 
 			const wrapper = document.createElement('div');
 			wrapper.className = 'extra-topping-item d-flex align-items-center mb-2';
@@ -574,20 +680,10 @@
 			container.appendChild(wrapper);
 		}
 
-		function removeExtraTopping(button) {
-			const toppingDiv = button.parentNode;
-			if (toppingDiv && toppingDiv.parentNode) {
-				const container = toppingDiv.parentNode;
-				container.removeChild(toppingDiv);
-				if (container.children.length === 0) {
-					container.style.display = 'none';
-				}
-			}
-		}
-
 		// 추가 토핑 버튼 이벤트 연결 함수
 		function setupExtraToppingButtons(context = document) {
 			context.querySelectorAll('.add-extra-topping').forEach(button => {
+				button.onclick = null;
 				button.onclick = () => {
 					const menuItem = button.closest('.menu-item');
 					const menus = Array.from(document.querySelectorAll('.menu-item'));
@@ -603,7 +699,11 @@
 			menus.forEach((menu, i) => {
 				// input, select, textarea 이름 인덱스 변경
 				menu.querySelectorAll('input, select, textarea').forEach(input => {
-					if (input.name) input.name = input.name.replace(/\[\d+\]/, `[${i}]`);
+					if (!input.name) {
+						console.warn('입력 요소에 name 속성이 없음:', input);
+						return;
+					}
+					input.name = input.name.replace(/\[\d+\]/g, `[${i}]`);
 				});
 
 				// extra toppings container id 변경
@@ -614,6 +714,12 @@
 					extraContainer.querySelectorAll('input[name^="menus"]').forEach((input, idx) => {
 						input.name = `menus[${i}].extraToppings[${idx}]`;
 					});
+				}
+
+				// data-menu-index 속성도 갱신
+				const toppingTags = menu.querySelector('.topping-tags');
+				if (toppingTags) {
+					toppingTags.dataset.menuIndex = i;
 				}
 			});
 
@@ -633,6 +739,11 @@
 					if (allMenus.length > 1) {
 						e.currentTarget.closest('.menu-item').remove();
 						updateMenuIndices();
+
+						setupToppingTags();
+						setupExtraToppingButtons();
+						setupMenuImageUpload(document);
+						updateRemoveMenuButtons();
 					} else {
 						e.preventDefault();
 						e.stopPropagation();
@@ -667,18 +778,6 @@
 					} else {
 						if (existing) defaultContainer.removeChild(existing);
 					}
-				};
-			});
-		}
-
-		/* ========== 추가 토핑 버튼 연결 ========== */
-		function setupExtraToppingButtons(context = document) {
-			context.querySelectorAll('.add-extra-topping').forEach(button => {
-				button.onclick = () => {
-					const menuItem = button.closest('.menu-item');
-					const menus = Array.from(document.querySelectorAll('.menu-item'));
-					const menuIndex = menus.indexOf(menuItem);
-					addExtraTopping(menuIndex);
 				};
 			});
 		}
@@ -764,21 +863,31 @@
 			return options.join("");
 		}
 
-		function checkClosed(index) {
+		function checkClosed(event, index) {
 			const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`);
 			const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`);
 			const closedInput = document.getElementById(`closed-day-${index}`);
 
-			if (open.value === "CLOSED" || close.value === "CLOSED") {
+			if (event.target.value === "CLOSED") {
+				open.dataset.prevValue = open.value;
+				close.dataset.prevValue = close.value;
+
 				open.value = "CLOSED";
 				close.value = "CLOSED";
 				closedInput.value = "true";
 			} else {
 				closedInput.value = "false";
-			}
 
-			open.disabled = false;
-			close.disabled = false;
+				if (event.target === open) {
+					if (close.value === "CLOSED" && close.dataset.prevValue) {
+						close.value = close.dataset.prevValue;
+					}
+				} else if (event.target === close) {
+					if (open.value === "CLOSED" && open.dataset.prevValue) {
+						open.value = open.dataset.prevValue;
+					}
+				}
+			}
 		}
 
 		function renderOpeningSchedule() {
@@ -786,64 +895,78 @@
 			let html = "";
 			for (let i = 0; i < days.length; i++) {
 				html += `
-        <div class="row mb-2 align-items-center">
-            <div class="col-md-2">
-                <label class="fix_spacing">${dayLabels[i]}</label>
-                <input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}">
-                <input type="hidden" name="weekSchedule[${i}].isClosedDay" value="false" id="closed-day-${i}">
-            </div>
-            <div class="col-md-5">
-                <select class="form-control" name="weekSchedule[${i}].openingAt" onchange="checkClosed(${i})">
-                    <option value="">Opening Time</option>
-                    <option value="CLOSED">Closed</option>
-                    ${generateTimeOptions()}
-                </select>
-            </div>
-            <div class="col-md-5">
-                <select class="form-control" name="weekSchedule[${i}].closingAt" onchange="checkClosed(${i})">
-                    <option value="">Closing Time</option>
-                    <option value="CLOSED">Closed</option>
-                    ${generateTimeOptions()}
-                </select>
-            </div>
-        </div>`;
+		<div class="row mb-2 align-items-center">
+			<div class="col-md-2">
+				<label class="fix_spacing">${dayLabels[i]}</label>
+				<input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}">
+				<input type="hidden" name="weekSchedule[${i}].isClosedDay" value="false" id="closed-day-${i}">
+			</div>
+			<div class="col-md-5">
+				<select class="form-control"
+						name="weekSchedule[${i}].openingAt"
+						onchange="checkClosed(event, ${i})"
+						data-prev-value="">
+					<option value="">Opening Time</option>
+					<option value="CLOSED">Closed</option>
+					${generateTimeOptions()}
+				</select>
+			</div>
+			<div class="col-md-5">
+				<select class="form-control"
+						name="weekSchedule[${i}].closingAt"
+						onchange="checkClosed(event, ${i})"
+						data-prev-value="">
+					<option value="">Closing Time</option>
+					<option value="CLOSED">Closed</option>
+					${generateTimeOptions()}
+				</select>
+			</div>
+		</div>`;
 			}
 			container.innerHTML = html;
 		}
+
 		document.addEventListener("DOMContentLoaded", renderOpeningSchedule);
 
-		<!-- 예외처리 -->
+		// add-menu 버튼 클릭 이벤트
+		document.getElementById('add-menu').addEventListener('click', () => {
+			const menuList = document.getElementById('menu-items');
+			const template = document.querySelector('.menu-item');
+			const clone = template.cloneNode(true);
 
-		document.addEventListener('DOMContentLoaded', () => {
-			const form = document.getElementById('register');
-			const uploadArea = document.getElementById('image-upload-area');
+			clone.querySelectorAll('input, select, textarea').forEach(input => {
+				if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
+				else input.value = '';
+			});
+
+			menuList.appendChild(clone);
+
+			updateMenuIndices();
+
+			const newMenu = menuList.lastElementChild;
+
+			setupToppingTags(newMenu);
+			setupExtraToppingButtons(newMenu);
+			setupMenuImageUpload(newMenu);
+			updateRemoveMenuButtons(newMenu);
+		});
+
+			document.addEventListener('DOMContentLoaded', () => {
 			const imageInputs = document.querySelectorAll('.menu-image-input');
-			const preview = document.getElementById('preview-image');
-			const uploadText = document.getElementById('upload-text');
 
-			uploadArea.addEventListener('click', () => {
-				imageInputs.click();
-			});
+			imageInputs.forEach(input => {
+				input.addEventListener('change', (event) => {
+					const file = event.target.files[0];
+					if (file) {
+						const uploadArea = input.closest('.menu-image-upload');
+						const menuPreview = uploadArea.querySelector('.menu-preview-image');
+						const uploadText = uploadArea.querySelector('p');
 
-			imageInputs.addEventListener('change', (event) => {
-				const file = event.target.files[0];
-				if (file) {
-					const reader = new FileReader();
-					reader.onload = (e) => {
-						preview.src = e.target.result;
-						preview.style.display = 'block';
+						menuPreview.src = URL.createObjectURL(file);
+						menuPreview.style.display = 'block';
 						uploadText.style.display = 'none';
-					};
-					reader.readAsDataURL(file);
-				}
-			});
-
-			form.addEventListener('submit', () => {
-				const localCardChecked = document.getElementById('localCard').checked;
-				const childAllowedChecked = document.getElementById('childAllowed').checked;
-
-				document.getElementById('isLocalCardValue').value = localCardChecked;
-				document.getElementById('isChildAllowedValue').value = childAllowedChecked;
+					}
+				});
 			});
 		});
 	</script>
@@ -925,95 +1048,6 @@
 				});
 			});
 		}
-	</script>
-
-
-	<script>
-		document.addEventListener('DOMContentLoaded', () => {
-			const form = document.getElementById('register');
-			if (!form) return;
-
-			form.addEventListener('submit', function (e) {
-				e.preventDefault();
-
-				const formData = new FormData(form);
-
-				const imageInputs = document.querySelectorAll('.menu-image-input');
-				imageInputs.forEach((input, i) => {
-					const file = input.files[0];
-					if (file) {
-						formData.append(`menus[${i}].menuImageFile`, file);
-					}
-				});
-
-				// 전화번호 합쳐서 hidden #phone에 넣기 (submit 전에 반드시 호출)
-			function updatePhoneHiddenField() {
-				const prefixSelect = document.getElementById('phonePrefix');
-				const prefixInput = document.getElementById('phonePrefixInput');
-				const restInput = document.getElementById('phoneRest');
-				const phoneHidden = document.getElementById('phone');
-
-				let prefix = prefixSelect?.value || '';
-				if (prefixInput?.value.trim()) {
-					prefix = prefixInput.value.trim();
-				}
-				const rest = restInput?.value.trim() || '';
-
-				if (prefix && rest) {
-					phoneHidden.value = prefix + '-' + rest;
-				} else {
-					phoneHidden.value = '';
-				}
-			}
-
-			// 제출 이벤트에 폼 데이터 로그 출력과 전화번호 필드 값 세팅
-			form.addEventListener('submit', (e) => {
-				updatePhoneHiddenField(); // 전화번호 hidden 필드에 값 세팅
-
-				console.log('===== [등록 전 입력값 확인] =====');
-
-				const storeImage = document.querySelector('input[name="storeMainImage"]');
-				console.log('대표 이미지 파일명:', storeImage?.files[0]?.name || '없음');
-
-				console.log('가게명:', document.querySelector('input[name="storeName"]')?.value);
-				console.log('주소:', document.querySelector('input[name="address"]')?.value);
-				console.log('위도:', document.getElementById('storeLat')?.value);
-				console.log('경도:', document.getElementById('storeLng')?.value);
-				console.log('법정코드:', document.getElementById('storeLegalCode')?.value);
-				console.log('전화번호:', document.getElementById('phone')?.value);
-
-				const localCardChecked = document.querySelector('input[name="isLocalCard"]').checked;
-				const childAllowedChecked = document.querySelector('input[name="isChildAllowed"]').checked;
-				console.log("지역카드:", localCardChecked ? "사용 가능" : "선택 안 함");
-				console.log("유아동반:", childAllowedChecked ? "가능" : "불가능");
-				console.log('주차:', document.querySelector('input[name="hasParking"]:checked')?.value);
-				console.log('사장님 소개:', document.querySelector('textarea[name="ownerComment"]')?.value);
-
-				const menuItems = document.querySelectorAll('.menu-item');
-				menuItems.forEach((menu, i) => {
-					console.log(`-- 메뉴 ${i} --`);
-					console.log('이름:', menu.querySelector(`[name="menus[${i}].menuName"]`)?.value);
-					console.log('가격:', menu.querySelector(`[name="menus[${i}].price"]`)?.value);
-					console.log('설명:', menu.querySelector(`[name="menus[${i}].menuDescription"]`)?.value);
-					console.log('카테고리:', menu.querySelector(`[name="menus[${i}].ramenCategoryId"]`)?.value);
-					console.log('육수:', menu.querySelector(`[name="menus[${i}].ramenSoupId"]`)?.value);
-					console.log('메뉴 이미지 파일명:', menu.querySelector(`[name="menus[${i}].menuImageFile"]`)?.files[0]?.name || '없음');
-
-					// 기본 토핑: 선택된 토핑 태그 span에서 data-id 읽기
-					const selectedToppings = menu.querySelectorAll('.topping-tag.selected');
-					const selectedToppingIds = Array.from(selectedToppings).map(el => el.dataset.id);
-					console.log('기본 토핑:', selectedToppingIds);
-
-					// 추가 토핑: input[name^=extraToppings] 값 읽기
-					const extraToppingInputs = menu.querySelectorAll(`input[name^="menus[${i}].extraToppings"]`);
-					const extraToppingValues = Array.from(extraToppingInputs).map(t => t.value);
-					console.log('추가 토핑:', extraToppingValues);
-				});
-
-				console.log('==============================');
-			});
-		});
-		});
 	</script>
 
 </body>

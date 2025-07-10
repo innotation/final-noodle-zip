@@ -1,13 +1,14 @@
 package noodlezip.store.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
 import noodlezip.user.entity.User;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -15,12 +16,15 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/store")
 @Controller
+@Slf4j
 public class StoreRegistController {
 
     private final StoreService storeService;
@@ -37,14 +41,25 @@ public class StoreRegistController {
         return "store/regist";
     }
 
-    @PostMapping("/regist")
-    public String registerStore(@AuthenticationPrincipal MyUserDetails myUserDetails,
-                                @ModelAttribute StoreRequestDto dto) {
-        // 로그인한 유저 객체 얻기
+    @PostMapping(value = "/regist", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseBody
+    public Map<String, Object> registerStore(
+            @AuthenticationPrincipal MyUserDetails myUserDetails,
+            @RequestPart("store") StoreRequestDto dto,
+            @RequestPart(value = "storeMainImage", required = false) MultipartFile storeMainImage,
+            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles
+    ) {
+        // 유저
         User user = myUserDetails.getUser();
 
-        // 가게 등록 처리
-        Long storeId = storeService.registerStore(dto, dto.getStoreMainImage(), user);
-        return "redirect:/store/detail.page?no=" + storeId;
+        dto.setStoreMainImage(storeMainImage);           // 대표 이미지 주입
+        for (int i = 0; i < dto.getMenus().size(); i++) {
+            if (menuImageFiles != null && i < menuImageFiles.size()) {
+                dto.getMenus().get(i).setMenuImageFile(menuImageFiles.get(i));  // 메뉴 이미지 주입
+            }
+        }
+
+        Long storeId = storeService.registerStore(dto, storeMainImage, user);
+        return Map.of("storeId", storeId);
     }
 }
