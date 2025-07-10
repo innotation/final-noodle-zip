@@ -2,6 +2,7 @@ package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
 import noodlezip.store.service.StoreService;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/store")
@@ -116,6 +119,13 @@ public class StoreController {
             @PathVariable Long storeId
     ) {
         return ramenService.getSummaryByStoreId(storeId);
+    }
+
+    // 메뉴 토핑 조회
+    @GetMapping("/detail/{storeId}/toppings")
+    @ResponseBody
+    public List<ToppingResponseDto> getToppingByStoreId(@PathVariable Long storeId){
+        return storeService.getStoreToppings(storeId);
     }
 
 }
