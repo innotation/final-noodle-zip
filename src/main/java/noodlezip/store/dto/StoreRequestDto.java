@@ -38,4 +38,6 @@ public class StoreRequestDto {
     private MultipartFile storeMainImage;
 
     private Long storeLegalCode;
+
+    private Long bizNum;
 }

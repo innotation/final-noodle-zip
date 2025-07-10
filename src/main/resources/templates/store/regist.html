@@ -463,13 +463,20 @@
 			});
 
 			// 7-3. JSON DTO 데이터 생성
-			const storeData = {
+			const checkedParking = document.querySelector('input[name="hasParking"]:checked');
+			 if (!checkedParking) {
+				     alert('주차 옵션을 선택해주세요.');
+				     return;
+				 }
+
+			 const storeData = {
 				storeName: document.querySelector('input[name="storeName"]').value,
 				address: document.querySelector('input[name="address"]').value,
 				phone: document.querySelector('input[name="phone"]').value,
+				bizNum: parseInt(document.getElementById('businessRegistrationNumber').value, 10),
 				isLocalCard: document.querySelector('input[name="isLocalCard"]').checked,
 				isChildAllowed: document.querySelector('input[name="isChildAllowed"]').checked,
-				hasParking: document.querySelector('input[name="hasParking"]:checked').value,
+				hasParking: checkedParking.value, // [수정] 안전하게 값 가져오기
 				ownerComment: document.querySelector('textarea[name="ownerComment"]').value,
 				storeLat: parseFloat(document.getElementById('storeLat').value),
 				storeLng: parseFloat(document.getElementById('storeLng').value),
@@ -478,7 +485,7 @@
 				storeLegalCode: parseInt(document.getElementById('storeLegalCode').value),
 				menus: [],
 				weekSchedule: []
-			};
+			 };
 
 			// 7-4. 메뉴 데이터 수집
 			const menuItems = document.querySelectorAll('.menu-item');
@@ -580,67 +587,6 @@
 					checkClosed(idx);
 				}
 			});
-		});
-
-		/* ========== 메뉴 추가 버튼 클릭 시 ========== */
-
-		addButton.addEventListener('click', () => {
-			const clone = template.cloneNode(true);
-
-			const previewImg = clone.querySelector('.menu-preview-image');
-			if (previewImg) {
-				previewImg.src = '';
-				previewImg.style.display = 'none';
-			}
-
-			const uploadText = clone.querySelector('.menu-image-upload p');
-			if (uploadText) {
-				uploadText.style.display = 'block';
-			}
-
-			clone.querySelectorAll('input, select, textarea').forEach(el => {
-				if (el.name) {
-					el.name = el.name.replace(/\[\d+\]/g, `[${menuIndex}]`);
-				}
-
-				if (el.tagName === 'SELECT') {
-					el.selectedIndex = 0;
-				} else if (el.type === 'checkbox' || el.type === 'radio') {
-					el.checked = false;
-				} else {
-					el.value = "";
-				}
-			});
-
-			clone.querySelectorAll('.topping-tags, .default-toppings-container').forEach(el => {
-				el.dataset.menuIndex = menuIndex;
-			});
-
-			const extraContainer = clone.querySelector('[id^="extra-toppings-container-"]');
-			if (extraContainer) {
-				extraContainer.id = `extra-toppings-container-${menuIndex}`;
-				extraContainer.innerHTML = '';
-				extraContainer.style.display = 'none';
-			}
-
-			const defaultToppingContainer = clone.querySelector('.default-toppings-container');
-			if (defaultToppingContainer) {
-				defaultToppingContainer.innerHTML = '';
-			}
-
-			clone.querySelectorAll('.topping-tag.selected').forEach(tag => {
-				tag.classList.remove('selected');
-			});
-
-			// 기능 재등록
-			setupMenuImageUpload(clone);
-			setupToppingTags(clone);
-			setupExtraToppingButtons(clone);
-			updateRemoveMenuButtons(clone);
-
-			menuList.appendChild(clone);
-
-			menuIndex++;
 		});
 
 		/* ========== 추가 토핑 입력 필드 추가 ========== */

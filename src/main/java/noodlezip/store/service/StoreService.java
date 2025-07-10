@@ -90,6 +90,7 @@ public class StoreService {
                 .storeName(dto.getStoreName())
                 .address(dto.getAddress())
                 .phone(dto.getPhone())
+                .bizNum(dto.getBizNum())
                 .isLocalCard(dto.getIsLocalCard())
                 .isChildAllowed(dto.getIsChildAllowed())
                 .hasParking(dto.getHasParking())

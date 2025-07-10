@@ -86,4 +86,9 @@ public class Store extends BaseTimeEntity {
     @NotNull
     @Column(name = "store_legal_code", nullable = false)
     private Long storeLegalCode;
+
+    // 사업자등록번호
+    @NotNull
+    @Column(name = "biz_num", nullable = false)
+    private Long bizNum;
 }

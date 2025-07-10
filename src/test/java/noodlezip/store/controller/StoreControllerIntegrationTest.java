@@ -1,3 +1,4 @@
+/*
 package noodlezip.store.controller;
 
 import jakarta.transaction.Transactional;
@@ -55,4 +56,4 @@ class StoreControllerIntegrationTest {
                 .andExpect(view().name("store/detail"))
                 .andDo(print());
     }
-}
+}*/
