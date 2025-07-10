@@ -131,7 +131,7 @@
                                     <figure>
                                         <img src="/img/lazy-placeholder.png"
                                              th:attr="data-src=${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
-                                        <a th:href="@{'/store/detail/' + ${store.storeId}}" class="strip_info">
+                                        <a th:href="@{'/store/detail/' + ${store.storeId}}" class="strip_info" target="_blank" rel="noopener noreferrer">
                                             <small th:text="${store.saveStoreCategoryName}"></small>
                                             <div class="item_title">
                                                 <h3 th:text="${store.storeName}">가게명</h3>
