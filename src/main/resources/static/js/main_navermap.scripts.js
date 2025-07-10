@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentLat = 37.5665;
   let currentLng = 126.9780;
   let isFilterMode = false;
+  let currentPage = 1;
+  let totalPages = 1;
+  let totalElements = 0;
 
   // 지도 초기화 (서울 시청 기준)
   const map = new naver.maps.Map('map', {
@@ -100,7 +103,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // 매장 로드 함수
-  function loadStores() {
+  function loadStores(page = 1) {
+    currentPage = page;
     const url = isFilterMode ? 
       `${contextPath}search/filter?lat=${currentLat}&lng=${currentLng}&page=${page}&size=${size}` :
       `${contextPath}search/stores?lat=${currentLat}&lng=${currentLng}&page=${page}&size=${size}`;
@@ -109,12 +113,74 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(response => response.json())
       .then(data => {
         renderStores(data.content);
+        renderPagination(data);
       })
       .catch(error => {
         console.error('매장 검색 실패: ', error);
         document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
       });
   }
+
+  // 페이징 렌더링 함수
+  function renderPagination(data) {
+    totalPages = data.totalPages;
+    totalElements = data.totalElements;
+    currentPage = data.number + 1; // Spring Data는 0부터 시작하므로 +1
+
+    const paginationContainer = document.getElementById('pagination-container');
+    
+    if (totalPages <= 1) {
+      paginationContainer.innerHTML = '';
+      return;
+    }
+
+    let paginationHTML = '';
+    
+    // 이전 페이지 버튼
+    if (currentPage > 1) {
+      paginationHTML += `<a href="#" onclick="changePage(${currentPage - 1})">&laquo;</a>`;
+    }
+
+    // 페이지 번호들
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    if (startPage > 1) {
+      paginationHTML += `<a href="#" onclick="changePage(1)">1</a>`;
+      if (startPage > 2) {
+        paginationHTML += `<span>...</span>`;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      if (i === currentPage) {
+        paginationHTML += `<a href="#" class="active">${i}</a>`;
+      } else {
+        paginationHTML += `<a href="#" onclick="changePage(${i})">${i}</a>`;
+      }
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        paginationHTML += `<span>...</span>`;
+      }
+      paginationHTML += `<a href="#" onclick="changePage(${totalPages})">${totalPages}</a>`;
+    }
+
+    // 다음 페이지 버튼
+    if (currentPage < totalPages) {
+      paginationHTML += `<a href="#" onclick="changePage(${currentPage + 1})">&raquo;</a>`;
+    }
+
+    paginationContainer.innerHTML = paginationHTML;
+  }
+
+  // 페이지 변경 함수 (전역 함수로 등록)
+  window.changePage = function(page) {
+    loadStores(page);
+    // 페이지 상단으로 스크롤
+    document.querySelector('.content-left').scrollTop = 0;
+  };
 
   // 필터 적용 함수
   function applyFilters() {
@@ -133,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const filterParams = new URLSearchParams({
         lat: currentLat,
         lng: currentLng,
-        page: page,
+        page: 1, // 필터 적용 시 첫 페이지로
         size: size
       });
 
@@ -155,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
           renderStores(data.content);
+          renderPagination(data);
         })
         .catch(error => {
           console.error('필터링된 매장 검색 실패: ', error);
@@ -162,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     } else {
       // 일반 검색
-      loadStores();
+      loadStores(1);
     }
   }
 
@@ -175,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('distance-value').textContent = 30;
     
     isFilterMode = false;
-    loadStores();
+    loadStores(1);
   }
 
   // 이벤트 리스너 등록
