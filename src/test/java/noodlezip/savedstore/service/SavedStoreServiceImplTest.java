@@ -51,161 +51,78 @@ class SavedStoreServiceImplTest {
     }
 
     @Test
-    void saveSavedStore_shouldCreateNewSavedStoreIfNotExists() {
+    void saveSavedStore_shouldDeleteOldAndCreateNewSavedStores() {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
-                .memo("첫 방문")
-                .build();
-
-        when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
-        when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
-
-        SavedStoreCategory newCategory = SavedStoreCategory.builder().id(101L).user(user).categoryName("데이트").build();
-        when(saveStoreCategoryRepository.save(any(SavedStoreCategory.class))).thenReturn(newCategory);
-
-        // when
-        savedStoreService.saveSavedStore(user.getId(), store.getId(), request);
-
-        // then
-        verify(saveStoreCategoryRepository).save(any(SavedStoreCategory.class));
-        verify(saveStoreRepository).save(any(SavedStore.class));
-    }
-
-    @Test
-    void saveSavedStore_shouldUpdateIfSavedStoreExists() {
-        // given
-        SaveStoreRequest request = SaveStoreRequest.builder()
-                .memo("재방문")
-                .saveStoreCategoryIds(List.of(100L))
-                .build();
-
-        SavedStore existingSavedStore = SavedStore.builder()
-                .id(999L)
-                .user(user)
-                .store(store)
-                .saveStoreCategory(category)
-                .memo("예전 메모")
-                .location(new SavedStoreLocation(37.1, 127.2))
-                .build();
-
-        when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(entityManager.getReference(SavedStoreCategory.class, 100L)).thenReturn(category);
-        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId()))
-                .thenReturn(Optional.of(existingSavedStore));
-
-        // when
-        savedStoreService.saveSavedStore(user.getId(), store.getId(), request);
-
-        // then
-        assertThat(existingSavedStore.getMemo()).isEqualTo("재방문");
-        assertThat(existingSavedStore.getSaveStoreCategory()).isEqualTo(category);
-
-        verify(saveStoreRepository, never()).save(any());  // update only
-    }
-
-    @Test
-    void saveSavedStore_createNewSavedStore_withNewCategory() {
-        // given
-        SaveStoreRequest request = SaveStoreRequest.builder()
-                .memo("처음 저장")
-                .saveStoreCategoryIds(List.of(100L))
-                .build();
-
-        when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
-        when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
-
-        SavedStoreCategory newCategory = SavedStoreCategory.builder().id(101L).user(user).categoryName("데이트").build();
-        when(saveStoreCategoryRepository.save(any(SavedStoreCategory.class))).thenReturn(newCategory);
-
-        // when
-        savedStoreService.saveSavedStore(user.getId(), store.getId(), request);
-
-        // then
-        verify(saveStoreCategoryRepository).save(any(SavedStoreCategory.class));
-        verify(saveStoreRepository).save(any(SavedStore.class));
-    }
-
-    @Test
-    void saveSavedStore_createNewSavedStore_withExistingCategoryId() {
-        // given
-        SaveStoreRequest request = SaveStoreRequest.builder()
-                .memo("처음 저장")
+                .memo("좋았음")
                 .saveStoreCategoryIds(List.of(100L))
                 .build();
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
         when(entityManager.getReference(SavedStoreCategory.class, 100L)).thenReturn(category);
-        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
         when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
         // when
         savedStoreService.saveSavedStore(user.getId(), store.getId(), request);
 
         // then
+        verify(saveStoreRepository).deleteByUserIdAndStoreId(user.getId(), store.getId());
         verify(saveStoreRepository).save(any(SavedStore.class));
-        verify(saveStoreCategoryRepository, never()).save(any());
     }
 
     @Test
-    void saveSavedStore_updateExistingSavedStore_changeMemoAndCategory() {
+    void saveSavedStore_shouldNotSaveIfCategoryIdsIsEmpty() {
         // given
         SaveStoreRequest request = SaveStoreRequest.builder()
-                .memo("수정된 메모")
-                .saveStoreCategoryIds(List.of(100L))
-                .build();
-
-        SavedStore existingSavedStore = SavedStore.builder()
-                .id(999L)
-                .user(user)
-                .store(store)
-                .saveStoreCategory(category)
-                .memo("이전 메모")
-                .location(new SavedStoreLocation(37.1, 127.2))
+                .memo("메모")
+                .saveStoreCategoryIds(List.of())
                 .build();
 
         when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(entityManager.getReference(SavedStoreCategory.class, 100L)).thenReturn(category);
-        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId()))
-                .thenReturn(Optional.of(existingSavedStore));
 
         // when
         savedStoreService.saveSavedStore(user.getId(), store.getId(), request);
 
         // then
-        assertThat(existingSavedStore.getMemo()).isEqualTo("수정된 메모");
-        assertThat(existingSavedStore.getSaveStoreCategory()).isEqualTo(category);
+        verify(saveStoreRepository).deleteByUserIdAndStoreId(user.getId(), store.getId());
         verify(saveStoreRepository, never()).save(any());
     }
 
     @Test
-    void saveSavedStore_createNewCategoryTrimmed() {
+    void getUserSavedStoreMemo_shouldReturnMemoIfExists() {
         // given
-        SaveStoreRequest request = SaveStoreRequest.builder()
-                .memo("메모")
-                .saveStoreCategoryIds(List.of(100L))
+        SavedStore savedStore = SavedStore.builder()
+                .memo("재방문")
                 .build();
-
-        when(entityManager.getReference(User.class, user.getId())).thenReturn(user);
-        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId())).thenReturn(Optional.empty());
-        when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId()))
+                .thenReturn(Optional.of(savedStore));
 
         // when
-        savedStoreService.saveSavedStore(user.getId(), store.getId(), request);
+        String memo = savedStoreService.getUserSavedStoreMemo(user.getId(), store.getId());
 
         // then
-        ArgumentCaptor<SavedStoreCategory> captor = ArgumentCaptor.forClass(SavedStoreCategory.class);
-        verify(saveStoreCategoryRepository).save(captor.capture());
-        assertThat(captor.getValue().getCategoryName()).isEqualTo("데이트");
+        assertThat(memo).isEqualTo("재방문");
+    }
+
+    @Test
+    void getUserSavedStoreMemo_shouldReturnEmptyStringIfNotExists() {
+        // given
+        when(saveStoreRepository.findFirstByUserIdAndStoreId(user.getId(), store.getId()))
+                .thenReturn(Optional.empty());
+
+        // when
+        String memo = savedStoreService.getUserSavedStoreMemo(user.getId(), store.getId());
+
+        // then
+        assertThat(memo).isEqualTo("");
     }
 
     @Test
     void deleteSavedStore_shouldCallRepository() {
         // when
-        savedStoreService.deleteSavedStore(1L, 10L);
+        savedStoreService.deleteSavedStore(user.getId(), store.getId());
 
         // then
-        verify(saveStoreRepository).deleteByUserIdAndStoreId(1L, 10L);
+        verify(saveStoreRepository).deleteByUserIdAndStoreId(user.getId(), store.getId());
     }
 }
