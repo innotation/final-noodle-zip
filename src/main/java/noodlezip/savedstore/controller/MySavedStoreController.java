@@ -5,14 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.controller.MyBaseController;
 import noodlezip.mypage.dto.MyPageAuthorityContext;
+import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
 import noodlezip.savedstore.dto.response.MySavedStorePageResponse;
 import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
 import noodlezip.savedstore.dto.response.SavedStorePageResponse;
 import noodlezip.savedstore.service.MySavedStoreService;
-import noodlezip.savedstore.util.SavedStorePagePolicy;
-import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.savedstore.service.SavedStoreService;
+import noodlezip.savedstore.util.SavedStorePagePolicy;
 import noodlezip.user.entity.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,6 +27,7 @@ public class MySavedStoreController extends MyBaseController {
 
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
+
 
     @GetMapping("/my/saved-store/list")
     public String mySavedStoreList(@AuthenticationPrincipal MyUserDetails userDetails, Model model) {

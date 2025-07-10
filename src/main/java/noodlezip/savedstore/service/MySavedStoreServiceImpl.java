@@ -3,9 +3,9 @@ package noodlezip.savedstore.service;
 import lombok.RequiredArgsConstructor;
 import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
 import noodlezip.savedstore.dto.response.MySavedStorePageResponse;
+import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
 import noodlezip.savedstore.dto.response.SavedStorePageResponse;
-import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 import noodlezip.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +18,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
 
     private final UserService userService;
     private final SavedStoreService savedStoreService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -41,6 +42,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
                 .savedStoreList(savedStoreList)
                 .build();
     }
+
 
     @Override
     @Transactional(readOnly = true)
