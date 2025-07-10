@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <figure>
           <img src="${imgUrl}" class="img-fluid lazy" alt="${store.storeName}" 
                onerror="this.onerror=null; this.src='${contextPath}img/lazy-placeholder.png';">
-          <a href="#" class="strip_info">
+          <a href="${contextPath}store/detail/${store.id}" class="strip_info">
             <small>${phone}</small>
             <div class="item_title">
               <h3>${store.storeName}</h3>
@@ -314,12 +314,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // 인포 윈도우 생성
       const infoWindow = new naver.maps.InfoWindow({
-        content: `<div style="padding:10px;"><strong>${store.storeName}</strong><br>${address}</div>`
+        content: `
+          <div style="padding:10px; min-width:200px;">
+            <strong>${store.storeName}</strong><br>
+            ${address}<br>
+            <a href="${contextPath}store/detail/${store.id}" style="color:#007bff; text-decoration:none; font-size:12px;">
+              상세보기 →
+            </a>
+          </div>
+        `
       });
 
+      // 마커 클릭 이벤트 - 인포윈도우 토글
       naver.maps.Event.addListener(marker, 'click', () => {
-        infoWindows.forEach(iw => iw.close());
-        infoWindow.open(map, marker);
+        if (infoWindow.getMap()) {
+          // 이미 열려있으면 닫기
+          infoWindow.close();
+        } else {
+          // 닫혀있으면 열기 (다른 인포윈도우들 먼저 닫기)
+          infoWindows.forEach(iw => iw.close());
+          infoWindow.open(map, marker);
+        }
       });
 
       markers.push(marker);
