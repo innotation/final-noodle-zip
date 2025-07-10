@@ -383,6 +383,13 @@ article.blog .post_info ul li:last-child i {
   padding: 12px;
 }
 
+.post-content img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 15px auto;
+}
+
 #comments {
   padding: 10px 0 0px 0;
   margin-bottom: 30px;
