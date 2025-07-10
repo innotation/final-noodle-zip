@@ -85,7 +85,7 @@ public class BoardServiceImpl implements BoardService {
 
         String sanitizedContentHtml = boardRespDto.getContent();
 
-        Document doc = Jsoup.parse(boardRespDto.getContent());
+        Document doc = Jsoup.parse(sanitizedContentHtml);
 
         sanitizedContentHtml = Jsoup.clean(doc.body().html(), Safelist.relaxed());
 

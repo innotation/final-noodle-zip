@@ -60,10 +60,6 @@ public class BoardController {
 
     @GetMapping("/review")
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
-    })
     public String review() {
         return "/board/leave-review";
     }
@@ -79,16 +75,6 @@ public class BoardController {
 
     @PostMapping("/regist")
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "302", description = "게시글 등록 성공 및 게시글 목록 페이지로 리다이렉트",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "400", description = "유효성 검사 실패 (제목 또는 내용 누락 등)",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자 (로그인 필요)",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류 (파일 업로드 실패 등)",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
-    })
     @Parameters({
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true),
             @Parameter(name = "boardReqDto", description = "게시글의 제목과 내용을 포함하는 요청 DTO", required = true,
@@ -130,12 +116,6 @@ public class BoardController {
 
     @GetMapping({"/list", "/{category}/list"})
     @Operation(summary = "게시글 목록 조회", description = "모든 게시글 또는 특정 카테고리의 게시글을 최신 순으로 페이지네이션하여 조회합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
-    })
     @Parameters({
             @Parameter(name = "category", description = "조회할 게시글의 카테고리 (선택 사항). 예: 'community', 'qna'", required = false, example = "community"),
             @Parameter(name = "page", description = "조회할 페이지 번호 (기본값: 0, 1부터 요청 시 내부적으로 0으로 변환)", example = "1"),
@@ -186,19 +166,8 @@ public class BoardController {
 
     @GetMapping("/detail/{id}")
     @Operation(summary = "게시글 상세 조회", description = "특정 게시글의 상세 내용을 조회하고 조회수를 증가시킵니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "게시글 상세 조회 성공",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 (게시글 ID 누락 또는 유효하지 않음)",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
-    })
     @Parameters({
-            @Parameter(name = "id", description = "조회할 게시글의 ID", required = true, example = "1",
-                    schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(name = "id", description = "조회할 게시글의 ID", required = true, example = "1"),
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String getBoardDetail (
@@ -234,21 +203,8 @@ public class BoardController {
     @PostMapping("/delete/{boardId}")
     @Operation(summary = "게시글 삭제", description = "지정된 ID의 게시글을 삭제합니다. 게시글 작성자만 삭제할 수 있습니다.",
             method = "POST")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "302", description = "게시글 삭제 성공 및 게시글 목록 페이지로 리다이렉트",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자 (로그인 필요)",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "403", description = "권한 없음 (게시글 작성자가 아님)",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
-    })
     @Parameters({
-            @Parameter(name = "boardId", description = "삭제할 게시글의 ID", required = true, example = "1",
-                    schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(name = "boardId", description = "삭제할 게시글의 ID", required = true, example = "1"),
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
     })
     public String deleteBoard(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
@@ -259,20 +215,8 @@ public class BoardController {
     @PostMapping("/like/{boardId}")
     @Operation(summary = "게시글 좋아요/취소", description = "지정된 게시글에 좋아요를 추가하거나 취소합니다. 로그인된 사용자만 가능합니다.",
             method = "POST")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "좋아요 상태 변경 성공",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = LikeResponseDto.class))),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자 (로그인 필요)",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE)),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
-    })
     @Parameters({
-            @Parameter(name = "boardId", description = "좋아요를 누를 게시글의 ID", required = true, example = "1",
-                    schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(name = "boardId", description = "좋아요를 누를 게시글의 ID", required = true, example = "1"),
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
     })
     @ResponseBody
@@ -293,15 +237,16 @@ public class BoardController {
 
     @GetMapping("/recent")
     @ResponseBody
+    @Operation(summary = "최근 본 게시글 목록 조회", description = "사용자 쿠키에 저장된 최근 본 게시글 ID들을 기반으로 게시글 목록을 조회하여 반환합니다.")
     public ResponseEntity<?> getRecentViewedBoards(HttpServletRequest request) {
         List<Long> recentBoardIds = CookieUtil.getRecentViewedItemIds(request, RECENT_VIEWED_BOARDS);
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, boardService.getBoardsByIds(recentBoardIds));
     }
 
-    @PostMapping("/imageUpload")
+    @PostMapping(value = "/imageUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
+    @Operation(summary = "이미지 업로드", description = "게시글 작성 시 사용되는 이미지 파일을 서버에 업로드하고, 업로드된 이미지들의 URL 목록을 반환합니다. 다중 파일 업로드를 지원합니다.")
     public ResponseEntity<?> uploadImage(@RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
-        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED,boardService.uploadImages(uploadFiles));
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED, boardService.uploadImages(uploadFiles));
     }
-
 }
