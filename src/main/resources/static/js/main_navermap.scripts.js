@@ -288,7 +288,8 @@ document.addEventListener('DOMContentLoaded', function () {
       item.innerHTML = `
       <div class="strip">
         <figure>
-          <img src="${imgUrl}" class="img-fluid lazy" alt="${store.storeName}">
+          <img src="${imgUrl}" class="img-fluid lazy" alt="${store.storeName}" 
+               onerror="this.onerror=null; this.src='${contextPath}img/lazy-placeholder.png';">
           <a href="#" class="strip_info">
             <small>${phone}</small>
             <div class="item_title">
