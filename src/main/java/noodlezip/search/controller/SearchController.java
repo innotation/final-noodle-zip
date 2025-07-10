@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/search")
@@ -60,6 +62,12 @@ public class SearchController {
         }
 
         return searchService.searchStoresByFilter(filter, pageable);
+    }
+
+    @GetMapping("/filter-options")
+    @ResponseBody
+    public Map<String, Object> getFilterOptions() {
+        return searchService.getFilterOptions();
     }
 
 }

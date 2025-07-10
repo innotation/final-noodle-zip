@@ -168,13 +168,7 @@
           <div class="page_header element_to_stick">
             <div class="row">
               <div class="col-xl-12 d-none d-md-block">
-                <h1>145 restaurants in Convent Street 2983</h1>
-              </div>
-              <div class="col-xl-12">
-                <div class="search_bar_list">
-                  <input type="text" class="form-control" placeholder="Search again...">
-                  <input type="submit" value="Search">
-                </div>
+                <h1 id="search-result-count">매장을 검색중입니다...</h1>
               </div>
             </div>
             <!-- /row -->
@@ -203,73 +197,51 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="filter_type">
-                    <h6>Categories</h6>
-                    <ul>
-                      <li>
-                        <label class="container_check">Pizza - Italian <small>12</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
-                      <li>
-                        <label class="container_check">Japanese - Sushi <small>24</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
-                      <li>
-                        <label class="container_check">Burghers <small>23</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
-                      <li>
-                        <label class="container_check">Vegetarian <small>11</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
+                    <h6>라멘 카테고리</h6>
+                    <ul id="category-filters">
+                      <!-- 동적으로 생성됩니다 -->
                     </ul>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="filter_type">
-                    <h6>Rating</h6>
-                    <ul>
-                      <li>
-                        <label class="container_check">Superb 9+ <small>06</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
-                      <li>
-                        <label class="container_check">Very Good 8+ <small>12</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
-                      <li>
-                        <label class="container_check">Good 7+ <small>17</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
-                      <li>
-                        <label class="container_check">Pleasant 6+ <small>43</small>
-                          <input type="checkbox">
-                          <span class="checkmark"></span>
-                        </label>
-                      </li>
+                    <h6>육수</h6>
+                    <ul id="soup-filters">
+                      <!-- 동적으로 생성됩니다 -->
                     </ul>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="filter_type">
+                    <h6>토핑</h6>
+                    <ul id="topping-filters">
+                      <!-- 동적으로 생성됩니다 -->
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="filter_type">
+                    <h6>검색</h6>
+                    <div class="form-group">
+                      <input type="text" id="search-keyword" class="form-control" placeholder="매장명 또는 메뉴명 검색">
+                      <select id="search-type" class="form-control mt-2">
+                        <option value="ALL">전체</option>
+                        <option value="STORE_NAME">매장명</option>
+                        <option value="MENU_NAME">메뉴명</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-12">
                   <div class="filter_type">
-                    <h6>Distance</h6>
-                    <div class="distance"> Radius around selected destination <span></span> km</div>
-                    <div><input type="range" min="10" max="100" step="10" value="30" data-orientation="horizontal">
-                    </div>
+                    <h6>거리</h6>
+                    <div class="distance"> 반경 <span id="distance-value">30</span> km</div>
+                    <div><input type="range" id="distance-range" min="1" max="50" step="1" value="30" data-orientation="horizontal"></div>
                   </div>
+                </div>
+                <div class="col-md-12">
+                  <button type="button" id="apply-filters" class="btn_1 full-width">필터 적용</button>
+                  <button type="button" id="clear-filters" class="btn_1 outline full-width mt-2">필터 초기화</button>
                 </div>
               </div>
               <!-- /row -->
@@ -282,7 +254,11 @@
 
           </div>
           <!-- /row -->
-          <p class="text-center"><a href="#0" class="btn_1"><strong>Load more</strong></a></p>
+          
+          <!-- 페이징 -->
+          <div class="pagination_fg" id="pagination-container">
+            <!-- 페이징이 동적으로 생성됩니다 -->
+          </div>
         </div>
         <!-- /content-left-->
         <div class="col-xl-8 col-lg-7 map-right">

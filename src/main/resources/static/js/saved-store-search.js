@@ -53,7 +53,7 @@ function renderStoreList(storeList) {
                       <div class="strip">
                           <figure>
                               <img src="img/lazy-placeholder.png" data-src="${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
-                              <a href="/store//detail/${store.storeId}" class="strip_info">
+                              <a href="/store/detail/${store.storeId}" class="strip_info">
                                   <small>${store.saveStoreCategoryName}</small>
                                   <div class="item_title">
                                       <h3>${store.storeName}</h3>

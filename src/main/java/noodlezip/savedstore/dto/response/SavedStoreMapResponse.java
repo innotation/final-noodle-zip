@@ -13,7 +13,7 @@ import java.util.Map;
 @ToString
 public class SavedStoreMapResponse {
 
-    private Map<Integer, List<SavedStoreResponse>> locationListByCategoryId;
+    private Map<Long, List<SavedStoreResponse>> locationListByCategoryId;
 
 }
 

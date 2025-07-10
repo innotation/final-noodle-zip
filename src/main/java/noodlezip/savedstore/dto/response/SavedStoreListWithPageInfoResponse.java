@@ -33,5 +33,5 @@ public class SavedStoreListWithPageInfoResponse {
                 .isLast((Boolean) map.get("isLast"))
                 .build();
     }
-    
+
 }

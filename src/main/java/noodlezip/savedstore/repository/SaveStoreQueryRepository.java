@@ -1,8 +1,8 @@
 package noodlezip.savedstore.repository;
 
 import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
-import noodlezip.savedstore.dto.response.SavedStoreResponse;
 import noodlezip.savedstore.dto.response.SavedStoreMapResponse;
+import noodlezip.savedstore.dto.response.SavedStoreResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -120,9 +120,9 @@ public class SaveStoreQueryRepositoryImpl implements SaveStoreQueryRepository {
                 .where(where)
                 .fetch();
 
-        Map<Integer, List<SavedStoreResponse>> grouped = resultList.stream()
+        Map<Long, List<SavedStoreResponse>> grouped = resultList.stream()
                 .collect(Collectors.groupingBy(
-                        tuple -> Objects.requireNonNull(tuple.get(savedStoreCategory.id)).intValue(),
+                        tuple -> Objects.requireNonNull(tuple.get(savedStoreCategory.id)),
                         Collectors.mapping(
                                 tuple -> SavedStoreResponse.builder()
                                         .savedStoreId(tuple.get(savedStore.id))
