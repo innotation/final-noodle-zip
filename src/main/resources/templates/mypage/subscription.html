@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
+  <meta name="author" content="Ansonika">
+  <title>Foogra - Discover & Book the best restaurants at the best price</title>
+
+  <!-- Favicons-->
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+
+  <!-- GOOGLE WEB FONT -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- BASE CSS -->
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/admin_section/css/admin.css}" rel="stylesheet">
+
+  <!-- SPECIFIC CSS -->
+  <link th:href="@{/css/subscription.css}" rel="stylesheet">
+
+</head>
+<body>
+<!--  <div th:replace="/fragments/subHeader::subHeader"></div>-->
+
+  <main>
+    <div>
+      <div class="container-fluid">
+        <div class="box_general">
+          <div class="header_box">
+            <a href="#0" class="show-submenu">구독자</a>
+            <a href="#0" class="show-submesnu">구독중</a>
+          </div>
+          <div class="list_general">
+            <ul>
+              <li>
+                <figure><img src="img/item_1.jpg" alt=""></figure>
+                <small>Pizza - Italian</small>
+                <h4>La Monnalisa</h4>
+                <p><a href="#0" class="btn_1 gray"> 구독 </a></p>
+                <ul class="buttons">
+                  <li><a href="#0" class="btn_1 gray delete wishlist_close"><i class="fa fa-fw fa-times-circle-o"></i> Cancel</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="pagination_fg">
+          <a href="#">&laquo;</a>
+          <a href="#" class="active">1</a>
+          <a href="#">2</a>
+          <a href="#">3</a>
+          <a href="#">4</a>
+          <a href="#">5</a>
+          <a href="#">&raquo;</a>
+        </div>
+      </div>
+    </div>
+    <aside class="col-lg-3">
+      <!-- /widget -->
+      <div class="widget">
+        <div class="widget-title">
+          <h4>Categories</h4>
+        </div>
+        <ul class="cats">
+          <li><a href="#">Food <span>(12)</span></a></li>
+          <li><a href="#">Places to visit <span>(21)</span></a></li>
+          <li><a href="#">New Places <span>(44)</span></a></li>
+          <li><a href="#">Suggestions and guides <span>(31)</span></a></li>
+        </ul>
+      </div>
+      <!-- /widget -->
+    </aside>
+  </main>
+  <script src="/js/common_scripts.min.js"></script>
+  <script src="/js/common_func.js"></script>
+  <script src="/assets/validate.js"></script>
+
+</body>
+</html>
