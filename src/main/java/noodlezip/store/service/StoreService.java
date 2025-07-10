@@ -258,7 +258,7 @@ public class StoreService {
         return new PageImpl<>(dtoList, pageable, page.getTotalElements());
     }
 
-
+    // 매장 토핑 조회
     public List<ToppingResponseDto> getStoreToppings(Long storeId) {
         Store store = em.getReference(Store.class, storeId);
         List<ToppingResponseDto> result = new ArrayList<>();

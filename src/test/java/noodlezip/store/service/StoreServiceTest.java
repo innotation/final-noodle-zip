@@ -1,15 +1,21 @@
 package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
+import noodlezip.common.exception.CustomException;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
+import noodlezip.ramen.dto.ToppingResponseDto;
+import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.RamenToppingRepository;
 import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.StoreReviewDto;
+import noodlezip.store.entity.Store;
+import noodlezip.store.entity.StoreExtraTopping;
 import noodlezip.store.repository.MenuRepository;
+import noodlezip.store.repository.StoreExtraToppingRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +33,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StoreServiceTest {
@@ -45,6 +55,7 @@ class StoreServiceTest {
     @Mock private EntityManager em;
     @Mock private RamenReviewRepository ramenReviewRepository;
     @Mock private ReviewToppingRepository reviewToppingRepository;
+    @Mock private StoreExtraToppingRepository storeExtraToppingRepository;
 
     private StoreService storeService;
 
@@ -62,7 +73,8 @@ class StoreServiceTest {
                 fileUtil,
                 em,
                 ramenReviewRepository,
-                reviewToppingRepository
+                reviewToppingRepository,
+                storeExtraToppingRepository
         );
     }
 
@@ -118,5 +130,49 @@ class StoreServiceTest {
         assertThat(resultDto.getToppingNames()).containsExactly("차슈", "계란");
         assertThat(resultDto.getMenuName()).isEqualTo("카라미소라멘");
         assertThat(resultDto.getIsReceiptReview()).isTrue();
+    }
+
+    @Test
+    void getStoreToppings_정상동작() throws Exception {
+        // given
+        Long storeId = 1L;
+        Store store = new Store();
+        when(em.getReference(Store.class, storeId)).thenReturn(store);
+
+        StoreExtraTopping toppingEntity = mock(StoreExtraTopping.class);
+        Topping topping = mock(Topping.class);
+        when(toppingEntity.getId()).thenReturn(10L);
+        when(toppingEntity.getTopping()).thenReturn(topping);
+        when(topping.getToppingName()).thenReturn("계란");
+        when(toppingEntity.getPrice()).thenReturn(2000);
+
+        when(storeExtraToppingRepository.findStoreExtraToppingByStore(store))
+                .thenReturn(java.util.List.of(toppingEntity));
+
+        // when
+        java.util.List<ToppingResponseDto> result = storeService.getStoreToppings(storeId);
+
+        // then
+        assertEquals(1, result.size());
+        assertEquals("계란", result.get(0).getName());
+        assertEquals(2000, result.get(0).getPrice());
+    }
+
+    @Test
+    void getStoreToppings_NPE발생시_CustomException() throws Exception {
+        // given
+        Long storeId = 1L;
+        Store store = new Store();
+        when(em.getReference(Store.class, storeId)).thenReturn(store);
+
+        StoreExtraTopping toppingEntity = mock(StoreExtraTopping.class);
+        when(toppingEntity.getId()).thenReturn(10L);
+        when(toppingEntity.getTopping()).thenReturn(null); // NPE 유발
+
+        when(storeExtraToppingRepository.findStoreExtraToppingByStore(store))
+                .thenReturn(java.util.List.of(toppingEntity));
+
+        // when & then
+        assertThrows(CustomException.class, () -> storeService.getStoreToppings(storeId));
     }
 }
