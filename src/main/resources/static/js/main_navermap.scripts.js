@@ -326,6 +326,43 @@ document.addEventListener('DOMContentLoaded', function () {
       infoWindows.push(infoWindow);
 
     });
+
+    // 지도 위치 조정
+    adjustMapToStores(stores);
+  }
+
+  // 지도 위치 조정 함수
+  function adjustMapToStores(stores) {
+    if (stores.length === 0) return;
+
+    if (stores.length === 1) {
+      // 매장이 1개인 경우: 해당 위치로 중심 이동
+      const store = stores[0];
+      const position = new naver.maps.LatLng(store.storeLat, store.storeLng);
+      map.setCenter(position);
+      map.setZoom(16); // 상세 줌
+    } else {
+      // 매장이 여러 개인 경우: 모든 매장이 보이도록 영역 계산
+      const bounds = new naver.maps.LatLngBounds();
+      
+      stores.forEach(store => {
+        bounds.extend(new naver.maps.LatLng(store.storeLat, store.storeLng));
+      });
+
+      // 경계에 여백 추가
+      const padding = 0.01; // 약 1km 여백
+      bounds.extend(new naver.maps.LatLng(
+        bounds.getMin().lat() - padding,
+        bounds.getMin().lng() - padding
+      ));
+      bounds.extend(new naver.maps.LatLng(
+        bounds.getMax().lat() + padding,
+        bounds.getMax().lng() + padding
+      ));
+
+      // 지도 영역 설정
+      map.fitBounds(bounds);
+    }
   }
 });
 
