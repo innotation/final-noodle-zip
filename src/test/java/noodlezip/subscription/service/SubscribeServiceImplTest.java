@@ -3,10 +3,7 @@ package noodlezip.subscription.service;
 
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.util.PageUtil;
-import noodlezip.subscription.dto.response.FolloweeResponse;
-import noodlezip.subscription.dto.response.FollowerPageResponse;
-import noodlezip.subscription.dto.response.FollowerResponse;
-import noodlezip.subscription.dto.response.FollowingPageResponse;
+import noodlezip.subscription.dto.response.*;
 import noodlezip.subscription.entity.UserSubscription;
 import noodlezip.subscription.repository.UserSubscriptionRepository;
 import noodlezip.subscription.status.SubscriptionErrorStatus;
@@ -80,8 +77,9 @@ class SubscribeServiceImplTest {
         verify(userSubscriptionRepository).save(captor.capture());
 
         UserSubscription saved = captor.getValue();
-        assertThat(saved.getFollower()).isEqualTo(requestUser);
-        assertThat(saved.getFollowee()).isEqualTo(targetUser);
+        // equals 깨지지 않게 ID만 비교
+        assertThat(saved.getFollower().getId()).isEqualTo(requestUser.getId());
+        assertThat(saved.getFollowee().getId()).isEqualTo(targetUser.getId());
     }
 
     @Test
@@ -126,8 +124,8 @@ class SubscribeServiceImplTest {
         Long requestUserId = 2L;
         int page = 1;
 
-        FollowerResponse dto = new FollowerResponse(10L, 100L, "Alice", "alice.jpg", true);
-        Page<FollowerResponse> followerPage = new PageImpl<>(List.of(dto), PageRequest.of(0, 30), 20);
+        SubscriberResponse dto = new SubscriberResponse(10L, 100L, "Alice","Alice", "alice.jpg", true);
+        Page<SubscriberResponse> followerPage = new PageImpl<>(List.of(dto), PageRequest.of(0, 30), 20);
 
         Map<String, Object> dummyPageInfo = Map.of(
                 "page", 1,
@@ -144,7 +142,7 @@ class SubscribeServiceImplTest {
                 .thenReturn(dummyPageInfo);
 
         // when
-        FollowerPageResponse response = subscribeService.getFollowerListWithPaging(targetUserId, requestUserId, page);
+        SubscriptionPageResponse response = subscribeService.getFollowerListWithPaging(targetUserId, requestUserId, page);
 
         // then
         assertThat(response.getPage()).isEqualTo(1);
@@ -154,8 +152,8 @@ class SubscribeServiceImplTest {
         assertThat(response.isFirst()).isTrue();
         assertThat(response.isLast()).isFalse();
 
-        assertThat(response.getFollowerList()).hasSize(1);
-        assertThat(response.getFollowerList()).extracting("name").containsExactly("Alice");
+        assertThat(response.getSubscriptionList()).hasSize(1);
+        assertThat(response.getSubscriptionList()).extracting("name").containsExactly("Alice");
 
         verify(userSubscriptionRepository).findFollowerList(eq(targetUserId), eq(requestUserId), any(Pageable.class));
         verify(pageUtil).getPageInfo(followerPage, SubscriptionPagePolicy.PAGE_PER_BLOCK);
@@ -170,8 +168,8 @@ class SubscribeServiceImplTest {
         Long requestUserId = 2L;
         int page = 2;
 
-        FolloweeResponse dto = new FolloweeResponse(20L, 200L, "Bob", "bob.jpg", false);
-        Page<FolloweeResponse> followeePage = new PageImpl<>(List.of(dto), PageRequest.of(1, 30), 40);
+        SubscriberResponse dto = new SubscriberResponse(20L, 200L, "Bob", "Bob","bob.jpg", false);
+        Page<SubscriberResponse> followeePage = new PageImpl<>(List.of(dto), PageRequest.of(1, 30), 40);
 
         Map<String, Object> dummyPageInfo = Map.of(
                 "page", 2,
@@ -188,7 +186,7 @@ class SubscribeServiceImplTest {
                 .thenReturn(dummyPageInfo);
 
         // when
-        FollowingPageResponse response = subscribeService.getFollowingListWithPaging(targetUserId, requestUserId, page);
+        SubscriptionPageResponse response = subscribeService.getFollowingListWithPaging(targetUserId, requestUserId, page);
 
         // then
         assertThat(response.getPage()).isEqualTo(2);
@@ -198,8 +196,8 @@ class SubscribeServiceImplTest {
         assertThat(response.isFirst()).isFalse();
         assertThat(response.isLast()).isFalse();
 
-        assertThat(response.getFollowingList()).hasSize(1);
-        assertThat(response.getFollowingList()).extracting("name").containsExactly("Bob");
+        assertThat(response.getSubscriptionList()).hasSize(1);
+        assertThat(response.getSubscriptionList()).extracting("name").containsExactly("Bob");
 
         verify(userSubscriptionRepository).findFolloweeList(eq(targetUserId), eq(requestUserId), any(Pageable.class));
         verify(pageUtil).getPageInfo(followeePage, SubscriptionPagePolicy.PAGE_PER_BLOCK);
