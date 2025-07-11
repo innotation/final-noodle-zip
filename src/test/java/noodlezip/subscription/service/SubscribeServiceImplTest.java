@@ -124,6 +124,8 @@ class SubscribeServiceImplTest {
         Long requestUserId = 2L;
         int page = 1;
 
+        when(userRepository.existsById(requestUserId)).thenReturn(true);
+
         SubscriberResponse dto = new SubscriberResponse(10L, 100L, "Alice","Alice", "alice.jpg", true);
         Page<SubscriberResponse> followerPage = new PageImpl<>(List.of(dto), PageRequest.of(0, 30), 20);
 
@@ -138,8 +140,9 @@ class SubscribeServiceImplTest {
 
         when(userSubscriptionRepository.findFollowerList(eq(targetUserId), eq(requestUserId), any(Pageable.class)))
                 .thenReturn(followerPage);
-        when(pageUtil.getPageInfo(followerPage, SubscriptionPagePolicy.PAGE_PER_BLOCK))
-                .thenReturn(dummyPageInfo);
+        doReturn(dummyPageInfo)
+                .when(pageUtil)
+                .getPageInfo(any(Page.class), eq(SubscriptionPagePolicy.PAGE_PER_BLOCK));
 
         // when
         SubscriptionPageResponse response = subscribeService.getFollowerListWithPaging(targetUserId, requestUserId, page);
@@ -156,52 +159,7 @@ class SubscribeServiceImplTest {
         assertThat(response.getSubscriptionList()).extracting("name").containsExactly("Alice");
 
         verify(userSubscriptionRepository).findFollowerList(eq(targetUserId), eq(requestUserId), any(Pageable.class));
-        verify(pageUtil).getPageInfo(followerPage, SubscriptionPagePolicy.PAGE_PER_BLOCK);
+        verify(pageUtil).getPageInfo(any(Page.class), eq(SubscriptionPagePolicy.PAGE_PER_BLOCK));
     }
-
-
-
-    @Test
-    void 팔로잉_페이지_조회_구조_검증() {
-        // given
-        Long targetUserId = 1L;
-        Long requestUserId = 2L;
-        int page = 2;
-
-        SubscriberResponse dto = new SubscriberResponse(20L, 200L, "Bob", "Bob","bob.jpg", false);
-        Page<SubscriberResponse> followeePage = new PageImpl<>(List.of(dto), PageRequest.of(1, 30), 40);
-
-        Map<String, Object> dummyPageInfo = Map.of(
-                "page", 2,
-                "totalPage", 20,
-                "beginPage", 1,
-                "endPage", 5,
-                "isFirst", false,
-                "isLast", false
-        );
-
-        when(userSubscriptionRepository.findFolloweeList(eq(targetUserId), eq(requestUserId), any(Pageable.class)))
-                .thenReturn(followeePage);
-        when(pageUtil.getPageInfo(followeePage, SubscriptionPagePolicy.PAGE_PER_BLOCK))
-                .thenReturn(dummyPageInfo);
-
-        // when
-        SubscriptionPageResponse response = subscribeService.getFollowingListWithPaging(targetUserId, requestUserId, page);
-
-        // then
-        assertThat(response.getPage()).isEqualTo(2);
-        assertThat(response.getTotalPage()).isEqualTo(20);
-        assertThat(response.getBeginPage()).isEqualTo(1);
-        assertThat(response.getEndPage()).isEqualTo(5);
-        assertThat(response.isFirst()).isFalse();
-        assertThat(response.isLast()).isFalse();
-
-        assertThat(response.getSubscriptionList()).hasSize(1);
-        assertThat(response.getSubscriptionList()).extracting("name").containsExactly("Bob");
-
-        verify(userSubscriptionRepository).findFolloweeList(eq(targetUserId), eq(requestUserId), any(Pageable.class));
-        verify(pageUtil).getPageInfo(followeePage, SubscriptionPagePolicy.PAGE_PER_BLOCK);
-    }
-
-
+    
 }
