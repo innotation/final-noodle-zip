@@ -1,40 +1,145 @@
 /*============================================================================================*/
-/* Your custom styles below */
+/* YOUR CUSTOM CSS */
 /*============================================================================================*/
 
-.search-bar {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
+/* Tabelog 스타일 검색바 */
+.search_bar_list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
 }
 
-.search-bar .search-trigger {
-  display: flex;
-  align-items: center;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  padding: 5px 10px;
-  cursor: pointer;
-  width: 250px;
+.search-filter-container,
+.search-keyword-container,
+.search-category-container {
+    position: relative;
+    flex: 1;
 }
 
-.search-bar input {
-  border: none;
-  outline: none;
-  width: 100%;
-  background: transparent;
-  cursor: pointer;
+.search-filter-container input,
+.search-keyword-container input,
+.search-category-container select {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
 }
 
-.search-bar i {
-  font-size: 1.2rem;
-  color: #888;
-  margin-left: 8px;
+.search-filter-container input {
+    cursor: pointer;
+    padding-right: 35px;
 }
 
+.search-filter-container input:focus,
+.search-keyword-container input:focus {
+    background-color: #f8f9fa;
+}
+
+.search-modal-trigger {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.search-modal-trigger:hover {
+    color: #589442;
+}
+
+.search-execute-btn {
+    background-color: #589442;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.search-execute-btn:hover {
+    background-color: #4a7a38;
+}
+
+/* 구분선 스타일 */
+.search-filter-container::after,
+.search-keyword-container::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 20px;
+    background-color: #ddd;
+}
+
+/* 검색바 호버 효과 */
+.search_bar_list:hover {
+    border-color: #589442;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .search_bar_list {
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px;
+    }
+    
+    .search-filter-container::after,
+    .search-keyword-container::after {
+        display: none;
+    }
+    
+    .search-execute-btn {
+        width: 100%;
+        margin-top: 4px;
+    }
+}
+
+/* SubHeader 검색바 스타일 */
+.search_bar_list .search-trigger {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 25px;
+    padding: 8px 15px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.search_bar_list .search-trigger:hover {
+    background: #fff;
+    border-color: #589442;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.search_bar_list .search-trigger input {
+    font-size: 14px;
+    color: #444;
+}
+
+.search_bar_list .search-trigger input::placeholder {
+    color: #999;
+}
+
+.search_bar_list .search-trigger i {
+    color: #589442;
+    font-size: 16px;
+}
 
 
 /* 태그 필터 활성화/비활성화 스타일 */

@@ -3,31 +3,39 @@
 
 <div th:fragment="subHeader">
 
-  <header class="header clearfix element_to_stick">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="noodle.zip - ramen community site">
+    <meta name="author" content="zip.lab">
+    <title>누들집 - 대한민국 최초 라멘 커뮤니티 사이트</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="/img/apple-touch-icon-144x144-precomposed.png">
+
+    <!-- GOOGLE WEB FONT -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- BASE CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+
+  </head>
+  <body class="margin_sticky">
+
+  <header class="header_in is_sticky clearfix">
     <div class="container">
       <div id="logo">
         <a th:href="@{/}">
-          <img th:src="@{/img/logo.svg}" width="140" height="35" alt="" class="logo_normal">
-          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
+          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="">
         </a>
       </div>
-
-      <!-- 중앙 검색바 -->
-      <div class="search-bar">
-        <button type="button"
-                class="search-trigger d-flex align-items-center gap-2"
-                data-bs-toggle="modal"
-                data-bs-target="#searchModal">
-          <input type="text"
-                 placeholder="라멘 검색..."
-                 class="form-control border-0 bg-transparent p-0"
-                 readonly
-                 style="cursor:pointer"/>
-
-          <i class="bi bi-search"></i>
-        </button>
-      </div>
-
+      
       <!-- /top_menu -->
       <ul id="top_menu">
         <div sec:authorize="isAnonymous()">
@@ -53,9 +61,8 @@
           </li>
         </div>
       </ul>
-
-
       <!-- /top_menu -->
+      
       <nav class="main-menu">
         <ul>
           <li><a href="검색페이지">검색페이지</a></li>
@@ -64,6 +71,60 @@
       </nav>
     </div>
   </header>
+
+  <!-- 검색바 섹션 -->
+  <div class="page_header element_to_stick">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
+          <!-- 브레드크럼이나 다른 정보가 들어갈 수 있는 공간 -->
+        </div>
+        <div class="col-xl-4 col-lg-5 col-md-5">
+          <div class="search_bar_list">
+            <!-- 라멘 상세 검색 모달 칸 -->
+            <div class="search-filter-container" 
+                 data-bs-toggle="modal" 
+                 data-bs-target="#searchModal"
+                 style="cursor: pointer;">
+              <input type="text" 
+                     id="filterDisplay" 
+                     class="form-control" 
+                     placeholder="라멘 상세 검색"
+                     readonly>
+              <button type="button" 
+                      class="search-modal-trigger">
+                <i class="bi bi-funnel"></i>
+              </button>
+            </div>
+
+            <!-- 검색어 검색 칸 -->
+            <div class="search-keyword-container">
+              <input type="text" 
+                     id="keywordSearch" 
+                     class="form-control" 
+                     placeholder="매장명 또는 메뉴명 검색">
+            </div>
+
+            <!-- 검색 카테고리 칸 -->
+            <div class="search-category-container">
+              <select id="searchCategory" class="form-control">
+                <option value="ALL">전체</option>
+                <option value="STORE_NAME">매장명</option>
+                <option value="MENU_NAME">메뉴명</option>
+              </select>
+            </div>
+
+            <!-- 검색 버튼 -->
+            <button type="button" 
+                    id="searchButton" 
+                    class="search-execute-btn">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- 검색모달 include -->
   <div th:replace="~{fragments/searchModal :: searchModal}"></div>
@@ -102,7 +163,7 @@
           </div>
           <div class="text-center">
             <input type="submit" value="Log In" class="btn_1 full-width mb_5">
-            Don’t have an account? <a href="회원가입페이지">Sign up</a>
+            Don't have an account? <a href="회원가입페이지">Sign up</a>
           </div>
           <div id="forgot_pw">
             <div class="form-group">
@@ -121,4 +182,7 @@
 </div>
       <!--form -->
 
-      <!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용 <link th:include="fragements/subHeader.html"/>  구문 삽입해서 사용-->
+      <!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용 <div th:replace="~{fragments/subHeader::subHeader}"></div>
+>  구문 삽입해서 사용-->
+
+</html>

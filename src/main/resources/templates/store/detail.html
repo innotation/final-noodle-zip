@@ -2,15 +2,19 @@
 <html lang="en"
 			xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{store/head :: head}"></head>
-
-
-
-<body>
 	<!-- header -->
-	<th:block th:replace="~{store/header :: header}"></th:block>
+  <th:block th:replace="~{fragments/subHeader::subHeader}"></th:block>
 
-	<main>
+  <!-- SPECIFIC CSS -->
+  <link href="/css/detail-page.css" rel="stylesheet">
+
+  <link href="/css/blog.css" rel="stylesheet">
+
+  <!-- YOUR CUSTOM CSS -->
+  <link href="/css/custom.css" rel="stylesheet">
+
+
+  <main>
 		
 		<div class="container margin_detail">
 		    <div class="row">
@@ -86,8 +90,8 @@
 		        </div>
 		        <!-- /col -->
 
-		                <div class="col-lg-4" id="sidebar_fixed">
-            <div class="box_booking">
+          <div class="col-lg-4" id="sidebar_fixed">
+          <div class="box_booking">
                 <div class="head">
                     <h3>매장 위치</h3>
                 </div>
