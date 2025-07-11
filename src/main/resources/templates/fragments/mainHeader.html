@@ -26,6 +26,8 @@
     <link th:href="@{/css/style.css}" rel="stylesheet">
     <!-- SPECIFIC CSS -->
     <link th:href="@{/css/home.css}" rel="stylesheet">
+    <!-- HEADER CSS -->
+    <link th:href="@{/css/header.css}" rel="stylesheet">
     <!-- YOUR CUSTOM CSS -->
     <link th:href="@{/css/custom.css}" rel="stylesheet">
   </head>
@@ -38,7 +40,46 @@
             <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
           </a>
         </div>
+        
+        <!-- /top_menu -->
+        <ul id="top_menu">
+          <div sec:authorize="isAnonymous()">
+            <li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
+          </div>
+          <div sec:authorize="isAuthenticated()">
+            <li>
+              <div class="dropdown user clearfix">
+                <a href="#" data-bs-toggle="dropdown">
+                  <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure><span th:text="${#authentication.principal.user.userName}"></span>
+                </a>
+                <div class="dropdown-menu">
+                  <div class="dropdown-menu-content">
+                    <ul>
+                      <li><a href="#0"><i class="icon_cog"></i>마이페이지</a></li>
+                      <li><a th:href="@{/logout}"><i class="icon_key"></i>Log Out</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- /dropdown -->
+            </li>
+          </div>
+        </ul>
+        <!-- /top_menu -->
+        
+        <!-- 햄버거 메뉴 버튼 -->
+        <a href="#0" class="open_close">
+          <i class="icon_menu"></i><span>Menu</span>
+        </a>
+        
         <nav class="main-menu">
+          <!-- 사이드바 내부 헤더 -->
+          <div id="header_menu">
+            <a href="#0" class="open_close">
+              <i class="icon_close"></i><span>Menu</span>
+            </a>
+            <a th:href="@{/}"><img th:src="@{/img/logo.svg}" width="140" height="35" alt=""></a>
+          </div>
           <ul>
             <li><a th:href="@{/search/list}">검색페이지</a></li>
             <li><a th:href="@{/board/list}">커뮤니티페이지</a></li>
@@ -46,6 +87,60 @@
         </nav>
       </div>
     </header>
+    
+    <!-- Layer 요소 - 사이드바 메뉴용 -->
+    <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
+    
+    <!-- 로그인 모달 -->
+    <div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
+      <div class="modal_header">
+        <h3>Sign In</h3>
+      </div>
+
+      <form th:action="@{/login}" method="post">
+        <form>
+          <div class="sign-in-wrapper">
+            <a href="#0" class="social_bt facebook">Login with Facebook</a>
+            <a href="#0" class="social_bt google">Login with Google</a>
+            <div class="divider"><span>Or</span></div>
+            <div class="form-group">
+              <label>Id</label>
+              <input type="text" class="form-control" name="userId" id="userId">
+              <i class="icon_mail_alt"></i>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="form-control" name="userPwd" id="userPwd">
+              <i class="icon_lock_alt"></i>
+            </div>
+            <div class="clearfix add_bottom_15">
+              <div class="checkboxes float-start">
+                <label class="container_check">Remember me
+                  <input type="checkbox" name="remember-me">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
+            </div>
+            <div class="text-center">
+              <input type="submit" value="Log In" class="btn_1 full-width mb_5">
+              Don't have an account? <a href="회원가입페이지">Sign up</a>
+            </div>
+            <div id="forgot_pw">
+              <div class="form-group">
+                <label>Please confirm login email below</label>
+                <input type="email" class="form-control" name="email_forgot" id="email_forgot">
+                <i class="icon_mail_alt"></i>
+              </div>
+              <p>You will receive an email containing a link allowing you to reset your password to a new preferred
+                one.</p>
+              <div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
+            </div>
+          </div>
+        </form>
+      </form>
+    </div>
+  </body>
 </div>
 <!-- /header -->
 
