@@ -7,6 +7,11 @@
   border-radius: 8px;
 }
 
+.pagination_fg a.disabled {
+  pointer-events: none;
+  color: #ccc;
+}
+
 
 /* Top Navigation Menu */
 .top-nav-menu {
@@ -100,4 +105,10 @@ aside .widget ul li a:hover {
   background-color: #f8f9fa;
   color: #007bff;
   transform: translateX(5px);
+}
+
+
+
+.list_general ul li {
+  height: 120px; /* 원하는 높이로 지정 */
 }
