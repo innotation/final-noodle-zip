@@ -186,6 +186,8 @@
         }
 
         const ocr = data.ocrData || {};
+        window.ocrResultCache = ocr;
+
         $('#storeName').text(ocr.storeName || "없음");
         $('#date').text(ocr.date || "없음");
         $('#menuNames').text((ocr.menuNames || []).join(', ') || "없음");
@@ -211,7 +213,16 @@
 
   /* ========== 4) 리뷰 작성 페이지로 이동 ========== */
   function proceedToReview() {
-    window.location.href = "/review/write";  // 실제 경로로 수정
+    const ocr = window.ocrResultCache; // 이전 fetch에서 저장해둔 객체
+    const bizNum = ocr?.bizNum;
+
+    if (!bizNum) {
+      alert("사업자 번호 정보가 없습니다. 다시 시도해주세요.");
+      return;
+    }
+
+    // 쿼리 파라미터로 bizNum을 넘김
+    window.location.href = `/board/review?bizNum=${encodeURIComponent(bizNum)}`;
   }
 </script>
 </body>

@@ -3,6 +3,8 @@ package noodlezip.store.repository;
 import noodlezip.admin.dto.RegistListDto;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
+import noodlezip.store.dto.StoreIdNameDto;
+import noodlezip.store.entity.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,4 +23,6 @@ public interface StoreRepositoryCustom {
     List<String> findDistinctSoups();
 
     List<String> findDistinctToppings();
+
+    List<StoreIdNameDto> findIdNameByBizNum(Long bizNum);
 }

@@ -1,6 +1,7 @@
 package noodlezip.store.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
 import noodlezip.ramen.entity.*;
+import noodlezip.store.dto.StoreIdNameDto;
 import noodlezip.store.entity.QStoreExtraTopping;
 import noodlezip.search.dto.SearchFilterDto;
 import noodlezip.search.dto.SearchStoreDto;
@@ -292,6 +294,19 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(store.approvalStatus.eq(ApprovalStatus.APPROVED)
                         .and(topping.isActive.isTrue()))
+                .distinct()
+                .fetch();
+    }
+
+    @Override
+    public List<StoreIdNameDto> findIdNameByBizNum(Long bizNum) {
+        QStore store = QStore.store;
+
+        return queryFactory
+                .select(Projections.constructor(StoreIdNameDto.class,
+                        store.id, store.storeName))
+                .from(store)
+                .where(store.bizNum.eq(bizNum))
                 .distinct()
                 .fetch();
     }
