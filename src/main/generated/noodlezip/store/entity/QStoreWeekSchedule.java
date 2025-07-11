@@ -22,13 +22,13 @@ public class QStoreWeekSchedule extends EntityPathBase<StoreWeekSchedule> {
 
     public static final QStoreWeekSchedule storeWeekSchedule = new QStoreWeekSchedule("storeWeekSchedule");
 
-    public final DateTimePath<java.time.LocalDateTime> closingAt = createDateTime("closingAt", java.time.LocalDateTime.class);
+    public final TimePath<java.time.LocalTime> closingAt = createTime("closingAt", java.time.LocalTime.class);
 
     public final QStoreWeekScheduleId id;
 
     public final BooleanPath isClosedDay = createBoolean("isClosedDay");
 
-    public final DateTimePath<java.time.LocalDateTime> openingAt = createDateTime("openingAt", java.time.LocalDateTime.class);
+    public final TimePath<java.time.LocalTime> openingAt = createTime("openingAt", java.time.LocalTime.class);
 
     public final QStore storeId;
 

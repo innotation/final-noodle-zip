@@ -87,9 +87,7 @@ public class SecurityConfig {
         });
 
         // 동일 도메인에서 iframe 접근 가능 설정
-        http
-                .headers()
-                .frameOptions().sameOrigin();
+        http.headers().frameOptions().sameOrigin();
 
         return http.build();
 
