@@ -40,24 +40,24 @@
             <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
           </a>
         </div>
-        
+
         <!-- /top_menu -->
         <ul id="top_menu">
           <div sec:authorize="isAnonymous()">
-            <li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
+            <li><a href="#sign-in-dialog" class="sign-in login">Sign In</a></li>
           </div>
           <div sec:authorize="isAuthenticated()">
             <li>
               <div class="dropdown user clearfix">
                 <a href="#" data-bs-toggle="dropdown">
-                  <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure><span th:text="${#authentication.principal.user.userName}"></span>
+                  <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure>
+                  <span th:text="${#authentication.principal.user.userName}"></span>
                 </a>
                 <div class="dropdown-menu">
                   <div class="dropdown-menu-content">
                     <ul>
                       <li><a href="#0"><i class="icon_cog"></i>마이페이지</a></li>
-                      <li><a th:href="@{'/logout?redirectUrl=' + ${#httpServletRequest.requestURI + (#httpServletRequest.queryString != null ? '?' + #httpServletRequest.queryString : '')}}">
-                        <i class="icon_key"></i>Log Out</a></li>
+                      <li><a href="/logout" class="logout-link"><i class="icon_key"></i>Log Out</a></li>
                     </ul>
                   </div>
                 </div>
@@ -67,12 +67,12 @@
           </div>
         </ul>
         <!-- /top_menu -->
-        
+
         <!-- 햄버거 메뉴 버튼 -->
         <a href="#0" class="open_close">
           <i class="icon_menu"></i><span>Menu</span>
         </a>
-        
+
         <nav class="main-menu">
           <!-- 사이드바 내부 헤더 -->
           <div id="header_menu">
@@ -88,10 +88,10 @@
         </nav>
       </div>
     </header>
-    
+
     <!-- Layer 요소 - 사이드바 메뉴용 -->
     <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
-    
+
     <!-- 로그인 모달 -->
     <div th:replace="~{fragments/signin-modal :: signin-modal}"></div>
   </body>

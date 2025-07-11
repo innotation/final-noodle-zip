@@ -24,7 +24,7 @@
           <i class="icon_lock_alt"></i>
         </div>
         <input type="hidden" name="redirectUrl" id="redirectUrlInput"
-               th:value="${#httpServletRequest.requestURI + (#httpServletRequest.queryString != null ? '?' + #httpServletRequest.queryString : '')}" />
+               th:value="${#httpServletRequest != null ? #httpServletRequest.requestURI + (#httpServletRequest.queryString != null ? '?' + #httpServletRequest.queryString : '') : '/'}" />
         <div class="clearfix add_bottom_15">
           <div class="checkboxes float-start">
             <label class="container_check">Remember me

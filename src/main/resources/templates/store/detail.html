@@ -108,7 +108,7 @@
                        target="_blank" class="btn_1 full-width mb_5">
                         <i class="icon_location"></i> 네이버 지도에서 보기
                     </a>
-                    <a href="#" class="btn_1 full-width outline wishlist"><i class="icon_heart"></i> 위시리스트에 추가</a>
+                    <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
                 </div>
             </div>
             <!-- /box_booking -->
@@ -509,9 +509,6 @@
 			}
 		});
 	</script>
-<!--	<script th:src="@{/js/store_review_tab.js}"></script>-->
-	<!-- review 탭 설정 script -->
-
 
 	<!-- footer -->
 	<th:block th:replace="~{fragments/footer :: footer}"></th:block>
@@ -521,7 +518,7 @@
 	<div class="layer"></div><!-- Opacity Mask Menu Mobile -->
 	
 	<!-- Sign In Modal -->
-	<th:block th:replace="~{store/signin-modal :: signin-modal}"></th:block>
+	<th:block th:replace="~{fragments/signin-modal :: signin-modal}"></th:block>
 
     <!-- 위시리스트 모달 -->
     <div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="wishlistModalLabel" aria-hidden="true">
@@ -595,35 +592,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 로그인 안내 모달 삭제 -->
-    <!--
-    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="loginRequiredModalLabel">로그인 필요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            이 기능은 로그인 후 이용하실 수 있습니다.<br>
-            <a href="/login" class="btn btn-primary mt-3 w-100">로그인 하러 가기</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    -->
-
-	    <!-- COMMON SCRIPTS -->
-    <script src="/js/common_scripts.min.js"></script>
-    <script src="/js/common_func.js"></script>
-    <script src="/assets/validate.js"></script>
-    
-    <!-- SPECIFIC SCRIPTS -->
-    <script src="/js/sticky_sidebar.min.js"></script>
-    <script src="/js/specific_detail.js"></script>
-	<script src="/js/datepicker.min.js"></script>
-	<script src="/js/datepicker_func_1.js"></script>
 
     <!-- Naver Map API -->
     <script type="text/javascript"
@@ -773,23 +741,6 @@
       if (wishlistBtn) {
         wishlistBtn.addEventListener('click', function(e) {
           e.preventDefault();
-          if (!isLoggedIn) {
-            $.magnificPopup.close(); // 기존 팝업 강제 종료
-            $.magnificPopup.open({
-              items: {
-                src: '#sign-in-dialog',
-                type: 'inline'
-              },
-              removalDelay: 500,
-              mainClass: 'my-mfp-zoom-in',
-              closeOnContentClick: false,
-              closeOnBgClick: true,
-              showCloseBtn: true,
-              closeBtnInside: true,
-              closeMarkup: '<button title="%title%" type="button" class="mfp-close"></button>'
-            });
-            return;
-          }
           const storeId = document.getElementById("store-id").value;
 
           fetch(`/stores/${storeId}/saved-store/memo`)
@@ -960,6 +911,18 @@
       }
     });
     </script>
+
+
+  <!-- COMMON SCRIPTS -->
+  <script src="/js/common_scripts.min.js"></script>
+  <script src="/js/common_func.js"></script>
+  <script src="/assets/validate.js"></script>
+
+  <!-- SPECIFIC SCRIPTS -->
+  <script src="/js/sticky_sidebar.min.js"></script>
+  <script src="/js/specific_detail.js"></script>
+  <script src="/js/datepicker.min.js"></script>
+  <script src="/js/datepicker_func_1.js"></script>
 
 </body>
 </html>
