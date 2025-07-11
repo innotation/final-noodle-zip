@@ -6,7 +6,6 @@ import noodlezip.common.auth.MyUserDetails;
 import noodlezip.subscription.dto.response.SubscriptionPageResponse;
 import noodlezip.subscription.service.SubscribeService;
 import noodlezip.subscription.util.SubscriptionPagePolicy;
-import noodlezip.user.entity.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,8 +29,9 @@ public class MyUserSubscribeController {
                                @RequestParam(defaultValue = SubscriptionPagePolicy.DEFAULT_PAGE) int page,
                                Model model
     ) {
-        User user = myUserDetails.getUser();
-        Long requestUserId = user.getId();
+        Long requestUserId = (myUserDetails != null)
+                ? myUserDetails.getUser().getId()
+                : null;
         SubscriptionPageResponse followerList = subscribeService.getFollowerListWithPaging(userId, requestUserId, page);
 
         model.addAttribute("list", followerList);
@@ -46,8 +46,9 @@ public class MyUserSubscribeController {
                                @RequestParam(defaultValue = SubscriptionPagePolicy.DEFAULT_PAGE) int page,
                                Model model
     ) {
-        User user = myUserDetails.getUser();
-        Long requestUserId = user.getId();
+        Long requestUserId = (myUserDetails != null)
+                ? myUserDetails.getUser().getId()
+                : null;
         SubscriptionPageResponse followingList = subscribeService.getFollowingListWithPaging(userId, requestUserId, page);
 
         model.addAttribute("list", followingList);
