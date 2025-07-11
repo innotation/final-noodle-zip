@@ -150,4 +150,59 @@
     bottom: 0;
     width: 3px;
     background: linear-gradient(to bottom, #589442, #4a7d37);
+}
+
+/* 스크롤 문제 해결을 위한 스타일 수정 */
+
+/* content-left 스크롤 문제 해결 */
+.content-left {
+  height: auto !important;
+  min-height: auto !important;
+  overflow-y: visible !important;
+  background-color: #fff;
+}
+
+/* map-right 레이아웃 문제 해결 */
+@media (max-width: 991px) {
+  .map-right {
+    position: static !important;
+    height: 400px !important;
+    min-height: auto !important;
+  }
+}
+
+/* full-height 문제 해결 */
+.full-height {
+  height: auto !important;
+}
+
+@media (max-width: 991px) {
+  .full-height {
+    height: auto !important;
+  }
+}
+
+/* row-height 문제 해결 */
+.row-height {
+  height: auto !important;
+  min-height: auto !important;
+  padding-top: 20px !important;
+}
+
+@media (max-width: 991px) {
+  .row-height {
+    height: auto !important;
+    padding-top: 15px !important;
+  }
+}
+
+/* 페이지네이션 아래쪽 마진 추가 */
+#pagination-container {
+  margin-bottom: 30px !important;
+}
+
+@media (max-width: 768px) {
+  #pagination-container {
+    margin-bottom: 20px !important;
+  }
 } 
