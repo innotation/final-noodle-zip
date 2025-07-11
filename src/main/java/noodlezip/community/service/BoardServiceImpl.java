@@ -11,12 +11,14 @@ import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.entity.Like;
 import noodlezip.community.repository.BoardRepository;
-import noodlezip.common.repository.ImageRepository;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.community.repository.LikeRepository;
 import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Safelist;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,8 +44,6 @@ public class BoardServiceImpl implements BoardService {
     private final FileUtil fileUtil;
     private final ViewCountService viewCountService;
     private final LikeRepository likeRepository;
-    private final ImageRepository imageRepository;
-    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -64,6 +65,32 @@ public class BoardServiceImpl implements BoardService {
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
         map.put("list", boardPage.getContent());
+        map.put("category", category);
+
+        return map;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndCommunityTypeAndKeyword(category, keyword,pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+
+        map.put("list", boardPage.getContent());
+        map.put("category", category);
+
+        return map;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> searchBoards(String keyword, Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndKeyword(keyword,pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+
+        map.put("list", boardPage.getContent());
 
         return map;
     }
@@ -80,7 +107,15 @@ public class BoardServiceImpl implements BoardService {
             isLike = likeRepository.existsById(BoardUserId.builder().userId(Long.parseLong(infoAndIdOrIp[1])).communityId(id).build());
         }
 
-        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id);
+        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id).orElseThrow( () -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+        String sanitizedContentHtml = boardRespDto.getContent();
+
+        Document doc = Jsoup.parse(sanitizedContentHtml);
+
+        sanitizedContentHtml = Jsoup.clean(doc.body().html(), Safelist.relaxed());
+
+        boardRespDto.setContent(sanitizedContentHtml);
 
         if (boardRespDto == null) {
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
@@ -94,23 +129,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void registBoard(BoardReqDto boardReqDto, User user, MultipartFile boardImage) {
+    public void registBoard(BoardReqDto boardReqDto, User user) {
         Board board = modelMapper.map(boardReqDto, Board.class);
         board.setCommunityType("community");
         board.setPostStatus(CommunityActiveStatus.POSTED);
         board.setUser(user);
-        if (!boardImage.isEmpty() && boardImage.getOriginalFilename() != null) {
-            Map<String, String> map = fileUtil.fileupload("board", boardImage);
-//            Image image = Image.builder()
-//                                .imageOrder(1)
-//                                .imageUrl(map.get("fileUrl"))
-//                                .imageType("community")
-//                                .targetId(board.getId())
-//                                .build();
-//            imageRepository.save(image);
-            board.setImageUrl(map.get("fileUrl"));
-//            log.info("image save : {}", image);
-        }
         boardRepository.save(board);
         log.info("board save : {}", board);
     }
@@ -162,5 +185,24 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<Board> getBoardsByIds(List<Long> recentBoardIds) {
         return boardRepository.findAllById(recentBoardIds);
+    }
+
+    @Override
+    public List<Map<String, String>> uploadImages(List<MultipartFile> uploadFiles) {
+        List<Map<String, String>> imageInfos = new ArrayList<>();
+        if (uploadFiles != null && !uploadFiles.isEmpty()) {
+
+            for (MultipartFile image : uploadFiles) {
+                if (!image.isEmpty() && image.getOriginalFilename() != null && !image.getOriginalFilename().trim().isEmpty()) {
+                    Map<String, String> map = fileUtil.fileupload("temp", image);
+                    imageInfos.add(map);
+                } else {
+                    log.error("image is empty");
+                }
+            }
+        } else {
+            log.error("upload images is empty");
+        }
+        return imageInfos;
     }
 }

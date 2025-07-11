@@ -1,5 +1,6 @@
 package noodlezip.community.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +13,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
-public class BoardRepositoryImpl implements BoardRepositoryCustom{
+public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public BoardRespDto findBoardByBoardIdWithUser(Long boardId) {
+    public Optional<BoardRespDto> findBoardByBoardIdWithUser(Long boardId) {
         QBoard board = QBoard.board;
         QUser user = QUser.user;
 
@@ -44,7 +46,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                         board.id.eq(boardId).and(board.postStatus.eq(CommunityActiveStatus.POSTED))
                 )
                 .fetchOne();
-        return result;
+        return Optional.ofNullable(result);
     }
 
     @Override
@@ -85,11 +87,14 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 )
                 .fetchOne();
 
-        return new PageImpl<>(results, pageable, total);
+        long totalCount = Optional.ofNullable(total).orElse(0L);
+
+
+        return new PageImpl<>(results, pageable, totalCount);
     }
 
     @Override
-    public Page<BoardRespDto> findBoardWithPaginationAndCommunityType(String category,Pageable pageable) {
+    public Page<BoardRespDto> findBoardWithPaginationAndCommunityType(String category, Pageable pageable) {
         QBoard board = QBoard.board;
         QUser user = QUser.user;
 
@@ -127,7 +132,109 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                 )
                 .fetchOne();
 
-        return new PageImpl<>(results, pageable, total);
+        long totalCount = Optional.ofNullable(total).orElse(0L);
+
+
+        return new PageImpl<>(results, pageable, totalCount);
+    }
+
+    @Override
+    public Page<BoardRespDto> findBoardWithPaginationAndCommunityTypeAndKeyword(String category, String keyword, Pageable pageable) {
+        QBoard board = QBoard.board;
+        QUser user = QUser.user;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(board.postStatus.eq(CommunityActiveStatus.POSTED));
+
+        builder.and(board.communityType.eq(category));
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String likeKeyword = "%" + keyword.trim() + "%";
+            builder.and(board.title.like(likeKeyword).or(board.content.like(likeKeyword)));
+        }
+
+        List<BoardRespDto> results = queryFactory
+                .select(Projections.fields(BoardRespDto.class,
+                        board.id.as("boardId"),
+                        board.user.userName.as("userName"),
+                        board.user.profileImageUrl.as("userProfileImageUrl"),
+                        board.title.as("title"),
+                        board.content.as("content"),
+                        board.communityType.as("communityType"),
+                        board.postStatus.as("postStatus"),
+                        board.likesCount.as("likesCount"),
+                        board.viewsCount.as("viewsCount"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+                        board.imageUrl.as("imageUrl")
+                ))
+                .from(board)
+                .leftJoin(board.user, user)
+                .where(builder)
+                .orderBy(board.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(board.count())
+                .from(board)
+                .where(builder)
+                .fetchOne();
+
+        long totalCount = Optional.ofNullable(total).orElse(0L);
+
+        return new PageImpl<>(results, pageable, totalCount);
+    }
+
+    @Override
+    public Page<BoardRespDto> findBoardWithPaginationAndKeyword(String keyword, Pageable pageable) {
+
+        QBoard board = QBoard.board;
+        QUser user = QUser.user;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(board.postStatus.eq(CommunityActiveStatus.POSTED));
+
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String likeKeyword = "%" + keyword.trim() + "%";
+            builder.and(board.title.like(likeKeyword).or(board.content.like(likeKeyword)));
+        }
+        List<BoardRespDto> results = queryFactory
+                .select(Projections.fields(BoardRespDto.class,
+                        board.id.as("boardId"),
+                        board.user.userName.as("userName"),
+                        board.user.profileImageUrl.as("userProfileImageUrl"),
+                        board.title.as("title"),
+                        board.content.as("content"),
+                        board.communityType.as("communityType"),
+                        board.postStatus.as("postStatus"),
+                        board.likesCount.as("likesCount"),
+                        board.viewsCount.as("viewsCount"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+                        board.imageUrl.as("imageUrl")
+                ))
+                .from(board)
+                .leftJoin(board.user, user)
+                .where(builder)
+                .orderBy(board.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(board.count())
+                .from(board)
+                .where(builder)
+                .fetchOne();
+
+        long totalCount = Optional.ofNullable(total).orElse(0L);
+
+        return new PageImpl<>(results, pageable, totalCount);
     }
 
     @Override

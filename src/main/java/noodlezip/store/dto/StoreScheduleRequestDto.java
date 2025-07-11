@@ -1,8 +1,9 @@
 package noodlezip.store.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -13,9 +14,11 @@ public class StoreScheduleRequestDto {
 
     private String dayOfWeek; // 요일
 
-    private LocalDateTime openingAt; // 오픈 시간
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+        private LocalTime openingAt;
 
-    private LocalDateTime closingAt; // 마감 시간
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+        private LocalTime closingAt;
 
     private Boolean isClosedDay; // 휴무일
 }

@@ -339,9 +339,17 @@
 					+ '&submodules=geocoder,markerclusterer'}">
 
 	</script>
-  <script>
-    const contextPath = "[[@{/}]]";
+  <script th:inline="javascript">
+
     const page = 1;
     const size = 10;
+
+    
+    // 검색 파라미터 (Thymeleaf에서 전달받은 값들)
+    const searchKeyword = /*[[${searchKeyword}]]*/ null;
+    const searchType = /*[[${searchType}]]*/ 'ALL';
+    const searchCategories = /*[[${searchCategories}]]*/ [];
+    const searchSoups = /*[[${searchSoups}]]*/ [];
+    const searchToppings = /*[[${searchToppings}]]*/ [];
   </script>
   <script src="/js/main_navermap.scripts.js"></script>

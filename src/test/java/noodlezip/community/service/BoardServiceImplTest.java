@@ -192,7 +192,7 @@ class BoardServiceImplTest {
         Long userId = 1L;
 
         // Mocking behavior
-        when(boardRepository.findBoardByBoardIdWithUser(anyLong())).thenReturn(testBoardRespDto);
+        when(boardRepository.findBoardByBoardIdWithUser(anyLong())).thenReturn(Optional.ofNullable(testBoardRespDto));
 
         // When
         BoardRespDto result = boardService.findBoardById(boardId, userId.toString());
@@ -214,7 +214,7 @@ class BoardServiceImplTest {
         Long userId = 1L;
 
         // Mocking
-        when(boardRepository.findBoardByBoardIdWithUser(anyLong())).thenReturn(null);
+        when(boardRepository.findBoardByBoardIdWithUser(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
         CustomException exception = assertThrows(CustomException.class, () -> {
@@ -225,60 +225,6 @@ class BoardServiceImplTest {
 
         // Verify
         verify(boardRepository, times(1)).findBoardByBoardIdWithUser(boardId);
-    }
-
-    @Test
-    @DisplayName("게시글 등록 성공 - 이미지 없음")
-    void registBoard_NoImage_Success() {
-        // Given
-        MultipartFile mockImage = mock(MultipartFile.class);
-        when(mockImage.isEmpty()).thenReturn(true); // 이미지 파일이 비어있음
-
-        // Mocking
-        when(modelMapper.map(any(BoardReqDto.class), eq(Board.class))).thenReturn(testBoard);
-        when(boardRepository.save(any(Board.class))).thenReturn(testBoard); // save 호출 시 testBoard 반환
-
-        // When
-        boardService.registBoard(testBoardReqDto, testUser, mockImage);
-
-        // Then
-        verify(boardRepository, times(1)).save(testBoard);
-        // Verify
-        verify(fileUtil, never()).fileupload(anyString(), any(MultipartFile.class));
-
-        assertThat(testBoard.getCommunityType()).isEqualTo("community");
-        assertThat(testBoard.getPostStatus()).isEqualTo(CommunityActiveStatus.POSTED);
-        assertThat(testBoard.getUser()).isEqualTo(testUser);
-        assertThat(testBoard.getImageUrl()).isNull(); // 이미지가 없으므로 imageUrl은 null
-    }
-
-    @Test
-    @DisplayName("게시글 등록 성공 - 이미지 있음")
-    void registBoard_WithImage_Success() {
-        // Given
-        MultipartFile mockImage = mock(MultipartFile.class);
-        String originalFilename = "test_image.jpg";
-        String fileUrl = "http://example.com/test_image.jpg";
-        Map<String, String> fileUploadResult = new HashMap<>();
-        fileUploadResult.put("fileUrl", fileUrl);
-
-        when(mockImage.isEmpty()).thenReturn(false);
-        when(mockImage.getOriginalFilename()).thenReturn(originalFilename);
-
-        // Mocking
-        when(modelMapper.map(any(BoardReqDto.class), eq(Board.class))).thenReturn(testBoard);
-        when(fileUtil.fileupload(anyString(), any(MultipartFile.class))).thenReturn(fileUploadResult);
-        when(boardRepository.save(any(Board.class))).thenReturn(testBoard);
-
-        // When
-        boardService.registBoard(testBoardReqDto, testUser, mockImage);
-
-        // Then
-        verify(modelMapper, times(1)).map(testBoardReqDto, Board.class);
-        verify(fileUtil, times(1)).fileupload("board", mockImage); // fileUtil 호출 확인
-        verify(boardRepository, times(1)).save(testBoard);
-
-        assertThat(testBoard.getImageUrl()).isEqualTo(fileUrl); // imageUrl이 설정 확인
     }
 
     @Test
