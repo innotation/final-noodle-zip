@@ -65,6 +65,7 @@ public class BoardServiceImpl implements BoardService {
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
         map.put("list", boardPage.getContent());
+        map.put("category", category);
 
         return map;
     }
@@ -77,6 +78,7 @@ public class BoardServiceImpl implements BoardService {
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
         map.put("list", boardPage.getContent());
+        map.put("category", category);
 
         return map;
     }
