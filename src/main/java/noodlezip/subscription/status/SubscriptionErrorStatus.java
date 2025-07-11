@@ -17,6 +17,7 @@ public enum SubscriptionErrorStatus implements BaseErrorCode {
     private final String code;
     private final String message;
 
+
     @Override
     public ErrorReasonDto getReason() {
         return ErrorReasonDto.builder()
@@ -35,5 +36,5 @@ public enum SubscriptionErrorStatus implements BaseErrorCode {
                 .message(message)
                 .build();
     }
-    
+
 }
