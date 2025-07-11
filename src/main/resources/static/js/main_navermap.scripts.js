@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 필터 옵션 로드 함수
   function loadFilterOptions() {
-    fetch(`${contextPath}search/filter-options`)
+    fetch(`/search/filter-options`)
       .then(response => response.json())
       .then(data => {
         renderFilterOptions(data);
@@ -52,10 +52,11 @@ document.addEventListener('DOMContentLoaded', function () {
     categoryContainer.innerHTML = '';
     if (data.categories && data.categories.length > 0) {
       data.categories.forEach(category => {
+        const isChecked = searchCategories && searchCategories.includes(category) ? 'checked' : '';
         categoryContainer.innerHTML += `
           <li>
             <label class="container_check">${category}
-              <input type="checkbox" name="category" value="${category}">
+              <input type="checkbox" name="category" value="${category}" ${isChecked}>
               <span class="checkmark"></span>
             </label>
           </li>
@@ -70,10 +71,11 @@ document.addEventListener('DOMContentLoaded', function () {
     soupContainer.innerHTML = '';
     if (data.soups && data.soups.length > 0) {
       data.soups.forEach(soup => {
+        const isChecked = searchSoups && searchSoups.includes(soup) ? 'checked' : '';
         soupContainer.innerHTML += `
           <li>
             <label class="container_check">${soup}
-              <input type="checkbox" name="soup" value="${soup}">
+              <input type="checkbox" name="soup" value="${soup}" ${isChecked}>
               <span class="checkmark"></span>
             </label>
           </li>
@@ -88,10 +90,11 @@ document.addEventListener('DOMContentLoaded', function () {
     toppingContainer.innerHTML = '';
     if (data.toppings && data.toppings.length > 0) {
       data.toppings.forEach(topping => {
+        const isChecked = searchToppings && searchToppings.includes(topping) ? 'checked' : '';
         toppingContainer.innerHTML += `
           <li>
             <label class="container_check">${topping}
-              <input type="checkbox" name="topping" value="${topping}">
+              <input type="checkbox" name="topping" value="${topping}" ${isChecked}>
               <span class="checkmark"></span>
             </label>
           </li>
@@ -100,14 +103,38 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       toppingContainer.innerHTML = '<li><small>토핑 데이터가 없습니다.</small></li>';
     }
+
+    // 검색 키워드와 타입 설정
+    if (searchKeyword && searchKeyword.trim() !== '') {
+      const keywordElement = document.getElementById('search-keyword');
+      if (keywordElement) {
+        keywordElement.value = searchKeyword;
+      }
+    }
+    
+    if (searchType) {
+      const typeElement = document.getElementById('search-type');
+      if (typeElement) {
+        typeElement.value = searchType;
+      }
+    }
+
+    // 검색 파라미터가 있으면 필터 모드로 전환하고 검색 실행
+    if ((searchKeyword && searchKeyword.trim() !== '') || 
+        (searchCategories && searchCategories.length > 0) || 
+        (searchSoups && searchSoups.length > 0) || 
+        (searchToppings && searchToppings.length > 0)) {
+      isFilterMode = true;
+      applyFilters();
+    }
   }
 
   // 매장 로드 함수
   function loadStores(page = 1) {
     currentPage = page;
     const url = isFilterMode ? 
-      `${contextPath}search/filter?lat=${currentLat}&lng=${currentLng}&page=${page}&size=${size}` :
-      `${contextPath}search/stores?lat=${currentLat}&lng=${currentLng}&page=${page}&size=${size}`;
+      `/search/filter?lat=${currentLat}&lng=${currentLng}&page=${page}&size=${size}` :
+      `/search/stores?lat=${currentLat}&lng=${currentLng}&page=${page}&size=${size}`;
 
     fetch(url)
       .then(response => response.json())
@@ -258,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
         filterParams.append('searchType', searchType);
       }
 
-      fetch(`${contextPath}search/filter?${filterParams.toString()}`)
+      fetch(`/search/filter?${filterParams.toString()}`)
         .then(response => response.json())
         .then(data => {
           renderStores(data.content);
@@ -323,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const item = document.createElement('div');
       item.classList.add('col-lg-12', 'col-sm-6');
 
-      const imgUrl = store.storeMainImageUrl || `${contextPath}img/lazy-placeholder.png`;
+      const imgUrl = store.storeMainImageUrl || `img/lazy-placeholder.png`;
       const address = store.address || '';
       const phone = store.phone || '';
       const hasParking = store.hasParking || '';
@@ -377,8 +404,8 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="strip store-list">
         <figure>
           <img src="${imgUrl}" class="img-fluid lazy" alt="${store.storeName}" 
-               onerror="this.onerror=null; this.src='${contextPath}img/lazy-placeholder.png';">
-          <a href="${contextPath}store/detail/${store.id}" class="strip_info">
+               onerror="this.onerror=null; this.src='/img/lazy-placeholder.png';">
+          <a href="/store/detail/${store.id}" class="strip_info">
             <div class="item_title">
               <h3>${store.storeName}</h3>
               <small>${address}</small>
@@ -409,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div style="padding:10px; min-width:200px;">
             <strong>${store.storeName}</strong><br>
             ${address}<br>
-            <a href="${contextPath}store/detail/${store.id}" style="color:#007bff; text-decoration:none; font-size:12px;">
+            <a href="/store/detail/${store.id}" style="color:#007bff; text-decoration:none; font-size:12px;">
               상세보기 →
             </a>
           </div>

@@ -27,9 +27,6 @@ public class Board extends BaseTimeEntity {
     @Column(name = "community_id", nullable = false)
     private Long id;
 
-//    @NotNull
-//    @Column(name = "user_id", nullable = false)
-//    private Long userId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore

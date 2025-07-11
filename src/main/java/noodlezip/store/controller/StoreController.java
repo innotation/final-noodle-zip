@@ -2,12 +2,11 @@ package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.auth.MyUserDetails;
-import noodlezip.common.util.PageUtil;
+import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
 import noodlezip.store.service.StoreService;
 import noodlezip.user.entity.User;
-import noodlezip.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +24,6 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
-    private final UserRepository userRepository;
-    private final PageUtil pageUtil;
     private final RamenService ramenService;
 
     // 등록 폼 페이지 진입
@@ -71,22 +68,6 @@ public class StoreController {
         return "store/fragments/tab-menu :: menu-tab";
     }
 
-/*
-    // 매장 리뷰 조회
-    @GetMapping("/detail/review")
-    @ResponseBody
-    public StoreReviewResponseDto showStoreReviewList(
-            @RequestParam Long storeId,
-            Pageable pageable
-    ) {
-
-        Page<StoreReviewDto> reviews = storeService.getReviews(storeId, pageable);
-        return StoreReviewResponseDto.builder()
-                .reviews(reviews.getContent())
-                .pagination(pageUtil.getPageInfo(reviews, 10))
-                .build();
-    }
-*/
     // 매장 리뷰 조회
     @GetMapping("/detail/{no}/reviews")
     public String getReviewTab(
@@ -138,6 +119,13 @@ public class StoreController {
             @PathVariable Long storeId
     ) {
         return ramenService.getSummaryByStoreId(storeId);
+    }
+
+    // 메뉴 토핑 조회
+    @GetMapping("/detail/{storeId}/toppings")
+    @ResponseBody
+    public List<ToppingResponseDto> getToppingByStoreId(@PathVariable Long storeId){
+        return storeService.getStoreToppings(storeId);
     }
 
 }

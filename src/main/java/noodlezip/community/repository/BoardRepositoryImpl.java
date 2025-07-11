@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class BoardRepositoryImpl implements BoardRepositoryCustom{
@@ -19,7 +20,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public BoardRespDto findBoardByBoardIdWithUser(Long boardId) {
+    public Optional<BoardRespDto> findBoardByBoardIdWithUser(Long boardId) {
         QBoard board = QBoard.board;
         QUser user = QUser.user;
 
@@ -44,7 +45,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom{
                         board.id.eq(boardId).and(board.postStatus.eq(CommunityActiveStatus.POSTED))
                 )
                 .fetchOne();
-        return result;
+        return Optional.ofNullable(result);
     }
 
     @Override

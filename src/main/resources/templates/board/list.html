@@ -200,7 +200,7 @@
                                 <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
                                     제목</a>
                                 </h2>
-                                <p th:text="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>
+<!--                                <p th:utext="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>-->
                                 <ul>
                                     <li>
                                         <div class="thumb"><img
