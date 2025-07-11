@@ -119,8 +119,17 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
+    // 지역 필터 설정
+    if (searchRegions && searchRegions.length > 0) {
+      const regionElement = document.getElementById('region-filter');
+      if (regionElement) {
+        regionElement.value = searchRegions[0]; // 첫 번째 지역 선택
+      }
+    }
+
     // 검색 파라미터가 있으면 필터 모드로 전환하고 검색 실행
     if ((searchKeyword && searchKeyword.trim() !== '') || 
+        (searchRegions && searchRegions.length > 0) ||
         (searchCategories && searchCategories.length > 0) || 
         (searchSoups && searchSoups.length > 0) || 
         (searchToppings && searchToppings.length > 0)) {
@@ -255,12 +264,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
     const selectedSoups = Array.from(document.querySelectorAll('input[name="soup"]:checked')).map(cb => cb.value);
     const selectedToppings = Array.from(document.querySelectorAll('input[name="topping"]:checked')).map(cb => cb.value);
+    const selectedRegion = document.getElementById('region-filter').value;
     const keyword = document.getElementById('search-keyword').value.trim();
     const searchType = document.getElementById('search-type').value;
 
     // 필터가 하나라도 선택되었거나 검색어가 있으면 필터 모드로 전환
     isFilterMode = selectedCategories.length > 0 || selectedSoups.length > 0 || 
-                   selectedToppings.length > 0 || keyword.length > 0;
+                   selectedToppings.length > 0 || keyword.length > 0 || selectedRegion.length > 0;
 
     if (isFilterMode) {
       // 필터링된 검색
@@ -279,6 +289,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       if (selectedToppings.length > 0) {
         selectedToppings.forEach(topping => filterParams.append('topping', topping));
+      }
+      if (selectedRegion.length > 0) {
+        filterParams.append('region', selectedRegion);
       }
       if (keyword.length > 0) {
         filterParams.append('keyword', keyword);
@@ -308,6 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
     document.getElementById('search-keyword').value = '';
     document.getElementById('search-type').value = 'ALL';
+    document.getElementById('region-filter').value = '';
     document.getElementById('distance-range').value = 30;
     document.getElementById('distance-value').textContent = 30;
     

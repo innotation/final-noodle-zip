@@ -14,6 +14,31 @@
 
         <div class="modal-body">
           <form id="detailedSearchForm" method="get" action="/search/list">
+            <!-- 지역 선택 -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">지역</label>
+              <select id="modal-region-select" class="form-control">
+                <option value="">전체 지역</option>
+                <option value="서울">서울</option>
+                <option value="부산">부산</option>
+                <option value="대구">대구</option>
+                <option value="인천">인천</option>
+                <option value="광주">광주</option>
+                <option value="대전">대전</option>
+                <option value="울산">울산</option>
+                <option value="세종">세종</option>
+                <option value="경기">경기</option>
+                <option value="강원">강원</option>
+                <option value="충북">충북</option>
+                <option value="충남">충남</option>
+                <option value="전북">전북</option>
+                <option value="전남">전남</option>
+                <option value="경북">경북</option>
+                <option value="경남">경남</option>
+                <option value="제주">제주</option>
+              </select>
+            </div>
+
             <!-- 라멘 카테고리 -->
             <div class="mb-3">
               <label class="form-label fw-bold">라멘 카테고리</label>
@@ -60,6 +85,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       // 선택된 옵션들을 저장할 객체
       let selectedOptions = {
+        region: [],
         ramenCategory: [],
         ramenSoup: [],
         topping: [],
@@ -72,12 +98,20 @@
       const searchCategory = document.getElementById('searchCategory');
       const searchButton = document.getElementById('searchButton');
       const confirmSearchBtn = document.getElementById('confirmSearchBtn');
+      const regionSelect = document.getElementById('modal-region-select');
 
       // 검색모달이 열릴 때 필터 옵션 로드
       const searchModal = document.getElementById('searchModal');
       if (searchModal) {
         searchModal.addEventListener('show.bs.modal', function() {
           loadModalFilterOptions();
+        });
+      }
+
+      // 지역 선택 이벤트
+      if (regionSelect) {
+        regionSelect.addEventListener('change', function() {
+          selectedOptions.region = this.value ? [this.value] : [];
         });
       }
 
@@ -117,6 +151,11 @@
       // 필터 표시 업데이트 함수
       function updateFilterDisplay() {
         const selectedTexts = [];
+        
+        // 지역 선택된 것들 추가
+        if (selectedOptions.region.length > 0) {
+          selectedTexts.push(...selectedOptions.region);
+        }
         
         // 카테고리 선택된 것들 추가
         if (selectedOptions.ramenCategory.length > 0) {
@@ -270,6 +309,11 @@
 
       // 기존 선택된 옵션들 복원
       function restoreSelectedOptions() {
+        // 지역 선택 복원
+        if (regionSelect && selectedOptions.region.length > 0) {
+          regionSelect.value = selectedOptions.region[0];
+        }
+
         // 카테고리 체크박스 복원
         selectedOptions.ramenCategory.forEach(category => {
           const checkbox = document.querySelector(`input[value="${category}"].category-checkbox`);
