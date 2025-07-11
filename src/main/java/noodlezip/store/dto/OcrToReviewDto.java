@@ -1,6 +1,7 @@
 package noodlezip.store.dto;
 
 import lombok.*;
+import noodlezip.ramen.dto.ToppingResponseDto;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ import java.util.List;
 public class OcrToReviewDto {
     private String storeName;
     private List<MenuDetailDto> menuList;
-    private List<String> toppings;
+    private List<ToppingResponseDto> toppingList;
 }

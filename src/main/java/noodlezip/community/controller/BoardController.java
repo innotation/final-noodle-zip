@@ -72,7 +72,7 @@ public class BoardController {
         OcrToReviewDto dto = storeService.findStoreWithMenusByBizNum(bizNum);
         model.addAttribute("storeName", dto.getStoreName());
         model.addAttribute("menuList", dto.getMenuList());
-        model.addAttribute("toppings", dto.getToppings());
+        model.addAttribute("toppings", dto.getToppingList());
         return "/board/leave-review";
     }
 
