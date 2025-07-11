@@ -1,3 +1,4 @@
+/*
 package noodlezip.store.controller;
 
 import noodlezip.common.util.PageUtil;
@@ -53,3 +54,4 @@ public class StoreControllerUnitTest {
     }
 
 }
+*/

@@ -85,20 +85,10 @@ public class Store extends BaseTimeEntity {
     // 법정코드
     @NotNull
     @Column(name = "store_legal_code", nullable = false)
-    private Integer storeLegalCode;
+    private Long storeLegalCode;
 
-    /* 양방향 연관관계 매핑. 필요없을 듯 하다
-    // 메뉴 리스트 (1:N)
-    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Menu> menus = new ArrayList<>();
-
-    // 추가 토핑 리스트 (1:N)
-    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<StoreExtraTopping> extraToppings = new ArrayList<>();
-
-    // 요일별 영업 시간 (1:N)
-    @OneToMany(mappedBy = "storeId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<StoreWeekSchedule> weekSchedules = new ArrayList<>();
-*/
-
+    // 사업자등록번호
+    @NotNull
+    @Column(name = "biz_num", nullable = false)
+    private Long bizNum;
 }

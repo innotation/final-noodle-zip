@@ -22,7 +22,7 @@ public class Topping {
 
     @Size(max = 50)
     @NotNull
-    @Column(name = "topping_name", nullable = false, length = 50)
+    @Column(name = "topping_name", nullable = false, length = 50, unique = true) // 중복된 토핑 저장 방지
     private String toppingName;
 
     @NotNull

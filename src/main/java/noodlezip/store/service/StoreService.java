@@ -9,6 +9,7 @@ import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
+import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
 import noodlezip.ramen.entity.RamenSoup;
@@ -20,10 +21,7 @@ import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
-import noodlezip.store.entity.Menu;
-import noodlezip.store.entity.Store;
-import noodlezip.store.entity.StoreWeekSchedule;
-import noodlezip.store.entity.StoreWeekScheduleId;
+import noodlezip.store.entity.*;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreExtraToppingRepository;
 import noodlezip.store.repository.StoreRepository;
@@ -37,16 +35,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import noodlezip.store.status.StoreErrorCode;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
-@Slf4j
 public class StoreService {
 
     private final StoreRepository storeRepository;
@@ -65,25 +65,34 @@ public class StoreService {
 
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, MultipartFile storeMainImage, User user) {
+
+        List<String> defaultToppingNames = toppingRepository.findAll().stream()
+                .filter(Topping::getIsActive)
+                .map(Topping::getToppingName)
+                .toList();
+
         String storeMainImageUrl = null;
 
-        // 매장 이미지 저장
+        // ① 대표 이미지 업로드 및 유효성 검사
         if (storeMainImage != null && !storeMainImage.isEmpty()) {
             try {
-                Map<String, String> uploadResult = fileUtil.fileupload("store", storeMainImage);
-                // filePath + "/" + filesystemName 조합해서 URL/경로 만듦
-                storeMainImageUrl = uploadResult.get("filePath") + "/" + uploadResult.get("filesystemName");
-                log.info("Store main image uploaded for user {}: {}", user.getId(), storeMainImageUrl);
+                Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", storeMainImage);
+                storeMainImageUrl = uploadResult.get("fileUrl");
+            } catch (CustomException ce) {
+                throw ce;
             } catch (Exception e) {
-                log.error("Failed to upload store main image for user {}: {}", user.getId(), e.getMessage(), e);
-                throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+                throw new CustomException(ErrorStatus._FILE_UPLOAD_FAILED);
             }
+        } else {
+            throw new CustomException(ErrorStatus._FILE_REQUIRED);
         }
 
+        // ② Store 엔티티 생성 및 저장
         Store store = Store.builder()
                 .storeName(dto.getStoreName())
                 .address(dto.getAddress())
                 .phone(dto.getPhone())
+                .bizNum(dto.getBizNum())
                 .isLocalCard(dto.getIsLocalCard())
                 .isChildAllowed(dto.getIsChildAllowed())
                 .hasParking(dto.getHasParking())
@@ -91,16 +100,15 @@ public class StoreService {
                 .storeMainImageUrl(storeMainImageUrl)
                 .storeLat(dto.getStoreLat())
                 .storeLng(dto.getStoreLng())
-                .approvalStatus(dto.getApprovalStatus())
+                .approvalStatus(ApprovalStatus.WAITING)
                 .operationStatus(dto.getOperationStatus())
                 .userId(user.getId())
                 .build();
-        store.setStoreLegalCode(dto.getStoreLegalCode());
+        store.setStoreLegalCode(dto.getStoreLegalCode() != null ? dto.getStoreLegalCode().longValue() : null);
 
         Store savedStore = storeRepository.save(store);
 
-        // 영업시간 저장
-
+        // ③ 영업시간 저장
         if (dto.getWeekSchedule() != null) {
             List<StoreWeekSchedule> schedules = dto.getWeekSchedule().stream()
                     .map(s -> {
@@ -109,45 +117,58 @@ public class StoreService {
                         schedule.setId(id);
                         schedule.setIsClosedDay(s.getIsClosedDay());
                         if (Boolean.TRUE.equals(s.getIsClosedDay())) {
-                            schedule.setOpeningAt(null);
-                            schedule.setClosingAt(null);
+                            schedule.setOpeningAt(LocalTime.MIN); // 00:00
+                            schedule.setClosingAt(LocalTime.MIN); // 00:00
                         } else {
                             schedule.setOpeningAt(s.getOpeningAt());
                             schedule.setClosingAt(s.getClosingAt());
                         }
+
+                        schedule.setStoreId(savedStore);
+
                         return schedule;
                     }).collect(Collectors.toList());
 
             scheduleRepository.saveAll(schedules);
         }
 
-        // 메뉴 및 기본 토핑 저장 (메뉴 이미지 로컬 저장 포함)
+        // ④ 메뉴 및 기본 토핑, 추가 토핑 저장
         if (dto.getMenus() != null) {
             for (MenuRequestDto m : dto.getMenus()) {
+                // 메뉴 이름 중복 체크 (해당 매장(store) 내에 중복 이름 있는지 검사)
+                boolean exists = menuRepository.existsByStoreIdAndMenuName(savedStore.getId(), m.getMenuName());
+                if (exists) {
+                    throw new CustomException(StoreErrorCode._DUPLICATE_MENU_NAME);
+                }
                 String menuImageUrl = null;
-
                 MultipartFile menuImageFile = m.getMenuImageFile();
+
+                // 메뉴 이미지 업로드
                 if (menuImageFile != null && !menuImageFile.isEmpty()) {
                     try {
-                        Map<String, String> uploadResult = fileUtil.fileupload("menu", menuImageFile);
-                        menuImageUrl = uploadResult.get("filePath") + "/" + uploadResult.get("filesystemName");
-                        log.info("Menu image uploaded for menu {}: {}", m.getMenuName(), menuImageUrl);
+                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", menuImageFile);
+                        menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
+                    } catch (CustomException ce) {
+                        throw ce;
                     } catch (Exception e) {
-                        log.error("Failed to upload menu image for menu {}: {}", m.getMenuName(), e.getMessage(), e);
                         throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
                     }
                 }
 
+                // 클라이언트에서 직접 URL 보낸 경우 사용
                 if (menuImageUrl == null) {
-                    menuImageUrl = m.getMenuImageUrl();  // 클라이언트가 이미 URL 넘겼을 경우
+                    throw new CustomException(ErrorStatus._FILE_REQUIRED);
                 }
 
+
+                // 카테고리/육수 매핑
                 Category category = new Category();
                 category.setId(m.getRamenCategoryId());
 
                 RamenSoup soup = new RamenSoup();
                 soup.setId(m.getRamenSoupId());
 
+                // 메뉴 엔티티 저장
                 Menu menu = Menu.builder()
                         .store(savedStore)
                         .menuName(m.getMenuName())
@@ -160,6 +181,7 @@ public class StoreService {
 
                 Menu savedMenu = menuRepository.save(menu);
 
+                // 기본 토핑 저장
                 if (m.getDefaultToppingIds() != null) {
                     for (Long toppingId : m.getDefaultToppingIds()) {
                         Topping topping = toppingRepository.getReferenceById(toppingId);
@@ -169,12 +191,45 @@ public class StoreService {
                         ramenToppingRepository.save(ramenTopping);
                     }
                 }
+
+                // 추가 토핑 저장
+                if (m.getExtraToppings() != null && !m.getExtraToppings().isEmpty()) {
+                    for (String toppingName : m.getExtraToppings()) {
+                        if (toppingName == null || toppingName.isBlank()) continue;
+
+                        // 기본 토핑이면 예외 발생
+                        if (defaultToppingNames.contains(toppingName)) {
+                            throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
+                        }
+
+                        // 중복 방지: 기존 비활성화 토핑 재사용 or 새로 저장
+                        Topping topping = toppingRepository.findByToppingName(toppingName)
+                                .orElseGet(() -> toppingRepository.save(
+                                        Topping.builder()
+                                                .toppingName(toppingName)
+                                                .isActive(false)
+                                                .build()
+                                ));
+
+                        // StoreExtraTopping 저장
+                        StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
+                        storeExtraTopping.setStore(savedStore);
+                        storeExtraTopping.setTopping(topping);
+                        // 가격 정보가 없으면 기본 0 또는 적절히 처리
+                        storeExtraTopping.setPrice(0);
+                        storeExtraToppingRepository.save(storeExtraTopping);
+                    }
+                }
             }
         }
 
         return savedStore.getId();
     }
 
+    // 라멘 육수 목록 조회
+    public List<RamenSoupResponseDto> getAllSoups() {
+        return ramenService.getAllSoups();
+    }
 
     // 라멘 카테고리 목록 조회
     public List<CategoryResponseDto> getRamenCategories() {
