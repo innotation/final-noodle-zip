@@ -26,9 +26,9 @@ public class UserSubscribeController {
     @GetMapping("{userId}/subscribe")
     public void subscribe(@AuthenticationPrincipal MyUserDetails myUserDetails, @PathVariable Long userId) {
         User user = myUserDetails.getUser();
-        Long targetUserId = user.getId();
+        Long requestUserId = user.getId();
 
-        subscribeService.handleSubscribe(targetUserId, userId);
+        subscribeService.handleSubscribe(userId, requestUserId);
     }
 
 }

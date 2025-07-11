@@ -3,8 +3,7 @@ package noodlezip.subscription.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
-import noodlezip.subscription.dto.response.FollowerPageResponse;
-import noodlezip.subscription.dto.response.FollowingPageResponse;
+import noodlezip.subscription.dto.response.SubscriptionPageResponse;
 import noodlezip.subscription.service.SubscribeService;
 import noodlezip.subscription.util.SubscriptionPagePolicy;
 import noodlezip.user.entity.User;
@@ -25,20 +24,21 @@ public class MyUserSubscribeController {
     private final SubscribeService subscribeService;
 
 
-    @GetMapping("/{userId}/followers")
+    @GetMapping("/{userId}/follower")
     public String getFollowers(@AuthenticationPrincipal MyUserDetails myUserDetails,
                                @PathVariable Long userId,
                                @RequestParam(defaultValue = SubscriptionPagePolicy.DEFAULT_PAGE) int page,
                                Model model
     ) {
         User user = myUserDetails.getUser();
-        Long targetUserId = user.getId();
-        FollowerPageResponse followerList = subscribeService.getFollowerListWithPaging(userId, targetUserId, page);
+        Long requestUserId = user.getId();
+        SubscriptionPageResponse followerList = subscribeService.getFollowerListWithPaging(userId, requestUserId, page);
 
-        model.addAttribute("followerList", followerList);
+        model.addAttribute("list", followerList);
 
-        return "index";
+        return "mypage/subscription";
     }
+
 
     @GetMapping("/{userId}/following")
     public String getFollowing(@AuthenticationPrincipal MyUserDetails myUserDetails,
@@ -47,12 +47,12 @@ public class MyUserSubscribeController {
                                Model model
     ) {
         User user = myUserDetails.getUser();
-        Long targetUserId = user.getId();
-        FollowingPageResponse followingList = subscribeService.getFollowingListWithPaging(userId, targetUserId, page);
+        Long requestUserId = user.getId();
+        SubscriptionPageResponse followingList = subscribeService.getFollowingListWithPaging(userId, requestUserId, page);
 
-        model.addAttribute("followingList", followingList);
+        model.addAttribute("list", followingList);
 
-        return "index";
+        return "mypage/subscription";
     }
 
 }
