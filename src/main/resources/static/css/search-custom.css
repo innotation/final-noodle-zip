@@ -85,8 +85,8 @@
 .store-list .tags li a {
     display: inline-flex;
     align-items: center;
-    padding: 1px 4px;
-    font-size: 8px;
+    padding: 2px 6px;
+    font-size: 10px;
     font-weight: 500;
     text-decoration: none;
     border-radius: 8px;
@@ -101,16 +101,16 @@
 }
 
 .store-list .tags li a i {
-    font-size: 9px;
-    margin-right: 3px;
+    font-size: 11px;
+    margin-right: 4px;
 }
 
 /* 거리 태그 특별 스타일 */
 .store-list .tags li a[style*="color: #6c757d"] {
-    font-size: 9px;
+    font-size: 11px;
     opacity: 0.7;
     border: none;
-    padding: 2px 6px;
+    padding: 3px 8px;
 }
 
 .store-list .tags li a[style*="color: #6c757d"]:hover {

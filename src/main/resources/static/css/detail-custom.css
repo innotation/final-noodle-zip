@@ -96,6 +96,29 @@
     background-color: #4a7d37;
 }
 
+/* 태그 필터 활성화/비활성화 스타일 */
+.filter-tag.active {
+    background-color: #589442;
+    color: #fff;
+}
+
+.filter-tag.inactive {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* 태그 간 간격 추가 */
+.tags a {
+    margin-right: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.filter-tag {
+    cursor: pointer;
+}
+
 /* 템플릿 포인트 컬러에 맞춘 위시리스트 버튼 활성화 스타일 */
 .wishlist.active, .wishlist.wishlist-active {
     color: #007bff !important;

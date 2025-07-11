@@ -270,7 +270,8 @@
 									}
 								},
 								closeOnContentClick: true,
-								midClick: true
+								midClick: true,
+								showCloseBtn: false
 							});
 						};
 						
@@ -496,7 +497,8 @@
 								}
 							},
 							closeOnContentClick: true,
-							midClick: true
+							midClick: true,
+							showCloseBtn: false
 						});
 					};
 					
@@ -772,13 +774,19 @@
         wishlistBtn.addEventListener('click', function(e) {
           e.preventDefault();
           if (!isLoggedIn) {
+            $.magnificPopup.close(); // 기존 팝업 강제 종료
             $.magnificPopup.open({
               items: {
                 src: '#sign-in-dialog',
                 type: 'inline'
               },
               removalDelay: 500,
-              mainClass: 'my-mfp-zoom-in'
+              mainClass: 'my-mfp-zoom-in',
+              closeOnContentClick: false,
+              closeOnBgClick: true,
+              showCloseBtn: true,
+              closeBtnInside: true,
+              closeMarkup: '<button title="%title%" type="button" class="mfp-close"></button>'
             });
             return;
           }
