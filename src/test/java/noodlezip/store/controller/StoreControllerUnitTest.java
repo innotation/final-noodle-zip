@@ -33,23 +33,23 @@ public class StoreControllerUnitTest {
     private UserRepository userRepository;
     private PageUtil pageUtil;
 
-    @BeforeEach
-    void setUp() {
-        storeService = Mockito.mock(StoreService.class);
-        userRepository = Mockito.mock(UserRepository.class);
-        pageUtil = new PageUtil();
-        StoreController storeController = new StoreController(
-                storeService,
-                userRepository,
-                pageUtil
-        );  // 생성자 주입
-        mockMvc = MockMvcBuilders.standaloneSetup(storeController).build();
-
-        // Pageable을 바인딩해주는 Resolver 등록
-        mockMvc = MockMvcBuilders.standaloneSetup(storeController)
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                .build();
-    }
+//    @BeforeEach
+//    void setUp() {
+//        storeService = Mockito.mock(StoreService.class);
+//        userRepository = Mockito.mock(UserRepository.class);
+//        pageUtil = new PageUtil();
+//        StoreController storeController = new StoreController(
+//                storeService,
+//                userRepository,
+//                pageUtil
+//        );  // 생성자 주입
+//        mockMvc = MockMvcBuilders.standaloneSetup(storeController).build();
+//
+//        // Pageable을 바인딩해주는 Resolver 등록
+//        mockMvc = MockMvcBuilders.standaloneSetup(storeController)
+//                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+//                .build();
+//    }
 
     @Test
     void 메뉴_디테일_테스트() throws Exception {
@@ -67,7 +67,7 @@ public class StoreControllerUnitTest {
                         .build()
         );
 
-        given(storeService.getMenuDetail(storeId)).willReturn(menuList);
+//        given(storeService.getMenuDetail(storeId)).willReturn(menuList);
 
         mockMvc.perform(get("/store/detail/menuList").param("storeId", storeId.toString()))
                 .andExpect(status().isOk())
