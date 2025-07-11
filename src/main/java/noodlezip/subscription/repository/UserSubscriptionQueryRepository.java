@@ -10,4 +10,8 @@ public interface UserSubscriptionQueryRepository {
 
     Page<SubscriberResponse> findFolloweeList(Long targetUserId, Long requestUserId, Pageable pageable);
 
+    Page<SubscriberResponse> findFollowerListWithoutLoginUser(Long targetUserId, Pageable pageable);
+
+    Page<SubscriberResponse> findFolloweeListWithoutLoginUser(Long targetUserId, Pageable pageable);
+
 }
