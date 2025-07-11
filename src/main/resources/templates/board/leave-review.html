@@ -2,273 +2,276 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
-    <meta name="author" content="Ansonika">
-    <title>Foogra - Discover & Book the best restaurants at the best price</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
+	<meta name="author" content="Ansonika">
+	<title>Foogra - Discover & Book the best restaurants at the best price</title>
 
-    <!-- Favicons-->
-    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
-    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+	<!-- Favicons-->
+	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+	<link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+	<link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+	<link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
 
-     <!-- GOOGLE WEB FONT -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+	<!-- GOOGLE WEB FONT -->
+	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- BASE CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
+	<!-- BASE CSS -->
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/style.css" rel="stylesheet">
 
-    <!-- SPECIFIC CSS -->
-    <link href="/css/review.css" rel="stylesheet">
+	<!-- SPECIFIC CSS -->
+	<link href="/css/review.css" rel="stylesheet">
 
-    <!-- YOUR CUSTOM CSS -->
-    <link href="/css/custom.css" rel="stylesheet">
+	<!-- YOUR CUSTOM CSS -->
+	<link href="/css/custom.css" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+
+	<style>
+		.review-slider {
+			margin-top: 30px;
+		}
+		.slick-item {
+			padding: 10px;
+			outline: none;
+		}
+		.slick-item .card {
+			border: 1px solid #ddd;
+			border-radius: 10px;
+			padding: 20px;
+			height: 100%;
+		}
+		.slick-prev:before,
+		.slick-next:before {
+			color: #333;
+		}
+	</style>
+
+	<script th:inline="javascript">
+		let toppings = /*[[${toppings}]]*/ [];
+		console.log("🍜 토핑:", toppings);
+	</script>
 
 </head>
-
 <body>
-				
-	<header class="header_in clearfix">
-		<div class="container">
-		<div id="logo">
-			<a href="index.html">
-				<img src="img/logo_sticky.svg" width="140" height="35" alt="">
-			</a>
-		</div>
-		<ul id="top_menu">
-			<li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
-			<li><a href="wishlist.html" class="wishlist_bt_top" title="Your wishlist">Your wishlist</a></li>
-		</ul>
-		<!-- /top_menu -->
-		<a href="#0" class="open_close">
-			<i class="icon_menu"></i><span>Menu</span>
-		</a>
-		<nav class="main-menu">
-			<div id="header_menu">
-				<a href="#0" class="open_close">
-					<i class="icon_close"></i><span>Menu</span>
-				</a>
-				<a href="index.html"><img src="img/logo.svg" width="140" height="35" alt=""></a>
-			</div>
-			<ul>
-				<li class="submenu">
-					<a href="#0" class="show-submenu">Home</a>
-					<ul>
-						<li><a href="index.html">Default</a></li>			
-						<li class="third-level"><a href="#0">Sliders - Parallax <strong>New!</strong></a>
-							<ul>
-								<li><a href="index-16.html">Kenburns slider <strong>New!</strong></a></li>
-								<li><a href="index-8.html">Revolution Slider 1</a></li>
-								<li><a href="index-9.html">Revolution Slider 2</a></li>
-								<li><a href="index-3.html">Owl Carousel</a></li>
-								<li><a href="index-10.html">Parallax Youtube</a></li>
-								<li><a href="index-11.html">Parallax Vimeo</a></li>
-								<li><a href="index-12.html">Parallax Mp4 Video</a></li>
-								<li><a href="index-13.html">Parallax Video Fullscreen</a></li>
-								<li><a href="index-14.html">Parallax Image</a></li>
-							</ul>
-						</li>
-						<li><a href="index-15.html">Text Rotator</a></li>
-						<li><a href="index-5.html">Address Autocomplete</a></li>
-						<li><a href="index-6.html">Search Version 2</a></li>
-						<li><a href="index-7.html">Delivery/Takeaway version</a></li>
-						<li><a href="modal-advertise.html">Modal Advertise</a></li>
-						<li><a href="modal-newsletter.html">Modal Newsletter</a></li>
-						<li><a href="index-2.html">Video Bg Fallback Mobile</a></li>
-						<li><a href="index-4.html">GDPR Cookie Bar EU Law</a></li>
-					</ul>
-				</li>
-				<li class="submenu">
-					<a href="#0" class="show-submenu">Listing</a>
-					<ul>
-						<li class="third-level"><a href="#0">List pages</a>
-							<ul>
-								<li><a href="grid-listing-filterscol.html">List default</a></li>
-								<li><a href="grid-listing-filterscol-map.html">List with map</a></li>
-								<li><a href="listing-map.html">List side map</a></li>
-								<li><a href="grid-listing-filterscol-full-width.html">List full width</a></li>
-								<li><a href="grid-listing-filterscol-full-masonry.html">List Masonry Filter</a></li>
-								<li><a href="grid-listing-filterscol-delivery.html">List Delivery/Takeaway</a></li>
-							</ul>
-						</li>
-						<li class="third-level"><a href="#0">Detail pages</a>
-							<ul>
-								<li><a href="detail-restaurant.html">Detail page 1</a></li>
-								<li><a href="detail-restaurant-2.html">Detail page 2</a></li>
-								<li><a href="detail-restaurant-3.html">Mobile Fixed Booking</a></li>
-								<li><a href="detail-restaurant-delivery.html">Delivery/Takeaway</a></li>
-								<li><a href="detail-restaurant-4.html">Detail Menu Thumbs</a></li>
-								<li><a href="detail-restaurant-5.html">Detail Contact Form</a></li>
-							</ul>
-						</li>
-						<li class="third-level"><a href="#0">OpenStreetMap</a>
-							<ul>
-								<li><a href="grid-listing-filterscol-map-openstreetmap.html">List with map</a></li>
-								<li><a href="listing-map-openstreetmap.html">List side map</a></li>
-								<li><a href="grid-listing-filterscol-full-width-openstreetmap.html">List full width</a></li>
-								<li><a href="grid-listing-filterscol-full-masonry-openstreetmap.html">List Masonry Filter</a></li>
-							</ul>
-						</li>
-						<li><a href="submit-restaurant.html">Submit Restaurant</a></li>
-						<li><a href="submit-rider.html">Submit Rider</a></li>
-						<li><a href="wishlist.html">Wishlist</a></li>
-						<li><a href="booking.html">Booking</a></li>
-						<li><a href="confirm.html">Confirm Booking</a></li>
-						<li><a href="confirm-delivery.html">Confirm Order</a></li>
-						<li><a href="booking-delivery-2.html">Order Delivery/Takeaway</a></li>
-						<li><a href="booking-delivery.html">Order Delivery/Takeaway 2</a></li>
-						<li><a href="admin_section/index.html" target="_blank">Admin Section</a></li>
-					</ul>
-				</li>
-				<li class="submenu">
-					<a href="#0" class="show-submenu">Other Pages</a>
-					<ul>
-						<li><a href="404.html">404 Error</a></li>
-						<li><a href="help.html">Help and Faq</a></li>
-						<li><a href="blog.html">Blog</a></li>
-						<li><a href="leave-review.html">Leave a review</a></li>
-						<li><a href="user-logged-1.html">User Logged 1</a></li>
-						<li><a href="user-logged-2.html">User Logged 2</a></li>
-						<li><a href="contacts.html">Contacts</a></li>
-						<li><a href="coming_soon/index.html">Coming Soon</a></li>
-						<li><a href="account.html">Sign Up</a></li>
-						<li><a href="icon-pack-1.html">Icon Pack 1</a></li>
-						<li><a href="icon-pack-2.html">Icon Pack 2</a></li>
-					</ul>
-				</li>
-				<li><a href="submit-restaurant.html">Submit</a></li>
-				<li><a href="#0">Buy this template</a></li>
-			</ul>
-		</nav>
-	</div>
-	</header>
-	<!-- /header -->
-	
-	<main class="bg_gray pattern">
-		
-		<div class="container margin_60_40">
-		   <div class="row justify-content-center">
-				<div class="col-lg-8">
-					<div class="box_general write_review">
-						<h1 class="add_bottom_15" th:text="|${storeName}에 리뷰를 남겨주세요!|"></h1>
-
-						<label class="d-block add_bottom_15">Overall rating</label>
-						<div class="row">
-							<div class="col-md-3 add_bottom_25">
-							   <div class="add_bottom_15">Food Quality <strong class="food_quality_val"></strong></div>
-			                   <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" id="food_quality" name="food_quality">
-							</div>
-							<div class="col-md-3 add_bottom_25">
-								<div class="add_bottom_15">Service <strong class="service_val"></strong></div>
-			                   <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" id="service" name="service">
-							</div>
-							<div class="col-md-3 add_bottom_25">
-								<div class="add_bottom_15">Location <strong class="location_val"></strong></div>
-			                   <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" id="location" name="location">
-							</div>
-							<div class="col-md-3 add_bottom_25">
-								<div class="add_bottom_15">Price <strong class="price_val"></strong></div>
-			                   <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" id="price" name="price">
-							</div>
+<!-- ... header 및 상단 생략 ... -->
+<main class="bg_gray pattern">
+	<div class="container margin_60_40">
+		<div class="row justify-content-center">
+			<div class="col-lg-8">
+				<div class="box_general write_review">
+					<h2 th:text="|${storeName}에 리뷰를 남겨주세요!|"></h2>
+					<div id="menu-selection">
+						<h3>리뷰를 남길 메뉴를 선택해주세요</h3>
+						<div class="form-group" th:each="menu : ${menuList}">
+							<label>
+								<input type="checkbox" class="menu-checkbox" th:value="${menu.menuId}" th:data-name="${menu.menuName}">
+								<span th:text="${menu.menuName}"></span>
+							</label>
 						</div>
-						
-						<div class="form-group">
-							<label>제목</label>
-							<input class="form-control" type="text" placeholder="If you could say it in one sentence, what would you say?">
-						</div>
-						<div class="form-group">
-							<label>내용</label>
-							<textarea class="form-control" style="height: 180px;" placeholder="Write your review to help others learn about this online business"></textarea>
-						</div>
-						<div class="form-group">
-							<label>Add your photo (optional)</label>
-							<div class="fileupload"><input type="file" name="fileupload" accept="image/*"></div>
-						</div>
-						<div class="form-group">
-							<div class="checkboxes float-start add_bottom_15 add_top_15">
-								<label class="container_check">Eos tollit ancillae ea, lorem consulatu qui ne, eu eros eirmod scaevola sea. Et nec tantas accusamus salutatus, sit commodo veritus te, erat legere fabulas has ut. Rebum laudem cum ea, ius essent fuisset ut. Viderer petentium cu his.
-									<input type="checkbox">
-									<span class="checkmark"></span>
-								</label>
-							</div>
-						</div>
-						<a href="confirm.html" class="btn_1">Submit review</a>
+						<button id="startReviewBtn" class="btn btn-primary">리뷰 작성하기</button>
 					</div>
-				</div>
-		</div>
-		<!-- /row -->
-		</div>
-		<!-- /container -->
-		
-	</main>
-	<!-- /main -->
-	<footer th:replace="~{fragments/footer :: footer}"></footer>
-	<!--/footer-->
-
-	<div id="toTop"></div><!-- Back to top button -->
-	
-	<div class="layer"></div><!-- Opacity Mask Menu Mobile -->
-	
-	<!-- Sign In Modal -->
-	<div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
-		<div class="modal_header">
-			<h3>Sign In</h3>
-		</div>
-		<form>
-			<div class="sign-in-wrapper">
-				<a href="#0" class="social_bt facebook">Login with Facebook</a>
-				<a href="#0" class="social_bt google">Login with Google</a>
-				<div class="divider"><span>Or</span></div>
-				<div class="form-group">
-					<label>Email</label>
-					<input type="email" class="form-control" name="email" id="email">
-					<i class="icon_mail_alt"></i>
-				</div>
-				<div class="form-group">
-					<label>Password</label>
-					<input type="password" class="form-control" name="password" id="password" value="">
-					<i class="icon_lock_alt"></i>
-				</div>
-				<div class="clearfix add_bottom_15">
-					<div class="checkboxes float-start">
-						<label class="container_check">Remember me
-						  <input type="checkbox">
-						  <span class="checkmark"></span>
-						</label>
-					</div>
-					<div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
-				</div>
-				<div class="text-center">
-					<input type="submit" value="Log In" class="btn_1 full-width mb_5">
-					Don’t have an account? <a href="account.html">Sign up</a>
-				</div>
-				<div id="forgot_pw">
-					<div class="form-group">
-						<label>Please confirm login email below</label>
-						<input type="email" class="form-control" name="email_forgot" id="email_forgot">
-						<i class="icon_mail_alt"></i>
-					</div>
-					<p>You will receive an email containing a link allowing you to reset your password to a new preferred one.</p>
-					<div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
+					<form th:action="@{/review/submit}" method="post" enctype="multipart/form-data" style="display:none;" id="reviewForm">
+						<div class="review-slider"></div>
+						<div class="text-center" style="margin-top: 30px;">
+							<button type="button" class="btn btn-sm btn-info" id="openMenuModal" data-toggle="modal" data-target="#menuSelectModal">+ 메뉴 추가</button>
+							<button type="submit" class="btn btn-success">리뷰 제출</button>
+						</div>
+					</form>
 				</div>
 			</div>
-		</form>
-		<!--form -->
+		</div>
 	</div>
-	<!-- /Sign In Modal -->
-	
-	<!-- COMMON SCRIPTS -->
-    <script src="/js/common_scripts.min.js"></script>
-    <script src="/js/common_func.js"></script>
-    <script src="/assets/validate.js"></script>
+</main>
 
-    <!-- SPECIFIC SCRIPTS -->
-    <script src="js/specific_review.js"></script>
+<!-- 메뉴 선택 모달 -->
+<div id="menuSelectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="menuModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="menuModalLabel">메뉴 선택</h4>
+			</div>
+			<div class="modal-body">
+				<ul id="menuListContainer"></ul>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+			</div>
+		</div>
+	</div>
+</div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<div id="toTop"></div>
+<div class="layer"></div>
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script>
 
+
+	const addedMenuIds = new Set();
+
+	$('#startReviewBtn').on('click', function () {
+		addedMenuIds.clear();
+
+		const selectedMenus = $('.menu-checkbox:checked');
+		if (selectedMenus.length === 0) {
+			alert("리뷰할 메뉴를 1개 이상 선택해주세요.");
+			return;
+		}
+
+		const slider = $('.review-slider');
+		slider.empty();
+
+		selectedMenus.each(function (index) {
+			const menuId = $(this).val();
+			const menuName = $(this).data('name');
+			addedMenuIds.add(String(menuId));
+			const html = getReviewSlideHtml(menuId, menuName, index);
+			slider.append(html);
+		});
+
+		$('#menu-selection').hide();
+		$('#reviewForm').show();
+		$('#menuAddBtnContainer').show();
+
+		slider.slick({
+			slidesToShow: 1,
+			centerMode: true,
+			centerPadding: '60px',
+			arrows: true,
+			infinite: false
+		});
+	});
+
+	$('#openMenuModal').on('click', function () {
+		$('body').removeClass('modal-open');
+		refreshMenuModalList();
+		$('#menuSelectModal').modal('show');
+	});
+
+	let pendingMenuToAdd = null;
+
+	$(document).on('click', '.addMenuBtn', function () {
+		const menuId = String($(this).data('id'));
+		const menuName = $(this).data('name');
+		pendingMenuToAdd = { id: menuId, name: menuName };
+		$('#menuSelectModal').modal('hide'); // 모달만 닫고, 추가는 나중에
+	});
+
+	// 모달이 완전히 닫힌 후 슬라이드 추가
+	$('#menuSelectModal').on('hidden.bs.modal', function () {
+		setTimeout(() => {
+			$('body').removeClass('modal-open');
+			$('.modal-backdrop').remove();
+			$('#openMenuModal').blur();
+
+			if (pendingMenuToAdd !== null) {
+				const menuId = pendingMenuToAdd.id;
+				const menuName = pendingMenuToAdd.name;
+				const index = $('.review-slider .slick-item').length;
+				const html = getReviewSlideHtml(menuId, menuName, index);
+				$('.review-slider').slick('slickAdd', html);
+				addedMenuIds.add(menuId);
+				$('.menu-checkbox[value="' + menuId + '"]').prop('checked', true);
+				refreshMenuModalList();
+				pendingMenuToAdd = null;
+			}
+		}, 300);
+	});
+
+
+	$(document).on('click', '.remove-slide', function () {
+		const $slide = $(this).closest('.slick-item');
+		const index = $slide.attr('data-slick-index');
+		const menuId = String($(this).data('menu-id'));
+
+		const slideIndex = $slide.index();
+		$('.review-slider').slick('slickRemove', slideIndex);
+		addedMenuIds.delete(menuId);
+		$('.menu-checkbox[value="' + menuId + '"]').prop('checked', false);
+		refreshMenuModalList();
+	});
+
+	function refreshMenuModalList() {
+		const $list = $('#menuListContainer');
+		$list.empty();
+
+		$('.menu-checkbox').each(function () {
+			const id = String($(this).val());
+			const name = $(this).data('name');
+			if (!addedMenuIds.has(id)) {
+				const item = `<li class="mb-2"><button type="button" class="btn btn-info addMenuBtn" data-id="${id}" data-name="${name}">${name}</button></li>`;
+				$list.append(item);
+			}
+		});
+	}
+
+	function forceCloseModal() {
+		$('#menuSelectModal').modal('hide');
+		$('.modal-backdrop').remove();
+		$('body').removeClass('modal-open');
+		$('body').css('padding-right', '');
+	}
+
+	$('#menuSelectModal').on('hidden.bs.modal', function () {
+		forceCloseModal();
+		$('#openMenuModal').blur();
+	});
+
+	function getReviewSlideHtml(menuId, menuName, index) {
+		let toppingOptions = '';
+		toppings.forEach(topping => {
+			toppingOptions += `
+      <label class="checkbox-inline">
+        <input type="checkbox" name="reviews[${index}].toppingIds" value="${topping.id}"> ${topping.name}
+      </label>`;
+		});
+
+		return `
+        <div class="slick-item" data-slick-index="${index}">
+          <div class="card p-3">
+            <h4>${menuName}에 대한 리뷰</h4>
+            <input type="hidden" name="reviews[${index}].menuId" value="${menuId}" />
+            <div class="row">
+              <div class="col-xs-6"><label>면 굵기</label><input type="range" name="reviews[${index}].noodleThickness" min="0" max="10" value="5"/></div>
+              <div class="col-xs-6"><label>면 식감</label><input type="range" name="reviews[${index}].noodleTexture" min="0" max="10" value="5"/></div>
+              <div class="col-xs-6"><label>면 삶기</label><input type="range" name="reviews[${index}].noodleBoiledLevel" min="0" max="10" value="5"/></div>
+              <div class="col-xs-6"><label>국물 농도</label><input type="range" name="reviews[${index}].soupThickness" min="0" max="10" value="5"/></div>
+              <div class="col-xs-6"><label>온도</label><input type="range" name="reviews[${index}].soupTemperature" min="0" max="10" value="5"/></div>
+              <div class="col-xs-6"><label>염도</label><input type="range" name="reviews[${index}].soupSaltiness" min="0" max="10" value="5"/></div>
+              <div class="col-xs-6"><label>맵기</label><input type="range" name="reviews[${index}].soupSpiciness" min="0" max="10" value="5"/></div>
+              <div class="col-xs-6"><label>기름</label><input type="range" name="reviews[${index}].soupOiliness" min="0" max="10" value="5"/></div>
+            </div>
+            <div class="form-group">
+          <label>먹은 토핑 선택</label><br/>
+          ${toppingOptions}
+       		 </div>
+            <div class="form-group">
+              <label>제목</label>
+              <input type="text" class="form-control" name="reviews[${index}].title" />
+            </div>
+            <div class="form-group">
+              <label>내용</label>
+              <textarea class="form-control" name="reviews[${index}].content" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label>사진 첨부</label>
+              <input type="file" name="reviews[${index}].imageFile" accept="image/*" />
+            </div>
+            <button type="button" class="btn btn-danger remove-slide" data-menu-id="${menuId}">삭제</button>
+          </div>
+        </div>`;
+	}
+</script>
 </body>
 </html>
