@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.util.PageUtil;
 import noodlezip.subscription.constants.SubscriptionType;
-import noodlezip.subscription.dto.response.SubscriptionPageResponse;
 import noodlezip.subscription.dto.response.SubscriberResponse;
+import noodlezip.subscription.dto.response.SubscriptionPageResponse;
 import noodlezip.subscription.entity.UserSubscription;
 import noodlezip.subscription.repository.UserSubscriptionRepository;
 import noodlezip.subscription.status.SubscriptionErrorStatus;
@@ -32,8 +32,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     @Transactional(readOnly = true)
     public SubscriptionPageResponse getFollowerListWithPaging(Long targetUserId, Long requestUserId, int page) {
         Pageable pageable = SubscriptionPagePolicy.getPageable(page);
-        Page<SubscriberResponse> followerList =
-                userSubscriptionRepository.findFollowerList(targetUserId, requestUserId, pageable);
+        Page<SubscriberResponse> followerList = getFollowerListByLoginStatus(targetUserId, requestUserId, pageable);
 
         Map<String, Object> pageInfo = pageUtil.getPageInfo(followerList, SubscriptionPagePolicy.PAGE_PER_BLOCK);
         SubscriptionPageResponse response = SubscriptionPageResponse.pageOf(pageInfo);
@@ -45,13 +44,19 @@ public class SubscribeServiceImpl implements SubscribeService {
         return response;
     }
 
+    private Page<SubscriberResponse> getFollowerListByLoginStatus(Long targetUserId, Long requestUserId, Pageable pageable) {
+        if (isLoginUser(requestUserId)) {
+            return userSubscriptionRepository.findFollowerList(targetUserId, requestUserId, pageable);
+        }
+        return userSubscriptionRepository.findFollowerListWithoutLoginUser(targetUserId, pageable);
+    }
+
 
     @Override
     @Transactional(readOnly = true)
     public SubscriptionPageResponse getFollowingListWithPaging(Long targetUserId, Long requestUserId, int page) {
         Pageable pageable = SubscriptionPagePolicy.getPageable(page);
-        Page<SubscriberResponse> followeeList =
-                userSubscriptionRepository.findFolloweeList(targetUserId, requestUserId, pageable);
+        Page<SubscriberResponse> followeeList = getFollowingListByLoginStatus(targetUserId, requestUserId, pageable);
 
         Map<String, Object> pageInfo = pageUtil.getPageInfo(followeeList, SubscriptionPagePolicy.PAGE_PER_BLOCK);
         SubscriptionPageResponse response = SubscriptionPageResponse.pageOf(pageInfo);
@@ -61,6 +66,17 @@ public class SubscribeServiceImpl implements SubscribeService {
         response.setSubscriptionType(SubscriptionType.FOLLOWING);
 
         return response;
+    }
+
+    private  Page<SubscriberResponse> getFollowingListByLoginStatus(Long targetUserId, Long requestUserId, Pageable pageable) {
+        if(isLoginUser(requestUserId)) {
+            return userSubscriptionRepository.findFolloweeList(targetUserId, requestUserId, pageable);
+        }
+        return userSubscriptionRepository.findFolloweeListWithoutLoginUser(targetUserId, pageable);
+    }
+
+    private boolean isLoginUser(Long requestUserId) {
+        return requestUserId != null && userRepository.existsById(requestUserId);
     }
 
 
