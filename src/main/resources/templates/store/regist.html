@@ -215,7 +215,7 @@
 						</div>
 
 						<hr>
-							<h6 class="mb-3">메뉴 등록</h6>
+						<h4 class="mb-3">메뉴 등록</h4>
 
 							<!-- 메뉴 항목들이 추가될 컨테이너 -->
 							<div id="menu-items">
@@ -241,7 +241,7 @@
 											<div class="col-md-6 mb-2">
 												<div class="input-group">
 													<label for="price0" class="visually-hidden">가격</label>
-													<input type="number" id="price0" name="menus[0].price" class="form-control" placeholder="가격" min="0" step="500" required />
+													<input type="number" id="price0" name="menus[0].price" class="form-control" placeholder="가격" min="0" step="100" required />
 													<span class="input-group-text">원</span>
 												</div>
 											</div>
@@ -270,27 +270,28 @@
 													<div class="default-toppings-container"></div>
 												</div>
 											</div>
-
-											<div id="extra-toppings-container-0" style="display:none;">
-
+											<div class="text-end mt-2">
+												<button type="button" class="btn btn-sm btn-outline-danger remove-menu">메뉴 삭제</button>
 											</div>
-
-											<div class="col-12 text-start mt-2">
-												<button type="button" class="btn btn-sm btn-outline-primary add-extra-topping">+ 추가 토핑</button>
-											</div>
-
-											<div class="col-12 text-end mt-2">
-												<button type="button" class="btn btn-sm btn-outline-danger remove-menu">삭제</button>
-											</div>
-
+											<div id="extra-toppings-container-0" style="display:none;">											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 
-							<!-- 메뉴 추가 버튼 (menu-items 밖, 메뉴 항목 아래) -->
+							<!-- 메뉴 추가 버튼 -->
 							<div class="text-start mb-3">
 								<button type="button" id="add-menu" class="btn btn-sm btn-outline-primary">+ 메뉴 추가</button>
+							</div>
+
+							<div class="mb-4">
+								<label for="store-extra-toppings-container" class="form-label">매장 추가 토핑</label>
+
+								<div id="store-extra-toppings-container"></div>
+
+								<button type="button" id="add-store-extra-topping" class="btn btn-outline-primary mt-2">
+									+ 추가 토핑
+								</button>
 							</div>
 
 							<!-- 등록 버튼 -->
@@ -308,15 +309,13 @@
 
 
 
-
+	<!-- ❗JS 스크립트 ❗ -->
 
 
 	<!-- COMMON SCRIPTS -->
     <script src="/js/common_scripts.min.js"></script>
     <script src="/js/common_func.js"></script>
     <script src="/assets/validate.js"></script>
-
-	<!-- ❗JS 스크립트 ❗ -->
 
 	<!-- 카카오 다음 우편번호 API 스크립트 -->
 	<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js" charset="utf-8"></script>
@@ -477,11 +476,9 @@
 			}
 
 			// 7-2. 메뉴 이미지 첨부 (여러 개)
-			const menuImageInputs = document.querySelectorAll('input[name^="menus["][name$="].menuImageFile"]');
+			const menuImageInputs = document.querySelectorAll('.menu-image-input');
 			menuImageInputs.forEach(input => {
-				if (input.files[0]) {
-					formData.append("menuImageFiles", input.files[0]);
-				}
+				formData.append("menuImageFiles", input.files[0]);
 			});
 
 			// 7-3. JSON DTO 데이터 생성
@@ -509,6 +506,16 @@
 				weekSchedule: []
 			 };
 
+			// 추가 토핑 입력값 수집 (가게 단위)
+			storeData.extraToppings = [];
+			document.querySelectorAll('#store-extra-toppings-container .extra-topping-item').forEach(item => {
+				const name = item.querySelector('input[name$=".name"]')?.value.trim();
+				const price = parseInt(item.querySelector('input[name$=".price"]')?.value, 10) || 0;
+				if (name) {
+					storeData.extraToppings.push({ name, price });
+				}
+			});
+
 			// 7-4. 메뉴 데이터 수집
 			const menuItems = document.querySelectorAll('.menu-item');
 			menuItems.forEach((menu, i) => {
@@ -530,6 +537,20 @@
 				});
 			});
 
+			storeData.menus = storeData.menus.map(menu => {
+				if (Array.isArray(menu.extraToppings)) {
+					const toppings = [];
+					for (let i = 0; i < menu.extraToppings.length; i += 2) {
+						toppings.push({
+							name: menu.extraToppings[i],
+							price: parseInt(menu.extraToppings[i + 1]) || 0
+						});
+					}
+					menu.extraToppings = toppings;
+				}
+				return menu;
+			});
+
 			function formatTime(timeStr) {
 				if (!timeStr || timeStr === "CLOSED") return null;
 				return `${timeStr}:00`;
@@ -543,6 +564,37 @@
 				const openVal = document.querySelector(`[name="weekSchedule[${i}].openingAt"]`).value;
 				const closeVal = document.querySelector(`[name="weekSchedule[${i}].closingAt"]`).value;
 
+				if (!isClosed && openVal === closeVal) {
+					alert(`${days[i]}의 영업 시작 시간과 종료 시간이 같을 수 없습니다!`);
+					throw new Error("영업시간 예외 발생");
+				}
+
+				storeData.weekSchedule = [];
+
+				for (let i = 0; i < 7; i++) {
+					const isClosed = document.getElementById(`closed-day-${i}`).value === 'true';
+					const openVal = document.querySelector(`[name="weekSchedule[${i}].openingAt"]`).value;
+					const closeVal = document.querySelector(`[name="weekSchedule[${i}].closingAt"]`).value;
+
+					if (!isClosed) {
+						if (!openVal || !closeVal || openVal === 'CLOSED' || closeVal === 'CLOSED') {
+							alert(`${dayLabels[i]}의 영업 시작/종료 시간을 입력해주세요.`);
+							return; // 제출 중단
+						}
+						if (openVal === closeVal) {
+							alert(`${dayLabels[i]}의 시작/종료 시간이 같을 수 없습니다.`);
+							return;
+						}
+					}
+
+					storeData.weekSchedule.push({
+						dayOfWeek: days[i],
+						isClosedDay: isClosed,
+						openingAt: isClosed ? null : formatTime(openVal),
+						closingAt: isClosed ? null : formatTime(closeVal)
+					});
+				}
+
 				storeData.weekSchedule.push({
 					dayOfWeek: days[i],
 					isClosedDay: isClosed,
@@ -552,13 +604,16 @@
 			}
 
 			// 7-6. JSON Blob으로 만들어서 FormData에 첨부
-			formData.append("store", new Blob([JSON.stringify(storeData)], { type: "application/json" }));
+			const storeBlob = new Blob([JSON.stringify(storeData)], {
+				type: "application/json;charset=utf-8"
+			});
+			formData.append("store", storeBlob);
 
-			// 8. 서버로 전송
+
 			try {
 				const response = await fetch("/store/regist", {
 					method: "POST",
-					body: formData
+					body: formData,
 				});
 
 				if (response.ok) {
@@ -612,100 +667,67 @@
 		});
 
 		/* ========== 추가 토핑 입력 필드 추가 ========== */
-
-		function addExtraTopping(menuIndex) {
-			const container = document.getElementById(`extra-toppings-container-${menuIndex}`);
-			if (!container) return;
-
-			if (container.style.display === 'none' || container.style.display === '') {
-				container.style.display = 'block';
-			}
-
-			const existingItems = container.querySelectorAll('.extra-topping-item').length;
-
-			const wrapper = document.createElement('div');
-			wrapper.className = 'extra-topping-item d-flex align-items-center mb-2';
-
-			// 추가 토핑 이름 input
-			const inputName = document.createElement('input');
-			inputName.type = 'text';
-			inputName.name = `menus[${menuIndex}].extraToppings[${existingItems}].name`;
-			inputName.className = 'form-control form-control-sm';
-			inputName.placeholder = '추가 토핑 (예: 매운 멘마)';
-			inputName.lang = 'ko';
-
-			// 추가 토핑 가격 input
-			const inputPrice = document.createElement('input');
-			inputPrice.type = 'number';
-			inputPrice.name = `menus[${menuIndex}].extraToppings[${existingItems}].price`;
-			inputPrice.className = 'form-control form-control-sm';
-			inputPrice.placeholder = '가격';
-			inputPrice.min = 0;
-			inputPrice.step = 100;
-
-			// 삭제 버튼
-			const btn = document.createElement('button');
-			btn.type = 'button';
-			btn.className = 'btn btn-sm btn-outline-danger';
-			btn.textContent = '삭제';
-			btn.onclick = () => {
-				container.removeChild(wrapper);
-				if (container.children.length === 0) {
-					container.style.display = 'none';
-				}
-			};
-
-			wrapper.appendChild(inputName);
-			wrapper.appendChild(inputPrice);
-			wrapper.appendChild(btn);
-			container.appendChild(wrapper);
-		}
-
-		// 추가 토핑 버튼 이벤트 연결 함수
-		function setupExtraToppingButtons(context = document) {
-			context.querySelectorAll('.add-extra-topping').forEach(button => {
-				button.onclick = null;
-				button.onclick = () => {
-					const menuItem = button.closest('.menu-item');
-					const menus = Array.from(document.querySelectorAll('.menu-item'));
-					const menuIndex = menus.indexOf(menuItem);
-					addExtraTopping(menuIndex);
-				};
-			});
-		}
-
-		// 메뉴 인덱스 재정렬 시 추가 토핑 input name도 함께 업데이트
 		function updateMenuIndices() {
 			const menus = document.querySelectorAll('.menu-item');
-			menus.forEach((menu, i) => {
-				// input, select, textarea 이름 인덱스 변경
+			menus.forEach((menu, index) => {
+				// 각 input, select, textarea 이름에서 인덱스 부분을 업데이트
 				menu.querySelectorAll('input, select, textarea').forEach(input => {
-					if (!input.name) {
-						console.warn('입력 요소에 name 속성이 없음:', input);
-						return;
+					if (input.name) {
+						input.name = input.name.replace(/menus\[\d+\]/, `menus[${index}]`);
 					}
-					input.name = input.name.replace(/\[\d+\]/g, `[${i}]`);
 				});
 
-				// extra toppings container id 변경
-				const extraContainer = menu.querySelector('[id^="extra-toppings-container-"]');
-				if (extraContainer) {
-					extraContainer.id = `extra-toppings-container-${i}`;
-					// extra toppings 내부 input 이름 인덱스도 수정
-					extraContainer.querySelectorAll('input[name^="menus"]').forEach((input, idx) => {
-						input.name = `menus[${i}].extraToppings[${idx}]`;
+				const defaultToppingsContainer = menu.querySelector('.default-toppings-container');
+				if (defaultToppingsContainer) {
+					defaultToppingsContainer.querySelectorAll('input[type="hidden"]').forEach(input => {
+						if (input.name) {
+							input.name = input.name.replace(/menus\[\d+\]/, `menus[${index}]`);
+						}
 					});
 				}
-
-				// data-menu-index 속성도 갱신
-				const toppingTags = menu.querySelector('.topping-tags');
-				if (toppingTags) {
-					toppingTags.dataset.menuIndex = i;
+				const extraToppingContainer = menu.querySelector('.extra-topping-container');
+				if (extraToppingContainer) {
+					extraToppingContainer.querySelectorAll('input').forEach(input => {
+						if (input.name) {
+							input.name = input.name.replace(/menus\[\d+\]/, `menus[${index}]`);
+						}
+					});
 				}
 			});
-
-			setupExtraToppingButtons();
 		}
+
+		function addStoreExtraTopping() {
+			const container = document.getElementById('store-extra-toppings-container');
+			if (!container) return;
+
+			const inputWrapper = document.createElement('div');
+			inputWrapper.className = 'input-group mb-2 extra-topping-item';
+
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.className = 'form-control';
+			input.name = 'storeExtraToppings[]';
+			input.placeholder = '추가 토핑 입력';
+
+			const removeBtn = document.createElement('button');
+			removeBtn.type = 'button';
+			removeBtn.className = 'btn btn-outline-danger';
+			removeBtn.textContent = '삭제';
+			removeBtn.onclick = () => inputWrapper.remove();
+
+			inputWrapper.appendChild(input);
+			inputWrapper.appendChild(removeBtn);
+			container.appendChild(inputWrapper);
+		}
+
+		// 페이지가 로드되면 버튼에 이벤트 연결
+		document.getElementById('add-store-extra-topping').addEventListener('click', addStoreExtraTopping);
+
+		// 최초 1개 기본 추가해도 좋음
+		addStoreExtraTopping();
+
+		// 추가 토핑 버튼 이벤트 연결 함수
+		document.getElementById('add-store-extra-topping').addEventListener('click', addStoreExtraTopping);
 
 		/* ========== 메뉴 추가 버튼 클릭 시 ========== */
 
@@ -746,22 +768,21 @@
 			setupToppingTags();
 			setupExtraToppingButtons();
 			setupMenuImageUpload(clone);
+			updateRemoveMenuButtons();
 		});
 
 		/* ========== 메뉴 삭제 버튼 클릭 시 ========== */
 		function updateRemoveMenuButtons(context = document) {
 			context.querySelectorAll('.remove-menu').forEach(button => {
-				const newButton = button.cloneNode(true); // 기존 이벤트 제거용
+				const newButton = button.cloneNode(true);
 				button.replaceWith(newButton);
 			});
-
 			context.querySelectorAll('.remove-menu').forEach(button => {
 				button.addEventListener('click', (e) => {
 					const allMenus = document.querySelectorAll('.menu-item');
 					if (allMenus.length > 1) {
 						e.currentTarget.closest('.menu-item').remove();
 						updateMenuIndices();
-
 						setupToppingTags();
 						setupExtraToppingButtons();
 						setupMenuImageUpload(document);
@@ -848,14 +869,6 @@
 				}
 			});
 		}
-
-
-
-		/* ========== 초기 실행 ========== */
-		updateRemoveMenuButtons();
-		setupToppingTags();
-		setupExtraToppingButtons();
-		setupMenuImageUpload(document);
 
 		/* ========== 한 줄 소개 ========== */
 		const textarea = document.getElementById('owner-intro');
@@ -953,7 +966,8 @@
 		document.addEventListener("DOMContentLoaded", renderOpeningSchedule);
 
 			document.addEventListener('DOMContentLoaded', () => {
-			const imageInputs = document.querySelectorAll('.menu-image-input');
+				document.getElementById('add-store-extra-topping').addEventListener('click', addStoreExtraTopping);
+				const imageInputs = document.querySelectorAll('.menu-image-input');
 
 			imageInputs.forEach(input => {
 				input.addEventListener('change', (event) => {
@@ -987,7 +1001,6 @@
 				const soups = await soupsRes.json();
 
 				renderAllMenus(categories, soups, toppings);
-
 				addExtraTopping(menuIndex);
 				setupToppingTagEvents();
 
@@ -995,6 +1008,46 @@
 				console.error("데이터 불러오기 실패:", error);
 			}
 		});
+
+		function setupExtraToppingButtons(context = document) {
+			context.querySelectorAll('.add-extra-topping').forEach(button => {
+				button.onclick = () => {
+					const menuItem = button.closest('.menu-item');
+					const menus = Array.from(document.querySelectorAll('.menu-item'));
+					const menuIndex = menus.indexOf(menuItem);
+					addExtraTopping(menuIndex);
+				};
+			});
+		}
+
+		function addExtraTopping(menuIndex) {
+			const menuItems = document.querySelectorAll('.menu-item');
+			const menuItem = menuItems[menuIndex];
+			if (!menuItem) return;
+
+			const container = menuItem.querySelector('.extra-topping-container');
+			if (!container) return;
+
+			const inputWrapper = document.createElement('div');
+			inputWrapper.className = 'input-group mb-2';
+
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.className = 'form-control';
+			input.name = `menus[${menuIndex}].extraToppings[]`;
+			input.placeholder = '추가 토핑 입력';
+
+			const removeBtn = document.createElement('button');
+			removeBtn.type = 'button';
+			removeBtn.className = 'btn btn-outline-danger';
+			removeBtn.textContent = '삭제';
+			removeBtn.onclick = () => inputWrapper.remove();
+
+			inputWrapper.appendChild(input);
+			inputWrapper.appendChild(removeBtn);
+			container.appendChild(inputWrapper);
+		}
+
 
 		// 여러 메뉴에 옵션/토핑 렌더링
 		function renderAllMenus(categories, soups, toppings) {
@@ -1049,6 +1102,18 @@
 				});
 			});
 		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+			updateRemoveMenuButtons();
+			setupToppingTags();
+			setupExtraToppingButtons();
+			setupMenuImageUpload(document);
+
+			const storeToppingBtn = document.getElementById('add-store-extra-topping');
+			if (storeToppingBtn) {
+				storeToppingBtn.addEventListener('click', addStoreExtraTopping);
+			}
+		});
 	</script>
 
 </body>
