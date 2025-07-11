@@ -85,7 +85,7 @@ class SearchControllerTest {
                 .storeMainImageUrl("https://example.com/image.jpg")
                 .storeLat(37.5665)
                 .storeLng(126.9780)
-                .storeLegalCode(12401293)
+                .storeLegalCode(12401293L)
                 .build();
         storeRepository.save(store);
 
@@ -155,7 +155,7 @@ class SearchControllerTest {
                 .storeLat(37.5665)
                 .storeLng(126.9780)
                 .approvalStatus(ApprovalStatus.WAITING)
-                .storeLegalCode(12401293)
+                .storeLegalCode(12401293L)
                 .build();
         storeRepository.save(store);
 
@@ -220,7 +220,7 @@ class SearchControllerTest {
                 .storeLat(37.5665)
                 .storeLng(126.9780)
                 .approvalStatus(ApprovalStatus.APPROVED)
-                .storeLegalCode(11110)
+                .storeLegalCode(11110L)
                 .build());
     }
 
