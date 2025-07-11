@@ -1,13 +1,11 @@
 package noodlezip.subscription.service;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.util.PageUtil;
-import noodlezip.subscription.dto.response.FolloweeResponse;
-import noodlezip.subscription.dto.response.FollowerPageResponse;
-import noodlezip.subscription.dto.response.FollowerResponse;
-import noodlezip.subscription.dto.response.FollowingPageResponse;
+import noodlezip.subscription.constants.SubscriptionType;
+import noodlezip.subscription.dto.response.SubscriptionPageResponse;
+import noodlezip.subscription.dto.response.SubscriberResponse;
 import noodlezip.subscription.entity.UserSubscription;
 import noodlezip.subscription.repository.UserSubscriptionRepository;
 import noodlezip.subscription.status.SubscriptionErrorStatus;
@@ -25,44 +23,58 @@ import java.util.Map;
 @Service
 public class SubscribeServiceImpl implements SubscribeService {
 
-    private final EntityManager entityManager;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final UserRepository userRepository;
     private final PageUtil pageUtil;
 
+
     @Override
     @Transactional(readOnly = true)
-    public FollowerPageResponse getFollowerListWithPaging(Long targetUserId, Long requestUserId, int page) {
+    public SubscriptionPageResponse getFollowerListWithPaging(Long targetUserId, Long requestUserId, int page) {
         Pageable pageable = SubscriptionPagePolicy.getPageable(page);
-        Page<FollowerResponse> followerList =
+        Page<SubscriberResponse> followerList =
                 userSubscriptionRepository.findFollowerList(targetUserId, requestUserId, pageable);
 
         Map<String, Object> pageInfo = pageUtil.getPageInfo(followerList, SubscriptionPagePolicy.PAGE_PER_BLOCK);
-        FollowerPageResponse response = FollowerPageResponse.of(pageInfo);
-        response.setFollowerList(followerList.getContent());
+        SubscriptionPageResponse response = SubscriptionPageResponse.pageOf(pageInfo);
+        response.setRequestUserId(requestUserId);
+        response.setTargetUserId(targetUserId);
+        response.setSubscriptionList(followerList.getContent());
+        response.setSubscriptionType(SubscriptionType.FOLLOWER);
 
         return response;
     }
+
 
     @Override
     @Transactional(readOnly = true)
-    public FollowingPageResponse getFollowingListWithPaging(Long targetUserId, Long requestUserId, int page) {
+    public SubscriptionPageResponse getFollowingListWithPaging(Long targetUserId, Long requestUserId, int page) {
         Pageable pageable = SubscriptionPagePolicy.getPageable(page);
-        Page<FolloweeResponse> followeeList =
+        Page<SubscriberResponse> followeeList =
                 userSubscriptionRepository.findFolloweeList(targetUserId, requestUserId, pageable);
 
         Map<String, Object> pageInfo = pageUtil.getPageInfo(followeeList, SubscriptionPagePolicy.PAGE_PER_BLOCK);
-        FollowingPageResponse response = FollowingPageResponse.of(pageInfo);
-        response.setFollowingList(followeeList.getContent());
+        SubscriptionPageResponse response = SubscriptionPageResponse.pageOf(pageInfo);
+        response.setRequestUserId(requestUserId);
+        response.setTargetUserId(targetUserId);
+        response.setSubscriptionList(followeeList.getContent());
+        response.setSubscriptionType(SubscriptionType.FOLLOWING);
 
         return response;
     }
+
 
     @Override
     @Transactional
     public void handleSubscribe(Long targetUserId, Long requestUserId) {
-        boolean isExists = userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId);
+        if (targetUserId == null || requestUserId == null) {
+            throw new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION);
+        }
+        if (targetUserId.equals(requestUserId)) {
+            throw new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION);
+        }
 
+        boolean isExists = userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId);
         if (isExists) {
             cancelSubscription(targetUserId, requestUserId);
         } else {
@@ -75,14 +87,10 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     private void addSubscription(Long targetUserId, Long requestUserId) {
-//        User targetUser = userRepository.findById(targetUserId)
-//                .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION));
-//        User requestUser = userRepository.findById(requestUserId)
-//                .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION));
-
-        User targetUser = User.builder().id(targetUserId).build();
-        User requestUser = User.builder().id(requestUserId).build();
-
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION));
+        User requestUser = userRepository.findById(requestUserId)
+                .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION));
 
         UserSubscription userSubscription = UserSubscription.builder()
                 .follower(requestUser)
