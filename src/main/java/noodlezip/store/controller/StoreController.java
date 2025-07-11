@@ -11,6 +11,7 @@ import noodlezip.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,10 @@ public class StoreController {
 
     // 매장 상세페이지 진입
     @GetMapping("/detail/{no}")
-    public String showDetailPage(@PathVariable Long no, Model model) {
-        StoreDto store = storeService.getStore(no);
+    public String showDetailPage(@PathVariable Long no,
+                                 @AuthenticationPrincipal MyUserDetails myUserDetails,
+                                 Model model) {
+        StoreDto store = storeService.getStore(no, myUserDetails.getUser().getId());
         model.addAttribute("store", store);
         return "store/detail";
     }

@@ -564,7 +564,7 @@
 				if (response.ok) {
 					const data = await response.json();
 					alert("등록 성공!");
-					window.location.href = `/store/detail.page?no=${data.storeId}`;
+					window.location.href = `/store/detail/${data.storeId}`;
 				} else {
 					const text = await response.text();
 					alert("등록 실패: " + text);
