@@ -3,9 +3,9 @@ package noodlezip.subscription.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import noodlezip.subscription.dto.response.FolloweeResponse;
-import noodlezip.subscription.dto.response.FollowerResponse;
+import noodlezip.subscription.dto.response.SubscriberResponse;
 import noodlezip.subscription.entity.QUserSubscription;
+import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.QUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,42 +20,20 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
 
     private final JPAQueryFactory queryFactory;
 
-    /**
-     * targetUserId가 following인 데이터의 follwer
-     */
-//    public List<FollowerResponse> findFollowerList(Long targetUserId, Long requestUserId) {
-//        QUserSubscription subscription = QUserSubscription.userSubscription;
-//        QUserSubscription requestUserSubscription = new QUserSubscription("requestUserSubscription");    // requestUser 의 구독 정보
-//        QUser follower = QUser.user;
-//
-//        return queryFactory
-//                .select(Projections.constructor(FollowerResponse.class,
-//                        subscription.id,
-//                        follower.id,
-//                        follower.userName,
-//                        follower.profileImageUrl,
-//                        requestUserSubscription.id.isNotNull()
-//                ))
-//                .from(subscription)
-//                .join(subscription.follower, follower)
-//                .leftJoin(requestUserSubscription)
-//                .on(requestUserSubscription.follower.id.eq(requestUserId)
-//                        .and(requestUserSubscription.followee.id.eq(follower.id)))
-//                .where(subscription.followee.id.eq(targetUserId))
-//                .fetch();
-//    }
-    public Page<FollowerResponse> findFollowerList(Long targetUserId,
-                                                   Long requestUserId,
-                                                   Pageable pageable
+
+    public Page<SubscriberResponse> findFollowerList(Long targetUserId,
+                                                     Long requestUserId,
+                                                     Pageable pageable
     ) {
         QUserSubscription subscription = QUserSubscription.userSubscription;
-        QUserSubscription requestUserSubscription = new QUserSubscription("requestUserSubscription");    // requestUser 의 구독 정보
+        QUserSubscription requestUserSubscription = new QUserSubscription("requestUserSubscription");
         QUser follower = QUser.user;
 
-        List<FollowerResponse> content = queryFactory
-                .select(Projections.constructor(FollowerResponse.class,
+        List<SubscriberResponse> content = queryFactory
+                .select(Projections.constructor(SubscriberResponse.class,
                         subscription.id,
                         follower.id,
+                        follower.loginId,
                         follower.userName,
                         follower.profileImageUrl,
                         requestUserSubscription.id.isNotNull()
@@ -65,7 +43,10 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
                 .leftJoin(requestUserSubscription)
                 .on(requestUserSubscription.follower.id.eq(requestUserId)
                         .and(requestUserSubscription.followee.id.eq(follower.id)))
-                .where(subscription.followee.id.eq(targetUserId))
+                .where(
+                        subscription.followee.id.eq(targetUserId),
+                        follower.activeStatus.eq(ActiveStatus.ACTIVE)
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(subscription.id.desc())
@@ -74,48 +55,30 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
         Long total = queryFactory
                 .select(subscription.count())
                 .from(subscription)
-                .where(subscription.followee.id.eq(targetUserId))
+                .join(subscription.follower, follower)
+                .where(
+                        subscription.followee.id.eq(targetUserId),
+                        follower.activeStatus.eq(ActiveStatus.ACTIVE)
+                )
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total == null ? 0 : total);
     }
 
-    /**
-     * targetUserId가 follower
-     */
-//    public List<FolloweeResponse> findFolloweeList(Long targetUserId, Long requestUserId) {
-//        QUserSubscription subscription = QUserSubscription.userSubscription;
-//        QUserSubscription requestUserSubscription = new QUserSubscription("requestUserSubscription");
-//        QUser followee = QUser.user;
-//
-//        return queryFactory
-//                .select(Projections.constructor(FolloweeResponse.class,
-//                        subscription.id,
-//                        followee.id,
-//                        followee.userName,
-//                        followee.profileImageUrl,
-//                        requestUserSubscription.id.isNotNull()
-//                ))
-//                .from(subscription)
-//                .join(subscription.followee, followee)
-//                .leftJoin(requestUserSubscription)
-//                .on(requestUserSubscription.follower.id.eq(requestUserId)
-//                        .and(requestUserSubscription.followee.id.eq(followee.id)))
-//                .where(subscription.follower.id.eq(targetUserId))
-//                .fetch();
-//    }
-    public Page<FolloweeResponse> findFolloweeList(Long targetUserId,
-                                                   Long requestUserId,
-                                                   Pageable pageable
+
+    public Page<SubscriberResponse> findFolloweeList(Long targetUserId,
+                                                     Long requestUserId,
+                                                     Pageable pageable
     ) {
         QUserSubscription subscription = QUserSubscription.userSubscription;
         QUserSubscription requestUserSubscription = new QUserSubscription("requestUserSubscription");
         QUser followee = QUser.user;
 
-        List<FolloweeResponse> content = queryFactory
-                .select(Projections.constructor(FolloweeResponse.class,
+        List<SubscriberResponse> content = queryFactory
+                .select(Projections.constructor(SubscriberResponse.class,
                         subscription.id,
                         followee.id,
+                        followee.loginId,
                         followee.userName,
                         followee.profileImageUrl,
                         requestUserSubscription.id.isNotNull()
@@ -125,7 +88,10 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
                 .leftJoin(requestUserSubscription)
                 .on(requestUserSubscription.follower.id.eq(requestUserId)
                         .and(requestUserSubscription.followee.id.eq(followee.id)))
-                .where(subscription.follower.id.eq(targetUserId))
+                .where(
+                        subscription.follower.id.eq(targetUserId),
+                        followee.activeStatus.eq(ActiveStatus.ACTIVE)
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(subscription.id.desc())
@@ -134,7 +100,11 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
         Long total = queryFactory
                 .select(subscription.count())
                 .from(subscription)
-                .where(subscription.follower.id.eq(targetUserId))
+                .join(subscription.followee, followee)
+                .where(
+                        subscription.follower.id.eq(targetUserId),
+                        followee.activeStatus.eq(ActiveStatus.ACTIVE)
+                )
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total == null ? 0 : total);
