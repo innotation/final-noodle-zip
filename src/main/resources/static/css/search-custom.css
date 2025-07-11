@@ -1,0 +1,153 @@
+/*============================================================================================*/
+/* SEARCH CUSTOM CSS */
+/*============================================================================================*/
+
+/* 태그 필터 활성화/비활성화 스타일 */
+.filter-tag.active {
+    background-color: #589442; /* blog.css의 hover 색상 */
+    color: #fff;
+}
+
+.filter-tag.inactive {
+    opacity: 0.5; /* 비활성화된 느낌을 주기 위해 투명도 조절 */
+    background-color: #f0f0f0; /* 기본 배경색 */
+    color: #333; /* 기본 글씨색 */
+}
+
+/* 태그 간 간격 추가 */
+.tags a {
+    margin-right: 5px; /* 태그 간 오른쪽 여백 */
+    margin-bottom: 5px; /* 태그 간 아래쪽 여백 */
+    cursor: pointer; /* 마우스 오버 시 손가락 모양 */
+}
+
+.filter-tag {
+    cursor: pointer; /* 마우스 오버 시 손가락 모양 */
+}
+
+/* 매장 리스트 컨테이너 스타일 */
+#store-list {
+    padding: 10px 0;
+    margin: 0;
+}
+
+#store-list .col-lg-12 {
+    padding: 0;
+    margin: 0;
+}
+
+/* 매장 리스트 카드 스타일 */
+.store-list {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.store-list:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+/* 매장 리스트 내부 요소들 간격 조정 */
+.store-list figure {
+    margin-bottom: 10px;
+}
+
+.store-list ul:not(.tags) {
+    margin-bottom: 6px;
+}
+
+.store-list .strip_info {
+    padding: 0;
+}
+
+/* 매장 리스트 태그 스타일 개선 */
+.store-list .tags {
+    margin: 4px 0 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.store-list .tags li {
+    display: inline-block;
+    margin-right: 3px;
+    margin-bottom: 2px;
+}
+
+.store-list .tags li a {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 4px;
+    font-size: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    line-height: 1.2;
+    border: 1px solid;
+}
+
+.store-list .tags li a:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.store-list .tags li a i {
+    font-size: 9px;
+    margin-right: 3px;
+}
+
+/* 거리 태그 특별 스타일 */
+.store-list .tags li a[style*="color: #6c757d"] {
+    font-size: 9px;
+    opacity: 0.7;
+    border: none;
+    padding: 2px 6px;
+}
+
+.store-list .tags li a[style*="color: #6c757d"]:hover {
+    opacity: 1;
+}
+
+/* 사장님 한마디 스타일 개선 */
+.owner-comment {
+    margin-top: 6px;
+    padding: 6px 10px;
+    background-color: #f8f9fa;
+    border-left: 3px solid #589442;
+    font-size: 10px;
+    color: #555;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.4;
+    position: relative;
+}
+
+.owner-comment strong {
+    color: #589442;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.owner-comment strong i {
+    font-size: 10px;
+    margin-right: 4px;
+}
+
+.owner-comment:before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #589442, #4a7d37);
+} 

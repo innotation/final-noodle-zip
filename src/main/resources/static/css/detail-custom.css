@@ -1,0 +1,147 @@
+/*============================================================================================*/
+/* DETAIL CUSTOM CSS */
+/*============================================================================================*/
+
+/* 메뉴 카드 내 태그 스타일 (필터와 동일하게) */
+.review_card .tags a.active {
+    background-color: #589442;
+    color: #fff;
+}
+
+.review_card .tags a.inactive {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* 메뉴 이미지 썸네일 스타일 */
+.review_card .user_info .menu-image-thumb {
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.review_card .user_info .menu-image-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 잘리지 않고 꽉 차도록 */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+/* 메뉴명 태그 스타일 */
+.review_card .user_info .menu-name-tags {
+    margin-top: 5px;
+}
+
+.review_card .user_info .menu-name-tags .tags {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.review_card .user_info .menu-name-tags .tags li {
+    display: inline-block;
+}
+
+.review_card .user_info .menu-name-tags .tags li a {
+    background-color: #e9ecef; /* Bootstrap secondary light */
+    color: #495057; /* Bootstrap secondary dark */
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.review_card .user_info .menu-name-tags .tags li a:hover {
+    background-color: #dee2e6;
+}
+
+/* 리뷰 탭 상단 메뉴 필터 태그 스타일 */
+#menu-filter-tags .filter-tag {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#menu-filter-tags .filter-tag.active {
+    background-color: #589442;
+    color: #fff;
+}
+
+#menu-filter-tags .filter-tag:hover {
+    background-color: #e0e0e0;
+}
+
+#menu-filter-tags .filter-tag.active:hover {
+    background-color: #4a7d37;
+}
+
+/* 템플릿 포인트 컬러에 맞춘 위시리스트 버튼 활성화 스타일 */
+.wishlist.active, .wishlist.wishlist-active {
+    color: #007bff !important;
+    border-color: #007bff !important;
+    background: #eaf4ff !important;
+}
+
+/* 메뉴와 리뷰 이미지에만 돋보기 효과 적용 */
+#pane-C .magnific-gallery img,
+#pane-B .magnific-gallery img {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#pane-C .magnific-gallery img:hover,
+#pane-B .magnific-gallery img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+#pane-C .magnific-gallery a,
+#pane-B .magnific-gallery a {
+    display: block;
+    position: relative;
+}
+
+#pane-C .magnific-gallery a::after,
+#pane-B .magnific-gallery a::after {
+    content: '🔍';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#pane-C .magnific-gallery a:hover::after,
+#pane-B .magnific-gallery a:hover::after {
+    opacity: 1;
+} 
