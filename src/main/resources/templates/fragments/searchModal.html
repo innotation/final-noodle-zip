@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="searchModal">
+  <!-- 상세 검색 모달 -->
+  <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchModalLabel">라멘 상세 검색</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+        </div>
+
+        <div class="modal-body">
+          <form id="detailedSearchForm" method="get" action="/search/list">
+            <!-- 검색 키워드 -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">검색</label>
+              <input type="text" class="form-control" name="keyword" placeholder="매장명 또는 메뉴명 검색">
+              <select name="searchType" class="form-control mt-2">
+                <option value="ALL">전체</option>
+                <option value="STORE_NAME">매장명</option>
+                <option value="MENU_NAME">메뉴명</option>
+              </select>
+            </div>
+
+            <!-- 라멘 카테고리 -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">라멘 카테고리</label>
+              <div id="modal-category-filters">
+                <!-- 동적으로 생성됩니다 -->
+              </div>
+            </div>
+
+            <!-- 육수 -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">육수</label>
+              <div id="modal-soup-filters">
+                <!-- 동적으로 생성됩니다 -->
+              </div>
+            </div>
+
+            <!-- 토핑 -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">토핑</label>
+              <div id="modal-topping-filters">
+                <!-- 동적으로 생성됩니다 -->
+              </div>
+            </div>
+
+            <!-- 거리 -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">거리</label>
+              <div class="distance">반경 <span id="modal-distance-value">30</span> km</div>
+              <input type="range" id="modal-distance-range" min="1" max="50" step="1" value="30" data-orientation="horizontal">
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          <button type="submit" class="btn btn-primary" form="detailedSearchForm">검색하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 검색모달 필터 옵션 로드 스크립트 -->
+  <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      // 검색모달이 열릴 때 필터 옵션 로드
+      const searchModal = document.getElementById('searchModal');
+      if (searchModal) {
+        searchModal.addEventListener('show.bs.modal', function() {
+          loadModalFilterOptions();
+        });
+      }
+
+      // 거리 슬라이더 이벤트
+      const modalDistanceRange = document.getElementById('modal-distance-range');
+      if (modalDistanceRange) {
+        modalDistanceRange.addEventListener('input', function() {
+          document.getElementById('modal-distance-value').textContent = this.value;
+        });
+      }
+
+      // 필터 옵션 로드 함수
+      function loadModalFilterOptions() {
+        fetch('/search/filter-options')
+          .then(response => response.json())
+          .then(data => {
+            renderModalFilterOptions(data);
+          })
+          .catch(error => {
+            console.error('필터 옵션 로드 실패:', error);
+          });
+      }
+
+      // 모달 필터 옵션 렌더링
+      function renderModalFilterOptions(data) {
+        // 카테고리 필터
+        const categoryContainer = document.getElementById('modal-category-filters');
+        if (categoryContainer && data.categories) {
+          categoryContainer.innerHTML = '';
+          data.categories.forEach(category => {
+            categoryContainer.innerHTML += `
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="ramenCategory" value="${category}" id="modal-cat-${category.replace(/\s+/g, '-')}">
+                <label class="form-check-label" for="modal-cat-${category.replace(/\s+/g, '-')}">${category}</label>
+              </div>
+            `;
+          });
+        }
+
+        // 육수 필터
+        const soupContainer = document.getElementById('modal-soup-filters');
+        if (soupContainer && data.soups) {
+          soupContainer.innerHTML = '';
+          data.soups.forEach(soup => {
+            soupContainer.innerHTML += `
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="ramenSoup" value="${soup}" id="modal-soup-${soup.replace(/\s+/g, '-')}">
+                <label class="form-check-label" for="modal-soup-${soup.replace(/\s+/g, '-')}">${soup}</label>
+              </div>
+            `;
+          });
+        }
+
+        // 토핑 필터
+        const toppingContainer = document.getElementById('modal-topping-filters');
+        if (toppingContainer && data.toppings) {
+          toppingContainer.innerHTML = '';
+          data.toppings.forEach(topping => {
+            toppingContainer.innerHTML += `
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="topping" value="${topping}" id="modal-topping-${topping.replace(/\s+/g, '-')}">
+                <label class="form-check-label" for="modal-topping-${topping.replace(/\s+/g, '-')}">${topping}</label>
+              </div>
+            `;
+          });
+        }
+      }
+    });
+  </script>
+</div> 

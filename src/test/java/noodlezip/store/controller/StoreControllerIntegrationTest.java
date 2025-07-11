@@ -41,7 +41,7 @@ class StoreControllerIntegrationTest {
                 .operationStatus(OperationStatus.OPEN)
                 .ownerComment("테스트 라면가게입니다.")
                 .storeMainImageUrl("TESTImageUrl")
-                .storeLegalCode(110101101)
+                .storeLegalCode(110101101L)
                 .approvalStatus(ApprovalStatus.APPROVED)
                 .storeLat(37.5665)
                 .storeLng(126.9780)

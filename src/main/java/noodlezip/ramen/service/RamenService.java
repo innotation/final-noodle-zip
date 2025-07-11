@@ -2,11 +2,14 @@ package noodlezip.ramen.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.ramen.dto.CategoryResponseDto;
+import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.entity.Category;
+import noodlezip.ramen.entity.RamenSoup;
 import noodlezip.ramen.entity.Topping;
 import noodlezip.ramen.repository.CategoryRepository;
 import noodlezip.ramen.repository.RamenReviewRepository;
+import noodlezip.ramen.repository.RamenSoupRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.store.dto.MenuDetailDto;
 import noodlezip.store.dto.ReviewSummaryDto;
@@ -22,6 +25,7 @@ public class RamenService {
     private final ToppingRepository toppingRepository;
     private final CategoryRepository categoryRepository;
     private final RamenReviewRepository ramenReviewRepository;
+    private final RamenSoupRepository ramenSoupRepository;
 
     // 전체 토핑 목록 조회
     public List<ToppingResponseDto> getAllToppings() {
@@ -69,6 +73,14 @@ public class RamenService {
 
     public ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName) {
         return ramenReviewRepository.getSummaryByStoreIdAndMenuName(storeId, menuName);
+    }
+
+    // 전체 육수 목록 조회
+    public List<RamenSoupResponseDto> getAllSoups() {
+        List<RamenSoup> soups = ramenSoupRepository.findAll();
+        return soups.stream()
+                .map(s -> new RamenSoupResponseDto(s.getId(), s.getSoupName()))
+                .collect(Collectors.toList());
     }
 
 }
