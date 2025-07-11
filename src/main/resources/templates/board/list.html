@@ -200,7 +200,7 @@
                                 <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
                                     제목</a>
                                 </h2>
-<!--                                <p th:utext="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>-->
+                                <!--                                <p th:utext="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>-->
                                 <ul>
                                     <li>
                                         <div class="thumb"><img
@@ -219,24 +219,42 @@
                 </div>
                 <!-- /row -->
 
-                <div class="pagination_fg">
+                <div class="pagination_fg" th:if="${totalPage > 0}">
                     <a th:href="${category != null and #strings.length(category) > 0} ?
-                @{/board/{category}/list(page=${page - 1}, category=${category})} :
-                @{/board/list(page=${page - 1})}"
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/{category}/list(page=${page - 1}, category=${category}, search=${searchKeyword})} :
+            @{/board/{category}/list(page=${page - 1}, category=${category})}
+        ) :
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/list(page=${page - 1}, search=${searchKeyword})} :
+            @{/board/list(page=${page - 1})}
+        )"
                        th:if="${!isFirst}">&laquo;</a>
 
                     <th:block th:each="i : ${#numbers.sequence(beginPage, endPage)}">
                         <a th:href="${category != null and #strings.length(category) > 0} ?
-                    @{/board/{category}/list(page=${i}, category=${category})} :
-                    @{/board/list(page=${i})}"
+            ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+                @{/board/{category}/list(page=${i}, category=${category}, search=${searchKeyword})} :
+                @{/board/{category}/list(page=${i}, category=${category})}
+            ) :
+            ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+                @{/board/list(page=${i}, search=${searchKeyword})} :
+                @{/board/list(page=${i})}
+            )"
                            th:classappend="${i eq page} ? 'active' : ''">
                             <span th:text="${i}"></span>
                         </a>
                     </th:block>
 
                     <a th:href="${category != null and #strings.length(category) > 0} ?
-                @{/board/{category}/list(page=${page + 1}, category=${category})} :
-                @{/board/list(page=${page + 1})}"
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/{category}/list(page=${page + 1}, category=${category}, search=${searchKeyword})} :
+            @{/board/{category}/list(page=${page + 1}, category=${category})}
+        ) :
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/list(page=${page + 1}, search=${searchKeyword})} :
+            @{/board/list(page=${page + 1})}
+        )"
                        th:if="${!isLast}">&raquo;</a>
                 </div>
 
@@ -249,7 +267,9 @@
                         <h4>최근 본 게시글</h4>
                     </div>
                     <ul class="comments-list" id="recent-boards-list-container">
-                        <li id="loading-message">로딩 중...</li> <li id="no-boards-message" style="display:none;">최근 본 게시글이 없습니다.</li> </ul>
+                        <li id="loading-message">로딩 중...</li>
+                        <li id="no-boards-message" style="display:none;">최근 본 게시글이 없습니다.</li>
+                    </ul>
                 </div>
                 <!-- /widget -->
                 <div class="widget">
@@ -436,7 +456,7 @@
     }
 
     const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('keypress', function(event) {
+    searchInput.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
             performSearch();
         }

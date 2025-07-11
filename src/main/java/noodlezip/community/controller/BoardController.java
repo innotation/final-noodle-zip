@@ -143,9 +143,10 @@ public class BoardController {
         }
 
         model.addAttribute("category", pathCommunityType);
-        log.info(pathCommunityType);
+        model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("board", map.get("list"));
         model.addAttribute("page", map.get("page"));
+        model.addAttribute("totalPage", map.get("totalPage"));
         model.addAttribute("beginPage", map.get("beginPage"));
         model.addAttribute("endPage", map.get("endPage"));
         model.addAttribute("isFirst", map.get("isFirst"));
