@@ -30,58 +30,64 @@
 <body>
 <!--  <div th:replace="/fragments/subHeader::subHeader"></div>-->
 
-  <main>
-    <div>
-      <div class="container-fluid">
-        <div class="box_general">
-          <div class="header_box">
-            <a href="#0" class="show-submenu">구독자</a>
-            <a href="#0" class="show-submesnu">구독중</a>
-          </div>
-          <div class="list_general">
-            <ul>
-              <li>
-                <figure><img src="img/item_1.jpg" alt=""></figure>
-                <small>Pizza - Italian</small>
-                <h4>La Monnalisa</h4>
-                <p><a href="#0" class="btn_1 gray"> 구독 </a></p>
-                <ul class="buttons">
-                  <li><a href="#0" class="btn_1 gray delete wishlist_close"><i class="fa fa-fw fa-times-circle-o"></i> Cancel</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
+<main>
+  <div>
+    <div class="container-fluid">
+      <div class="box_general">
+        <div class="header_box">
+          <a th:classappend="${list.subscriptionType.name() == 'FOLLOWER'} ? ' active' : ''"
+             th:href="@{/users/{userId}/follower(userId=${list.targetUserId})}">
+            구독자
+          </a>
+          <a th:classappend="${list.subscriptionType.name() == 'FOLLOWING'} ? ' active' : ''"
+             th:href="@{/users/{userId}/following(userId=${list.targetUserId})}">
+            구독중
+          </a>
         </div>
-        <div class="pagination_fg">
-          <a href="#">&laquo;</a>
-          <a href="#" class="active">1</a>
-          <a href="#">2</a>
-          <a href="#">3</a>
-          <a href="#">4</a>
-          <a href="#">5</a>
-          <a href="#">&raquo;</a>
+
+        <div class="list_general">
+          <ul>
+            <li th:each="item : ${list.subscriptionList}">
+              <figure>
+                <img th:src="${item.profileImageUrl}" alt="profile">
+              </figure>
+              <small th:text="'ID: ' + ${item.loginId}"></small>
+              <h4>
+                <a th:href="@{/mypage/{userId}(userId=${item.userId})}"
+                   th:text="${item.name}">Name</a>
+              </h4>
+              <ul class="buttons">
+                <li th:if="${list.requestUserId != item.userId}">
+                  <a href="#0"
+                     class="btn_1 gray subscribe-btn"
+                     th:data-userId="${item.userId}"
+                     th:data-subscribed="${item.isSubscribed}"
+                     th:text="${item.isSubscribed} ? '구독취소' : '구독'">
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-    <aside class="col-lg-3">
-      <!-- /widget -->
-      <div class="widget">
-        <div class="widget-title">
-          <h4>Categories</h4>
-        </div>
-        <ul class="cats">
-          <li><a href="#">Food <span>(12)</span></a></li>
-          <li><a href="#">Places to visit <span>(21)</span></a></li>
-          <li><a href="#">New Places <span>(44)</span></a></li>
-          <li><a href="#">Suggestions and guides <span>(31)</span></a></li>
-        </ul>
-      </div>
-      <!-- /widget -->
-    </aside>
-  </main>
-  <script src="/js/common_scripts.min.js"></script>
-  <script src="/js/common_func.js"></script>
-  <script src="/assets/validate.js"></script>
+    <div class="pagination_fg">
+      <a th:href="@{|?page=${list.page > 1 ? list.page - 1 : 1}|}"
+         th:classappend="${list.page == 1} ? ' disabled' : ''">&laquo;</a>
+      <a th:each="i : ${#numbers.sequence(list.beginPage, list.endPage)}"
+         th:href="@{|?page=${i}|}"
+         th:text="${i}"
+         th:classappend="${list.page == i} ? ' active' : ''"></a>
+      <a th:href="@{|?page=${list.page < list.totalPage ? list.page + 1 : list.totalPage}|}"
+         th:classappend="${list.page == list.totalPage} ? ' disabled' : ''">&raquo;</a>
+    </div>
+  </div>
+</main>
+
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
+<script src="/js/subscription.js"></script>
 
 </body>
 </html>
