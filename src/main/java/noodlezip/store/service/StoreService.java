@@ -265,4 +265,13 @@ public class StoreService {
     }
 
 
+    public OcrToReviewDto findStoreWithMenusByBizNum(Long bizNum) {
+        List<StoreIdNameDto> store = storeRepository.findIdNameByBizNum(bizNum);
+        List<MenuDetailDto> menuList = menuRepository.findMenuDetailByStoreId(store.get(0).getId());
+
+        return OcrToReviewDto.builder()
+                .storeName(store.get(0).getName())
+                .menuList(menuList)
+                .toppings()
+    }
 }

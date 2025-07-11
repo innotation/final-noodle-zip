@@ -25,6 +25,9 @@ import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.status.BoardSuccessStatus;
+import noodlezip.store.dto.OcrToReviewDto;
+import noodlezip.store.entity.Store;
+import noodlezip.store.service.StoreService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -57,6 +60,7 @@ public class BoardController {
 
     private static final String RECENT_VIEWED_BOARDS = "recentViewedBoards";
     private static final int MAX_RECENT_BOARDS = 3;
+    private final StoreService storeService;
 
     @GetMapping("/review")
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
@@ -64,7 +68,11 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public String review() {
+    public String review(@RequestParam Long bizNum, Model model) {
+        OcrToReviewDto dto = storeService.findStoreWithMenusByBizNum(bizNum);
+        model.addAttribute("storeName", dto.getStoreName());
+        model.addAttribute("menuList", dto.getMenuList());
+        model.addAttribute("toppings", dto.getToppings());
         return "/board/leave-review";
     }
 
