@@ -25,5 +25,5 @@ public class MenuRequestDto {
 
     private List<Long> defaultToppingIds;
 
-    private List<String> extraToppings;
+    private List<ExtraToppingRequestDto> extraToppings;
 }
