@@ -43,6 +43,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> findCommentListByUserId(Long userId, Pageable pageable) {
+        Page<CommentRespDto> commentDtoPage = commentRepository.findCommentByUserId(userId, pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
+        map.put("comments", commentDtoPage.getContent());
+        map.put("totalComments", commentDtoPage.getTotalElements());
+        return map;
+    }
+
+    @Override
     public Map<String, Object> registComment(CommentReqDto commentReqDto) {
 
         // 게시글 없을 경우(삭제 등)

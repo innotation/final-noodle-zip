@@ -70,6 +70,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, Object> findBoardLiked(Long userId, Pageable pageable) {
         List<Long> boardIds = likeRepository.findCommunityIdsByUserId(userId);
         Page<BoardRespDto> boardPage = boardRepository.findBoardsByIdsAndStatusPostedWithPaging(boardIds, pageable);
@@ -187,6 +188,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Integer getLikeCount(Long boardId) {
         return boardRepository.findById(boardId)
                 .map(Board::getLikesCount)
@@ -194,6 +196,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Board> getBoardsByIds(List<Long> BoardIds) {
         return boardRepository.findAllById(BoardIds);
     }
