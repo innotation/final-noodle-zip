@@ -26,7 +26,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -168,7 +167,7 @@ class BoardServiceImplTest {
         pageInfoMap.put("endPage", 1);
 
         // Mocking
-        when(boardRepository.findBoardWithPaginationAndCommunityType(anyString(), any(Pageable.class))).thenReturn(boardPage);
+        when(boardRepository.findBoardByCommunityTypeWithPagination(anyString(), any(Pageable.class))).thenReturn(boardPage);
         when(pageUtil.getPageInfo(any(Page.class), anyInt())).thenReturn(pageInfoMap);
 
         // When
@@ -180,7 +179,7 @@ class BoardServiceImplTest {
         assertThat(result.get("list")).isEqualTo(boardRespList);
 
         // Verify
-        verify(boardRepository, times(1)).findBoardWithPaginationAndCommunityType(category, pageable);
+        verify(boardRepository, times(1)).findBoardByCommunityTypeWithPagination(category, pageable);
         verify(pageUtil, times(1)).getPageInfo(boardPage, 5);
     }
 
