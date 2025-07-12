@@ -3,7 +3,7 @@ let lastSearchedCategories = []; // 마지막 검색 시점의 카테고리 상�
 let isSearchPerformed = true; // 검색이 실행되었는지 확인
 
 function fetchAndRender(page, useLastSearchedCategories = false) {
-  const path = document.body.getAttribute('data-path');
+  const userId = document.body.getAttribute('userId');
 
   let selectedCategories;
 
@@ -23,7 +23,7 @@ function fetchAndRender(page, useLastSearchedCategories = false) {
   params.append('isAllCategory', isAllCategory);
   params.append('page', page);
 
-  fetch(`/mypage/${path}/saved-store/list/category-filter-search?${params.toString()}`)
+  fetch(`/users/${userId}/saved-stores/category-filter-search?${params.toString()}`)
     .then(response => response.json())
     .then(data => {
       renderStoreList(data.savedStoreList);
