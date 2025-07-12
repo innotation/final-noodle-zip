@@ -31,6 +31,9 @@ public class SearchController {
         if (filter.getSearchType() != null) {
             model.addAttribute("searchType", filter.getSearchType());
         }
+        if (filter.getRegion() != null && !filter.getRegion().isEmpty()) {
+            model.addAttribute("searchRegions", filter.getRegion());
+        }
         if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
             model.addAttribute("searchCategories", filter.getRamenCategory());
         }
