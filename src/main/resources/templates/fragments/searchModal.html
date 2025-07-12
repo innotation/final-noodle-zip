@@ -14,14 +14,28 @@
 
         <div class="modal-body">
           <form id="detailedSearchForm" method="get" action="/search/list">
-            <!-- 검색 키워드 -->
+            <!-- 지역 선택 -->
             <div class="mb-3">
-              <label class="form-label fw-bold">검색</label>
-              <input type="text" class="form-control" name="keyword" placeholder="매장명 또는 메뉴명 검색">
-              <select name="searchType" class="form-control mt-2">
-                <option value="ALL">전체</option>
-                <option value="STORE_NAME">매장명</option>
-                <option value="MENU_NAME">메뉴명</option>
+              <label class="form-label fw-bold">지역</label>
+              <select id="modal-region-select" class="form-control">
+                <option value="">전체 지역</option>
+                <option value="서울">서울</option>
+                <option value="부산">부산</option>
+                <option value="대구">대구</option>
+                <option value="인천">인천</option>
+                <option value="광주">광주</option>
+                <option value="대전">대전</option>
+                <option value="울산">울산</option>
+                <option value="세종">세종</option>
+                <option value="경기">경기</option>
+                <option value="강원">강원</option>
+                <option value="충북">충북</option>
+                <option value="충남">충남</option>
+                <option value="전북">전북</option>
+                <option value="전남">전남</option>
+                <option value="경북">경북</option>
+                <option value="경남">경남</option>
+                <option value="제주">제주</option>
               </select>
             </div>
 
@@ -60,7 +74,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-          <button type="submit" class="btn btn-primary" form="detailedSearchForm">검색하기</button>
+          <button type="button" class="btn btn-primary" id="confirmSearchBtn">확인</button>
         </div>
       </div>
     </div>
@@ -69,6 +83,23 @@
   <!-- 검색모달 필터 옵션 로드 스크립트 -->
   <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
+      // 선택된 옵션들을 저장할 객체
+      let selectedOptions = {
+        region: [],
+        ramenCategory: [],
+        ramenSoup: [],
+        topping: [],
+        distance: 30
+      };
+
+      // 검색바 요소들
+      const filterDisplay = document.getElementById('filterDisplay');
+      const keywordSearch = document.getElementById('keywordSearch');
+      const searchCategory = document.getElementById('searchCategory');
+      const searchButton = document.getElementById('searchButton');
+      const confirmSearchBtn = document.getElementById('confirmSearchBtn');
+      const regionSelect = document.getElementById('modal-region-select');
+
       // 검색모달이 열릴 때 필터 옵션 로드
       const searchModal = document.getElementById('searchModal');
       if (searchModal) {
@@ -77,12 +108,105 @@
         });
       }
 
+      // 지역 선택 이벤트
+      if (regionSelect) {
+        regionSelect.addEventListener('change', function() {
+          selectedOptions.region = this.value ? [this.value] : [];
+        });
+      }
+
       // 거리 슬라이더 이벤트
       const modalDistanceRange = document.getElementById('modal-distance-range');
       if (modalDistanceRange) {
         modalDistanceRange.addEventListener('input', function() {
           document.getElementById('modal-distance-value').textContent = this.value;
+          selectedOptions.distance = parseInt(this.value);
         });
+      }
+
+      // 확인 버튼 클릭 이벤트
+      if (confirmSearchBtn) {
+        confirmSearchBtn.addEventListener('click', function() {
+          updateFilterDisplay();
+          $('#searchModal').modal('hide');
+        });
+      }
+
+      // 검색 버튼 클릭 이벤트
+      if (searchButton) {
+        searchButton.addEventListener('click', function() {
+          executeSearch();
+        });
+      }
+
+      // 검색어 입력 필드 엔터 키 이벤트
+      if (keywordSearch) {
+        keywordSearch.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            executeSearch();
+          }
+        });
+      }
+
+      // 필터 표시 업데이트 함수
+      function updateFilterDisplay() {
+        const selectedTexts = [];
+        
+        // 지역 선택된 것들 추가
+        if (selectedOptions.region.length > 0) {
+          selectedTexts.push(...selectedOptions.region);
+        }
+        
+        // 카테고리 선택된 것들 추가
+        if (selectedOptions.ramenCategory.length > 0) {
+          selectedTexts.push(...selectedOptions.ramenCategory);
+        }
+        
+        // 육수 선택된 것들 추가
+        if (selectedOptions.ramenSoup.length > 0) {
+          selectedTexts.push(...selectedOptions.ramenSoup);
+        }
+        
+        // 토핑 선택된 것들 추가
+        if (selectedOptions.topping.length > 0) {
+          selectedTexts.push(...selectedOptions.topping);
+        }
+
+        // 필터 표시 업데이트
+        if (selectedTexts.length > 0) {
+          filterDisplay.value = selectedTexts.join(', ');
+        } else {
+          filterDisplay.value = '';
+        }
+      }
+
+      // 검색 실행 함수
+      function executeSearch() {
+        const keyword = keywordSearch.value.trim();
+        const category = searchCategory.value;
+        
+        // URL 파라미터 구성
+        const params = new URLSearchParams();
+        
+        // 키워드 검색
+        if (keyword) {
+          params.append('keyword', keyword);
+          params.append('searchType', category);
+        }
+        
+        // 필터 옵션들 추가
+        Object.keys(selectedOptions).forEach(key => {
+          if (Array.isArray(selectedOptions[key])) {
+            selectedOptions[key].forEach(value => {
+              params.append(key, value);
+            });
+          } else {
+            params.append(key, selectedOptions[key]);
+          }
+        });
+
+        // 검색 실행
+        window.location.href = `/search/list?${params.toString()}`;
       }
 
       // 필터 옵션 로드 함수
@@ -91,6 +215,8 @@
           .then(response => response.json())
           .then(data => {
             renderModalFilterOptions(data);
+            // 기존 선택된 옵션들 복원
+            restoreSelectedOptions();
           })
           .catch(error => {
             console.error('필터 옵션 로드 실패:', error);
@@ -106,7 +232,7 @@
           data.categories.forEach(category => {
             categoryContainer.innerHTML += `
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="ramenCategory" value="${category}" id="modal-cat-${category.replace(/\s+/g, '-')}">
+                <input class="form-check-input category-checkbox" type="checkbox" name="ramenCategory" value="${category}" id="modal-cat-${category.replace(/\s+/g, '-')}">
                 <label class="form-check-label" for="modal-cat-${category.replace(/\s+/g, '-')}">${category}</label>
               </div>
             `;
@@ -120,7 +246,7 @@
           data.soups.forEach(soup => {
             soupContainer.innerHTML += `
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="ramenSoup" value="${soup}" id="modal-soup-${soup.replace(/\s+/g, '-')}">
+                <input class="form-check-input soup-checkbox" type="checkbox" name="ramenSoup" value="${soup}" id="modal-soup-${soup.replace(/\s+/g, '-')}">
                 <label class="form-check-label" for="modal-soup-${soup.replace(/\s+/g, '-')}">${soup}</label>
               </div>
             `;
@@ -134,11 +260,83 @@
           data.toppings.forEach(topping => {
             toppingContainer.innerHTML += `
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="topping" value="${topping}" id="modal-topping-${topping.replace(/\s+/g, '-')}">
+                <input class="form-check-input topping-checkbox" type="checkbox" name="topping" value="${topping}" id="modal-topping-${topping.replace(/\s+/g, '-')}">
                 <label class="form-check-label" for="modal-topping-${topping.replace(/\s+/g, '-')}">${topping}</label>
               </div>
             `;
           });
+        }
+
+        // 체크박스 이벤트 리스너 추가
+        addCheckboxEventListeners();
+      }
+
+      // 체크박스 이벤트 리스너 추가
+      function addCheckboxEventListeners() {
+        // 카테고리 체크박스
+        document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+          checkbox.addEventListener('change', function() {
+            if (this.checked) {
+              selectedOptions.ramenCategory.push(this.value);
+            } else {
+              selectedOptions.ramenCategory = selectedOptions.ramenCategory.filter(item => item !== this.value);
+            }
+          });
+        });
+
+        // 육수 체크박스
+        document.querySelectorAll('.soup-checkbox').forEach(checkbox => {
+          checkbox.addEventListener('change', function() {
+            if (this.checked) {
+              selectedOptions.ramenSoup.push(this.value);
+            } else {
+              selectedOptions.ramenSoup = selectedOptions.ramenSoup.filter(item => item !== this.value);
+            }
+          });
+        });
+
+        // 토핑 체크박스
+        document.querySelectorAll('.topping-checkbox').forEach(checkbox => {
+          checkbox.addEventListener('change', function() {
+            if (this.checked) {
+              selectedOptions.topping.push(this.value);
+            } else {
+              selectedOptions.topping = selectedOptions.topping.filter(item => item !== this.value);
+            }
+          });
+        });
+      }
+
+      // 기존 선택된 옵션들 복원
+      function restoreSelectedOptions() {
+        // 지역 선택 복원
+        if (regionSelect && selectedOptions.region.length > 0) {
+          regionSelect.value = selectedOptions.region[0];
+        }
+
+        // 카테고리 체크박스 복원
+        selectedOptions.ramenCategory.forEach(category => {
+          const checkbox = document.querySelector(`input[value="${category}"].category-checkbox`);
+          if (checkbox) checkbox.checked = true;
+        });
+
+        // 육수 체크박스 복원
+        selectedOptions.ramenSoup.forEach(soup => {
+          const checkbox = document.querySelector(`input[value="${soup}"].soup-checkbox`);
+          if (checkbox) checkbox.checked = true;
+        });
+
+        // 토핑 체크박스 복원
+        selectedOptions.topping.forEach(topping => {
+          const checkbox = document.querySelector(`input[value="${topping}"].topping-checkbox`);
+          if (checkbox) checkbox.checked = true;
+        });
+
+        // 거리 슬라이더 복원
+        const distanceRange = document.getElementById('modal-distance-range');
+        if (distanceRange) {
+          distanceRange.value = selectedOptions.distance;
+          document.getElementById('modal-distance-value').textContent = selectedOptions.distance;
         }
       }
     });

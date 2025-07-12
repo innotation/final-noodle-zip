@@ -173,14 +173,40 @@
         });
     });
 
-    // Like Icon
-    $('.btn_hero.wishlist').on('click', function (e) {
+    // 공통 로그인 모달 호출 함수
+    function openLoginModal() {
+        $.magnificPopup.open({
+            items: {
+                src: '#sign-in-dialog',
+                type: 'inline'
+            },
+            closeBtnInside: true,
+            mainClass: 'my-mfp-zoom-in',
+            callbacks: {
+                open: function() {
+                    var url = window.location.pathname + window.location.search + window.location.hash;
+                    $('#redirectUrlInput').val(url);
+                }
+            }
+        });
+    }
+
+    // 로그인이 필요한 모든 버튼에 공통 적용
+    $('.login-required').on('click', function(e) {
         e.preventDefault();
-        $(this).toggleClass('liked');
+        
+        // 로그인 상태 체크 - hidden input 값 사용
+        var isLoggedIn = $('#is-logged-in').val() === 'true';
+        
+        if (!isLoggedIn) {
+            openLoginModal();
+            return false; // 이벤트 중단
+        }
+        // 로그인된 경우는 이벤트를 계속 진행
     });
 
     // Modal Sign In
-    $('#sign-in').magnificPopup({
+    $('.sign-in').magnificPopup({
         type: 'inline',
         fixedContentPos: true,
         fixedBgPos: true,
@@ -190,7 +216,13 @@
         midClick: true,
         removalDelay: 300,
         closeMarkup: '<button title="%title%" type="button" class="mfp-close"></button>',
-        mainClass: 'my-mfp-zoom-in'
+        mainClass: 'my-mfp-zoom-in',
+        callbacks: {
+            open: function() { // 로그인 시 마지막 접속 url 저장
+                var url = window.location.pathname + window.location.search + window.location.hash;
+                $('#redirectUrlInput').val(url);
+            }
+        }
     });
 
     // Show hide password
@@ -216,5 +248,14 @@
             .find(".indicator")
             .toggleClass('icon_minus-06 icon_plus');
     }
+
+    // 로그아웃 링크에 현재 URL을 redirectUrl로 동적으로 세팅
+    document.addEventListener("DOMContentLoaded", function() {
+      var logoutLinks = document.querySelectorAll('.logout-link');
+      var currentUrl = window.location.pathname + window.location.search + window.location.hash;
+      logoutLinks.forEach(function(link) {
+        link.setAttribute('href', '/logout?redirectUrl=' + encodeURIComponent(currentUrl));
+      });
+    });
 
 })(window.jQuery);
