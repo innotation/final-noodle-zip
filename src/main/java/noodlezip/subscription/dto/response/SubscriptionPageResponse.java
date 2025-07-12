@@ -21,8 +21,6 @@ public class SubscriptionPageResponse {
     private boolean isFirst;
     private boolean isLast;
 
-    private Long requestUserId;
-    private Long targetUserId;
     private SubscriptionType subscriptionType;
     private List<SubscriberResponse> subscriptionList;
 

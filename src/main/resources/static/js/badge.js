@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
       modalLoading.style.display = 'flex';
       modalContent.style.display = 'none';
 
-      fetch('/mypage/badges/detail', {
+      fetch('/users/badges/detail', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

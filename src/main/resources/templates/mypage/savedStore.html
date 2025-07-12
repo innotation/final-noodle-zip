@@ -27,7 +27,7 @@
     <link th:href="@{/css/listing.css}" rel="stylesheet">
     <link th:href="@{/css/saved-store.css}" rel="stylesheet">
 </head>
-    <body th:attr="data-path=${authorityContext.dataPath}">
+    <body th:attr="userId=${userAccessInfo.targetUserId}">
         <div th:replace="/fragments/subHeader::subHeader"></div>
         <main>
 
@@ -61,7 +61,7 @@
                                     <a href="#filter_1" data-bs-toggle="collapse" class="opened">저장 카테고리 조회</a>
                                 </h4>
                                 <div class="collapse show" id="filter_1">
-                                    <ul th:if="${authorityContext.isOwner}">
+                                    <ul th:if="${userAccessInfo.isOwner}">
                                         <li th:each="category : ${mySavedStorePageInfo.searchFilter}">
                                             <label class="container_check">
                                                 <span th:text="${category.categoryName}"></span>
@@ -70,7 +70,7 @@
                                             </label>
                                         </li>
                                     </ul>
-                                    <ul th:unless="${authorityContext.isOwner}">
+                                    <ul th:unless="${userAccessInfo.isOwner}">
                                         <li th:each="category : ${savedStorePageInfo.searchFilter}">
                                             <label class="container_check">
                                                 <span th:text="${category.categoryName}"></span>
@@ -85,7 +85,7 @@
                                 </div>
                             </div>
                             <!-- 자기 자신에게만 보이는 카테고리 수정 영역-->
-                            <div class="filter_type" th:if="${authorityContext.isOwner}">
+                            <div class="filter_type" th:if="${userAccessInfo.isOwner}">
                                 <h4>
                                     <a href="#filter_2" data-bs-toggle="collapse" class="closed">카테고리 정보 수정</a>
                                 </h4>
@@ -124,7 +124,7 @@
                     <div class="col-lg-9">
                         <div class="row" id="store-list">
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6"
-                                 th:each="store : ${(authorityContext.isOwner
+                                 th:each="store : ${(userAccessInfo.isOwner
                                                         ? mySavedStorePageInfo.savedStoreList.savedStoreList
                                                         : savedStorePageInfo.savedStoreList.savedStoreList)}">
                                 <div class="strip">
@@ -153,7 +153,7 @@
                             </div>
                         </div>
 
-                        <div th:with="pageInfo=${authorityContext.isOwner } ? ${mySavedStorePageInfo.savedStoreList} : ${savedStorePageInfo.savedStoreList}">
+                        <div th:with="pageInfo=${userAccessInfo.isOwner } ? ${mySavedStorePageInfo.savedStoreList} : ${savedStorePageInfo.savedStoreList}">
                             <div class="pagination_fg">
                                 <a href="#"
                                    th:attr="data-page=${pageInfo.page > 1 ? pageInfo.page - 1 : 1}"

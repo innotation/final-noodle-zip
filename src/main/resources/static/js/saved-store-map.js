@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function loadSavedStoreMapData(selectedCategories) {
-    const path = document.body.getAttribute('data-path');
+    const userId = document.body.getAttribute('userId');
 
     if (!selectedCategories || selectedCategories.length === 0) {
       console.warn('선택된 카테고리가 없습니다.');
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
     selectedCategories.forEach(id => params.append('categoryIdList', id));
     params.append('isAllCategory', false);
 
-    fetch(`/mypage/${path}/saved-store/list/map?${params.toString()}`)
+    fetch(`/users/${userId}/saved-stores/map?${params.toString()}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
