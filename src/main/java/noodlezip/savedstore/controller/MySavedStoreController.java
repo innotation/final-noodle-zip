@@ -1,5 +1,9 @@
 package noodlezip.savedstore.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
@@ -26,7 +30,16 @@ public class MySavedStoreController extends MyBaseController {
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
 
-
+    @Operation(
+            summary = "사용자 저장 가게 목록 조회",
+            description = "특정 사용자의 저장 가게 목록을 조회합니다."
+    )
+    @Tag(name = "마이페이지", description = "미이페이지 연동 API")
+    @Parameters({
+            @Parameter(name = "userId", description = "조회될 사용자 PK"),
+            @Parameter(name = "myUserDetails", hidden = true),
+            @Parameter(name = "model", hidden = true)
+    })
     @GetMapping("/{userId}/saved-stores")
     public String savedStoreList(@AuthenticationPrincipal MyUserDetails myUserDetails,
                                  @PathVariable Long userId,

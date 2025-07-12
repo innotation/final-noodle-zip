@@ -1,5 +1,9 @@
 package noodlezip.subscription.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
@@ -25,6 +29,16 @@ public class MyUserSubscribeController extends MyBaseController {
     private final SubscribeService subscribeService;
 
 
+    @Operation(
+            summary = "사용자 구독 목록 조회",
+            description = "특정 사용자의 구독 목록을 조회합니다. 기본 이동 페이지는 follower 페이지입니다."
+    )
+    @Tag(name = "마이페이지", description = "미이페이지 연동 API")
+    @Parameters({
+            @Parameter(name = "userId", description = "조회될 사용자 PK"),
+            @Parameter(name = "myUserDetails", hidden = true),
+            @Parameter(name = "model", hidden = true)
+    })
     @GetMapping("/{userId}/follower")
     public String getFollowers(@AuthenticationPrincipal MyUserDetails myUserDetails,
                                @PathVariable Long userId,
