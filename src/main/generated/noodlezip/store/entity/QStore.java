@@ -25,6 +25,8 @@ public class QStore extends EntityPathBase<Store> {
 
     public final EnumPath<noodlezip.store.status.ApprovalStatus> approvalStatus = createEnum("approvalStatus", noodlezip.store.status.ApprovalStatus.class);
 
+    public final NumberPath<Long> bizNum = createNumber("bizNum", Long.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
@@ -44,7 +46,7 @@ public class QStore extends EntityPathBase<Store> {
 
     public final NumberPath<Double> storeLat = createNumber("storeLat", Double.class);
 
-    public final NumberPath<Integer> storeLegalCode = createNumber("storeLegalCode", Integer.class);
+    public final NumberPath<Long> storeLegalCode = createNumber("storeLegalCode", Long.class);
 
     public final NumberPath<Double> storeLng = createNumber("storeLng", Double.class);
 
