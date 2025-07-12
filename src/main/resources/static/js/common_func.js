@@ -195,17 +195,14 @@
     $('.login-required').on('click', function(e) {
         e.preventDefault();
         
-        // 로그인 상태 체크 (Spring Security의 인증 정보 활용)
-        var isLoggedIn = $('body').hasClass('logged-in') || 
-                         $('.user .dropdown').length > 0; // 로그인된 경우 나타나는 요소들
+        // 로그인 상태 체크 - hidden input 값 사용
+        var isLoggedIn = $('#is-logged-in').val() === 'true';
         
         if (!isLoggedIn) {
             openLoginModal();
-        } else {
-            // 로그인된 경우 원래 기능 수행
-            // 위시리스트 추가 로직 등
-            console.log('로그인된 상태 - 원래 기능 수행');
+            return false; // 이벤트 중단
         }
+        // 로그인된 경우는 이벤트를 계속 진행
     });
 
     // Modal Sign In

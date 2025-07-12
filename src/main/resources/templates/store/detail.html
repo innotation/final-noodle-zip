@@ -741,6 +741,12 @@
       if (wishlistBtn) {
         wishlistBtn.addEventListener('click', function(e) {
           e.preventDefault();
+
+          // 로그인 상태 체크 - 로그인이 안 되어 있으면 이벤트 중단
+          if (!isLoggedIn) {
+            return; // common_func.js의 login-required 로직이 처리하도록 함
+          }
+          
           const storeId = document.getElementById("store-id").value;
 
           fetch(`/stores/${storeId}/saved-store/memo`)
