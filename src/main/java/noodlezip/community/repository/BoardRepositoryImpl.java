@@ -16,13 +16,15 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+import static noodlezip.community.entity.QBoard.board;
+import static noodlezip.user.entity.QUser.user;
+
 @RequiredArgsConstructor
 public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
     private QBean<BoardRespDto> getBoardRespDtoProjection() {
-        QBoard board = QBoard.board;
 
         return Projections.fields(BoardRespDto.class,
                 board.id.as("boardId"),
@@ -59,8 +61,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
     @Override
     public Page<BoardRespDto> findBoardWithPagination(Pageable pageable) {
-        QBoard board = QBoard.board;
-        QUser user = QUser.user;
 
         List<BoardRespDto> results = queryFactory
                 .select(getBoardRespDtoProjection())
@@ -89,10 +89,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Page<BoardRespDto> findBoardWithPaginationAndCommunityType(String category, Pageable pageable) {
-        QBoard board = QBoard.board;
-        QUser user = QUser.user;
-
+    public Page<BoardRespDto> findBoardByCommunityTypeWithPagination(String category, Pageable pageable) {
 
         List<BoardRespDto> results = queryFactory
                 .select(getBoardRespDtoProjection())
@@ -121,9 +118,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Page<BoardRespDto> findBoardWithPaginationByWriter(Long userId, Pageable pageable) {
-        QBoard board = QBoard.board;
-        QUser user = QUser.user;
+    public Page<BoardRespDto> findBoardByWriterWithPagination(Long userId, Pageable pageable) {
 
         List<BoardRespDto> results = queryFactory
                 .select(getBoardRespDtoProjection())
@@ -152,9 +147,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Page<BoardRespDto> findBoardWithPaginationAndCommunityTypeAndKeyword(String category, String keyword, Pageable pageable) {
-        QBoard board = QBoard.board;
-        QUser user = QUser.user;
+    public Page<BoardRespDto> findBoardByCommunityTypeAndKeywordWithPagination(String category, String keyword, Pageable pageable) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -189,10 +182,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Page<BoardRespDto> findBoardWithPaginationAndKeyword(String keyword, Pageable pageable) {
-
-        QBoard board = QBoard.board;
-        QUser user = QUser.user;
+    public Page<BoardRespDto> findBoardByKeywordWithPagination(String keyword, Pageable pageable) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -224,9 +214,35 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         return new PageImpl<>(results, pageable, totalCount);
     }
 
+    public Page<BoardRespDto> findBoardsByIdsAndStatusPostedWithPaging(List<Long> boardIds, Pageable pageable) {
+        if (boardIds == null || boardIds.isEmpty()) {
+            return new PageImpl<>(List.of(), pageable, 0);
+        }
+
+        List<BoardRespDto> content = queryFactory
+                .select(getBoardRespDtoProjection())
+                .from(board)
+                .join(board.user, user)
+                .where(board.id.in(boardIds)
+                        .and(board.postStatus.eq(CommunityActiveStatus.POSTED)))
+                .orderBy(board.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = queryFactory
+                .select(board.count())
+                .from(board)
+                .where(board.id.in(boardIds).and(board.postStatus.eq(CommunityActiveStatus.POSTED)))
+                .fetchOne();
+
+        long totalCount = Optional.ofNullable(total).orElse(0L);
+
+        return new PageImpl<>(content, pageable, totalCount);
+    }
+
     @Override
     public Long increaseViewCount(Long boardId, Long viewCount) {
-        QBoard board = QBoard.board;
 
         Long result = queryFactory
                 .update(board)

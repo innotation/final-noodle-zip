@@ -15,7 +15,6 @@ import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.community.repository.LikeRepository;
 import noodlezip.user.entity.User;
-import noodlezip.user.repository.UserRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
@@ -60,7 +59,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> findBoardListByCategory(String category, Pageable pageable) {
-        Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndCommunityType(category, pageable);
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByCommunityTypeWithPagination(category, pageable);
 
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
@@ -71,9 +70,21 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public Map<String, Object> findBoardLiked(Long userId, Pageable pageable) {
+        List<Long> boardIds = likeRepository.findCommunityIdsByUserId(userId);
+        Page<BoardRespDto> boardPage = boardRepository.findBoardsByIdsAndStatusPostedWithPaging(boardIds, pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+
+        map.put("list", boardPage.getContent());
+
+        return map;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable) {
-        Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndCommunityTypeAndKeyword(category, keyword,pageable);
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByCommunityTypeAndKeywordWithPagination(category, keyword,pageable);
 
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
@@ -86,7 +97,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> searchBoards(String keyword, Pageable pageable) {
-        Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndKeyword(keyword,pageable);
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByKeywordWithPagination(keyword,pageable);
 
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
@@ -183,8 +194,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<Board> getBoardsByIds(List<Long> recentBoardIds) {
-        return boardRepository.findAllById(recentBoardIds);
+    public List<Board> getBoardsByIds(List<Long> BoardIds) {
+        return boardRepository.findAllById(BoardIds);
     }
 
     @Override

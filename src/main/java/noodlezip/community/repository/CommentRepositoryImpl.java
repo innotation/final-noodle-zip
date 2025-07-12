@@ -92,7 +92,6 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .from(comment)
                 .where(
                         comment.user.id.eq(userId)
-//                        comment.communityId.eq(boardId).and(comment.commentStatus.eq(CommunityActiveStatus.POSTED))
                 )
                 .fetchOne();
         List<CommentRespDto> content = results.stream()

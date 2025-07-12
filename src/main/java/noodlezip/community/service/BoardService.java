@@ -17,6 +17,7 @@ public interface BoardService {
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
     Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable);
     Map<String, Object> searchBoards(String keyword, Pageable pageable);
+    Map<String, Object> findBoardLiked(Long userId, Pageable pageable);
     BoardRespDto findBoardById(Long id, String userIdOrIp);
     void registBoard(BoardReqDto boardReqDto, User user);
     void deleteBoard(Long boardId, Long userId);
