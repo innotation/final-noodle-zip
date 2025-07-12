@@ -26,6 +26,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
         return Projections.fields(BoardRespDto.class,
                 board.id.as("boardId"),
+                board.user.id.as("userId"),
                 board.user.userName.as("userName"),
                 board.user.profileImageUrl.as("userProfileImageUrl"),
                 board.title.as("title"),
@@ -46,20 +47,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         QUser user = QUser.user;
 
         BoardRespDto result = queryFactory
-                .select(Projections.fields(BoardRespDto.class,
-                        board.id.as("boardId"),
-                        board.user.id.as("userId"),
-                        board.user.userName.as("userName"),
-                        board.title.as("title"),
-                        board.content.as("content"),
-                        board.communityType.as("communityType"),
-                        board.postStatus.as("postStatus"),
-                        board.likesCount.as("likesCount"),
-                        board.viewsCount.as("viewsCount"),
-                        board.createdAt.as("createdAt"),
-                        board.updatedAt.as("updatedAt"),
-                        board.imageUrl.as("imageUrl")
-                ))
+                .select(getBoardRespDtoProjection())
                 .from(board)
                 .leftJoin(board.user, user)
                 .where(
