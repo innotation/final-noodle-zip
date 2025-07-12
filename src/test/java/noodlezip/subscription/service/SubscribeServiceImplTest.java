@@ -10,6 +10,7 @@ import noodlezip.subscription.status.SubscriptionErrorStatus;
 import noodlezip.subscription.util.SubscriptionPagePolicy;
 import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
+import noodlezip.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
 class SubscribeServiceImplTest {
 
     @Mock private UserSubscriptionRepository userSubscriptionRepository;
+    @Mock private UserService userService;
     @Mock private UserRepository userRepository;
     @Mock private PageUtil pageUtil;
 
