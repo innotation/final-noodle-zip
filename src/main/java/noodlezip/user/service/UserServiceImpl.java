@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
-import noodlezip.mypage.exception.MyPageErrorStatus;
+import noodlezip.mypage.status.MyPageErrorStatus;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;

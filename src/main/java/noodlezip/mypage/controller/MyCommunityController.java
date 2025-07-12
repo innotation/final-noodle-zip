@@ -3,12 +3,9 @@ package noodlezip.mypage.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
-import noodlezip.community.dto.BoardRespDto;
-import noodlezip.community.dto.CommentRespDto;
 import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.mypage.dto.response.MyBoardListPageResponse;
 import noodlezip.mypage.dto.response.MyCommentListPageResponse;
-import noodlezip.mypage.dto.response.MyCommentResponse;
 import noodlezip.mypage.service.MyCommunityService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,14 +35,11 @@ public class MyCommunityController extends MyBaseController {
     ) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
-        MyBoardListPageResponse boardList = myCommunityService.getMyPostBoardListPage(userId,pageable);
+        MyBoardListPageResponse boardList = myCommunityService.getMyPostBoardListPage(userId, pageable);
 
         model.addAttribute("boardList", boardList);
         model.addAttribute("userAccessInfo", userAccessInfo);
 
-        for(BoardRespDto dto : boardList.getBoardList()) {
-            System.out.println(dto);
-        }
         return "mypage/myBoard";
     }
 
@@ -59,14 +53,10 @@ public class MyCommunityController extends MyBaseController {
     ) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
-        MyBoardListPageResponse boardList = myCommunityService.getMyLikedBoardListPage(userId,pageable);
+        MyBoardListPageResponse boardList = myCommunityService.getMyLikedBoardListPage(userId, pageable);
 
         model.addAttribute("boardList", boardList);
         model.addAttribute("userAccessInfo", userAccessInfo);
-
-        for(BoardRespDto dto : boardList.getBoardList()) {
-            System.out.println(dto);
-        }
 
         return "mypage/myBoard";
     }
@@ -81,14 +71,11 @@ public class MyCommunityController extends MyBaseController {
     ) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
-        MyCommentListPageResponse commentList = myCommunityService.getPostCommentListPage(userId,pageable);
+        MyCommentListPageResponse commentList = myCommunityService.getPostCommentListPage(userId, pageable);
 
         model.addAttribute("commentList", commentList);
         model.addAttribute("userAccessInfo", userAccessInfo);
 
-        for(MyCommentResponse dto : commentList.getCommentList()) {
-            System.out.println(dto);
-        }
         return "mypage/myComment";
     }
 

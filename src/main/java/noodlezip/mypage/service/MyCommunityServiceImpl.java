@@ -2,7 +2,6 @@ package noodlezip.mypage.service;
 
 import lombok.RequiredArgsConstructor;
 import noodlezip.community.dto.BoardRespDto;
-import noodlezip.community.dto.CommentRespDto;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.service.CommentService;
 import noodlezip.mypage.dto.response.MyBoardListPageResponse;

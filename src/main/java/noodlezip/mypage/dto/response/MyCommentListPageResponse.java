@@ -1,7 +1,6 @@
 package noodlezip.mypage.dto.response;
 
 import lombok.*;
-import noodlezip.community.dto.CommentRespDto;
 
 import java.util.List;
 import java.util.Map;
@@ -35,4 +34,5 @@ public class MyCommentListPageResponse {
                 .isLast((Boolean) map.get("isLast"))
                 .build();
     }
+
 }

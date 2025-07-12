@@ -1,4 +1,4 @@
-package noodlezip.mypage.exception;
+package noodlezip.mypage.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
