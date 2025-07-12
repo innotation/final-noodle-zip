@@ -57,6 +57,21 @@ public class BoardServiceImpl implements BoardService {
         return map;
     }
 
+
+    @Override
+    public List<Board> findMostLikedBoardList() {
+        List<Board> boardList = boardRepository.findTop3ByPostStatusOrderByLikesCountDesc(CommunityActiveStatus.POSTED);
+
+        return boardList;
+    }
+
+    @Override
+    public List<Board> findMostViewedBoardList() {
+        List<Board> boardList = boardRepository.findTop3ByPostStatusOrderByLikesCountDesc(CommunityActiveStatus.POSTED);
+
+        return boardList;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> findBoardListByCategory(String category, Pageable pageable) {

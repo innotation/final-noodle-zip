@@ -14,6 +14,8 @@ import java.util.Map;
 
 public interface BoardService {
     Map<String, Object> findBoardList(Pageable pageable);
+    List<Board> findMostLikedBoardList();
+    List<Board> findMostViewedBoardList();
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
     Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable);
     Map<String, Object> searchBoards(String keyword, Pageable pageable);
