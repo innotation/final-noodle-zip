@@ -15,14 +15,14 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/mypage")
+@RequestMapping("/users")
 @Controller
 public class MyBadgeController {
 
     private final MyBadgeService myBadgeService;
 
 
-    @GetMapping("/{userId}/badges/list")
+    @GetMapping("/{userId}/badges")
     public String badge(@PathVariable Long userId, Model model) {
         List<MyBadgeBadgeResponse> userBadgeList = myBadgeService.getUserBadgeListByGroup(userId);
 
