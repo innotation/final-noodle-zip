@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
           ${store.memo
             ? `<div class="info_memo">${store.memo}</div>`
             : ''}
-          <a href="/store/detail/${store.storeId}" class="info_detail_btn">상세보기</a>
+          <a href="/store/detail/${store.storeId}" class="info_detail_btn" target="_blank" rel="noopener noreferrer">상세보기</a>
         </div>
       </div>
     `;

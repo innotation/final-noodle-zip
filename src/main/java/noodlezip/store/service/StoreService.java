@@ -160,7 +160,6 @@ public class StoreService {
                     throw new CustomException(ErrorStatus._FILE_REQUIRED);
                 }
 
-
                 // 카테고리/육수 매핑
                 Category category = new Category();
                 category.setId(m.getRamenCategoryId());
@@ -181,7 +180,7 @@ public class StoreService {
 
                 Menu savedMenu = menuRepository.save(menu);
 
-                // 기본 토핑 저장
+                // 기본 토핑 저장 (메뉴 단위)
                 if (m.getDefaultToppingIds() != null) {
                     for (Long toppingId : m.getDefaultToppingIds()) {
                         Topping topping = toppingRepository.getReferenceById(toppingId);
@@ -191,35 +190,38 @@ public class StoreService {
                         ramenToppingRepository.save(ramenTopping);
                     }
                 }
+            }
+        }
 
-                // 추가 토핑 저장
-                if (m.getExtraToppings() != null && !m.getExtraToppings().isEmpty()) {
-                    for (String toppingName : m.getExtraToppings()) {
-                        if (toppingName == null || toppingName.isBlank()) continue;
+        // ⑤ 매장 단위 추가 토핑 저장 (dto.getExtraToppings)
+        if (dto.getExtraToppings() != null && !dto.getExtraToppings().isEmpty()) {
+            for (ExtraToppingRequestDto toppingDto : dto.getExtraToppings()) {
+                if (toppingDto == null || toppingDto.getName() == null || toppingDto.getName().isBlank()) continue;
 
-                        // 기본 토핑이면 예외 발생
-                        if (defaultToppingNames.contains(toppingName)) {
-                            throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
-                        }
+                String toppingName = toppingDto.getName();
+                Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
 
-                        // 중복 방지: 기존 비활성화 토핑 재사용 or 새로 저장
-                        Topping topping = toppingRepository.findByToppingName(toppingName)
-                                .orElseGet(() -> toppingRepository.save(
-                                        Topping.builder()
-                                                .toppingName(toppingName)
-                                                .isActive(false)
-                                                .build()
-                                ));
-
-                        // StoreExtraTopping 저장
-                        StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
-                        storeExtraTopping.setStore(savedStore);
-                        storeExtraTopping.setTopping(topping);
-                        // 가격 정보가 없으면 기본 0 또는 적절히 처리
-                        storeExtraTopping.setPrice(0);
-                        storeExtraToppingRepository.save(storeExtraTopping);
-                    }
+                if (defaultToppingNames.contains(toppingName)) {
+                    throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
                 }
+
+                Topping topping = toppingRepository.findByToppingName(toppingName)
+                        .orElseGet(() -> toppingRepository.save(
+                                Topping.builder()
+                                        .toppingName(toppingName)
+                                        .isActive(false)
+                                        .build()
+                        ));
+
+                if (topping == null) {
+                    throw new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME);
+                }
+
+                StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
+                storeExtraTopping.setStore(savedStore);
+                storeExtraTopping.setTopping(topping);
+                storeExtraTopping.setPrice(price);
+                storeExtraToppingRepository.save(storeExtraTopping);
             }
         }
 
@@ -254,13 +256,16 @@ public class StoreService {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
         store.setApprovalStatus(status);
-        storeRepository.save(store);
     }
+
     // ID로 활성화 된 매장 찾기
-    public StoreDto getStore(Long storeId) {
+    public StoreDto getStore(Long storeId, Long requesterUserId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NoSuchElementException("해당 매장을 찾을 수 없습니다."));
-        if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus())) {
+
+        // 승인되지 않았고, 등록한 사용자가 아닐 경우만 막기
+        if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus()) &&
+                !store.getUserId().equals(requesterUserId)) {
             throw new IllegalStateException("승인되지 않은 매장은 조회할 수 없습니다.");
         }
 
