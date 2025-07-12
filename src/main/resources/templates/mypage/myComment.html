@@ -199,13 +199,14 @@
                                     By <a th:text="${item.author}">사용자 이름</a>
                                     <span>|</span>
                                     <span th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
-                                    <span>|</span>
-                                    <a href="#0"
-                                       th:onclick="'deleteComment(' + ${item.id} + ',' + ${item.communityBoardId} + '); return false;'"
-                                       class="wish_bt"
-                                       style="color: red;">
-                                        <i class="icon_trash_alt"></i> 댓글 삭제
-                                    </a>
+                                    <span th:if="${userAccessInfo.isOwner}">|
+                                        <a href="#0"
+                                           th:onclick="'deleteComment(' + ${item.id} + ',' + ${item.communityBoardId} + '); return false;'"
+                                           class="wish_bt"
+                                           style="color: red;">
+                                            <i class="icon_trash_alt"></i> 댓글 삭제
+                                        </a>
+                                    </span>
                                 </div>
                                 <p th:text="${item.content}">여기 내용</p>
                             </div>
