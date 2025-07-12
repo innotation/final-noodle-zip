@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
+    <meta name="author" content="Ansonika">
+    <title>Foogra - Discover & Book the best restaurants at the best price</title>
+
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="/img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="/img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          href="/img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          href="/img/apple-touch-icon-144x144-precomposed.png">
+
+    <!-- GOOGLE WEB FONT -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- BASE CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <!-- SPECIFIC CSS -->
+    <link href="/css/blog.css" rel="stylesheet">
+
+    <!-- YOUR CUSTOM CSS -->
+    <link href="/css/listing.css" rel="stylesheet">
+
+</head>
+
+<body>
+<!--<div th:replace="/fragments/subHeader::subHeader"></div>-->
+<header class="header_in clearfix">
+    <div class="container">
+        <div id="logo">
+            <a href="index.html">
+                <img src="/img/logo_sticky.svg" width="140" height="35" alt="">
+            </a>
+        </div>
+        <ul id="top_menu">
+            <li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
+            <li><a href="wishlist.html" class="wishlist_bt_top" title="Your wishlist">Your wishlist</a></li>
+        </ul>
+        <!-- /top_menu -->
+        <a href="#0" class="open_close">
+            <i class="icon_menu"></i><span>Menu</span>
+        </a>
+        <nav class="main-menu">
+            <div id="header_menu">
+                <a href="#0" class="open_close">
+                    <i class="icon_close"></i><span>Menu</span>
+                </a>
+                <a href="index.html"><img src="/img/logo.svg" width="140" height="35" alt=""></a>
+            </div>
+            <ul>
+                <li class="submenu">
+                    <a href="#0" class="show-submenu">Home</a>
+                    <ul>
+                        <li><a href="index.html">Default</a></li>
+                        <li class="third-level"><a href="#0">Sliders - Parallax <strong>New!</strong></a>
+                            <ul>
+                                <li><a href="index-16.html">Kenburns slider <strong>New!</strong></a></li>
+                                <li><a href="index-8.html">Revolution Slider 1</a></li>
+                                <li><a href="index-9.html">Revolution Slider 2</a></li>
+                                <li><a href="index-3.html">Owl Carousel</a></li>
+                                <li><a href="index-10.html">Parallax Youtube</a></li>
+                                <li><a href="index-11.html">Parallax Vimeo</a></li>
+                                <li><a href="index-12.html">Parallax Mp4 Video</a></li>
+                                <li><a href="index-13.html">Parallax Video Fullscreen</a></li>
+                                <li><a href="index-14.html">Parallax Image</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="index-15.html">Text Rotator</a></li>
+                        <li><a href="index-5.html">Address Autocomplete</a></li>
+                        <li><a href="index-6.html">Search Version 2</a></li>
+                        <li><a href="index-7.html">Delivery/Takeaway version</a></li>
+                        <li><a href="modal-advertise.html">Modal Advertise</a></li>
+                        <li><a href="modal-newsletter.html">Modal Newsletter</a></li>
+                        <li><a href="index-2.html">Video Bg Fallback Mobile</a></li>
+                        <li><a href="index-4.html">GDPR Cookie Bar EU Law</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#0" class="show-submenu">Listing</a>
+                    <ul>
+                        <li class="third-level"><a href="#0">List pages</a>
+                            <ul>
+                                <li><a href="grid-listing-filterscol.html">List default</a></li>
+                                <li><a href="grid-listing-filterscol-map.html">List with map</a></li>
+                                <li><a href="listing-map.html">List side map</a></li>
+                                <li><a href="grid-listing-filterscol-full-width.html">List full width</a></li>
+                                <li><a href="grid-listing-filterscol-full-masonry.html">List Masonry Filter</a></li>
+                                <li><a href="grid-listing-filterscol-delivery.html">List Delivery/Takeaway</a></li>
+                            </ul>
+                        </li>
+                        <li class="third-level"><a href="#0">Detail pages</a>
+                            <ul>
+                                <li><a href="detail-restaurant.html">Detail page 1</a></li>
+                                <li><a href="detail-restaurant-2.html">Detail page 2</a></li>
+                                <li><a href="detail-restaurant-3.html">Mobile Fixed Booking</a></li>
+                                <li><a href="detail-restaurant-delivery.html">Delivery/Takeaway</a></li>
+                                <li><a href="detail-restaurant-4.html">Detail Menu Thumbs</a></li>
+                                <li><a href="detail-restaurant-5.html">Detail Contact Form</a></li>
+                            </ul>
+                        </li>
+                        <li class="third-level"><a href="#0">OpenStreetMap</a>
+                            <ul>
+                                <li><a href="grid-listing-filterscol-map-openstreetmap.html">List with map</a></li>
+                                <li><a href="listing-map-openstreetmap.html">List side map</a></li>
+                                <li><a href="grid-listing-filterscol-full-width-openstreetmap.html">List full width</a>
+                                </li>
+                                <li><a href="grid-listing-filterscol-full-masonry-openstreetmap.html">List Masonry
+                                    Filter</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="submit-restaurant.html">Submit Restaurant</a></li>
+                        <li><a href="submit-rider.html">Submit Rider</a></li>
+                        <li><a href="wishlist.html">Wishlist</a></li>
+                        <li><a href="booking.html">Booking</a></li>
+                        <li><a href="confirm.html">Confirm Booking</a></li>
+                        <li><a href="confirm-delivery.html">Confirm Order</a></li>
+                        <li><a href="booking-delivery-2.html">Order Delivery/Takeaway</a></li>
+                        <li><a href="booking-delivery.html">Order Delivery/Takeaway 2</a></li>
+                        <li><a href="admin_section/index.html" target="_blank">Admin Section</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#0" class="show-submenu">Other Pages</a>
+                    <ul>
+                        <li><a href="404.html">404 Error</a></li>
+                        <li><a href="help.html">Help and Faq</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="leave-review.html">Leave a review</a></li>
+                        <li><a href="user-logged-1.html">User Logged 1</a></li>
+                        <li><a href="user-logged-2.html">User Logged 2</a></li>
+                        <li><a href="contacts.html">Contacts</a></li>
+                        <li><a href="coming_soon/index.html">Coming Soon</a></li>
+                        <li><a href="account.html">Sign Up</a></li>
+                        <li><a href="icon-pack-1.html">Icon Pack 1</a></li>
+                        <li><a href="icon-pack-2.html">Icon Pack 2</a></li>
+                    </ul>
+                </li>
+                <li><a href="submit-restaurant.html">Submit</a></li>
+                <li><a href="#0">Buy this template</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<!-- /header -->
+<main>
+    <div class="page_header element_to_stick">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
+                    <div class="breadcrumbs blog">
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Category</a></li>
+                            <li>Page active</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-5 col-md-5">
+                    <div class="search_bar_list">
+                        <input id="searchInput" type="text" class="form-control" placeholder="Search in blog...">
+                        <input type="submit" value="Search" onclick="performSearch()">
+                    </div>
+                </div>
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+    <!-- /page_header -->
+
+    <div class="container margin_30_40">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-md-6" th:each="item : ${boardList.boardList}">
+                        <article class="blog">
+                            <figure>
+                                <a th:href="@{/board/detail/{id}(id=${item.boardId})}">
+                                    <img th:src="${#strings.isEmpty(item.imageUrl) ? '/img/blog-1.jpg' : item.imageUrl}"
+                                         alt="게시글 이미지">
+                                    <div class="preview"><span>더 보기</span></div>
+                                </a>
+                            </figure>
+                            <div class="post_info">
+                                <small>
+                                    <span th:text="${item.communityType}">카테고리</span> -
+                                    <span th:text="${#temporals.format(item.createdAt, 'yyyy.MM.dd')}">2023.01.01</span>
+                                </small>
+                                <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
+                                    제목</a>
+                                </h2>
+                                <ul>
+                                    <li>
+                                        <div class="thumb"><img
+                                                th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
+                                                alt="작성자 프로필 이미지"></div>
+                                        <span th:text="${item.userName}">작성자</span>
+                                    </li>
+                                    <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
+                                    <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
+                                </ul>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="pagination_fg" th:if="${boardList.totalPage > 0}">
+                    <a th:href="@{|?page=${boardList.page - 1}|}"
+                       th:if="${!boardList.isFirst}">&laquo;</a>
+                    <th:block th:each="i : ${#numbers.sequence(boardList.beginPage, boardList.endPage)}">
+                        <a th:href="@{|?page=${i}|}"
+                           th:classappend="${i eq boardList.page} ? 'active' : ''">
+                            <span th:text="${i}"></span>
+                        </a>
+                    </th:block>
+                    <a th:href="@{|?page=${boardList.page + 1}|}"
+                       th:if="${!boardList.isLast}">&raquo;</a>
+                </div>
+            </div>
+            <!-- /col -->
+
+            <aside class="col-lg-3">
+                <div class="widget">
+                    <div class="widget-title first">
+                        <h4>최근 본 게시글</h4>
+                    </div>
+                    <ul class="comments-list" id="recent-boards-list-container">
+                        <li id="loading-message">로딩 중...</li>
+                        <li id="no-boards-message" style="display:none;">최근 본 게시글이 없습니다.</li>
+                    </ul>
+                </div>
+                <!-- /widget -->
+                <div class="widget">
+                    <div class="widget-title">
+                        <h4>Categories</h4>
+                    </div>
+                    <ul class="cats">
+                        <li><a href="#">Food <span>(12)</span></a></li>
+                        <li><a href="#">Places to visit <span>(21)</span></a></li>
+                        <li><a href="#">New Places <span>(44)</span></a></li>
+                        <li><a href="#">Suggestions and guides <span>(31)</span></a></li>
+                    </ul>
+                </div>
+                <!-- /widget -->
+                <div class="widget">
+                    <div class="widget-title">
+                        <h4>Popular Tags</h4>
+                    </div>
+                    <div class="tags">
+                        <a href="#">Food</a>
+                        <a href="#">Bars</a>
+                        <a href="#">Cooktails</a>
+                        <a href="#">Shops</a>
+                        <a href="#">Best Offers</a>
+                        <a href="#">Transports</a>
+                        <a href="#">Restaurants</a>
+                    </div>
+                </div>
+                <!-- /widget -->
+            </aside>
+            <!-- /aside -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</main>
+<!-- /main -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<!--/footer-->
+
+<div id="toTop"></div><!-- Back to top button -->
+
+<div class="layer"></div><!-- Opacity Mask Menu Mobile -->
+
+<!-- Sign In Modal -->
+<div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
+    <div class="modal_header">
+        <h3>Sign In</h3>
+    </div>
+    <form>
+        <div class="sign-in-wrapper">
+            <a href="#0" class="social_bt facebook">Login with Facebook</a>
+            <a href="#0" class="social_bt google">Login with Google</a>
+            <div class="divider"><span>Or</span></div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" name="email" id="email">
+                <i class="icon_mail_alt"></i>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password" id="password" value="">
+                <i class="icon_lock_alt"></i>
+            </div>
+            <div class="clearfix add_bottom_15">
+                <div class="checkboxes float-start">
+                    <label class="container_check">Remember me
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Log In" class="btn_1 full-width mb_5">
+                Don’t have an account? <a href="account.html">Sign up</a>
+            </div>
+            <div id="forgot_pw">
+                <div class="form-group">
+                    <label>Please confirm login email below</label>
+                    <input type="email" class="form-control" name="email_forgot" id="email_forgot">
+                    <i class="icon_mail_alt"></i>
+                </div>
+                <p>You will receive an email containing a link allowing you to reset your password to a new preferred
+                    one.</p>
+                <div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
+            </div>
+        </div>
+    </form>
+    <!--form -->
+</div>
+<!-- /Sign In Modal -->
+<script>
+    function initializeRecentBoardsWidget() {
+        const listContainer = document.getElementById('recent-boards-list-container');
+        const loadingMessage = document.getElementById('loading-message');
+        const noBoardsMessage = document.getElementById('no-boards-message');
+        if (!listContainer || !loadingMessage || !noBoardsMessage) {
+            console.warn("Recent boards widget elements not found. Skipping initialization.");
+            return; // 필수 DOM 요소가 없으면 함수 종료
+        }
+
+        // 이전에 추가된 게시글 목록 초기화
+        listContainer.innerHTML = ''; // 기존 내용을 모두 지움
+        listContainer.appendChild(loadingMessage); // 로딩 메시지 다시 삽입 (만약 HTML 구조상 제거되었다면)
+        loadingMessage.style.display = 'block';
+        noBoardsMessage.style.display = 'none';
+
+        fetch('/board/recent')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(boards => {
+                loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
+                if (boards.payload && boards.payload.length > 0) {
+                    // 게시글 목록이 있을 경우, 각 게시글에 대해 li 요소를 생성하여 추가
+                    boards.payload.forEach(board => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                        <div class="alignleft">
+                            <a href="/board/detail/${board.id}">
+                                <img src="${board.imageUrl ? board.imageUrl : '/img/blog-1.jpg'}" alt="게시글 이미지">
+                            </a>
+                        </div>
+                        <small>
+                            ${board.category ? board.category : 'General'} -
+                            ${board.createdAt ? new Date(board.createdAt).toLocaleDateString('ko-KR') : 'N/A'}
+                        </small>
+                        <h3><a href="/board/detail/${board.id}" title="${board.title}">${board.title}</a></h3>
+                    `;
+                        listContainer.appendChild(li);
+                    });
+                } else {
+                    noBoardsMessage.style.display = 'block';
+                    listContainer.appendChild(noBoardsMessage);
+                }
+            })
+            .catch(error => {
+                loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
+                noBoardsMessage.style.display = 'block'; // 메시지 표시
+                noBoardsMessage.textContent = '최근 본 게시글을 불러오는 데 실패했습니다.';
+                listContainer.appendChild(noBoardsMessage);
+                console.error('Error fetching recent boards:', error);
+            });
+    }
+
+    function performSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const keyword = searchInput.value.trim();
+
+        if (keyword === "") {
+            alert("검색어를 입력해주세요.");
+            searchInput.focus();
+            return;
+        }
+
+        const encodedKeyword = encodeURIComponent(keyword);
+
+        // 현재 URL의 경로 부분을 가져옵니다. (예: /board/free/list)
+        const currentPath = window.location.pathname;
+
+        let targetUrl = "/board/list"; // 기본 검색 대상 URL (모든 게시글 검색 시)
+        let communityType = null;
+
+        // 정규 표현식을 사용하여 경로에서 communityType을 추출합니다.
+        // 예: /board/free/list, /board/notice/list 등
+        const pathMatch = currentPath.match(/\/board\/([a-zA-Z0-9]+)\/list/);
+
+        if (pathMatch && pathMatch[1]) {
+            // 정규 표현식에 매칭되면 두 번째 캡처 그룹([1])이 communityType입니다.
+            communityType = pathMatch[1];
+        }
+
+        if (communityType) {
+            targetUrl = `/board/${encodeURIComponent(communityType)}/list?search=${encodedKeyword}`;
+        } else {
+            targetUrl = `/board/list?search=${encodedKeyword}`;
+        }
+
+        location.href = targetUrl;
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            performSearch();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeRecentBoardsWidget();
+    });
+</script>
+<!-- COMMON SCRIPTS -->
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
+
+</body>
+</html>
