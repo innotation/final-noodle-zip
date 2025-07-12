@@ -84,6 +84,15 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
+    public Map<String, Object> findBoardByUser(Long userId, Pageable pageable){
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByWriterWithPagination(userId, pageable);
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+        map.put("list", boardPage.getContent());
+        return map;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable) {
         Page<BoardRespDto> boardPage = boardRepository.findBoardByCommunityTypeAndKeywordWithPagination(category, keyword,pageable);
 
