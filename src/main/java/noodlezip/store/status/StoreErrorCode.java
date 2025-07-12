@@ -25,6 +25,13 @@ public enum StoreErrorCode implements BaseErrorCode {
             .isSuccess(false)
             .code("ST003")
             .message("기본 토핑은 추가 토핑으로 사용할 수 없습니다.")
+            .build()),
+
+    _UNKNOWN_TOPPING_NAME(ErrorReasonDto.builder()
+            .httpStatus(HttpStatus.BAD_REQUEST)
+            .isSuccess(false)
+            .code("ST004")
+            .message("존재하지 않는 토핑 이름입니다.")
             .build());
 
     private final ErrorReasonDto errorReasonDto;

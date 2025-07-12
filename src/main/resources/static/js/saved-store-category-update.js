@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch('/mypage/my/saved-store/categories/update', {
+    fetch('/users/my/saved-store/categories/update', {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(payload)
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch('/mypage/my/saved-store/categories/delete', {
+    fetch('/users/my/saved-store/categories/delete', {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(selected)

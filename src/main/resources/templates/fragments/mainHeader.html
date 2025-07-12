@@ -1,23 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <div th:fragment="mainHeader">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="noodle.zip - ramen community site">
+    <meta name="author" content="zip.lab">
+    <title>누들집 - 대한민국 최초 라멘 커뮤니티 사이트</title>
+    <!-- Favicons -->
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" th:href="@{/img/apple-touch-icon-57x57-precomposed.png}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72"
+          th:href="@{/img/apple-touch-icon-72x72-precomposed.png}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114"
+          th:href="@{/img/apple-touch-icon-114x114-precomposed.png}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144"
+          th:href="@{/img/apple-touch-icon-144x144-precomposed.png}">
+    <!-- GOOGLE WEB FONT -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <!-- BASE CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <!-- SPECIFIC CSS -->
+    <link th:href="@{/css/home.css}" rel="stylesheet">
+    <!-- HEADER CSS -->
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+    <!-- YOUR CUSTOM CSS -->
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+  </head>
+  <body>
+    <header class="header clearfix element_to_stick">
+      <div class="container">
+        <div id="logo">
+          <a th:href="@{/}">
+            <img th:src="@{/img/logo.svg}" width="140" height="35" alt="" class="logo_normal">
+            <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
+          </a>
+        </div>
 
-  <header class="header clearfix element_to_stick">
-    <div class="container">
-      <div id="logo">
-        <a th:href="@{/}">
-          <img th:src="@{/img/logo.svg}" width="140" height="35" alt="" class="logo_normal">
-          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
-        </a>
-      </div>
-      <nav class="main-menu">
-        <ul>
-          <li><a href="검색페이지">검색페이지</a></li>
-          <li><a href="커뮤니티페이지">커뮤니티페이지</a></li>
+        <!-- /top_menu -->
+        <ul id="top_menu">
+          <div sec:authorize="isAnonymous()">
+            <li><a href="#sign-in-dialog" class="sign-in login">Sign In</a></li>
+          </div>
+          <div sec:authorize="isAuthenticated()">
+            <li>
+              <div class="dropdown user clearfix">
+                <a href="#" data-bs-toggle="dropdown">
+                  <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure>
+                  <span th:text="${#authentication.principal.user.userName}"></span>
+                </a>
+                <div class="dropdown-menu">
+                  <div class="dropdown-menu-content">
+                    <ul>
+                      <li><a href="#0"><i class="icon_cog"></i>마이페이지</a></li>
+                      <li><a href="/logout" class="logout-link"><i class="icon_key"></i>Log Out</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- /dropdown -->
+            </li>
+          </div>
         </ul>
-      </nav>
-    </div>
-  </header>
+        <!-- /top_menu -->
+
+        <!-- 햄버거 메뉴 버튼 -->
+        <a href="#0" class="open_close">
+          <i class="icon_menu"></i><span>Menu</span>
+        </a>
+
+        <nav class="main-menu">
+          <!-- 사이드바 내부 헤더 -->
+          <div id="header_menu">
+            <a href="#0" class="open_close">
+              <i class="icon_close"></i><span>Menu</span>
+            </a>
+            <a th:href="@{/}"><img th:src="@{/img/logo.svg}" width="140" height="35" alt=""></a>
+          </div>
+          <ul>
+            <li><a th:href="@{/search/list}">검색페이지</a></li>
+            <li><a th:href="@{/board/list}">커뮤니티페이지</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Layer 요소 - 사이드바 메뉴용 -->
+    <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
+
+    <!-- 로그인 모달 -->
+    <div th:replace="~{fragments/signin-modal :: signin-modal}"></div>
+  </body>
 </div>
-  <!-- /header -->
+<!-- /header -->
 
 
-<!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용 <link th:include="fragements/mainHeader.html"/>  구문 삽입해서 사용 -->
+<!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용 <div th:replace="~{fragments/mainHeader::mainHeader}"></div>
+  구문 삽입해서 사용 -->
+
+</html>

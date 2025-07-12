@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/mypage")
+@RequestMapping("/users")
 @Controller
 public class SaveStoreCategoryController {
 

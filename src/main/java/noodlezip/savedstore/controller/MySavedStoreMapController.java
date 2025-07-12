@@ -14,27 +14,23 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/mypage")
+@RequestMapping("/users")
 @Controller
 public class MySavedStoreMapController extends MyBaseController {
-
 
     private final SavedStoreLocationService savedStoreLocationService;
 
 
-    @GetMapping({
-            "/my/saved-store/list/map",
-            "/{userId}/saved-store/list/map"
-    })
+    @GetMapping("/{userId}/saved-stores/map")
     @ResponseBody
     public SavedStoreMapResponse getMySavedStoreListMap(@AuthenticationPrincipal MyUserDetails userDetails,
-                                                        @PathVariable(required = false) String userId,
+                                                        @PathVariable Long userId,
                                                         @ModelAttribute SavedStoreCategoryFilterRequest filter
     ) {
         UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 
         return savedStoreLocationService.getStoreLocationList(
-                userAccessInfo.targetUserId(), filter, userAccessInfo.isOwner()
+                userAccessInfo.getTargetUserId(), filter, userAccessInfo.getIsOwner()
         );
     }
 
