@@ -3,6 +3,7 @@ package noodlezip.mypage.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.user.entity.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,22 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @Controller
-public class MyPageMainController {
-
-    @GetMapping("/my")
-    public String myPage(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) { /// 자기 자신의 마이페이지로 이동 - url 경로가 유일함
-        User user = myUserDetails.getUser();
-
-        model.addAttribute("userId", user.getId()); ///마이페이지 내부에서 하위 페이지 이동시 herf에 필요
-        model.addAttribute("isOwner", true);
-        return "index";
-    }
-
+public class MyPageMainController extends MyBaseController {
 
     @GetMapping("/{userId}")
-    public String userMyPage(@PathVariable String userId, Model model) { /// 특정 사용자의 마이페이지로 이동
+    public String userMyPage(@AuthenticationPrincipal MyUserDetails myUserDetails,
+                             @PathVariable Long userId,
+                             Model model
+    ) {
+        UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
 
-        model.addAttribute("isOwner", false);
+        model.addAttribute("userAccessInfo", userAccessInfo);
+
         return "index";
     }
 
