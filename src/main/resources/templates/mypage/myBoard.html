@@ -208,6 +208,22 @@
                                     </li>
                                     <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
                                     <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
+                                    <li th:if="${type == 'POST_BOARD' and userAccessInfo.isOwner}">
+                                        <a href="#0"
+                                           th:onclick="'deleteBoard(' + ${item.boardId} + '); return false;'"
+                                           class="wish_bt"
+                                           style="color: red;">
+                                            <i class="icon_trash_alt"></i>
+                                        </a>
+                                    </li>
+<!--                                    <li th:if="${item.isWriter}">-->
+<!--                                        <a href="#0"-->
+<!--                                           th:onclick="'deleteBoard(' + ${item.id} + '); return false;'"-->
+<!--                                           class="wish_bt"-->
+<!--                                           style="color: red;">-->
+<!--                                            <i class="icon_trash_alt"></i> 게시글 삭제-->
+<!--                                        </a>-->
+<!--                                    </li>-->
                                 </ul>
                             </div>
                         </article>
@@ -329,6 +345,32 @@
     <!--form -->
 </div>
 <!-- /Sign In Modal -->
+<script>
+    function deleteBoard(boardId) {
+        if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
+
+        fetch(`/users/my/${boardId}/delete`, {
+            method: 'POST'
+        })
+            .then(res => {
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+                if (res.ok) {
+                    alert('삭제가 완료되었습니다.');
+                    location.reload();
+                } else {
+                    return res.json().then(err => {
+                        throw new Error(err.message || '삭제 실패');
+                    });
+                }
+            })
+            .catch(err => {
+                alert('삭제 실패: ' + err.message);
+            });
+    }
+</script>
 <script>
     function initializeRecentBoardsWidget() {
         const listContainer = document.getElementById('recent-boards-list-container');
