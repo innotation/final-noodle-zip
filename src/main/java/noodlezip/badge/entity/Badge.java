@@ -45,6 +45,14 @@ public class Badge extends BaseTimeEntity {
     private String badgeImageUrl;
 
 
+    public boolean isLevelBadge() {
+        return !badgePolicy.hasNotLevel();
+    }
+
+    public boolean isOptionalBadge() {
+        return badgeExtraOption.hasOption();
+    }
+
     public boolean isOverCompletionValue(int currentValue) {
         return badgePolicy.isOverCompletionValue(currentValue);
     }
