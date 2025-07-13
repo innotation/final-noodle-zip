@@ -134,6 +134,7 @@
                         <h4>Categories</h4>
                     </div>
                     <ul class="cats">
+                        <li><a th:href="@{/board/list}"><strong>전체 게시글 보기</strong></a></li>
                         <li th:each="categoryCount : ${categoryCounts}">
                             <a th:href="@{/board/{communityType}/list(communityType=${categoryCount.communityType})}"
                                th:text="${categoryCount.displayName} + '(' + ${categoryCount.count} + ')'">카테고리(0)
