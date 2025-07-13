@@ -37,6 +37,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness,
                         review.noodleTexture,
                         review.noodleBoilLevel,
+                        review.soupDensity,
                         review.soupTemperature,
                         review.soupSaltiness,
                         review.soupSpicinessLevel,
@@ -78,6 +79,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg().as("noodleThickness"),
                         review.noodleTexture.avg().as("noodleTexture"),
                         review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupDensity.avg().as("soupDensity"),
                         review.soupTemperature.avg().as("soupTemperature"),
                         review.soupSaltiness.avg().as("soupSaltiness"),
                         review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
@@ -86,11 +88,12 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg()
                                 .add(review.noodleTexture.avg())
                                 .add(review.noodleBoilLevel.avg())
+                                .add(review.soupDensity.avg())
                                 .add(review.soupTemperature.avg())
                                 .add(review.soupSaltiness.avg())
                                 .add(review.soupSpicinessLevel.avg())
                                 .add(review.soupOiliness.avg())
-                                .divide(7.0).as("overall")
+                                .divide(8.0).as("overall")
                 ))
                 .from(review)
                 .where(review.menu.store.id.eq(storeId))
@@ -110,6 +113,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg().as("noodleThickness"),
                         review.noodleTexture.avg().as("noodleTexture"),
                         review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupDensity.avg().as("soupDensity"),
                         review.soupTemperature.avg().as("soupTemperature"),
                         review.soupSaltiness.avg().as("soupSaltiness"),
                         review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
@@ -118,11 +122,12 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg()
                                 .add(review.noodleTexture.avg())
                                 .add(review.noodleBoilLevel.avg())
+                                .add(review.soupDensity.avg())
                                 .add(review.soupTemperature.avg())
                                 .add(review.soupSaltiness.avg())
                                 .add(review.soupSpicinessLevel.avg())
                                 .add(review.soupOiliness.avg())
-                                .divide(7.0).as("overall")
+                                .divide(8.0).as("overall")
                 ))
                 .from(review)
                 .join(review.menu, menu)

@@ -459,6 +459,9 @@
 						document.querySelector('.soup-oiliness-progress').style.width = (summary.soupOiliness * 10) + '%';
 						document.querySelector('.soup-oiliness-value').textContent = summary.soupOiliness.toFixed(1);
 
+						document.querySelector('.soup-density-progress').style.width = (summary.soupDensity * 10) + '%';
+						document.querySelector('.soup-density-value').textContent = summary.soupDensity.toFixed(1);
+
 					})
 					.catch(err => console.error("리뷰 요약 업데이트 실패", err));
 			}
