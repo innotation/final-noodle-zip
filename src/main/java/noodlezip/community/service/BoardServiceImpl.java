@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import noodlezip.community.dto.CategoryCountDto;
 
 @Service
 @RequiredArgsConstructor
@@ -227,5 +228,11 @@ public class BoardServiceImpl implements BoardService {
             log.error("upload images is empty");
         }
         return imageInfos;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryCountDto> getCategoryCounts() {
+        return boardRepository.findCategoryCounts();
     }
 }

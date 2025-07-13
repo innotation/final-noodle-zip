@@ -6,6 +6,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.CategoryCountDto;
 import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.entity.QBoard;
 import noodlezip.user.entity.QUser;
@@ -214,6 +215,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         return new PageImpl<>(results, pageable, totalCount);
     }
 
+    @Override
     public Page<BoardRespDto> findBoardsByIdsAndStatusPostedWithPaging(List<Long> boardIds, Pageable pageable) {
         if (boardIds == null || boardIds.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
@@ -251,4 +253,18 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .execute();
         return result;
     }
+
+    @Override
+    public List<CategoryCountDto> findCategoryCounts() {
+        return queryFactory
+                .select(Projections.constructor(CategoryCountDto.class,
+                        board.communityType,
+                        board.count()))
+                .from(board)
+                .where(board.postStatus.eq(CommunityActiveStatus.POSTED))
+                .groupBy(board.communityType)
+                .orderBy(board.communityType.asc())
+                .fetch();
+    }
+
 }

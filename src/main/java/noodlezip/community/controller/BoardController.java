@@ -120,7 +120,7 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String boardList(
-            @PathVariable(value = "category", required = false) String pathCommunityType,
+            @PathVariable(value = "category", required = false) String  pathCommunityType,
             @RequestParam(value = "search", required = false) String searchKeyword,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
@@ -151,6 +151,9 @@ public class BoardController {
         model.addAttribute("endPage", map.get("endPage"));
         model.addAttribute("isFirst", map.get("isFirst"));
         model.addAttribute("isLast", map.get("isLast"));
+
+        // 카테고리별 개수 조회
+        model.addAttribute("categoryCounts", boardService.getCategoryCounts());
 
         return "/board/list";
     }

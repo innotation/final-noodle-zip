@@ -1,6 +1,7 @@
 package noodlezip.community.repository;
 
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.CategoryCountDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +17,5 @@ public interface BoardRepositoryCustom {
     Long increaseViewCount(Long boardId, Long viewCount);
     Page<BoardRespDto> findBoardByCommunityTypeAndKeywordWithPagination(String category, String keyword, Pageable pageable);
     Page<BoardRespDto> findBoardByKeywordWithPagination(String keyword, Pageable pageable);
+    List<CategoryCountDto> findCategoryCounts();
 }
