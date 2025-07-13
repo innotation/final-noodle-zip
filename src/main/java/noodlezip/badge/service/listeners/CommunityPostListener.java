@@ -36,4 +36,11 @@ public class CommunityPostListener {
         }
     }
 
+    /**
+     *       eventPublisher.publishEvent(new BasicBadgeEvent(
+     *                 user.getId(),
+     *                 UserEventType.COMMUNITY_POST
+     *         ));
+     */
+
 }

@@ -36,4 +36,23 @@ public class CommunityLikeListener {
         }
     }
 
+    /**
+     *     private void publishBadgeEvent(Optional<Like> existingLike, boolean isLiked, Board board) {
+     *         if(existingLike.isEmpty() && isLiked) {
+     *             if("community".equals(board.getCommunityType())) {
+     *                 eventPublisher.publishEvent(new BasicBadgeEvent(
+     *                         board.getUser().getId(),
+     *                         UserEventType.COMMUNITY_LIKE
+     *                 ));
+     *             }
+     *             if("review".equals(board.getCommunityType())) {
+     *                 eventPublisher.publishEvent(new BasicBadgeEvent(
+     *                         board.getUser().getId(),
+     *                         UserEventType.RAMEN_REVIEW_LIKE
+     *                 ));
+     *             }
+     *         }
+     *     }
+     */
+
 }

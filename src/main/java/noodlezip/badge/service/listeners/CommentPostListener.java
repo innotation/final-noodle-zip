@@ -29,11 +29,20 @@ public class CommentPostListener {
                 log.error("[BadgeFail] userId={} event={} badgeType={} reason={}",
                         event.getUserId(),
                         UserEventType.COMMENT_POST.name(),
-                        LevelBadgeCategoryType.ALL_COMMUNITY_POST_COUNT_BADGE.name(),
+                        LevelBadgeCategoryType.ALL_COMMENT_POST_COUNT_BADGE.name(),
                         e.getMessage(), e
                 );
             }
         }
     }
+
+    /**
+     *     private void publishBadgeEvent(CommentReqDto info) {
+     *         eventPublisher.publishEvent(new BasicBadgeEvent(
+     *                 info.getUserId(),
+     *                 UserEventType.COMMENT_POST
+     *         ));
+     *     }
+     */
 
 }
