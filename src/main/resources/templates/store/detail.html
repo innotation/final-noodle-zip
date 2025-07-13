@@ -145,6 +145,8 @@
 					.then(html => {
 						paneC.innerHTML = html;
 						initMenuFilter();
+						// 추가 토핑 목록 로드
+						loadExtraToppings();
 						// DOM 렌더링 완료 후 갤러리 초기화
 						setTimeout(() => {
 							initMenuGallery(); // 메뉴 갤러리 초기화 추가
@@ -155,6 +157,45 @@
 						console.error(err);
 					});
 			});
+
+			// 추가 토핑 목록 로드 함수
+			function loadExtraToppings() {
+				fetch(`/store/detail/${storeId}/toppings`)
+					.then(response => {
+						if (!response.ok) throw new Error("Toppings load failed");
+						return response.json();
+					})
+					.then(toppings => {
+						const extraToppingsSection = document.getElementById('extra-toppings-section');
+						const extraToppingsList = document.getElementById('extra-toppings-list');
+						
+						if (toppings && toppings.length > 0) {
+							extraToppingsList.innerHTML = '';
+							toppings.forEach(topping => {
+								const toppingCard = document.createElement('div');
+								toppingCard.className = 'col-md-4 mb-3';
+								toppingCard.innerHTML = `
+									<div class="card h-100" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+										<div class="card-body text-center">
+											<h6 class="card-title mb-2">${topping.name}</h6>
+											<p class="card-text text-muted mb-0">
+												${topping.price ? topping.price.toLocaleString() + '원' : '가격 정보 없음'}
+											</p>
+										</div>
+									</div>
+								`;
+								extraToppingsList.appendChild(toppingCard);
+							});
+							extraToppingsSection.style.display = 'block';
+						} else {
+							extraToppingsSection.style.display = 'none';
+						}
+					})
+					.catch(err => {
+						console.error('추가 토핑 로드 실패:', err);
+						document.getElementById('extra-toppings-section').style.display = 'none';
+					});
+			}
 
 			function initMenuFilter() {
 					const tagEls = paneC.querySelectorAll(".filter-tag");
