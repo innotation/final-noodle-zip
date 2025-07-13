@@ -41,6 +41,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
         );
     }
 
+
     @Override
     public Optional<UserBadge> findRamenCategoryLevelUserBadge(long userId,
                                                                long badgeCategoryId,
@@ -85,6 +86,26 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                         .limit(1)
                         .fetchOne()
         );
+    }
+
+
+    @Override
+    public List<UserBadge> findUserBadgeForMyPageProfile(Long userId) {
+        QUserBadge userBadge = QUserBadge.userBadge;
+        QBadge badge = QBadge.badge;
+        QBadgeCategory badgeCategory = QBadgeCategory.badgeCategory;
+
+        return queryFactory
+                .select(userBadge)
+                .join(userBadge.badge, badge)
+                .join(badge.badgeCategory, badgeCategory)
+                .where(
+                        userBadge.userId.eq(userId),
+                        userBadge.obtainedAt.isNotNull()
+                )
+                .orderBy(userBadge.id.desc())
+                .limit(3)
+                .fetch();
     }
 
 
@@ -148,7 +169,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                 .from(userBadge)
                 .join(userBadge.badge, badge)
                 .join(badge.badgeCategory, badgeCategory)
-                .join(badgeCategory.badgeGroup, badgeGroup)
+//                .join(badgeCategory.badgeGroup, badgeGroup)
                 .where(
                         userBadge.userId.eq(userId),
                         userBadge.obtainedAt.isNotNull(),
@@ -209,7 +230,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                 .from(userBadge)
                 .join(userBadge.badge, badge)
                 .leftJoin(badge.badgeCategory, badgeCategory)
-                .join(badgeCategory.badgeGroup, badgeGroup)
+//                .join(badgeCategory.badgeGroup, badgeGroup)
                 .leftJoin(badge.badgeExtraOption.ramenCategory, ramenCategory)
                 .where(condition)
                 .orderBy(
