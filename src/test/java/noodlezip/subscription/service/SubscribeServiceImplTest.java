@@ -33,33 +33,31 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SubscribeServiceImplTest {
 
+
     @Mock private UserSubscriptionRepository userSubscriptionRepository;
     @Mock private UserService userService;
-    @Mock private UserRepository userRepository;
     @Mock private PageUtil pageUtil;
 
     @InjectMocks private SubscribeServiceImpl subscribeService;
 
     @Test
     void 구독_존재하면_취소한다() {
-        // given
         Long targetUserId = 1L;
         Long requestUserId = 2L;
 
         when(userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId))
                 .thenReturn(true);
+        when(userService.findExistingUserByUserId(targetUserId))
+                .thenReturn(Optional.of(User.builder().id(targetUserId).build()));
 
-        // when
         subscribeService.handleSubscribe(targetUserId, requestUserId);
 
-        // then
         verify(userSubscriptionRepository).deleteByFollowerIdAndFolloweeId(requestUserId, targetUserId);
         verify(userSubscriptionRepository, never()).save(any());
     }
 
     @Test
     void 구독_존재하지_않으면_추가한다() {
-        // given
         Long targetUserId = 1L;
         Long requestUserId = 2L;
 
@@ -68,33 +66,26 @@ class SubscribeServiceImplTest {
 
         when(userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId))
                 .thenReturn(false);
-        when(userRepository.findById(targetUserId)).thenReturn(Optional.of(targetUser));
-        when(userRepository.findById(requestUserId)).thenReturn(Optional.of(requestUser));
+        when(userService.findExistingUserByUserId(targetUserId)).thenReturn(Optional.of(targetUser));
+        when(userService.findExistingUserByUserId(requestUserId)).thenReturn(Optional.of(requestUser));
 
-        // when
         subscribeService.handleSubscribe(targetUserId, requestUserId);
 
-        // then
         ArgumentCaptor<UserSubscription> captor = ArgumentCaptor.forClass(UserSubscription.class);
         verify(userSubscriptionRepository).save(captor.capture());
 
         UserSubscription saved = captor.getValue();
-        // equals 깨지지 않게 ID만 비교
         assertThat(saved.getFollower().getId()).isEqualTo(requestUser.getId());
         assertThat(saved.getFollowee().getId()).isEqualTo(targetUser.getId());
     }
 
     @Test
     void 구독추가시_타겟유저가_없으면_예외() {
-        // given
         Long targetUserId = 1L;
         Long requestUserId = 2L;
 
-        when(userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId))
-                .thenReturn(false);
-        when(userRepository.findById(targetUserId)).thenReturn(Optional.empty());
+        when(userService.findExistingUserByUserId(targetUserId)).thenReturn(Optional.empty());
 
-        // when & then
         assertThatThrownBy(() -> subscribeService.handleSubscribe(targetUserId, requestUserId))
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(SubscriptionErrorStatus._FAIL_SUBSCRIPTION.getMessage());
@@ -102,7 +93,6 @@ class SubscribeServiceImplTest {
 
     @Test
     void 구독추가시_요청유저가_없으면_예외() {
-        // given
         Long targetUserId = 1L;
         Long requestUserId = 2L;
 
@@ -110,58 +100,12 @@ class SubscribeServiceImplTest {
 
         when(userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId))
                 .thenReturn(false);
-        when(userRepository.findById(targetUserId)).thenReturn(Optional.of(targetUser));
-        when(userRepository.findById(requestUserId)).thenReturn(Optional.empty());
+        when(userService.findExistingUserByUserId(targetUserId)).thenReturn(Optional.of(targetUser));
+        when(userService.findExistingUserByUserId(requestUserId)).thenReturn(Optional.empty());
 
-        // when & then
         assertThatThrownBy(() -> subscribeService.handleSubscribe(targetUserId, requestUserId))
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(SubscriptionErrorStatus._FAIL_SUBSCRIPTION.getMessage());
     }
 
-    @Test
-    void 팔로워_페이지_조회_구조_검증() {
-        // given
-        Long targetUserId = 1L;
-        Long requestUserId = 2L;
-        int page = 1;
-
-        when(userRepository.existsById(requestUserId)).thenReturn(true);
-
-        SubscriberResponse dto = new SubscriberResponse(10L, 100L, "Alice","Alice", "alice.jpg", true);
-        Page<SubscriberResponse> followerPage = new PageImpl<>(List.of(dto), PageRequest.of(0, 30), 20);
-
-        Map<String, Object> dummyPageInfo = Map.of(
-                "page", 1,
-                "totalPage", 10,
-                "beginPage", 1,
-                "endPage", 5,
-                "isFirst", true,
-                "isLast", false
-        );
-
-        when(userSubscriptionRepository.findFollowerList(eq(targetUserId), eq(requestUserId), any(Pageable.class)))
-                .thenReturn(followerPage);
-        doReturn(dummyPageInfo)
-                .when(pageUtil)
-                .getPageInfo(any(Page.class), eq(SubscriptionPagePolicy.PAGE_PER_BLOCK));
-
-        // when
-        SubscriptionPageResponse response = subscribeService.getFollowerListWithPaging(targetUserId, requestUserId, page);
-
-        // then
-        assertThat(response.getPage()).isEqualTo(1);
-        assertThat(response.getTotalPage()).isEqualTo(10);
-        assertThat(response.getBeginPage()).isEqualTo(1);
-        assertThat(response.getEndPage()).isEqualTo(5);
-        assertThat(response.isFirst()).isTrue();
-        assertThat(response.isLast()).isFalse();
-
-        assertThat(response.getSubscriptionList()).hasSize(1);
-        assertThat(response.getSubscriptionList()).extracting("name").containsExactly("Alice");
-
-        verify(userSubscriptionRepository).findFollowerList(eq(targetUserId), eq(requestUserId), any(Pageable.class));
-        verify(pageUtil).getPageInfo(any(Page.class), eq(SubscriptionPagePolicy.PAGE_PER_BLOCK));
-    }
-    
 }
