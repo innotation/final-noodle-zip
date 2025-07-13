@@ -1,13 +1,13 @@
 package noodlezip.badge.constants;
 
-public enum BadgeEventType {
+public enum UserEventType {
 
     COMMENT_WRITE,
 
     COMMUNITY_LIKE,
-    COMMUNITY_WRITE,
+    COMMUNITY_POST,
 
     RAMEN_REVIEW_LIKE,
-    RAMEN_REVIEW_WRITE;
+    RAMEN_REVIEW_POST;
 
 }
