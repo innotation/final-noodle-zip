@@ -134,10 +134,11 @@
                         <h4>Categories</h4>
                     </div>
                     <ul class="cats">
-                        <li><a href="#">Food <span>(12)</span></a></li>
-                        <li><a href="#">Places to visit <span>(21)</span></a></li>
-                        <li><a href="#">New Places <span>(44)</span></a></li>
-                        <li><a href="#">Suggestions and guides <span>(31)</span></a></li>
+                        <li th:each="categoryCount : ${categoryCounts}">
+                            <a th:href="@{/board/{communityType}/list(communityType=${categoryCount.communityType})}"
+                               th:text="${categoryCount.displayName} + '(' + ${categoryCount.count} + ')'">카테고리(0)
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <!-- /widget -->
