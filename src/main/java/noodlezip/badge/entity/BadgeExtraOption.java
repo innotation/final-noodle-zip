@@ -22,4 +22,9 @@ public class BadgeExtraOption {
     @JoinColumn(name = "ramen_category_id")
     private Category ramenCategory;
 
+
+    public boolean hasOption() {
+        return storeSidoLegalCode != null || ramenCategory != null;
+    }
+
 }
