@@ -26,14 +26,14 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final PageUtil pageUtil;
 
 
     @Override
     @Transactional(readOnly = true)
     public SubscriptionPageResponse getFollowerListWithPaging(Long targetUserId, Long requestUserId, int page) {
-        userService.validateMyPageExistingUserByUserId(targetUserId);
+        userService.findExistingUserByUserId(targetUserId)
+                .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION_LIST));
 
         Pageable pageable = SubscriptionPagePolicy.getPageable(page);
         Page<SubscriberResponse> followerList = getFollowerListByLoginStatus(targetUserId, requestUserId, pageable);
@@ -57,7 +57,8 @@ public class SubscribeServiceImpl implements SubscribeService {
     @Override
     @Transactional(readOnly = true)
     public SubscriptionPageResponse getFollowingListWithPaging(Long targetUserId, Long requestUserId, int page) {
-        userService.validateMyPageExistingUserByUserId(targetUserId);
+        userService.findExistingUserByUserId(targetUserId)
+                .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION_LIST));
 
         Pageable pageable = SubscriptionPagePolicy.getPageable(page);
         Page<SubscriberResponse> followeeList = getFollowingListByLoginStatus(targetUserId, requestUserId, pageable);
@@ -78,7 +79,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     private boolean isLoginUser(Long requestUserId) {
-        return requestUserId != null && userRepository.existsById(requestUserId);
+        return requestUserId != null && userService.findExistingUserByUserId(requestUserId).isPresent();
     }
 
 
@@ -88,7 +89,9 @@ public class SubscribeServiceImpl implements SubscribeService {
         if (targetUserId == null || requestUserId == null) {
             throw new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION);
         }
-        userService.validateMyPageExistingUserByUserId(targetUserId);
+        userService.findExistingUserByUserId(targetUserId)
+                .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION));
+
         if (targetUserId.equals(requestUserId)) {
             throw new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION);
         }
@@ -106,9 +109,9 @@ public class SubscribeServiceImpl implements SubscribeService {
     }
 
     private void addSubscription(Long targetUserId, Long requestUserId) {
-        User targetUser = userRepository.findById(targetUserId)
+        User targetUser = userService.findExistingUserByUserId(targetUserId)
                 .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION));
-        User requestUser = userRepository.findById(requestUserId)
+        User requestUser = userService.findExistingUserByUserId(requestUserId)
                 .orElseThrow(() -> new CustomException(SubscriptionErrorStatus._FAIL_SUBSCRIPTION));
 
         UserSubscription userSubscription = UserSubscription.builder()

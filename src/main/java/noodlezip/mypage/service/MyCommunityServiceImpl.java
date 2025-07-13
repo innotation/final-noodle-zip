@@ -1,12 +1,14 @@
 package noodlezip.mypage.service;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.exception.CustomException;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.service.CommentService;
 import noodlezip.mypage.dto.response.MyBoardListPageResponse;
 import noodlezip.mypage.dto.response.MyCommentListPageResponse;
 import noodlezip.mypage.dto.response.MyCommentResponse;
+import noodlezip.mypage.status.MyPageErrorStatus;
 import noodlezip.user.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,8 @@ public class MyCommunityServiceImpl implements MyCommunityService {
     @Override
     @Transactional(readOnly = true)
     public MyBoardListPageResponse getMyPostBoardListPage(Long userId, Pageable pageable) {
-        userService.validateMyPageExistingUserByUserId(userId);
+        userService.findExistingUserByUserId(userId)
+                .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
 
         Map<String, Object> boardPageInfo = boardService.findBoardByUser(userId, pageable);
         MyBoardListPageResponse boardList = MyBoardListPageResponse.of(boardPageInfo);
@@ -37,11 +40,13 @@ public class MyCommunityServiceImpl implements MyCommunityService {
         return boardList;
     }
 
+
     @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
     public MyBoardListPageResponse getMyLikedBoardListPage(Long userId, Pageable pageable) {
-        userService.validateMyPageExistingUserByUserId(userId);
+        userService.findExistingUserByUserId(userId)
+                .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
 
         Map<String, Object> boardPageInfo = boardService.findBoardLiked(userId, pageable);
         MyBoardListPageResponse boardList = MyBoardListPageResponse.of(boardPageInfo);
@@ -55,7 +60,8 @@ public class MyCommunityServiceImpl implements MyCommunityService {
     @Override
     @Transactional(readOnly = true)
     public MyCommentListPageResponse getPostCommentListPage(Long userId, Pageable pageable) {
-        userService.validateMyPageExistingUserByUserId(userId);
+        userService.findExistingUserByUserId(userId)
+                .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
 
         Map<String, Object> boardPageInfo = commentService.findCommentListByUserId(userId, pageable);
         MyCommentListPageResponse commentList = MyCommentListPageResponse.of(boardPageInfo);
