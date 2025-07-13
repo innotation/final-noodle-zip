@@ -20,16 +20,17 @@ public class CommentPostListener {
     @Async
     @TransactionalEventListener
     public void processAllCommentPostCount(BasicBadgeEvent event) {
-        if (event.getEventType() == UserEventType.COMMENT_WRITE) {
+        if (event.getEventType() == UserEventType.COMMENT_POST) {
+
             try {
                 directUpdateProcessor.process(
                         event.getUserId(), LevelBadgeCategoryType.ALL_COMMENT_POST_COUNT_BADGE);
             } catch (Exception e) {
-                log.error("[BadgeFail] userId={} badgeType={} reason={}",
-                        LevelBadgeCategoryType.ALL_COMMUNITY_POST_COUNT_BADGE.name(),
+                log.error("[BadgeFail] userId={} event={} badgeType={} reason={}",
                         event.getUserId(),
-                        e.getMessage(),
-                        e
+                        UserEventType.COMMENT_POST.name(),
+                        LevelBadgeCategoryType.ALL_COMMUNITY_POST_COUNT_BADGE.name(),
+                        e.getMessage(), e
                 );
             }
         }
