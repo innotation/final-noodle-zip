@@ -3,7 +3,7 @@
 /*============================================================================================*/
 
 /* Tabelog 스타일 검색바 - 원본 반응형 컨셉 유지 */
-.search_bar_list {
+.header_in .search_bar_list {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -70,6 +70,46 @@
     background: #4a7a38;
 }
 
+/* 게시글 목록 검색바 - 원본 스타일과 동일하게 적용 */
+.board_search_bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.board_search_bar input[type="text"] {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+    flex: 1;
+}
+
+.board_search_bar input[type="submit"] {
+    background: #589442;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.board_search_bar input[type="submit"]:hover {
+    background: #4a7a38;
+}
+
 /* 지역 선택 셀렉트박스 스타일 */
 #modal-region-select {
     border: 1px solid #ddd;
@@ -95,5 +135,9 @@
 @media (max-width: 991px) {
     .search_bar_list {
         display: none; /* 모바일에서는 검색바 숨김 */
+    }
+    
+    .board_search_bar {
+        max-width: 100%;
     }
 } 
