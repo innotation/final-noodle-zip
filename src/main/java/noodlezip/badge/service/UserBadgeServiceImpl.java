@@ -5,6 +5,7 @@ import noodlezip.badge.constants.LevelBadgeCategoryType;
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
 import noodlezip.badge.dto.response.BadgeGroupResponse;
+import noodlezip.badge.entity.UserBadge;
 import noodlezip.badge.repository.BadgeGroupRepository;
 import noodlezip.badge.repository.UserBadgeRepository;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,12 @@ public class UserBadgeServiceImpl implements UserBadgeService {
     @Transactional(readOnly = true)
     public List<BadgeGroupResponse> getBadgeGroupList() {
         return badgeGroupRepository.getBadgeGroups();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserBadge> getUserBadgeForMyPageProfile(Long userId) {
+        return userBadgeRepository.findUserBadgeForMyPageProfile(userId);
     }
 
     @Override
