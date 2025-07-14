@@ -635,10 +635,10 @@
                               <div class="clearfix add_bottom_15">
                                 <span class="mypage-board-date" th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></span>
                               </div>
-                              <a th:href="@{'/board/' + ${board.boardId}}" class="mypage-board-title-link">
+                              <a th:href="@{'/board/detail/' + ${board.boardId}}" class="mypage-board-title-link">
                                 <h4 class="mypage-board-title" th:text="${board.title}"></h4>
                               </a>
-                              <p class="mypage-board-content" th:text="${board.content}"></p>
+                              <p class="mypage-board-content" th:text="${board.plainContent}"></p>
                             </div>
                           </div>
                         </div>

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.jsoup.Jsoup;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -62,6 +63,9 @@ public class MyPageMainController extends MyBaseController {
         Pageable pageable = PageRequest.of(0, 100); // 1페이지, 100개
         @SuppressWarnings("unchecked")
         java.util.List<BoardRespDto> boards = (java.util.List<BoardRespDto>) boardService.findBoardByUser(userId, pageable).get("list");
+        for (BoardRespDto board : boards) {
+            board.setPlainContent(Jsoup.parse(board.getContent()).text());
+        }
         model.addAttribute("userAccessInfo", userAccessInfo);
         model.addAttribute("myPage", myPage);
         model.addAttribute("boards", boards);
