@@ -17,11 +17,7 @@ public interface BoardService {
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
     Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable);
     Map<String, Object> searchBoards(String keyword, Pageable pageable);
-
-    // 좋아요 누른 게시글 조회 위한 메소드
     Map<String, Object> findBoardLiked(Long userId, Pageable pageable);
-
-    // 내가 쓴 게시글 조회 위한 메소드
     Map<String, Object> findBoardByUser(Long userId, Pageable pageable);
     BoardRespDto findBoardById(Long id, String userIdOrIp);
     void registBoard(BoardReqDto boardReqDto, User user);
