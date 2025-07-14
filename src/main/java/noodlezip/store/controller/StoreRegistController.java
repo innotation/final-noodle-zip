@@ -64,4 +64,5 @@ public class StoreRegistController {
         Long storeId = storeService.registerStore(dto, storeMainImage, user);
         return Map.of("storeId", storeId);
     }
+
 }

@@ -11,12 +11,14 @@ import noodlezip.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/store")
@@ -109,6 +111,13 @@ public class StoreController {
     @ResponseBody
     public List<ToppingResponseDto> getToppingByStoreId(@PathVariable Long storeId){
         return storeService.getStoreToppings(storeId);
+    }
+
+    // 매장 삭제
+    @DeleteMapping("/{storeId}")
+    public ResponseEntity<?> deleteStore(@PathVariable Long storeId) {
+        storeService.deleteStore(storeId);
+        return ResponseEntity.ok().body(Map.of("message", "매장이 성공적으로 삭제되었습니다."));
     }
 
 }

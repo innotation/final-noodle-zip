@@ -337,4 +337,19 @@ public class StoreService {
                 });
         return result;
     }
+
+    // 매장 삭제
+    @Transactional
+    public void deleteStore(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        ramenToppingRepository.deleteByMenu_Store(store);
+        menuRepository.deleteByStore(store);
+        scheduleRepository.deleteByStore(store);
+        storeExtraToppingRepository.deleteByStore(store);
+
+        storeRepository.delete(store);
+    }
+
 }
