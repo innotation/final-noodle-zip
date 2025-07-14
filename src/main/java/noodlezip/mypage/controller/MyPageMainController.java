@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.jsoup.Jsoup;
 import noodlezip.badge.service.MyBadgeService;
 import noodlezip.badge.dto.response.UserBadgeResponse;
+import noodlezip.subscription.repository.UserSubscriptionRepository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ public class MyPageMainController extends MyBaseController {
     private final ModelMapper modelMapper;
     private final noodlezip.ramen.service.RamenService ramenService;
     private final MyBadgeService myBadgeService;
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     @Operation(
             summary = "마이페이지 메인페이지 정보 조회",
@@ -74,6 +76,8 @@ public class MyPageMainController extends MyBaseController {
         // 내가 쓴 리뷰 리스트 조회
         java.util.List<noodlezip.store.dto.StoreReviewDto> myReviews = ramenService.findReviewsByUserId(userId, pageable).getContent();
 
+        // 총 리뷰 개수
+        int totalReviewCount = myReviews.size();
         // 뱃지 3개 추천 조회
         java.util.List<UserBadgeResponse> userBadges = myBadgeService.getUserBadgeForMyPageProfile(userId);
         if (userBadges.size() > 3) userBadges = userBadges.subList(0, 3);
@@ -82,6 +86,13 @@ public class MyPageMainController extends MyBaseController {
         model.addAttribute("myPage", myPage);
         model.addAttribute("boards", boards);
         model.addAttribute("myReviews", myReviews);
+        // 팔로우/팔로워 수 조회 및 모델에 추가
+        long followingCount = userSubscriptionRepository.countByFollowerId(userId); // 내가 팔로우하는 사람 수
+        long followerCount = userSubscriptionRepository.countByFolloweeId(userId); // 나를 팔로우하는 사람 수
+        model.addAttribute("followingCount", followingCount);
+        model.addAttribute("followerCount", followerCount);
+        // 총 리뷰수 모델에 추가
+        model.addAttribute("totalReviewCount", totalReviewCount);
         return "mypage/main";
     }
 

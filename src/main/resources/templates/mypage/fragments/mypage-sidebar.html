@@ -1,4 +1,19 @@
 <div th:fragment="mypage-sidebar">
+  <!-- 팔로우/팔로워 영역 -->
+  <div class="sidebar-follow" style="display: flex; justify-content: center; gap: 16px; margin-bottom: 18px;">
+    <a th:href="@{'/users/' + ${myPage.id} + '/following'}" style="font-weight: 500;">
+      팔로우 <span th:text="${followingCount}">0</span>
+    </a>
+    <span>|</span>
+    <a th:href="@{'/users/' + ${myPage.id} + '/followers'}" style="font-weight: 500;">
+      팔로워 <span th:text="${followerCount}">0</span>
+    </a>
+  </div>
+  <!-- 총 리뷰수 영역 -->
+  <div class="sidebar-review-count" style="margin: 18px 0; text-align: center;">
+    <span style="font-size: 1.1em; color: #888;">총 리뷰</span>
+    <span style="font-size: 1.6em; font-weight: bold; margin-left: 6px;" th:text="${totalReviewCount}">0</span>건
+  </div>
   <div class="box_booking mobile_fixed">
     <div class="head">
       <h3>Contact Us</h3>
