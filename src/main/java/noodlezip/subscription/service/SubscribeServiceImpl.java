@@ -32,7 +32,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     ///구독인지 아닌지 상태 확인
     @Transactional(readOnly = true)
     public boolean isSubscribed(Long targetUserId, Long requestUserId) {
-
+        return false;
     }
 
 
