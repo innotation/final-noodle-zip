@@ -252,6 +252,17 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
+    public Long increaseViewCount(Long boardId, Long viewCount) {
+
+        Long result = queryFactory
+                .update(board)
+                .set(board.viewsCount, board.viewsCount.add(viewCount))
+                .where(board.id.eq(boardId))
+                .execute();
+        return result;
+    }
+
+    @Override
     public List<CategoryCountDto> findCategoryCounts() {
         return queryFactory
                 .select(Projections.constructor(CategoryCountDto.class,
@@ -314,17 +325,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Long increaseViewCount(Long boardId, Long viewCount) {
-
-        Long result = queryFactory
-                .update(board)
-                .set(board.viewsCount, board.viewsCount.add(viewCount))
-                .where(board.id.eq(boardId))
-                .execute();
-        return result;
-    }
-
-    @Override
     public Page<BoardRespDto> findReviewBoardsByTag(String tag, String type, Pageable pageable) {
         QRamenReview review = QRamenReview.ramenReview;
         QMenu menu = QMenu.menu;
@@ -370,4 +370,5 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
         return new PageImpl<>(results, pageable, totalCount);
     }
+    
 }
