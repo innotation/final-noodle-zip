@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
+    <!-- SPECIFIC CSS -->
+    <link href="/css/listing.css" rel="stylesheet">
+    <link href="/css/search-custom.css" rel="stylesheet">
+</head>
+
+<body class="margin_sticky">
 <!-- header -->
-<th:block th:replace="~{fragments/subHeader::subHeader}"></th:block>
-
-<!-- SPECIFIC CSS -->
-<link href="/css/listing.css" rel="stylesheet">
-
-<!-- YOUR CUSTOM CSS -->
-<link href="/css/custom.css" rel="stylesheet">
-<link href="/css/search-custom.css" rel="stylesheet">
+<div th:replace="~{fragments/subHeader :: subHeader}"></div>
 
 <main>
   <div class="container-fluid full-height">
@@ -150,8 +150,6 @@
 </main>
 <!--/main-->
 
-<div class="layer"></div><!-- Opacity Mask Menu Mobile -->
-
 <!-- Map -->
 <script type="text/javascript"
         th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='
@@ -184,4 +182,5 @@
 <script src="/js/specific_listing.js"></script>
 <script src="/js/main_navermap.scripts.js"></script>
 
+</body>
 </html>

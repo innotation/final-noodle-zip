@@ -1,5 +1,6 @@
 package noodlezip.ramen.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,12 +10,16 @@ import noodlezip.store.dto.ReviewSummaryDto;
 import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.entity.QMenu;
 import noodlezip.community.entity.QBoard;
+import noodlezip.ramen.entity.QCategory;
+import noodlezip.ramen.entity.QRamenSoup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -154,5 +159,141 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                 .fetchOne();
 
         return count > 0;
+    }
+
+    @Override
+    public Map<String, Long> getReviewCountByCategory() {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+        QCategory category = QCategory.category;
+
+        List<Tuple> results = queryFactory
+                .select(category.categoryName, review.count())
+                .from(review)
+                .join(review.menu, menu)
+                .join(menu.category, category)
+                .groupBy(category.categoryName)
+                .fetch();
+
+        return results.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(category.categoryName),
+                        tuple -> tuple.get(review.count())
+                ));
+    }
+
+    @Override
+    public Map<String, Long> getReviewCountBySoup() {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+        QRamenSoup soup = QRamenSoup.ramenSoup;
+
+        List<Tuple> results = queryFactory
+                .select(soup.soupName, review.count())
+                .from(review)
+                .join(review.menu, menu)
+                .join(menu.ramenSoup, soup)
+                .groupBy(soup.soupName)
+                .fetch();
+
+        return results.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(soup.soupName),
+                        tuple -> tuple.get(review.count())
+                ));
+    }
+
+    @Override
+    public Page<StoreReviewDto> findReviewsByTag(String tag, String type, Pageable pageable) {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+        QBoard board = QBoard.board;
+        QCategory category = QCategory.category;
+        QRamenSoup soup = QRamenSoup.ramenSoup;
+
+        List<StoreReviewDto> content;
+        Long count;
+
+        if ("category".equals(type)) {
+            // 카테고리로 필터링
+            content = queryFactory
+                    .select(Projections.constructor(
+                            StoreReviewDto.class,
+                            review.id,
+                            review.communityId,
+                            menu.id,
+                            menu.menuName,
+                            review.noodleThickness,
+                            review.noodleTexture,
+                            review.noodleBoilLevel,
+                            review.soupTemperature,
+                            review.soupSaltiness,
+                            review.soupSpicinessLevel,
+                            review.soupOiliness,
+                            review.soupFlavorKeywords,
+                            review.content,
+                            review.reviewImageUrl,
+                            review.isReceiptReview,
+                            board.user.userName,
+                            board.user.id
+                    ))
+                    .from(review)
+                    .join(review.menu, menu)
+                    .join(menu.category, category)
+                    .join(board).on(review.communityId.eq(board.id))
+                    .where(category.categoryName.eq(tag))
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+
+            count = queryFactory
+                    .select(review.count())
+                    .from(review)
+                    .join(review.menu, menu)
+                    .join(menu.category, category)
+                    .where(category.categoryName.eq(tag))
+                    .fetchOne();
+        } else {
+            // 육수로 필터링
+            content = queryFactory
+                    .select(Projections.constructor(
+                            StoreReviewDto.class,
+                            review.id,
+                            review.communityId,
+                            menu.id,
+                            menu.menuName,
+                            review.noodleThickness,
+                            review.noodleTexture,
+                            review.noodleBoilLevel,
+                            review.soupTemperature,
+                            review.soupSaltiness,
+                            review.soupSpicinessLevel,
+                            review.soupOiliness,
+                            review.soupFlavorKeywords,
+                            review.content,
+                            review.reviewImageUrl,
+                            review.isReceiptReview,
+                            board.user.userName,
+                            board.user.id
+                    ))
+                    .from(review)
+                    .join(review.menu, menu)
+                    .join(menu.ramenSoup, soup)
+                    .join(board).on(review.communityId.eq(board.id))
+                    .where(soup.soupName.eq(tag))
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+
+            count = queryFactory
+                    .select(review.count())
+                    .from(review)
+                    .join(review.menu, menu)
+                    .join(menu.ramenSoup, soup)
+                    .where(soup.soupName.eq(tag))
+                    .fetchOne();
+        }
+
+        return new PageImpl<>(content, pageable, count);
     }
 }

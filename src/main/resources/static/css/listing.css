@@ -376,8 +376,7 @@ a.btn_filters i {
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 0;
-  z-index: 9999;
+  z-index: 900;
 }
 @media (max-width: 991px) {
   .map-right {
