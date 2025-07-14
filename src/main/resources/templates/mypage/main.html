@@ -28,10 +28,10 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
                   <img th:src="${myPage.profileImageUrl}" alt="프로필 이미지"
-                       style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid #eee;"/>
+                       style="width:160px; height:160px; object-fit:cover; border-radius:16px; border:2px solid #eee;"/>
                   <h1 th:text="${myPage.userName}">Pizzeria da Alfredo</h1>
                 </div>
-                ITALIAN - 27 Old Gloucester St, 4530
+                <!-- 배지 영역이 들어갈 자리 -->
               </div>
               <div class="col-xl-8 col-lg-7 col-md-6 position-relative">
                 <div class="buttons clearfix">
@@ -460,11 +460,11 @@
                         <div class="review_card" th:each="board : ${boards}">
                           <div class="row">
                             <div class="col-md-3 d-flex align-items-center justify-content-center">
-                              <figure class="menu-image-thumb mb-0">
-                                <a th:href="${board.imageUrl != null ? board.imageUrl : '/img/placeholder.png'}"
+                              <figure class="menu-image-thumb mb-0 magnific-gallery">
+                                <a th:href="${board.imageUrl != null ? board.imageUrl : '/img/blog-1.jpg'}"
                                    data-effect="mfp-zoom-in">
-                                  <img th:src="${board.imageUrl != null ? board.imageUrl : '/img/placeholder.png'}"
-                                       onerror="this.onerror=null;this.src='/img/placeholder.png'"
+                                  <img th:src="${board.imageUrl != null ? board.imageUrl : '/img/blog-1.jpg'}"
+                                       onerror="this.onerror=null;this.src='/img/blog-1.jpg'"
                                        alt="게시글 이미지"
                                        style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;">
                                 </a>
@@ -562,5 +562,19 @@
   <script th:src="@{/js/sticky_sidebar.min.js}"></script>
   <script th:src="@{/js/specific_detail.js}"></script>
 
+  <!-- Magnific Popup 이미지 확대 라이트박스 초기화 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.jQuery && $.fn.magnificPopup) {
+        $('.magnific-gallery').magnificPopup({
+          delegate: 'a',
+          type: 'image',
+          gallery: { enabled: true },
+          removalDelay: 300,
+          mainClass: 'mfp-zoom-in',
+        });
+      }
+    });
+  </script>
 </body>
 </html>`

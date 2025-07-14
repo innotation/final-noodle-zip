@@ -15,7 +15,7 @@
           </div>
           <div class="col-12"><hr class="my-2"></div>
           <div class="col-md-3 d-flex align-items-center justify-content-center">
-            <figure class="menu-image-thumb mb-0">
+            <figure class="menu-image-thumb mb-0 magnific-gallery">
               <a th:href="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/menu-thumb-2.jpg'}"
                  th:title="${review.menuName + ' 리뷰 이미지'}"
                  data-effect="mfp-zoom-in">
@@ -32,7 +32,9 @@
               <span th:if="${review.updatedAt != null}" th:text="'수정됨 ' + ${#temporals.format(review.updatedAt, 'yyyy-MM-dd')}"></span>
               <span th:if="${review.updatedAt == null}" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"></span>
             </div>
-            <h4 th:text="${review.soupFlavorKeywords}">맛 키워드</h4>
+            <a th:href="@{'/board/detail/' + ${review.communityId}}">
+              <h4 th:text="${review.soupFlavorKeywords}">맛 키워드</h4>
+            </a>
             <p th:text="${review.content}">리뷰 본문</p>
             <div class="reviews_sum_details mt-2">
               <div class="row">
