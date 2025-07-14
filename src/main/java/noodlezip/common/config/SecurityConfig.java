@@ -25,7 +25,7 @@ public class SecurityConfig {
         "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**",
         "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
         "/store/**", "/admin_section/**", "/admin/**", "/receipt", "/location/**", "/ramen/**",
-        "/board/**", "/comments/**", "/mypage/main"
+        "/board/**", "/comments/**", "/mypage/**"
     );
 
     @Bean

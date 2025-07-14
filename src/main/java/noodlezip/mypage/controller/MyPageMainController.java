@@ -8,12 +8,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.dto.UserAccessInfo;
+import noodlezip.mypage.dto.response.MyPageResponse;
+import noodlezip.user.entity.User;
+import noodlezip.user.service.UserService;
+import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.service.BoardService;
+import noodlezip.user.status.UserErrorStatus;
+import noodlezip.common.exception.CustomException;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @Tag(name = "마이페이지", description = "미이페이지 연동 API")
 public class MyPageMainController extends MyBaseController {
+    private final UserService userService;
+    private final BoardService boardService;
+    private final ModelMapper modelMapper;
 
     @Operation(
             summary = "마이페이지 메인페이지 정보 조회",
@@ -37,9 +50,21 @@ public class MyPageMainController extends MyBaseController {
                              Model model
     ) {
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
-
+        // 유저 정보 조회
+        User user = userService.findExistingUserByUserId(userId)
+            .orElseThrow(() -> new CustomException(UserErrorStatus._NOT_FOUND_USER));
+        MyPageResponse myPage = MyPageResponse.builder()
+            .userName(user.getUserName())
+            .profileImageUrl(user.getProfileImageUrl())
+            .profileBannerImageUrl(user.getProfileBannerImageUrl())
+            .build();
+        // 유저 게시글 리스트 조회
+        Pageable pageable = PageRequest.of(0, 100); // 1페이지, 100개
+        @SuppressWarnings("unchecked")
+        java.util.List<BoardRespDto> boards = (java.util.List<BoardRespDto>) boardService.findBoardByUser(userId, pageable).get("list");
         model.addAttribute("userAccessInfo", userAccessInfo);
-
+        model.addAttribute("myPage", myPage);
+        model.addAttribute("boards", boards);
         return "mypage/main";
     }
 
