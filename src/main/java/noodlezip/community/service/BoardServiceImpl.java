@@ -226,6 +226,13 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<BoardRespDto> getPopularBoards(String category) {
+        return boardRepository.findPopularBoards(category);
+    }
+
+
+    @Override
     public List<Map<String, String>> uploadImages(List<MultipartFile> uploadFiles) {
         List<Map<String, String>> imageInfos = new ArrayList<>();
         if (uploadFiles != null && !uploadFiles.isEmpty()) {

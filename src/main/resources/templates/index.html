@@ -197,46 +197,18 @@
                     <span><em></em></span>
                     <h2>인기 게시글</h2>
                     <p>현재 인기있는 게시글들을 확인해보세요.</p>
-                    <a th:href="@{/board/list}">View All</a>
+                    <a th:href="@{/board/list}">전체보기</a>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="list_home">
-                    <ul>
-                        <li>
-                            <a href="detail-restaurant.html">
-                                <figure>
-                                    <img src="img/location_list_placeholder.png" data-src="img/location_list_1.jpg"
-                                         alt="" class="lazy">
-                                </figure>
-                                <div class="score"><strong>9.5</strong></div>
-                                <em>Italian</em>
-                                <h3>La Monnalisa</h3>
-                                <small>8 Patriot Square E2 9NF</small>
-                            </a>
-                        </li>
+                    <ul id="community-board-list-container">
                     </ul>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="list_home">
-                    <ul>
-                        <li>
-                            <a href="detail-restaurant.html">
-                                <figure>
-                                    <img src="img/location_list_placeholder.png" data-src="img/location_list_4.jpg"
-                                         alt="" class="lazy">
-                                </figure>
-                                <div class="score"><strong>9.5</strong></div>
-                                <em>Vegetarian</em>
-                                <h3>Mr. Pepper</h3>
-                                <small>27 Old Gloucester St, 4563</small>
-                                <ul>
-                                    <li><span class="ribbon off">-30%</span></li>
-                                    <li>Average price $20</li>
-                                </ul>
-                            </a>
-                        </li>
+                    <ul id="review-board-list-container">
                     </ul>
                 </div>
             </div>
@@ -291,5 +263,68 @@
 <script th:src="@{/js/slider.js}"></script>
 <script th:src="@{/js/common_func.js}"></script>
 <script th:src="@{/assets/validate.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const communityBoardListContainer = document.getElementById('community-board-list-container');
+        const reviewBoardListContainer = document.getElementById('review-board-list-container');
+        async function loadBoardData(boardName) {
+            console.log(boardName);
+            try {
+                const response = await fetch(`/board/popular/${boardName}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const pageData = await response.json();
+
+                const boardItems = pageData.payload;
+
+                if (!boardItems || boardItems.length === 0) {
+                    console.log(`${boardName} 게시판에 표시할 데이터가 없습니다.`);
+                    return;
+                }
+
+                boardItems.forEach(item => {
+                    const htmlliElement = document.createElement('li');
+                    const aElement = document.createElement('a');
+                    const figureElement = document.createElement('figure');
+                    const imgElement = document.createElement('img');
+                    const divStrongElement = document.createElement('div');
+                    divStrongElement.classList.add('score');
+                    const strongElement = document.createElement('strong');
+                    const emElement = document.createElement('em');
+                    const h3Element = document.createElement('h3');
+                    const smallElement = document.createElement('small');
+                    if (boardName == 'community')
+                    {
+                        communityBoardListContainer.appendChild(htmlliElement);
+                    } else if (boardName == 'review') {
+                        reviewBoardListContainer.appendChild(htmlliElement);
+                    }
+                    htmlliElement.appendChild(aElement);
+                    aElement.appendChild(figureElement);
+                    figureElement.appendChild(imgElement);
+                    imgElement.classList.add('lazy');
+                    aElement.appendChild(divStrongElement);
+                    divStrongElement.appendChild(strongElement);
+                    aElement.appendChild(emElement);
+                    aElement.appendChild(h3Element);
+                    aElement.appendChild(smallElement);
+                    aElement.href = `/board/detail/${item.boardId}`;
+                    imgElement.src = item.imageUrl;
+                    strongElement.textContent = item.likesCount;
+                    emElement.textContent = item.communityType;
+                    h3Element.textContent = item.title;
+                    smallElement.textContent = item.content;
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        loadBoardData('community');
+        loadBoardData('review');
+    });
+</script>
 </body>
 </html>

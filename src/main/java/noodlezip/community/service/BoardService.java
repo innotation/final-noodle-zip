@@ -28,4 +28,5 @@ public interface BoardService {
     Integer getLikeCount(Long boardId);
     List<Board> getBoardsByIds(List<Long> recentBoardIds);
     List<Map<String, String>> uploadImages(List<MultipartFile> uploadFiles);
+    List<BoardRespDto> getPopularBoards(String category);
 }

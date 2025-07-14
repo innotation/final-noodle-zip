@@ -147,6 +147,22 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
+    public List<BoardRespDto> findPopularBoards(String category) {
+        List<BoardRespDto> results = queryFactory
+                .select(getBoardRespDtoProjection())
+                .from(board)
+                .leftJoin(board.user, user)
+                .where(
+                        board.postStatus.eq(CommunityActiveStatus.POSTED).and(board.communityType.eq(category))
+                )
+                .orderBy(board.likesCount.desc())
+                .limit(5)
+                .fetch();
+
+        return results;
+    }
+
+    @Override
     public Page<BoardRespDto> findBoardByCommunityTypeAndKeywordWithPagination(String category, String keyword, Pageable pageable) {
 
         BooleanBuilder builder = new BooleanBuilder();
