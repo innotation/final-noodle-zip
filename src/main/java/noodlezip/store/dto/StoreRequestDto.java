@@ -32,6 +32,7 @@ public class StoreRequestDto {
     private OperationStatus operationStatus;
 
     private List<MenuRequestDto> menus;
+    private List<ExtraToppingRequestDto> extraToppings;
     private List<StoreScheduleRequestDto> weekSchedule;
 
     private String storeMainImageUrl;

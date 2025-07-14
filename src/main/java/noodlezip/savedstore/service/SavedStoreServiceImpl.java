@@ -56,9 +56,8 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         List<SavedStore> savedStores = saveStoreRepository.findAllByUserIdAndStoreId(userId, storeId);
         if (!savedStores.isEmpty()) {
             checkCategorySavedStoreMultiple(savedStores, categoryList);
-        } else {
-            categoryList.get(0).setActive(true);
         }
+        // 위시리스트에 저장하지 않은 경우 모든 카테고리를 비활성화 상태로 유지
         return categoryList;
     }
 

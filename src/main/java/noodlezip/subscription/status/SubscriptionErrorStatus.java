@@ -1,4 +1,4 @@
-package noodlezip.mypage.exception;
+package noodlezip.subscription.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,12 +6,15 @@ import noodlezip.common.code.BaseErrorCode;
 import noodlezip.common.dto.ErrorReasonDto;
 import org.springframework.http.HttpStatus;
 
-@AllArgsConstructor
 @Getter
-public enum MyPageErrorStatus implements BaseErrorCode {
+@AllArgsConstructor
+public enum SubscriptionErrorStatus implements BaseErrorCode {
 
-    _NOT_FOUND_USER_MY_PAGE(HttpStatus.NOT_FOUND,
-            "MYPAGE-001", "페이지를 찾을 수 없습니다.");
+    _FAIL_SUBSCRIPTION(HttpStatus.BAD_REQUEST,
+            "SUBSCRIPTION-001", "사용자 구독에 실패했습니다."),
+    _FAIL_SUBSCRIPTION_LIST(HttpStatus.BAD_REQUEST,
+            "SUBSCRIPTION-002", "구독자 목록을 불러오는데 실패했습니다.")
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
