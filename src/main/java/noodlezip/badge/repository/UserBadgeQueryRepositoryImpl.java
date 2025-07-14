@@ -65,6 +65,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
         );
     }
 
+
     @Override
     public Optional<UserBadge> findSidoRegionLevelUserBadge(long userId,
                                                             long badgeCategoryId,
@@ -97,6 +98,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
 
         return queryFactory
                 .select(userBadge)
+                .from(userBadge)
                 .join(userBadge.badge, badge)
                 .join(badge.badgeCategory, badgeCategory)
                 .where(
@@ -169,7 +171,6 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                 .from(userBadge)
                 .join(userBadge.badge, badge)
                 .join(badge.badgeCategory, badgeCategory)
-//                .join(badgeCategory.badgeGroup, badgeGroup)
                 .where(
                         userBadge.userId.eq(userId),
                         userBadge.obtainedAt.isNotNull(),
@@ -230,7 +231,6 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
                 .from(userBadge)
                 .join(userBadge.badge, badge)
                 .leftJoin(badge.badgeCategory, badgeCategory)
-//                .join(badgeCategory.badgeGroup, badgeGroup)
                 .leftJoin(badge.badgeExtraOption.ramenCategory, ramenCategory)
                 .where(condition)
                 .orderBy(
