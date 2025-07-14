@@ -1,7 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
-<div th:replace="~{fragments/mainHeader::mainHeader}"></div>
+<head>
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
+    <!-- SPECIFIC CSS -->
+  <link th:href="@{/css/home.css}" rel="stylesheet">
+</head>
+
+<body>
+<div th:replace="~{fragments/mainHeader :: mainHeader}"></div>
+
 <main>
     <div class="hero_single version_2">
         <div class="opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
