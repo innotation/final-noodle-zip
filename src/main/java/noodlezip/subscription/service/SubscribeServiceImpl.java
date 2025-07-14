@@ -28,6 +28,12 @@ public class SubscribeServiceImpl implements SubscribeService {
     private final UserService userService;
     private final PageUtil pageUtil;
 
+    // TODO 마이페이지 메인페이지 구독 버튼 활성화 여부
+    @Transactional(readOnly = true)
+    public boolean isSubscribed(Long requestUserId, Long targetUserId) {
+        return userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId);
+    }
+
 
     @Override
     @Transactional(readOnly = true)

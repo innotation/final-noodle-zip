@@ -17,8 +17,7 @@ public enum BadgeErrorStatus implements BaseErrorCode {
     _NOT_FOUNT_USER_BADGE(HttpStatus.NOT_FOUND,
             "BADGE-003", "달성되지 않은 배지입니다."),
     _NOT_FOUNT_USER_BADGE_PAGE(HttpStatus.NOT_FOUND,
-            "BADGE-003", "존재하지 않는 배지 페이지입니다.")
-    ;
+            "BADGE-003", "존재하지 않는 배지 페이지입니다.");
 
 
     private final HttpStatus httpStatus;

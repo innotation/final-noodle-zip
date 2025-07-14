@@ -57,7 +57,6 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         if (!savedStores.isEmpty()) {
             checkCategorySavedStoreMultiple(savedStores, categoryList);
         }
-        // 위시리스트에 저장하지 않은 경우 모든 카테고리를 비활성화 상태로 유지
         return categoryList;
     }
 
