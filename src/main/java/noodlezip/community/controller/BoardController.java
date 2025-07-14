@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import noodlezip.community.dto.CategoryCountDto;
+import noodlezip.community.dto.PopularTagDto;
 
 @RequestMapping("/board")
 @Controller
@@ -161,12 +163,6 @@ public class BoardController {
         model.addAttribute("isFirst", map.get("isFirst"));
         model.addAttribute("isLast", map.get("isLast"));
 
-        // 카테고리별 개수 조회
-        model.addAttribute("categoryCounts", boardService.getCategoryCounts());
-
-        // 인기 태그 조회
-        model.addAttribute("popularTags", boardService.getPopularTags());
-
         return "/board/list";
     }
 
@@ -254,5 +250,51 @@ public class BoardController {
     @Operation(summary = "이미지 업로드", description = "게시글 작성 시 사용되는 이미지 파일을 서버에 업로드하고, 업로드된 이미지들의 URL 목록을 반환합니다. 다중 파일 업로드를 지원합니다.")
     public ResponseEntity<?> uploadImage(@RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED, boardService.uploadImages(uploadFiles));
+    }
+
+    @GetMapping("/sidebar/categories")
+    @ResponseBody
+    @Operation(summary = "카테고리별 게시글 수 조회", description = "각 카테고리별 게시글 개수를 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<List<CategoryCountDto>>> getCategoryCounts() {
+        try {
+            List<CategoryCountDto> categoryCounts = boardService.getCategoryCounts();
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, categoryCounts);
+        } catch (Exception e) {
+            log.error("카테고리별 게시글 수 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sidebar/popular-tags")
+    @ResponseBody
+    @Operation(summary = "인기 태그 조회", description = "인기 태그 목록을 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<List<PopularTagDto>>> getPopularTags() {
+        try {
+            List<PopularTagDto> popularTags = boardService.getPopularTags();
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularTags);
+        } catch (Exception e) {
+            log.error("인기 태그 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sidebar/widgets")
+    @ResponseBody
+    @Operation(summary = "사이드바 위젯 데이터 조회", description = "카테고리별 게시글 개수와 인기 태그 데이터를 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Map<String, Object>>> getSidebarWidgets() {
+        try {
+            List<CategoryCountDto> categoryCounts = boardService.getCategoryCounts();
+            List<PopularTagDto> popularTags = boardService.getPopularTags();
+            
+            Map<String, Object> widgets = Map.of(
+                "categoryCounts", categoryCounts,
+                "popularTags", popularTags
+            );
+            
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, widgets);
+        } catch (Exception e) {
+            log.error("사이드바 위젯 데이터 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
     }
 }
