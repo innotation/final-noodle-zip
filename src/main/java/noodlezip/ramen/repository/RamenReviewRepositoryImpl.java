@@ -32,6 +32,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
         QRamenReview review = QRamenReview.ramenReview;
         QMenu menu = QMenu.menu;
         QBoard board = QBoard.board;
+        noodlezip.store.entity.QStore store = noodlezip.store.entity.QStore.store;
 
         List<StoreReviewDto> content = queryFactory
                 .select(Projections.fields(
@@ -55,10 +56,14 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         board.user.userName.as("userName"),
                         board.user.id.as("userId"),
                         board.createdAt.as("createdAt"),
-                        board.updatedAt.as("updatedAt")
+                        board.updatedAt.as("updatedAt"),
+                        store.id.as("storeId"),
+                        store.storeName.as("storeName"),
+                        store.address.as("storeAddress")
                 ))
                 .from(review)
                 .join(review.menu, menu)
+                .join(menu.store, store)
                 .join(board).on(review.communityId.eq(board.id))
                 .where(menu.store.id.eq(storeId))
                 .offset(pageable.getOffset())
@@ -304,6 +309,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
         QRamenReview review = QRamenReview.ramenReview;
         QMenu menu = QMenu.menu;
         QBoard board = QBoard.board;
+        noodlezip.store.entity.QStore store = noodlezip.store.entity.QStore.store;
 
         List<StoreReviewDto> content = queryFactory
                 .select(Projections.fields(
@@ -327,10 +333,14 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         board.user.userName.as("userName"),
                         board.user.id.as("userId"),
                         board.createdAt.as("createdAt"),
-                        board.updatedAt.as("updatedAt")
+                        board.updatedAt.as("updatedAt"),
+                        store.id.as("storeId"),
+                        store.storeName.as("storeName"),
+                        store.address.as("storeAddress")
                 ))
                 .from(review)
                 .join(review.menu, menu)
+                .join(menu.store, store)
                 .join(board).on(review.communityId.eq(board.id))
                 .where(board.user.id.eq(userId))
                 .offset(pageable.getOffset())

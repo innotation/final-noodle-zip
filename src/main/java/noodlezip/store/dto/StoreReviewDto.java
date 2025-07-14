@@ -33,5 +33,8 @@ public class StoreReviewDto {
     private Long userId;
     private java.time.LocalDateTime createdAt;
     private java.time.LocalDateTime updatedAt;
+    private Long storeId;
+    private String storeName;
+    private String storeAddress;
 
 }
