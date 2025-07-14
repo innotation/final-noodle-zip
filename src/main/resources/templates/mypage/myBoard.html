@@ -66,6 +66,7 @@
                                     </li>
                                     <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
                                     <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
+
                                     <li th:if="${path == 'boards' and userAccessInfo.isOwner}">
                                         <a href="#0"
                                            th:onclick="'deleteBoard(' + ${item.boardId} + '); return false;'"
@@ -74,6 +75,16 @@
                                             <i class="icon_trash_alt"></i>
                                         </a>
                                     </li>
+
+                                    <li th:if="${path == 'liked-boards' and userAccessInfo.isOwner}">
+                                        <a href="#0"
+                                           th:onclick="'cancelLike(' + ${item.boardId} + '); return false;'"
+                                           class="wish_bt"
+                                           style="color: red;">
+                                            <i class="icon_heart"></i>
+                                        </a>
+                                    </li>
+
                                 </ul>
                             </div>
                         </article>
@@ -158,6 +169,21 @@
             .catch(err => {
                 alert('삭제 실패: ' + err.message);
             });
+    }
+
+    function cancelLike(boardId) {
+        if (!confirm('정말 이 게시글에 누른 좋아요를 취소하시겠습니까?')) return;
+
+        fetch(`/board/like/${boardId}`, { method: 'POST' })
+            .then(res => {
+                if (!res.ok) return res.json().then(err => { throw new Error(err.message || '좋아요 취소 실패'); });
+                return res.json();
+            })
+            .then(data => {
+                alert('좋아요를 취소했습니다.');
+                location.reload(); // 혹은 DOM만 업데이트
+            })
+            .catch(err => alert('좋아요 취소 오류: ' + err.message));
     }
 </script>
 
