@@ -7,7 +7,10 @@ import noodlezip.badge.constants.Region;
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
 import noodlezip.badge.dto.response.*;
-import noodlezip.badge.entity.*;
+import noodlezip.badge.entity.Badge;
+import noodlezip.badge.entity.BadgeCategory;
+import noodlezip.badge.entity.BadgeExtraOption;
+import noodlezip.badge.entity.UserBadge;
 import noodlezip.badge.status.BadgeErrorStatus;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
@@ -29,12 +32,24 @@ public class MyBadgeServiceImpl implements MyBadgeService {
     private final BadgeService badgeService;
     private final UserBadgeService userBadgeService;
 
+    // TODO 마이페이지 메인페이지 배지 3개
+
+    /**
+     * ╔═════════════════════╗
+     * ║                     ║
+     * ║     badgeImageUrl   ║
+     * ║                     ║
+     * ╠═════════════════════╣
+     * ║    badgeTitleName   ║
+     * ║    badgeLevelName   ║
+     * ╚═════════════════════╝
+     */
     @Override
     @Transactional(readOnly = true)
     public List<UserBadgeResponse> getUserBadgeForMyPageProfile(Long userId) {
         List<UserBadgeResponse> result = new ArrayList<>();
-        List<UserBadge> userBadgeList = userBadgeService.getUserBadgeForMyPageProfile(userId);
 
+        List<UserBadge> userBadgeList = userBadgeService.getUserBadgeForMyPageProfile(userId);
         for (UserBadge userBadge : userBadgeList) {
             UserBadgeResponse userBadgeResponse = new UserBadgeResponse();
 
@@ -43,10 +58,11 @@ public class MyBadgeServiceImpl implements MyBadgeService {
 
             userBadgeResponse.setUserBadgeId(userBadge.getId());
             userBadgeResponse.setBadgeId(badge.getId());
+            userBadgeResponse.setBadgeImageUrl(badge.getBadgeImageUrl());
 
             if (badge.isOptionalBadge()) {
                 BadgeExtraOption extraOption = badge.getBadgeExtraOption();
-                String optionName = resolveOptionName(extraOption);
+                String optionName = decideOptionBadgeTitleNameOnExtraOption(extraOption);
                 userBadgeResponse.setBadgeTitleName(optionName);
             } else {
                 userBadgeResponse.setBadgeTitleName(badgeCategory.getBadgeDescription());
@@ -60,7 +76,7 @@ public class MyBadgeServiceImpl implements MyBadgeService {
         return result;
     }
 
-    private String resolveOptionName(BadgeExtraOption extraOption) {
+    private String decideOptionBadgeTitleNameOnExtraOption(BadgeExtraOption extraOption) {
         if (extraOption != null) {
             Category ramenCategory = extraOption.getRamenCategory();
             if (ramenCategory != null) {
