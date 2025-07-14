@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import noodlezip.community.dto.CategoryCountDto;
+import noodlezip.community.dto.PopularTagDto;
 
 @RequestMapping("/board")
 @Controller
@@ -120,19 +122,26 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String boardList(
-            @PathVariable(value = "category", required = false) String pathCommunityType,
+            @PathVariable(value = "category", required = false) String  pathCommunityType,
             @RequestParam(value = "search", required = false) String searchKeyword,
+            // 태그 검색을 위한 request 추가
+            @RequestParam(value = "tag", required = false) String tag,
+            @RequestParam(value = "type", required = false) String type,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
         boolean hasSearchKeyword = searchKeyword != null && !searchKeyword.trim().isEmpty();
-
         boolean hasCommunityType = pathCommunityType != null && !pathCommunityType.trim().isEmpty();
+        boolean hasTag = tag != null && !tag.trim().isEmpty();
 
         Map<String, Object> map;
-        if (hasCommunityType && hasSearchKeyword) {
+        
+        if (hasTag && "review".equals(pathCommunityType)) {
+            // 리뷰 카테고리에서 태그로 필터링
+            map = boardService.findReviewListByTag(tag, type, pageable);
+        } else if (hasCommunityType && hasSearchKeyword) {
             map = boardService.searchBoardsByCommunityTypeAndKeyword(pathCommunityType, searchKeyword, pageable);
         } else if (hasCommunityType) {
             map = boardService.findBoardListByCategory(pathCommunityType, pageable);
@@ -144,6 +153,8 @@ public class BoardController {
 
         model.addAttribute("category", pathCommunityType);
         model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("tag", tag);
+        model.addAttribute("type", type);
         model.addAttribute("board", map.get("list"));
         model.addAttribute("page", map.get("page"));
         model.addAttribute("totalPage", map.get("totalPage"));
@@ -239,5 +250,51 @@ public class BoardController {
     @Operation(summary = "이미지 업로드", description = "게시글 작성 시 사용되는 이미지 파일을 서버에 업로드하고, 업로드된 이미지들의 URL 목록을 반환합니다. 다중 파일 업로드를 지원합니다.")
     public ResponseEntity<?> uploadImage(@RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED, boardService.uploadImages(uploadFiles));
+    }
+
+    @GetMapping("/sidebar/categories")
+    @ResponseBody
+    @Operation(summary = "카테고리별 게시글 수 조회", description = "각 카테고리별 게시글 개수를 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<List<CategoryCountDto>>> getCategoryCounts() {
+        try {
+            List<CategoryCountDto> categoryCounts = boardService.getCategoryCounts();
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, categoryCounts);
+        } catch (Exception e) {
+            log.error("카테고리별 게시글 수 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sidebar/popular-tags")
+    @ResponseBody
+    @Operation(summary = "인기 태그 조회", description = "인기 태그 목록을 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<List<PopularTagDto>>> getPopularTags() {
+        try {
+            List<PopularTagDto> popularTags = boardService.getPopularTags();
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularTags);
+        } catch (Exception e) {
+            log.error("인기 태그 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sidebar/widgets")
+    @ResponseBody
+    @Operation(summary = "사이드바 위젯 데이터 조회", description = "카테고리별 게시글 개수와 인기 태그 데이터를 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Map<String, Object>>> getSidebarWidgets() {
+        try {
+            List<CategoryCountDto> categoryCounts = boardService.getCategoryCounts();
+            List<PopularTagDto> popularTags = boardService.getPopularTags();
+            
+            Map<String, Object> widgets = Map.of(
+                "categoryCounts", categoryCounts,
+                "popularTags", popularTags
+            );
+            
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, widgets);
+        } catch (Exception e) {
+            log.error("사이드바 위젯 데이터 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
     }
 }

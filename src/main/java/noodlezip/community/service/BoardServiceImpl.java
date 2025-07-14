@@ -6,6 +6,8 @@ import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.CategoryCountDto;
+import noodlezip.community.dto.PopularTagDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.entity.CommunityActiveStatus;
@@ -14,6 +16,7 @@ import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.community.repository.LikeRepository;
+
 import noodlezip.user.entity.User;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -227,5 +230,30 @@ public class BoardServiceImpl implements BoardService {
             log.error("upload images is empty");
         }
         return imageInfos;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryCountDto> getCategoryCounts() {
+        return boardRepository.findCategoryCounts();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PopularTagDto> getPopularTags() {
+        return boardRepository.findPopularTags();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable) {
+        // Board 엔티티를 기반으로 태그별 리뷰 게시글 조회
+        Page<BoardRespDto> boardPage = boardRepository.findReviewBoardsByTag(tag, type, pageable);
+        
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, pageable.getPageSize());
+        map.put("list", boardPage.getContent());
+        map.put("category", "review");
+        
+        return map;
     }
 }
