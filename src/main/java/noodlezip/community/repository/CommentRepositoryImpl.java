@@ -1,12 +1,15 @@
 package noodlezip.community.repository;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.community.dto.CommentRespDto;
 import noodlezip.community.dto.QCommentRespDto;
 import noodlezip.community.entity.CommunityActiveStatus;
+import noodlezip.community.entity.QBoard;
 import noodlezip.community.entity.QComment;
+import noodlezip.mypage.dto.response.MyCommentResponse;
 import noodlezip.user.entity.QUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -63,13 +66,16 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     }
 
     @Override
-    public Page<CommentRespDto> findCommentByUserId(Long userId,Pageable pageable) {
+    public Page<MyCommentResponse> findCommentByUserId(Long userId, Pageable pageable) {
         QComment comment = QComment.comment;
+        QBoard board = QBoard.board;
         QUser user = QUser.user;
 
-        List<CommentRespDto> results = queryFactory
-                .select(new QCommentRespDto(
+        List<MyCommentResponse> results = queryFactory
+                .select(Projections.constructor(MyCommentResponse.class,
                         comment.id,
+                        comment.communityId,
+                        board.title,
                         comment.user.userName,
                         comment.user.profileImageUrl,
                         comment.user.id,
@@ -79,6 +85,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 ))
                 .from(comment)
                 .leftJoin(comment.user, user)
+                .leftJoin(board).on(comment.communityId.eq(board.id))
                 .where(
                         comment.user.id.eq(userId)
                 )
@@ -94,12 +101,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                         comment.user.id.eq(userId)
                 )
                 .fetchOne();
-        List<CommentRespDto> content = results.stream()
-                .peek(dto -> {
-                    dto.setWriter(userId != null && dto.getUserId().equals(userId));
-                })
-                .collect(Collectors.toList());
 
-        return new PageImpl<>(content, pageable, total);
+        return new PageImpl<>(results, pageable, total == null ? 0 : total);
     }
 }

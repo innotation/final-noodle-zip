@@ -265,7 +265,7 @@ public class StoreService {
 
         // 승인되지 않았고, 등록한 사용자가 아닐 경우만 막기
         if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus()) &&
-                !store.getUserId().equals(requesterUserId)) {
+                (!store.getUserId().equals(requesterUserId))) {
             throw new IllegalStateException("승인되지 않은 매장은 조회할 수 없습니다.");
         }
 

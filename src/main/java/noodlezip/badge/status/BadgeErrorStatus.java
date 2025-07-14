@@ -11,14 +11,15 @@ import org.springframework.http.HttpStatus;
 public enum BadgeErrorStatus implements BaseErrorCode {
 
     _NOT_FOUND_BADGE_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR,
-            "BADGE-001", "존재하지 않는 배지 카테고리입니다."
-    ),
+            "BADGE-001", "존재하지 않는 배지 카테고리입니다."),
     _NOT_FOUND_BADGE(HttpStatus.INTERNAL_SERVER_ERROR,
-            "BADGE-002", "존재하지 않는 배지입니다."
-    ),
+            "BADGE-002", "존재하지 않는 배지입니다."),
     _NOT_FOUNT_USER_BADGE(HttpStatus.NOT_FOUND,
-            "BADGE-003", "달성되지 않은 배지입니다."
-    );
+            "BADGE-003", "달성되지 않은 배지입니다."),
+    _NOT_FOUNT_USER_BADGE_PAGE(HttpStatus.NOT_FOUND,
+            "BADGE-003", "존재하지 않는 배지 페이지입니다.")
+    ;
+
 
     private final HttpStatus httpStatus;
     private final String code;

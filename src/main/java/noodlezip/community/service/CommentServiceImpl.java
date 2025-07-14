@@ -11,6 +11,7 @@ import noodlezip.community.entity.Comment;
 import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.repository.BoardRepository;
 import noodlezip.community.repository.CommentRepository;
+import noodlezip.mypage.dto.response.MyCommentResponse;
 import noodlezip.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> findCommentListByUserId(Long userId, Pageable pageable) {
-        Page<CommentRespDto> commentDtoPage = commentRepository.findCommentByUserId(userId, pageable);
+        Page<MyCommentResponse> commentDtoPage = commentRepository.findCommentByUserId(userId, pageable);
         Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
         map.put("comments", commentDtoPage.getContent());
         map.put("totalComments", commentDtoPage.getTotalElements());

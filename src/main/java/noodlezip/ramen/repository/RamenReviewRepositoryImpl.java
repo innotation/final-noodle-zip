@@ -4,6 +4,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.ramen.entity.QRamenReview;
 import noodlezip.store.dto.ReviewSummaryDto;
 import noodlezip.store.dto.StoreReviewDto;
@@ -42,6 +43,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness,
                         review.noodleTexture,
                         review.noodleBoilLevel,
+                        review.soupDensity,
                         review.soupTemperature,
                         review.soupSaltiness,
                         review.soupSpicinessLevel,
@@ -74,8 +76,8 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
 
     @Override
     public ReviewSummaryDto getSummaryByStoreId(Long storeId) {
-        // QRamenReview 사용
         QRamenReview review = QRamenReview.ramenReview;
+        QBoard board = QBoard.board;
 
         ReviewSummaryDto summary = queryFactory
                 .select(Projections.fields(
@@ -83,6 +85,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg().as("noodleThickness"),
                         review.noodleTexture.avg().as("noodleTexture"),
                         review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupDensity.avg().as("soupDensity"),
                         review.soupTemperature.avg().as("soupTemperature"),
                         review.soupSaltiness.avg().as("soupSaltiness"),
                         review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
@@ -91,14 +94,17 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg()
                                 .add(review.noodleTexture.avg())
                                 .add(review.noodleBoilLevel.avg())
+                                .add(review.soupDensity.avg())
                                 .add(review.soupTemperature.avg())
                                 .add(review.soupSaltiness.avg())
                                 .add(review.soupSpicinessLevel.avg())
                                 .add(review.soupOiliness.avg())
-                                .divide(7.0).as("overall")
+                                .divide(8.0).as("overall")
                 ))
                 .from(review)
-                .where(review.menu.store.id.eq(storeId))
+                .join(board).on(review.communityId.eq(board.id))
+                .where(review.menu.store.id.eq(storeId)
+                        .and(board.postStatus.eq(CommunityActiveStatus.POSTED)))
                 .fetchOne();
 
         return summary;
@@ -108,6 +114,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
     public ReviewSummaryDto getSummaryByStoreIdAndMenuName(Long storeId, String menuName) {
         QRamenReview review = QRamenReview.ramenReview;
         QMenu menu = QMenu.menu;
+        QBoard board = QBoard.board;
 
         ReviewSummaryDto summary = queryFactory
                 .select(Projections.fields(
@@ -115,6 +122,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg().as("noodleThickness"),
                         review.noodleTexture.avg().as("noodleTexture"),
                         review.noodleBoilLevel.avg().as("noodleBoilLevel"),
+                        review.soupDensity.avg().as("soupDensity"),
                         review.soupTemperature.avg().as("soupTemperature"),
                         review.soupSaltiness.avg().as("soupSaltiness"),
                         review.soupSpicinessLevel.avg().as("soupSpicinessLevel"),
@@ -123,15 +131,19 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         review.noodleThickness.avg()
                                 .add(review.noodleTexture.avg())
                                 .add(review.noodleBoilLevel.avg())
+                                .add(review.soupDensity.avg())
                                 .add(review.soupTemperature.avg())
                                 .add(review.soupSaltiness.avg())
                                 .add(review.soupSpicinessLevel.avg())
                                 .add(review.soupOiliness.avg())
-                                .divide(7.0).as("overall")
+                                .divide(8.0).as("overall")
                 ))
                 .from(review)
                 .join(review.menu, menu)
-                .where(review.menu.store.id.eq(storeId).and(menu.menuName.eq(menuName)))
+                .join(board).on(review.communityId.eq(board.id))
+                .where(review.menu.store.id.eq(storeId)
+                        .and(board.postStatus.eq(CommunityActiveStatus.POSTED))
+                        .and(menu.menuName.eq(menuName)))
                 .fetchOne();
 
         return summary;

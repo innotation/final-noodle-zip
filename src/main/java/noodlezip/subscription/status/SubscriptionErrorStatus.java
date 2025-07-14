@@ -11,7 +11,10 @@ import org.springframework.http.HttpStatus;
 public enum SubscriptionErrorStatus implements BaseErrorCode {
 
     _FAIL_SUBSCRIPTION(HttpStatus.BAD_REQUEST,
-            "SUBSCRIPTION-001", "사용자 구독에 실패했습니다.");
+            "SUBSCRIPTION-001", "사용자 구독에 실패했습니다."),
+    _FAIL_SUBSCRIPTION_LIST(HttpStatus.BAD_REQUEST,
+            "SUBSCRIPTION-002", "구독자 목록을 불러오는데 실패했습니다.")
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -9,6 +9,7 @@ import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
+import noodlezip.user.entity.User;
 import noodlezip.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -45,7 +47,8 @@ class MyBadgeServiceImplTest {
         // given
         Long userId = 1L;
 
-        doNothing().when(userService).validateMyPageExistingUserByUserId(userId);
+        when(userService.findExistingUserByUserId(userId))
+                .thenReturn(Optional.of(User.builder().id(userId).build()));
 
         List<BadgeGroupResponse> badgeGroupList = new ArrayList<>(List.of(
                 BadgeGroupResponse.builder().id(1L).badgeGroupName("좋아요").build(),
@@ -167,7 +170,8 @@ class MyBadgeServiceImplTest {
         // given
         Long userId = 1L;
 
-        doNothing().when(userService).validateMyPageExistingUserByUserId(userId);
+        when(userService.findExistingUserByUserId(userId))
+                .thenReturn(Optional.of(User.builder().id(userId).build()));
 
         List<BadgeGroupResponse> badgeGroupList = List.of(
                 BadgeGroupResponse.builder().id(2L).badgeGroupName("소통").build()
@@ -205,7 +209,8 @@ class MyBadgeServiceImplTest {
         // given
         Long userId = 1L;
 
-        doNothing().when(userService).validateMyPageExistingUserByUserId(userId);
+        when(userService.findExistingUserByUserId(userId))
+                .thenReturn(Optional.of(User.builder().id(userId).build()));
 
         List<BadgeGroupResponse> badgeGroupList = List.of(
                 BadgeGroupResponse.builder().id(2L).badgeGroupName("소통").build()
@@ -243,7 +248,8 @@ class MyBadgeServiceImplTest {
         // given
         Long userId = 1L;
 
-        doNothing().when(userService).validateMyPageExistingUserByUserId(userId);
+        when(userService.findExistingUserByUserId(userId))
+                .thenReturn(Optional.of(User.builder().id(userId).build()));
 
         List<BadgeGroupResponse> badgeGroupList = List.of(
                 BadgeGroupResponse.builder().id(2L).badgeGroupName("소통").build()
