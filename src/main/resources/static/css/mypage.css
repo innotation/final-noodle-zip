@@ -1220,3 +1220,33 @@ a.show_hide:focus:hover {
     padding: 0 4px 4px 4px;
   }
 }
+
+/* 마이페이지 Follow 버튼 */
+.follow-btn {
+  min-width: 110px;
+  text-align: center;
+  font-size: 1.08em;
+  font-weight: 600;
+  border-radius: 22px;
+  border: 2px solid #2b7cff;
+  background: #2b7cff;
+  color: #fff;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  margin-left: 8px;
+  display: inline-block;
+}
+.follow-btn.followed {
+  background: #fff;
+  color: #2b7cff;
+  border: 2px solid #2b7cff;
+}
+.follow-btn:hover {
+  background: #174fa3;
+  color: #fff;
+  border-color: #174fa3;
+}
+.follow-btn.followed:hover {
+  background: #eaf2ff;
+  color: #174fa3;
+  border-color: #174fa3;
+}

@@ -50,13 +50,28 @@
               </div>
               <div class="col-xl-8 col-lg-7 col-md-6 position-relative">
                 <div class="buttons clearfix">
+<!--
 									<span class="magnific-gallery">
 										<a th:href="@{/img/detail_1.jpg}" class="btn_hero" title="Photo title" data-effect="mfp-zoom-in"><i
                       class="icon_image"></i>View photos</a>
 										<a th:href="@{/img/detail_2.jpg}" title="Photo title" data-effect="mfp-zoom-in"></a>
 										<a th:href="@{/img/detail_3.jpg}" title="Photo title" data-effect="mfp-zoom-in"></a>
 									</span>
-                  <a href="#0" class="btn_hero wishlist"><i class="icon_heart"></i>Wishlist</a>
+-->
+                  <th:block th:if="${isOwner}">
+                    <a th:href="@{/mypage/edit}" class="btn_hero edit-mypage-btn">
+                      <i class="icon_pencil"></i> 마이페이지 수정하기
+                    </a>
+                  </th:block>
+                  <th:block th:unless="${isOwner}">
+                    <a href="#0"
+                       id="follow-btn"
+                       th:class="${followStatus} ? 'btn_hero follow-btn followed' : 'btn_hero follow-btn' + (!${isLoggedIn} ? ' login-required' : '')"
+                       th:data-user-id="${myPage.id}">
+                      <i class="icon_heart"></i>
+                      <span th:text="${followStatus} ? 'Unfollow' : 'Follow'">Follow</span>
+                    </a>
+                  </th:block>
                 </div>
               </div>
             </div>
@@ -527,6 +542,7 @@
 
   <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
 
+  <input type="hidden" id="is-logged-in" th:value="${isLoggedIn}" />
 
   <!-- COMMON SCRIPTS -->
   <script th:src="@{/js/common_scripts.min.js}"></script>

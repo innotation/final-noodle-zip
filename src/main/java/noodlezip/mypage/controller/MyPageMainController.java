@@ -137,6 +137,11 @@ public class MyPageMainController extends MyBaseController {
         model.addAttribute("visitedRegionCountMap", sortedRegionCountMap);
         // 좋아하는 라멘 카테고리별 리뷰수 모델에 추가
         model.addAttribute("favoriteCategoryCountMap", sortedFavoriteCategoryCountMap);
+        // 로그인 여부 모델에 추가
+        model.addAttribute("isLoggedIn", myUserDetails != null);
+        // 본인 여부 모델에 추가
+        boolean isOwner = (myUserDetails != null) && user.getId().equals(myUserDetails.getUser().getId());
+        model.addAttribute("isOwner", isOwner);
         return "mypage/main";
     }
 
