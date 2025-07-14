@@ -166,6 +166,13 @@ public class BoardController {
         return "/board/list";
     }
 
+    @GetMapping("/popular/{category}")
+    @ResponseBody
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> getPopularBoards (@PathVariable String category) {
+        List<BoardRespDto> popularBoards = boardService.getPopularBoards(category);
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularBoards);
+    }
+
     @GetMapping("/detail/{id}")
     @Operation(summary = "게시글 상세 조회", description = "특정 게시글의 상세 내용을 조회하고 조회수를 증가시킵니다.")
     @Parameters({
