@@ -28,6 +28,9 @@ import org.jsoup.Jsoup;
 import noodlezip.badge.service.MyBadgeService;
 import noodlezip.badge.dto.response.UserBadgeResponse;
 import noodlezip.subscription.repository.UserSubscriptionRepository;
+import noodlezip.badge.constants.Region;
+import java.util.Map;
+import java.util.HashMap;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -78,6 +81,43 @@ public class MyPageMainController extends MyBaseController {
 
         // 총 리뷰 개수
         int totalReviewCount = myReviews.size();
+
+        // 방문 지역별 리뷰 수 집계
+        Map<String, Integer> visitedRegionCountMap = new HashMap<>();
+        for (noodlezip.store.dto.StoreReviewDto review : myReviews) {
+            Long legalCode = review.getStoreLegalCode();
+            if (legalCode != null) {
+                int regionCode = Integer.parseInt(legalCode.toString().substring(0, 2));
+                Region region = Region.getRegionBySidoCode(regionCode);
+                String regionName = (region != null) ? region.getName() : "기타";
+                visitedRegionCountMap.put(regionName, visitedRegionCountMap.getOrDefault(regionName, 0) + 1);
+            }
+        }
+        // 방문횟수 내림차순 정렬
+        Map<String, Integer> sortedRegionCountMap = visitedRegionCountMap.entrySet().stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .collect(java.util.stream.Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (e1, e2) -> e1,
+                java.util.LinkedHashMap::new
+            ));
+
+        // 좋아하는 라멘 카테고리(내가 쓴 리뷰의 categoryName 기준) 집계 및 내림차순 정렬
+        Map<String, Integer> favoriteCategoryCountMap = myReviews.stream()
+            .filter(r -> r.getCategoryName() != null && !r.getCategoryName().isEmpty())
+            .collect(java.util.stream.Collectors.groupingBy(
+                noodlezip.store.dto.StoreReviewDto::getCategoryName,
+                java.util.stream.Collectors.summingInt(r -> 1)
+            ));
+        Map<String, Integer> sortedFavoriteCategoryCountMap = favoriteCategoryCountMap.entrySet().stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .collect(java.util.stream.Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue,
+                (e1, e2) -> e1,
+                java.util.LinkedHashMap::new
+            ));
         // 뱃지 3개 추천 조회
         java.util.List<UserBadgeResponse> userBadges = myBadgeService.getUserBadgeForMyPageProfile(userId);
         if (userBadges.size() > 3) userBadges = userBadges.subList(0, 3);
@@ -93,6 +133,10 @@ public class MyPageMainController extends MyBaseController {
         model.addAttribute("followerCount", followerCount);
         // 총 리뷰수 모델에 추가
         model.addAttribute("totalReviewCount", totalReviewCount);
+        // 방문 지역별 리뷰수 모델에 추가
+        model.addAttribute("visitedRegionCountMap", sortedRegionCountMap);
+        // 좋아하는 라멘 카테고리별 리뷰수 모델에 추가
+        model.addAttribute("favoriteCategoryCountMap", sortedFavoriteCategoryCountMap);
         return "mypage/main";
     }
 

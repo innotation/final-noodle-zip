@@ -1,64 +1,72 @@
-<div th:fragment="mypage-sidebar">
-  <!-- 팔로우/팔로워 영역 -->
-  <div class="sidebar-follow" style="display: flex; justify-content: center; gap: 16px; margin-bottom: 18px;">
-    <a th:href="@{'/users/' + ${myPage.id} + '/following'}" style="font-weight: 500;">
-      팔로우 <span th:text="${followingCount}">0</span>
-    </a>
-    <span>|</span>
-    <a th:href="@{'/users/' + ${myPage.id} + '/followers'}" style="font-weight: 500;">
-      팔로워 <span th:text="${followerCount}">0</span>
-    </a>
+<aside th:fragment="mypage-sidebar">
+  <!-- 팔로우/팔로워 -->
+  <div class="widget">
+    <div class="widget-title"><h4>팔로우/팔로워</h4></div>
+    <div class="mypage-follow-stat-box">
+      <a th:href="@{'/users/' + ${myPage.id} + '/following'}" class="mypage-follow-stat" style="text-decoration:none;">
+        <div class="stat-num" th:text="${followingCount}">0</div>
+        <div class="stat-label">팔로우 중</div>
+      </a>
+      <a th:href="@{'/users/' + ${myPage.id} + '/followers'}" class="mypage-follow-stat active" style="text-decoration:none;">
+        <div class="stat-num" th:text="${followerCount}">0</div>
+        <div class="stat-label">팔로워</div>
+      </a>
+    </div>
   </div>
-  <!-- 총 리뷰수 영역 -->
-  <div class="sidebar-review-count" style="margin: 18px 0; text-align: center;">
-    <span style="font-size: 1.1em; color: #888;">총 리뷰</span>
-    <span style="font-size: 1.6em; font-weight: bold; margin-left: 6px;" th:text="${totalReviewCount}">0</span>건
+  <!-- 총 리뷰수 -->
+  <div class="widget">
+    <div class="widget-title"><h4>총 리뷰</h4></div>
+    <div class="main" style="text-align:center;">
+      <span style="font-size: 1.6em; font-weight: bold; margin-left: 6px;" th:text="${totalReviewCount}">0</span>건
+    </div>
   </div>
   <!-- 저장매장 이동 버튼 -->
-  <div style="margin: 18px 0; text-align: center;">
-    <a th:href="@{'/users/' + ${myPage.id} + '/saved-stores'}" class="btn_1 full-width" style="margin-top: 8px;">
-      저장매장 이동
-    </a>
-  </div>
-  <div class="box_booking mobile_fixed">
-    <div class="head">
-      <h3>Contact Us</h3>
-      <small>Or Call us at 0434 3432245</small>
-      <a href="#0" class="close_panel_mobile"><i class="icon_close"></i></a>
+  <div class="widget">
+    <div class="widget-title"><h4>저장매장</h4></div>
+    <div class="main" style="text-align:center;">
+      <a th:href="@{'/users/' + ${myPage.id} + '/saved-stores'}" class="btn_1 full-width" style="margin-top: 8px;">
+        저장매장 이동
+      </a>
     </div>
-    <!-- /head -->
+  </div>
+  <!-- 방문 지역 -->
+  <div class="widget">
+    <div class="widget-title"><h4>방문 지역</h4></div>
     <div class="main">
-      <div id="message-detail-contact"></div>
-      <form method="post" th:action="@{/assets/detail_contact.php}" id="detail_contact" autocomplete="off">
-        <input type="text" name="restaurant_name" id="restaurant_name" value="Pizzeria Da Aldredo"
-               hidden="hidden">
-        <div class="form-group">
-          <input type="text" name="name_detail_contact" id="name_detail_contact" class="form-control"
-                 placeholder="Name and Last Name">
+      <div th:if="${#maps.isEmpty(visitedRegionCountMap)}" style="color: #aaa; font-size: 0.98em; text-align:left;">
+        방문한 지역이 없습니다.
+      </div>
+      <div th:if="${!#maps.isEmpty(visitedRegionCountMap)}">
+        <div class="mypage-region-rank-list">
+          <th:block th:each="entry, iterStat : ${visitedRegionCountMap}">
+            <div class="mypage-region-rank-item">
+              <span class="mypage-region-rank-num" th:classappend="' rank-' + (${iterStat.index}+1)" th:text="${iterStat.index+1}"></span>
+              <span th:text="${entry.key}"></span>
+              <span class="mypage-region-rank-count" th:text="${entry.value}"></span>회
+            </div>
+          </th:block>
         </div>
-        <div class="form-group">
-          <input type="email" name="email_detail_contact" id="email_detail_contact" class="form-control"
-                 placeholder="Email address">
-        </div>
-        <div class="form-group">
-          <input type="text" name="telephone_detail_contact" id="telephone_detail_contact"
-                 class="form-control" placeholder="Telephone">
-        </div>
-        <div class="form-group add_bottom_15">
-            <textarea class="form-control" name="message_detail" id="message_detail"
-                      placeholder="Your message"></textarea>
-        </div>
-        <div class="btn_1_mobile" style="position: relative;">
-          <input class="btn_1 full-width" type="submit" value="Send message" id="submit-message">
-        </div>
-      </form>
+      </div>
     </div>
   </div>
-  <!-- /box_booking -->
-  <div class="btn_reserve_fixed"><a href="#0" class="btn_1 full-width">Send message</a></div>
-  <ul class="share-buttons">
-    <li><a class="fb-share" href="#0"><i class="social_facebook"></i> Share</a></li>
-    <li><a class="twitter-share" href="#0"><i class="social_twitter"></i> Share</a></li>
-    <li><a class="gplus-share" href="#0"><i class="social_googleplus"></i> Share</a></li>
-  </ul>
-</div> 
+  <!-- 좋아하는 라멘 카테고리 -->
+  <div class="widget">
+    <div class="widget-title"><h4>좋아하는 라멘 카테고리</h4></div>
+    <div class="main">
+      <div th:if="${#maps.isEmpty(favoriteCategoryCountMap)}" style="color: #aaa; font-size: 0.98em; text-align:left;">
+        리뷰 데이터가 없습니다.
+      </div>
+      <div th:if="${!#maps.isEmpty(favoriteCategoryCountMap)}">
+        <div class="mypage-category-rank-list">
+          <th:block th:each="entry, iterStat : ${favoriteCategoryCountMap}">
+            <div class="mypage-category-rank-item">
+              <span class="mypage-category-rank-num" th:classappend="' rank-' + (${iterStat.index}+1)" th:text="${iterStat.index+1}"></span>
+              <span th:text="${entry.key}"></span>
+              <span class="mypage-region-rank-count" th:text="${entry.value}"></span>회
+            </div>
+          </th:block>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside> 

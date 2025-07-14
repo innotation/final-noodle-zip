@@ -1129,3 +1129,94 @@ a.show_hide:focus:hover {
   font-size: 24px;
   font-size: 1.5rem;
 }
+
+/* 마이페이지 팔로우/팔로워 통계 박스 */
+.mypage-follow-stat-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 12px;
+  margin: 0 0 18px 0;
+}
+.mypage-follow-stat {
+  flex: 1 1 0;
+  background: #faf9f7;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  text-align: center;
+  padding: 18px 0 12px 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  border: 1.5px solid #f0f0f0;
+}
+.mypage-follow-stat:hover {
+  box-shadow: 0 2px 8px rgba(43,124,255,0.10);
+  border-color: #2b7cff;
+}
+.mypage-follow-stat .stat-num {
+  font-size: 2.1em;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 2px;
+  line-height: 1.1;
+}
+.mypage-follow-stat .stat-label {
+  font-size: 1em;
+  color: #888;
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+}
+.mypage-follow-stat.active .stat-num {
+  color: #2b7cff;
+}
+@media (max-width: 991px) {
+  .mypage-follow-stat-box {
+    gap: 8px;
+  }
+  .mypage-follow-stat {
+    padding: 14px 0 10px 0;
+  }
+  .mypage-follow-stat .stat-num {
+    font-size: 1.4em;
+  }
+}
+
+/* 방문 지역/카테고리 랭킹 2열 스타일 */
+.mypage-region-rank-list, .mypage-category-rank-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+}
+.mypage-region-rank-item, .mypage-category-rank-item {
+  width: 50%;
+  padding: 0 8px 6px 8px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  color: #444;
+  white-space: nowrap;
+}
+.mypage-region-rank-num, .mypage-category-rank-num {
+  display: inline-block;
+  width: 1.8em;
+  text-align: center;
+  font-weight: 700;
+  margin-right: 4px;
+  font-size: 1em;
+}
+.mypage-region-rank-num.rank-1 { color: #c9a14a; }
+.mypage-region-rank-num.rank-2 { color: #a0a0a0; }
+.mypage-region-rank-num.rank-3 { color: #b97c56; }
+.mypage-region-rank-num.rank-4, .mypage-region-rank-num.rank-5 { color: #888; }
+.mypage-region-rank-count {
+  color: #2b7cff;
+  font-size: 0.98em;
+  margin-left: 2px;
+}
+@media (max-width: 991px) {
+  .mypage-region-rank-item, .mypage-category-rank-item {
+    font-size: 0.97em;
+    padding: 0 4px 4px 4px;
+  }
+}

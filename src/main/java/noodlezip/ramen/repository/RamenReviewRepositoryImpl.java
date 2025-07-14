@@ -336,7 +336,9 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                         board.updatedAt.as("updatedAt"),
                         store.id.as("storeId"),
                         store.storeName.as("storeName"),
-                        store.address.as("storeAddress")
+                        store.address.as("storeAddress"),
+                        store.storeLegalCode.as("storeLegalCode"),
+                        menu.category.categoryName.as("categoryName")
                 ))
                 .from(review)
                 .join(review.menu, menu)

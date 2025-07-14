@@ -36,5 +36,7 @@ public class StoreReviewDto {
     private Long storeId;
     private String storeName;
     private String storeAddress;
+    private Long storeLegalCode;
+    private String categoryName;
 
 }
