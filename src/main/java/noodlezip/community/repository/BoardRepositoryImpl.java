@@ -126,16 +126,24 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         return new PageImpl<>(results, pageable, totalCount);
     }
 
+
     @Override
-    public Page<BoardRespDto> findBoardByWriterWithPagination(Long userId, Pageable pageable) {
+    public Page<BoardRespDto> findBoardByWriterAndCommunityTypeWithPagination(Long userId,
+                                                                              String category,
+                                                                              Pageable pageable
+    ) {
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(board.user.id.eq(userId));
+        where.and(board.postStatus.eq(CommunityActiveStatus.POSTED));
+        if (category != null && !category.isEmpty()) {
+            where.and(board.communityType.eq(category));
+        }
 
         List<BoardRespDto> results = queryFactory
                 .select(getBoardRespDtoProjection())
                 .from(board)
                 .leftJoin(board.user, user)
-                .where(
-                        board.user.id.eq(userId)
-                )
+                .where(where)
                 .orderBy(board.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -144,16 +152,15 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         Long total = queryFactory
                 .select(board.count())
                 .from(board)
-                .where(
-                        board.user.id.eq(userId)
-                )
+                .where(where)
                 .fetchOne();
 
         long totalCount = Optional.ofNullable(total).orElse(0L);
 
-
         return new PageImpl<>(results, pageable, totalCount);
     }
+
+
 
     @Override
     public List<BoardRespDto> findPopularBoards(String category) {
@@ -240,31 +247,40 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Page<BoardRespDto> findBoardsByIdsAndStatusPostedWithPaging(List<Long> boardIds, Pageable pageable) {
+    public Page<BoardRespDto> findBoardsByIdsAndStatusPostedWithPaging(List<Long> boardIds,
+                                                                       String category,
+                                                                       Pageable pageable
+    ) {
         if (boardIds == null || boardIds.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
+        }
+
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(board.id.in(boardIds));
+        where.and(board.postStatus.eq(CommunityActiveStatus.POSTED));
+        if (category != null && !category.isEmpty()) {
+            where.and(board.communityType.eq(category));
         }
 
         List<BoardRespDto> content = queryFactory
                 .select(getBoardRespDtoProjection())
                 .from(board)
                 .join(board.user, user)
-                .where(board.id.in(boardIds)
-                        .and(board.postStatus.eq(CommunityActiveStatus.POSTED)))
+                .where(where)
                 .orderBy(board.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory
-                .select(board.count())
-                .from(board)
-                .where(board.id.in(boardIds).and(board.postStatus.eq(CommunityActiveStatus.POSTED)))
-                .fetchOne();
+        long total = Optional.ofNullable(
+                queryFactory
+                        .select(board.count())
+                        .from(board)
+                        .where(where)
+                        .fetchOne()
+        ).orElse(0L);
 
-        long totalCount = Optional.ofNullable(total).orElse(0L);
-
-        return new PageImpl<>(content, pageable, totalCount);
+        return new PageImpl<>(content, pageable, total);
     }
 
     @Override
@@ -286,6 +302,42 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         board.count()))
                 .from(board)
                 .where(board.postStatus.eq(CommunityActiveStatus.POSTED))
+                .groupBy(board.communityType)
+                .orderBy(board.communityType.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<CategoryCountDto> findCategoryCountsByUser(Long userId) {
+        return queryFactory
+                .select(Projections.constructor(CategoryCountDto.class,
+                        board.communityType,
+                        board.count()))
+                .from(board)
+                .where(
+                        board.user.id.eq(userId),
+                        board.postStatus.eq(CommunityActiveStatus.POSTED)
+                )
+                .groupBy(board.communityType)
+                .orderBy(board.communityType.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<CategoryCountDto> findCategoryCountsByBoardIds(List<Long> boardIdList) {
+        if (boardIdList == null || boardIdList.isEmpty()) {
+            return List.of();
+        }
+
+        return queryFactory
+                .select(Projections.constructor(CategoryCountDto.class,
+                        board.communityType,
+                        board.count()))
+                .from(board)
+                .where(
+                        board.id.in(boardIdList),
+                        board.postStatus.eq(CommunityActiveStatus.POSTED)
+                )
                 .groupBy(board.communityType)
                 .orderBy(board.communityType.asc())
                 .fetch();
