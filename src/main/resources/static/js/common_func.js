@@ -104,8 +104,48 @@
         } else {
             $('.element_to_stick').removeClass("sticky");
         }
+        
+        // 모바일에서 스크롤 시 검색창 표시/숨김
+        if ($(window).width() <= 991) {
+            if ($(this).scrollTop() > 100) {
+                $('.mobile-search-header').addClass("sticky");
+            } else {
+                $('.mobile-search-header').removeClass("sticky");
+            }
+        }
     });
     $(window).scroll();
+
+    // 모바일 검색창 이벤트 동기화
+    $(document).ready(function() {
+        // 모바일 검색창 입력값을 기존 검색창과 동기화
+        $('#mobileKeywordSearch').on('input', function() {
+            $('#keywordSearch').val($(this).val());
+        });
+        
+        $('#keywordSearch').on('input', function() {
+            $('#mobileKeywordSearch').val($(this).val());
+        });
+        
+        // 모바일 검색 카테고리 동기화
+        $('#mobileSearchCategory').on('change', function() {
+            $('#searchCategory').val($(this).val());
+        });
+        
+        $('#searchCategory').on('change', function() {
+            $('#mobileSearchCategory').val($(this).val());
+        });
+        
+        // 모바일 검색 버튼 클릭 시 기존 검색 버튼과 동일한 동작
+        $('#mobileSearchButton').on('click', function() {
+            $('#searchButton').click();
+        });
+        
+        // 모바일 필터 표시 동기화
+        $('#mobileFilterDisplay').on('click', function() {
+            $('#filterDisplay').click();
+        });
+    });
 
     // Header background
     $('.background-image').each(function () {
