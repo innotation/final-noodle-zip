@@ -13,4 +13,5 @@ public class MyPageResponse {
     private String userName;
     private String profileImageUrl;
     private String profileBannerImageUrl;
+    private Long id;
 } 

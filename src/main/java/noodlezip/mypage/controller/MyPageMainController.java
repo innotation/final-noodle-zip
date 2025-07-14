@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.jsoup.Jsoup;
+import noodlezip.badge.service.MyBadgeService;
+import noodlezip.badge.dto.response.UserBadgeResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class MyPageMainController extends MyBaseController {
     private final BoardService boardService;
     private final ModelMapper modelMapper;
     private final noodlezip.ramen.service.RamenService ramenService;
+    private final MyBadgeService myBadgeService;
 
     @Operation(
             summary = "마이페이지 메인페이지 정보 조회",
@@ -56,6 +59,7 @@ public class MyPageMainController extends MyBaseController {
         User user = userService.findExistingUserByUserId(userId)
             .orElseThrow(() -> new CustomException(UserErrorStatus._NOT_FOUND_USER));
         MyPageResponse myPage = MyPageResponse.builder()
+            .id(user.getId())
             .userName(user.getUserName())
             .profileImageUrl(user.getProfileImageUrl())
             .profileBannerImageUrl(user.getProfileBannerImageUrl())
@@ -69,6 +73,11 @@ public class MyPageMainController extends MyBaseController {
         }
         // 내가 쓴 리뷰 리스트 조회
         java.util.List<noodlezip.store.dto.StoreReviewDto> myReviews = ramenService.findReviewsByUserId(userId, pageable).getContent();
+
+        // 뱃지 3개 추천 조회
+        java.util.List<UserBadgeResponse> userBadges = myBadgeService.getUserBadgeForMyPageProfile(userId);
+        if (userBadges.size() > 3) userBadges = userBadges.subList(0, 3);
+        model.addAttribute("userBadges", userBadges);
         model.addAttribute("userAccessInfo", userAccessInfo);
         model.addAttribute("myPage", myPage);
         model.addAttribute("boards", boards);
