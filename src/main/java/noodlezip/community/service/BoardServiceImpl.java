@@ -59,6 +59,21 @@ public class BoardServiceImpl implements BoardService {
         return map;
     }
 
+
+    @Override
+    public List<Board> findMostLikedBoardList() {
+        List<Board> boardList = boardRepository.findTop3ByPostStatusOrderByLikesCountDesc(CommunityActiveStatus.POSTED);
+
+        return boardList;
+    }
+
+    @Override
+    public List<Board> findMostViewedBoardList() {
+        List<Board> boardList = boardRepository.findTop3ByPostStatusOrderByLikesCountDesc(CommunityActiveStatus.POSTED);
+
+        return boardList;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> findBoardListByCategory(String category, Pageable pageable) {
@@ -212,6 +227,13 @@ public class BoardServiceImpl implements BoardService {
     public List<Board> getBoardsByIds(List<Long> BoardIds) {
         return boardRepository.findAllById(BoardIds);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BoardRespDto> getPopularBoards(String category) {
+        return boardRepository.findPopularBoards(category);
+    }
+
 
     @Override
     public List<Map<String, String>> uploadImages(List<MultipartFile> uploadFiles) {

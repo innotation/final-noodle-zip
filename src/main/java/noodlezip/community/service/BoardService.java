@@ -16,6 +16,8 @@ import java.util.Map;
 
 public interface BoardService {
     Map<String, Object> findBoardList(Pageable pageable);
+    List<Board> findMostLikedBoardList();
+    List<Board> findMostViewedBoardList();
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
     Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable);
     Map<String, Object> searchBoards(String keyword, Pageable pageable);
@@ -28,8 +30,7 @@ public interface BoardService {
     Integer getLikeCount(Long boardId);
     List<Board> getBoardsByIds(List<Long> recentBoardIds);
     List<Map<String, String>> uploadImages(List<MultipartFile> uploadFiles);
-
-    // 태그 및 카테고리 조회를 위한 메소드
+    List<BoardRespDto> getPopularBoards(String category);
     List<CategoryCountDto> getCategoryCounts();
     List<PopularTagDto> getPopularTags();
     Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable);
