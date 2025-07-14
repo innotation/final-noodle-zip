@@ -87,14 +87,18 @@ public class BoardServiceImpl implements BoardService {
         return map;
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> findBoardLiked(Long userId, Pageable pageable) {
-        List<Long> boardIds = likeRepository.findCommunityIdsByUserId(userId);
-        Page<BoardRespDto> boardPage = boardRepository.findBoardsByIdsAndStatusPostedWithPaging(boardIds, pageable);
+    public Map<String, Object> findBoardLiked(Long userId,
+                                              List<Long> boardIdList,
+                                              String category,
+                                              Pageable pageable
+    ) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardsByIdsAndStatusPostedWithPaging(
+                boardIdList, category, pageable);
 
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
-
         map.put("list", boardPage.getContent());
 
         return map;
@@ -102,10 +106,13 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> findBoardByUser(Long userId, Pageable pageable){
-        Page<BoardRespDto> boardPage = boardRepository.findBoardByWriterWithPagination(userId, pageable);
+    public Map<String, Object> findBoardByUser(Long userId, String category, Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByWriterAndCommunityTypeWithPagination(
+                userId, category, pageable);
+
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
         map.put("list", boardPage.getContent());
+
         return map;
     }
 
@@ -262,6 +269,18 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<CategoryCountDto> getCategoryCountsByUser(Long userId) {
+        return boardRepository.findCategoryCountsByUser(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryCountDto> getCategoryCountsByBoardIds(List<Long> boardIdList) {
+        return boardRepository.findCategoryCountsByBoardIds(boardIdList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<PopularTagDto> getPopularTags() {
         return boardRepository.findPopularTags();
     }
@@ -278,4 +297,10 @@ public class BoardServiceImpl implements BoardService {
         
         return map;
     }
+
+    @Override
+    public List<Long> getBoardIdByUserLiked(Long userId) {
+        return likeRepository.findCommunityIdsByUserId(userId);
+    }
+
 }

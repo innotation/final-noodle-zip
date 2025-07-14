@@ -21,8 +21,12 @@ public interface BoardService {
     Map<String, Object> findBoardListByCategory(String category, Pageable pageable);
     Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable);
     Map<String, Object> searchBoards(String keyword, Pageable pageable);
-    Map<String, Object> findBoardLiked(Long userId, Pageable pageable);
-    Map<String, Object> findBoardByUser(Long userId, Pageable pageable);
+
+    Map<String, Object> findBoardLiked(Long userId, List<Long> boardIdList, String category, Pageable pageable);
+    Map<String, Object> findBoardByUser(Long userId, String category, Pageable pageable);
+    List<CategoryCountDto> getCategoryCountsByUser(Long userId);
+    List<CategoryCountDto> getCategoryCountsByBoardIds(List<Long> boardIdList);
+
     BoardRespDto findBoardById(Long id, String userIdOrIp);
     void registBoard(BoardReqDto boardReqDto, User user);
     void deleteBoard(Long boardId, Long userId);
@@ -34,4 +38,5 @@ public interface BoardService {
     List<CategoryCountDto> getCategoryCounts();
     List<PopularTagDto> getPopularTags();
     Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable);
+    List<Long> getBoardIdByUserLiked(Long userId);
 }
