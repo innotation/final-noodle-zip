@@ -131,7 +131,7 @@
                 <!-- /widget -->
                 <div class="widget">
                     <div class="widget-title">
-                        <h4>Categories</h4>
+                        <h4>게시판</h4>
                     </div>
                     <ul class="cats">
                         <li><a th:href="@{/board/list}"><strong>전체 게시글 보기</strong></a></li>
@@ -148,13 +148,9 @@
                         <h4>Popular Tags</h4>
                     </div>
                     <div class="tags">
-                        <a href="#">Food</a>
-                        <a href="#">Bars</a>
-                        <a href="#">Cooktails</a>
-                        <a href="#">Shops</a>
-                        <a href="#">Best Offers</a>
-                        <a href="#">Transports</a>
-                        <a href="#">Restaurants</a>
+                        <a th:each="tag : ${popularTags}" 
+                           th:href="@{/board/review/list(tag=${tag.tagName}, type=${tag.tagType})}"
+                           th:text="${tag.tagName}">태그</a>
                     </div>
                 </div>
                 <!-- /widget -->

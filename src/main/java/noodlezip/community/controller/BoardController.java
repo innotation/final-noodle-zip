@@ -122,17 +122,24 @@ public class BoardController {
     public String boardList(
             @PathVariable(value = "category", required = false) String  pathCommunityType,
             @RequestParam(value = "search", required = false) String searchKeyword,
+            // 태그 검색을 위한 request 추가
+            @RequestParam(value = "tag", required = false) String tag,
+            @RequestParam(value = "type", required = false) String type,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
         boolean hasSearchKeyword = searchKeyword != null && !searchKeyword.trim().isEmpty();
-
         boolean hasCommunityType = pathCommunityType != null && !pathCommunityType.trim().isEmpty();
+        boolean hasTag = tag != null && !tag.trim().isEmpty();
 
         Map<String, Object> map;
-        if (hasCommunityType && hasSearchKeyword) {
+        
+        if (hasTag && "review".equals(pathCommunityType)) {
+            // 리뷰 카테고리에서 태그로 필터링
+            map = boardService.findReviewListByTag(tag, type, pageable);
+        } else if (hasCommunityType && hasSearchKeyword) {
             map = boardService.searchBoardsByCommunityTypeAndKeyword(pathCommunityType, searchKeyword, pageable);
         } else if (hasCommunityType) {
             map = boardService.findBoardListByCategory(pathCommunityType, pageable);
@@ -144,6 +151,8 @@ public class BoardController {
 
         model.addAttribute("category", pathCommunityType);
         model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("tag", tag);
+        model.addAttribute("type", type);
         model.addAttribute("board", map.get("list"));
         model.addAttribute("page", map.get("page"));
         model.addAttribute("totalPage", map.get("totalPage"));
@@ -154,6 +163,9 @@ public class BoardController {
 
         // 카테고리별 개수 조회
         model.addAttribute("categoryCounts", boardService.getCategoryCounts());
+
+        // 인기 태그 조회
+        model.addAttribute("popularTags", boardService.getPopularTags());
 
         return "/board/list";
     }

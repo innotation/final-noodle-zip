@@ -2,6 +2,7 @@ package noodlezip.community.repository;
 
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.dto.CategoryCountDto;
+import noodlezip.community.dto.PopularTagDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,5 +18,9 @@ public interface BoardRepositoryCustom {
     Long increaseViewCount(Long boardId, Long viewCount);
     Page<BoardRespDto> findBoardByCommunityTypeAndKeywordWithPagination(String category, String keyword, Pageable pageable);
     Page<BoardRespDto> findBoardByKeywordWithPagination(String keyword, Pageable pageable);
+    
+    // 태그별 리뷰 게시글 조회
+    Page<BoardRespDto> findReviewBoardsByTag(String tag, String type, Pageable pageable);
     List<CategoryCountDto> findCategoryCounts();
+    List<PopularTagDto> findPopularTags();
 }
