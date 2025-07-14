@@ -40,7 +40,7 @@ public class MyPageMainController extends MyBaseController {
 
         model.addAttribute("userAccessInfo", userAccessInfo);
 
-        return "index";
+        return "mypage/main";
     }
 
     /**
