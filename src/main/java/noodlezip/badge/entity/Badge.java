@@ -50,7 +50,7 @@ public class Badge extends BaseTimeEntity {
     }
 
     public boolean isOptionalBadge() {
-        return badgeExtraOption.hasOption();
+        return badgeExtraOption != null;
     }
 
     public boolean isOverCompletionValue(int currentValue) {
