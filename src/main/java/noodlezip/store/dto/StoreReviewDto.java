@@ -19,6 +19,7 @@ public class StoreReviewDto {
     private Integer noodleThickness;
     private Integer noodleTexture;
     private Integer noodleBoilLevel;
+    private Integer soupDensity;
     private Integer soupTemperature;
     private Integer soupSaltiness;
     private Integer soupSpicinessLevel;
@@ -39,6 +40,7 @@ public class StoreReviewDto {
             Integer noodleThickness,
             Integer noodleTexture,
             Integer noodleBoilLevel,
+            Integer soupDensity,
             Integer soupTemperature,
             Integer soupSaltiness,
             Integer soupSpicinessLevel,
@@ -57,6 +59,7 @@ public class StoreReviewDto {
         this.noodleThickness = noodleThickness;
         this.noodleTexture = noodleTexture;
         this.noodleBoilLevel = noodleBoilLevel;
+        this.soupDensity = soupDensity;
         this.soupTemperature = soupTemperature;
         this.soupSaltiness = soupSaltiness;
         this.soupSpicinessLevel = soupSpicinessLevel;

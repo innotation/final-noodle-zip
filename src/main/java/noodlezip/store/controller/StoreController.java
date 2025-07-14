@@ -31,7 +31,12 @@ public class StoreController {
     public String showDetailPage(@PathVariable Long no,
                                  @AuthenticationPrincipal MyUserDetails myUserDetails,
                                  Model model) {
-        StoreDto store = storeService.getStore(no, myUserDetails.getUser().getId());
+        Long userId = null;
+        if (myUserDetails != null) {
+            userId = myUserDetails.getUser().getId();
+        }
+        
+        StoreDto store = storeService.getStore(no, userId);
         model.addAttribute("store", store);
         return "store/detail";
     }

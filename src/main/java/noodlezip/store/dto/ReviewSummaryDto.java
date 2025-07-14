@@ -13,6 +13,7 @@ public class ReviewSummaryDto {
     private Double noodleThickness;
     private Double noodleTexture;
     private Double noodleBoilLevel;
+    private Double soupDensity;
     private Double soupTemperature;
     private Double soupSaltiness;
     private Double soupSpicinessLevel;

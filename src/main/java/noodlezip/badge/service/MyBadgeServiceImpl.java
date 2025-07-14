@@ -82,7 +82,8 @@ public class MyBadgeServiceImpl implements MyBadgeService {
     @Override
     @Transactional(readOnly = true)
     public List<MyBadgeBadgeResponse> getUserBadgeListByGroup(Long userId) {
-        userService.validateMyPageExistingUserByUserId(userId);
+        userService.findExistingUserByUserId(userId)
+                .orElseThrow(() -> new CustomException(BadgeErrorStatus._NOT_FOUNT_USER_BADGE_PAGE));
 
         List<BadgeGroupResponse> badgeGroupList = userBadgeService.getBadgeGroupList();
         List<UserNoOptionBadgeDto> notOptionBadgeList = userBadgeService.getNoOptionUserBadgeList(userId);
