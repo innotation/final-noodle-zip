@@ -26,4 +26,6 @@ public interface RamenReviewRepositoryCustom {
 
     // 태그로 필터링된 리뷰 목록 조회
     Page<StoreReviewDto> findReviewsByTag(String tag, String type, Pageable pageable);
+
+    Page<StoreReviewDto> findReviewsByUserId(Long userId, Pageable pageable);
 }

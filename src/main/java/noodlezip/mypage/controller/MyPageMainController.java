@@ -35,6 +35,7 @@ public class MyPageMainController extends MyBaseController {
     private final UserService userService;
     private final BoardService boardService;
     private final ModelMapper modelMapper;
+    private final noodlezip.ramen.service.RamenService ramenService;
 
     @Operation(
             summary = "마이페이지 메인페이지 정보 조회",
@@ -64,11 +65,14 @@ public class MyPageMainController extends MyBaseController {
         @SuppressWarnings("unchecked")
         java.util.List<BoardRespDto> boards = (java.util.List<BoardRespDto>) boardService.findBoardByUser(userId, pageable).get("list");
         for (BoardRespDto board : boards) {
-            board.setPlainContent(Jsoup.parse(board.getContent()).text());
+            board.setPlainContent(org.jsoup.Jsoup.parse(board.getContent()).text());
         }
+        // 내가 쓴 리뷰 리스트 조회
+        java.util.List<noodlezip.store.dto.StoreReviewDto> myReviews = ramenService.findReviewsByUserId(userId, pageable).getContent();
         model.addAttribute("userAccessInfo", userAccessInfo);
         model.addAttribute("myPage", myPage);
         model.addAttribute("boards", boards);
+        model.addAttribute("myReviews", myReviews);
         return "mypage/main";
     }
 
