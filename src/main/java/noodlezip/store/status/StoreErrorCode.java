@@ -32,7 +32,15 @@ public enum StoreErrorCode implements BaseErrorCode {
             .isSuccess(false)
             .code("ST004")
             .message("존재하지 않는 토핑 이름입니다.")
+            .build()),
+
+    _FORBIDDEN(ErrorReasonDto.builder()
+            .httpStatus(HttpStatus.FORBIDDEN)
+            .isSuccess(false)
+            .code("ST005")
+            .message("권한이 없습니다.")
             .build());
+
 
     private final ErrorReasonDto errorReasonDto;
 

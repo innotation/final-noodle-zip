@@ -27,6 +27,7 @@ import noodlezip.store.repository.StoreExtraToppingRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
 import noodlezip.user.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -124,7 +125,7 @@ public class StoreService {
                             schedule.setClosingAt(s.getClosingAt());
                         }
 
-                        schedule.setStoreId(savedStore);
+                        schedule.setStore(savedStore);
 
                         return schedule;
                     }).collect(Collectors.toList());
@@ -228,6 +229,26 @@ public class StoreService {
         return savedStore.getId();
     }
 
+    // 사용자 검증 + 삭제
+    @Transactional
+    public void deleteStore(Long storeId, User user) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        // 본인 확인
+        if (!store.getUserId().equals(user.getId())) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // 연관 엔티티 삭제
+        ramenToppingRepository.deleteByMenu_Store(store);
+        menuRepository.deleteByStore(store);
+        scheduleRepository.deleteByStore(store);
+        storeExtraToppingRepository.deleteByStore(store);
+
+        storeRepository.delete(store);
+    }
+
     // 라멘 육수 목록 조회
     public List<RamenSoupResponseDto> getAllSoups() {
         return ramenService.getAllSoups();
@@ -294,6 +315,28 @@ public class StoreService {
                 .soupNames(soups)
                 .toppingNames(toppings)
                 .build();
+    }
+
+    // 매장 삭제
+    public List<StoreDto> getStoresByUserId(Long userId) {
+        List<Store> stores = storeRepository.findByUserIdAndOperationStatusNot(userId, OperationStatus.CLOSED);
+        return stores.stream()
+                .map(StoreDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+
+    public void markStoreAsClosed(Long storeId, Long userId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        if (!store.getUserId().equals(userId)) {
+            throw new CustomException(StoreErrorCode._FORBIDDEN);
+        }
+
+        store.setOperationStatus(OperationStatus.CLOSED);
+
+        storeRepository.save(store);
     }
 
     // 매장 리뷰 조회

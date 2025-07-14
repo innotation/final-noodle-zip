@@ -129,9 +129,6 @@
 		</div>
 		<!-- /container -->
 
-      <!-- 삭제 버튼 -->
-      <button id="delete-btn" class="btn btn-danger mt-3">매장 삭제</button>
-		
 	</main>
 	<!-- /main -->
 
@@ -561,39 +558,6 @@
 			}
 		});
 	</script>
-
-      <!-- 매장 삭제 -->
-      <script>
-          document.addEventListener("DOMContentLoaded", function () {
-              const deleteBtn = document.getElementById("delete-btn");
-              const storeId = document.getElementById("store-detail").dataset.storeId;
-
-              deleteBtn.addEventListener("click", async function () {
-                  const confirmed = confirm("정말 이 매장을 삭제하시겠습니까?");
-                  if (!confirmed) return;
-
-                  try {
-                      const response = await fetch(`/store/${storeId}`, {
-                          method: "DELETE",
-                          headers: {
-                              "Content-Type": "application/json"
-                          }
-                      });
-
-                      if (response.ok) {
-                          alert("매장이 성공적으로 삭제되었습니다.");
-                          window.location.href = "/"; // 또는 '/store/list'
-                      } else {
-                          const err = await response.json();
-                          alert(err.message || "삭제에 실패했습니다.");
-                      }
-                  } catch (e) {
-                      console.error("삭제 실패:", e);
-                      alert("서버 오류가 발생했습니다.");
-                  }
-              });
-          });
-      </script>
 
 	<!-- footer -->
 	<th:block th:replace="~{fragments/footer :: footer}"></th:block>

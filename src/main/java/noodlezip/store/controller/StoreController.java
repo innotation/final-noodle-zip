@@ -113,12 +113,12 @@ public class StoreController {
         return storeService.getStoreToppings(storeId);
     }
 
-    // 매장 삭제
+    // 매장 삭제 API
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<?> deleteStore(@PathVariable Long storeId) {
-        storeService.deleteStore(storeId);
-        return ResponseEntity.ok().body(Map.of("message", "매장이 성공적으로 삭제되었습니다."));
+    public ResponseEntity<?> deleteStore(@PathVariable Long storeId,
+                                         @AuthenticationPrincipal MyUserDetails myUserDetails) {
+        storeService.deleteStore(storeId, myUserDetails.getUser());
+        return ResponseEntity.ok(Map.of("message", "삭제 완료"));
     }
-
 }
 

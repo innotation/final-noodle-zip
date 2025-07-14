@@ -118,6 +118,31 @@
   <!-- /bg_gray -->
 </main>
 
+<section class="my-store-list container margin_60_40">
+  <h2>내가 등록한 매장</h2>
+
+  <div th:if="${#lists.isEmpty(myStores)}">
+    <p>등록한 매장이 없습니다.</p>
+  </div>
+
+  <div class="store-cards" th:if="${!#lists.isEmpty(myStores)}">
+    <div class="store-card" th:each="store : ${myStores}">
+      <h3 th:text="${store.storeName}">매장명</h3>
+      <p th:text="${store.address}">매장 주소</p>
+
+      <!-- 수정 버튼 -->
+      <button class="btn btn-outline-primary btn-sm">수정</button>
+
+      <!-- 폐업 버튼 -->
+      <button class="btn btn-outline-danger btn-sm"
+              type="button"
+              th:onclick="|deleteStore(${store.id})|">
+        폐업
+      </button>
+    </div>
+  </div>
+</section>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <div id="toTop"></div><!-- Back to top button -->
@@ -126,6 +151,32 @@
 <script th:src="@{/js/common_scripts.min.js}"></script>
 <script th:src="@{/js/common_func.js}"></script>
 <script th:src="@{/assets/validate.js}"></script>
+
+<script>
+  function deleteStore(storeId) {
+    if (!confirm("폐업하시겠습니까?")) return;
+
+    fetch(`/mypage/store/delete/${storeId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+    })
+            .then(res => {
+              if (!res.ok) {
+                res.text().then(txt => console.error("서버 응답:", txt));
+                throw new Error('삭제 실패');
+              }
+              alert('폐업된 매장으로 전환하였습니다.');
+              window.location.reload();
+            })
+            .catch(e => {
+              alert('삭제 중 오류가 발생했습니다.');
+              console.error(e);
+            });
+  }
+</script>
 
 </body>
 </html>
