@@ -21,11 +21,11 @@ public class SecurityConfig {
 
     // permitAll 패턴을 상수로 분리
     private static final List<String> PERMIT_ALL_PATTERNS = Arrays.asList(
-        "/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
-        "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**",
-        "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
-        "/store/**", "/admin_section/**", "/admin/**", "/receipt", "/location/**", "/ramen/**",
-        "/board/**", "/comments/**"
+            "/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
+            "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**",
+            "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
+            "/store/**", "/admin_section/**", "/admin/**", "/receipt", "/location/**", "/ramen/**",
+            "/board/**", "/comments/**", "/users/**", "/mypage/**"
     );
 
     @Bean
