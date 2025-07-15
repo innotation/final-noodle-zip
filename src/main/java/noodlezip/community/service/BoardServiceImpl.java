@@ -218,19 +218,9 @@ public class BoardServiceImpl implements BoardService {
         // 2. 각 메뉴별 리뷰 처리
         for (MenuReviewDto menuReviewDto : reviewReqDto.getReviews()) {
 
-            MultipartFile reviewImage = menuReviewDto.getImageFile();
             String reviewImageUrl = "";
 
             RamenReview review = new RamenReview();
-
-            if (reviewImage != null && !reviewImage.isEmpty()) {
-                try {
-                    Map<String, String> uploadResult = fileUtil.fileupload("store", reviewImage);
-                    reviewImageUrl = uploadResult.get("fileUrl");
-                } catch (Exception e) {
-                    throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
-                }
-            }
 
             Menu menu = menuRepository.findById(menuReviewDto.getMenuId())
                     .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));

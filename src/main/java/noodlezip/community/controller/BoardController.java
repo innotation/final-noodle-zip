@@ -40,7 +40,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,7 +70,7 @@ public class BoardController {
     })
     public String review(@ModelAttribute ReviewInitDto reviewInitDto,
                          Model model) {
-        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(reviewInitDto.getBizNum());
+        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
         model.addAttribute("storeId", ocrToReviewDto.getStoreId());
         model.addAttribute("storeName",ocrToReviewDto.getStoreName());
         model.addAttribute("menuList", ocrToReviewDto.getMenuList());
@@ -78,38 +80,32 @@ public class BoardController {
         return "/board/leave-review";
     }
 
-    @PostMapping("/registReview")
+    @PostMapping(value = "/registReview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "리뷰게시글 등록 처리", description = "새로운 리뷰게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
     @Parameters({
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true),
             @Parameter(name = "reviewReqDto", description = "게시글의 제목과 리뷰와 내용을 포함하는 요청 DTO", required = true,
                     schema = @Schema(implementation = ReviewReqDto.class)),
-            @Parameter(name = "bindingResult", description = "유효성 검사 결과", hidden = true),
-            @Parameter(name = "boardImage", description = "게시글에 첨부할 이미지 파일 (선택 사항)", required = false,
+            @Parameter(name = "reviews[n].imageFile", description = "각 메뉴 리뷰에 첨부할 이미지 파일", required = false,
                     content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
     })
     public String registReview(
             @AuthenticationPrincipal MyUserDetails user,
             @Validated(ValidationGroups.OnCreate.class) @ModelAttribute ReviewReqDto reviewReqDto) {
+
         // 1. 사용자 인증 확인
         if (user == null || user.getUser() == null) {
             log.warn("비로그인 사용자가 게시글 등록 시도.");
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
 
-//        if (bindingResult.hasErrors()) {
-//            String errorMessage = bindingResult.getFieldErrors().stream()
-//                    .map(FieldError::getDefaultMessage)
-//                    .collect(Collectors.joining(", "));
-//            log.error("게시글 작성 유효성 검사 실패: {}", errorMessage);
-//            throw new CustomException(ErrorStatus._BAD_REQUEST);
-//        }
-
         if (reviewReqDto.getReviews() == null || reviewReqDto.getReviews().isEmpty()) {
             log.warn("리뷰가 없는 요청입니다.");
             throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
+        // Spring이 @ModelAttribute를 통해 자동으로 MultipartFile을 DTO에 바인딩해줍니다.
+        // 수동으로 파일을 추출할 필요가 없습니다.
 
         try {
             boardService.registReview(reviewReqDto, user.getUser());
@@ -308,4 +304,5 @@ public class BoardController {
     public ResponseEntity<?> uploadImage(@RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED, boardService.uploadImages(uploadFiles));
     }
+
 }
