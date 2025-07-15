@@ -66,10 +66,10 @@
                   <th:block th:unless="${isOwner}">
                     <a href="#0"
                        id="follow-btn"
-                       th:class="${followStatus} ? 'btn_hero follow-btn followed' : 'btn_hero follow-btn' + (!${isLoggedIn} ? ' login-required' : '')"
+                       th:class="${isSubscribed} ? 'btn_hero follow-btn followed' : 'btn_hero follow-btn' + (!${isLoggedIn} ? ' login-required' : '')"
                        th:data-user-id="${myPage.id}">
                       <i class="icon_heart"></i>
-                      <span th:text="${followStatus} ? 'Unfollow' : 'Follow'">Follow</span>
+                      <span th:text="${isSubscribed} ? '구독 취소' : '구독'">Follow</span>
                     </a>
                   </th:block>
                 </div>
@@ -570,5 +570,34 @@
       }
     });
   </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const btn = document.getElementById("follow-btn");
+    if (!btn) return;
+
+    btn.addEventListener("click", function(evt) {
+      const isLoggedInInput = document.getElementById('is-logged-in');
+      const isLoggedIn = isLoggedInInput && isLoggedInInput.value === 'true';
+      if (!isLoggedIn) {
+        return; // common_func.js의 login-required 로직이 처리하도록 함
+      }
+
+      evt.preventDefault();
+      const userId = btn.getAttribute("data-user-id");
+      fetch(`/users/${userId}/subscribe`, { method: 'GET' })
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          const isSubscribed = btn.getAttribute("data-subscribed") === "true";
+          btn.setAttribute("data-subscribed", (!isSubscribed).toString());
+          btn.textContent = !isSubscribed ? "구독 취소" : "구독";
+          window.location.reload();
+        })
+        .catch(err => {
+          alert("구독 처리 중 오류가 발생했습니다.");
+          console.error(err);
+        });
+    });
+  });
+</script>
 </body>
 </html>`
