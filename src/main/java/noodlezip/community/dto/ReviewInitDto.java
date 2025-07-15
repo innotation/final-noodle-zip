@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 @Builder
 public class ReviewInitDto {
-    private Long bizNum;
+    private String bizNum;
     private String ocrKeyHash;
     private String visitDate;
 }
