@@ -199,6 +199,8 @@ public class BoardServiceImpl implements BoardService {
         board.setPostStatus(CommunityActiveStatus.POSTED);
         board.setUser(user);
         boardRepository.save(board);
+
+        publishCommunityPostBadgeEvent(user);
         log.info("board save : {}", board);
     }
 
@@ -340,6 +342,13 @@ public class BoardServiceImpl implements BoardService {
             ));
         }
 
+    }
+
+    private void publishCommunityPostBadgeEvent(User user) {
+        eventPublisher.publishEvent(new BasicBadgeEvent(
+                user.getId(),
+                UserEventType.COMMUNITY_POST
+        ));
     }
 
 }
