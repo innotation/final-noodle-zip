@@ -11,7 +11,6 @@ import noodlezip.subscription.repository.UserSubscriptionRepository;
 import noodlezip.subscription.status.SubscriptionErrorStatus;
 import noodlezip.subscription.util.SubscriptionPagePolicy;
 import noodlezip.user.entity.User;
-import noodlezip.user.repository.UserRepository;
 import noodlezip.user.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,10 +27,22 @@ public class SubscribeServiceImpl implements SubscribeService {
     private final UserService userService;
     private final PageUtil pageUtil;
 
-    // TODO 마이페이지 메인페이지 구독 버튼 활성화 여부
     @Transactional(readOnly = true)
     public boolean isSubscribed(Long requestUserId, Long targetUserId) {
+        if (requestUserId == null || targetUserId == null) {
+            return false;
+        }
         return userSubscriptionRepository.existsByFollowerIdAndFolloweeId(requestUserId, targetUserId);
+    }
+
+    @Override
+    public int getCountByFolloweeById(Long followeeId) {
+        return userSubscriptionRepository.countByFolloweeId(followeeId);
+    }
+
+    @Override
+    public int getCountByFollowerById(Long followerId) {
+        return userSubscriptionRepository.countByFollowerId(followerId);
     }
 
 

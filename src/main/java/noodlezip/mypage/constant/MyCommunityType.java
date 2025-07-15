@@ -7,10 +7,10 @@ import lombok.Getter;
 @Getter
 public enum MyCommunityType {
 
-    POST_BOARD("POST_BOARD"),
-    LIKED_BOARD("LIKED_BOARD"),
-    POST_COMMENT("POST_COMMENT");
+    POST_BOARD("boards"),
+    LIKED_BOARD("liked-boards"),
+    POST_COMMENT("comments");
 
-    private final String value;
+    private final String path;
 
 }

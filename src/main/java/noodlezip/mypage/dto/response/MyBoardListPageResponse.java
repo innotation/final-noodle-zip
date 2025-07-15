@@ -2,6 +2,7 @@ package noodlezip.mypage.dto.response;
 
 import lombok.*;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.CategoryCountDto;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class MyBoardListPageResponse {
     private boolean isLast;
 
     private List<BoardRespDto> boardList;
+    private List<CategoryCountDto> communityTypeList;
 
 
     public static MyBoardListPageResponse of(Map<String, Object> map) {
