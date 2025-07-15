@@ -485,35 +485,71 @@
 	document.getElementById('submitReviewBtn').addEventListener('click', function () {
 
 		const form = document.getElementById('reviewForm');
-		const formData = new FormData(form); // 폼 전체 가져옴
-		console.log("총 필드 수:", [...formData.entries()].length);
-		for (let [key, value] of formData.entries()) {
-			console.log(`${key}:`, value);
-		}
 
-		// 디버깅용 - 실제 데이터 확인
-		for (let pair of formData.entries()) {
-			console.log(`${pair[0]}:`, pair[1]);
-		}
+// 리뷰 데이터 JSON 객체 생성
+		const reviews = [];
+		document.querySelectorAll('.slick-item').forEach((slide, index) => {
+			const review = {
+				menuId: slide.querySelector(`input[name="reviews[${index}].menuId"]`).value,
+				noodleThickness: slide.querySelector(`input[name="reviews[${index}].noodleThickness"]`).value,
+				noodleTexture: slide.querySelector(`input[name="reviews[${index}].noodleTexture"]`).value,
+				noodleBoiledLevel: slide.querySelector(`input[name="reviews[${index}].noodleBoiledLevel"]`).value,
+				soupThickness: slide.querySelector(`input[name="reviews[${index}].soupThickness"]`).value,
+				soupTemperature: slide.querySelector(`input[name="reviews[${index}].soupTemperature"]`).value,
+				soupSaltiness: slide.querySelector(`input[name="reviews[${index}].soupSaltiness"]`).value,
+				soupSpiciness: slide.querySelector(`input[name="reviews[${index}].soupSpiciness"]`).value,
+				soupOiliness: slide.querySelector(`input[name="reviews[${index}].soupOiliness"]`).value,
+				content: slide.querySelector(`textarea[name="reviews[${index}].content"]`).value,
+				toppingIds: Array.from(slide.querySelectorAll(`input[name="reviews[${index}].toppingIds"]:checked`)).map(input => input.value)
+			};
+			reviews.push(review);
+		});
 
-		// 서버에 fetch 전송
-		fetch('/board/registReview', {
+// 기타 데이터 수집
+		const payload = {
+			title: document.getElementById('title').value,
+			content: document.getElementById('content').value,
+			ocrKeyHash: form.querySelector('input[name="ocrKeyHash"]').value,
+			visitDate: form.querySelector('input[name="visitDate"]').value,
+			bizNum: form.querySelector('input[name="bizNum"]').value,
+			reviews: reviews
+		};
+
+		const fileData = new FormData();
+		document.querySelectorAll('input[type="file"]').forEach((input, index) => {
+			if (input.files[0]) {
+				// 슬라이드 index와 매핑해서 서버에서 구분 가능하도록 이름 지정
+				fileData.append(`images[${index}]`, input.files[0]);
+			}
+		});
+
+		fetch('/board/registReviewJson	', {
 			method: 'POST',
-			body: formData
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
 		})
-				.then(response => {
-					if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-					return response.text(); // 또는 .json()
-				})
-				.then(data => {
-					console.log("서버 응답:", data);
-					alert("🎉 리뷰가 성공적으로 등록되었습니다!");
-					location.href = "/"; // 성공 후 이동
-				})
-				.catch(error => {
-					console.error("❌ 게시글 작성 실패:", error);
-					alert("리뷰 제출 중 오류가 발생했습니다.");
+			.then(response => response.json())
+			.then(data => {
+				// data.reviewIds = [23, 24, 25] 같은 식
+				data.reviewIds.forEach((id, idx) => {
+					const file = fileData.get(`images[${idx}]`);
+					if (file) fileData.set(`image_${id}`, file); // 리뷰 ID와 연결
 				});
+
+				return fetch('/board/uploadReviewImages', {
+					method: 'POST',
+					body: fileData
+				});
+			})
+			.then(response => {
+				if (!response.ok) throw new Error("파일 업로드 실패");
+				alert("🎉 리뷰 등록 성공!");
+				location.href = "/";
+			})
+			.catch(err => {
+				console.error(err);
+				alert("제출 중 오류 발생");
+			});
 	});
 
 </script>

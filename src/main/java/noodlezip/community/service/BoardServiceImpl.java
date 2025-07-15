@@ -201,60 +201,116 @@ public class BoardServiceImpl implements BoardService {
         return imageInfos;
     }
 
+//    @Override
+//    public void registReview(ReviewReqDto reviewReqDto, User user) {
+//
+//        Long storeId = storeService.findStoreIdByBizNum(reviewReqDto.getBizNum());
+//
+//        Board board = modelMapper.map(reviewReqDto, Board.class);
+//        board.setReviewStoreId(storeId);
+//        board.setCommunityType("community");
+//        board.setPostStatus(CommunityActiveStatus.POSTED);
+//        board.setUser(user);
+//        boardRepository.save(board);
+//        Board savedBoard = boardRepository.save(board);
+//        List<RamenReview> ramenReviews = new ArrayList<>();
+//
+//        // 2. 각 메뉴별 리뷰 처리
+//        for (MenuReviewDto menuReviewDto : reviewReqDto.getReviews()) {
+//
+//            String reviewImageUrl = "";
+//
+//            RamenReview review = new RamenReview();
+//
+//            Menu menu = menuRepository.findById(menuReviewDto.getMenuId())
+//                    .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+//
+//
+//            review.setId(menuReviewDto.getReviewId());
+//            review.setCommunityId(savedBoard.getId());
+//            review.setMenu(menu);
+//
+//            review.setNoodleThickness(menuReviewDto.getNoodleThickness());
+//            review.setNoodleTexture(menuReviewDto.getNoodleTexture());
+//            review.setNoodleBoilLevel(menuReviewDto.getNoodleBoiledLevel());
+//            review.setSoupDensity(menuReviewDto.getSoupThickness());
+//            review.setSoupTemperature(menuReviewDto.getSoupTemperature());
+//            review.setSoupSaltiness(menuReviewDto.getSoupSaltiness());
+//            review.setSoupSpicinessLevel(menuReviewDto.getSoupSpiciness());
+//            review.setSoupOiliness(menuReviewDto.getSoupOiliness());
+//            review.setReviewImageUrl(reviewImageUrl);
+//
+//            review.setContent(menuReviewDto.getContent());
+//
+//            ramenReviewRepository.save(review);
+//
+//            if (menuReviewDto.getToppingIds() != null) {
+//                for (Long toppingId : menuReviewDto.getToppingIds()) {
+//                    StoreExtraTopping storeExtraTopping = storeExtraToppingRepository.getReferenceById(toppingId);
+//                    ReviewTopping reviewTopping = new ReviewTopping();
+//                    reviewTopping.setRamenReview(review);
+//                    reviewTopping.setStoreExtraTopping(storeExtraTopping);
+//                    reviewToppingRepository.save(reviewTopping);
+//                }
+//            }
+//
+//            ramenReviews.add(review);
+//        }
+//    }
+
     @Override
-    public void registReview(ReviewReqDto reviewReqDto, User user) {
-
-        Long storeId = storeService.findStoreIdByBizNum(reviewReqDto.getBizNum());
-
-        Board board = modelMapper.map(reviewReqDto, Board.class);
-        board.setReviewStoreId(storeId);
+    public List<Long> saveReviewJson(ReviewReqDto dto, User user) {
+        Board board = new Board();
+        board.setTitle(dto.getTitle());
+        board.setContent(dto.getContent());
+        board.setUser(user);
         board.setCommunityType("community");
         board.setPostStatus(CommunityActiveStatus.POSTED);
-        board.setUser(user);
         boardRepository.save(board);
-        Board savedBoard = boardRepository.save(board);
-        List<RamenReview> ramenReviews = new ArrayList<>();
 
-        // 2. 각 메뉴별 리뷰 처리
-        for (MenuReviewDto menuReviewDto : reviewReqDto.getReviews()) {
+        List<Long> reviewIds = new ArrayList<>();
 
-            String reviewImageUrl = "";
-
+        for (MenuReviewDto r : dto.getReviews()) {
             RamenReview review = new RamenReview();
-
-            Menu menu = menuRepository.findById(menuReviewDto.getMenuId())
-                    .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
-
-
-            review.setId(menuReviewDto.getReviewId());
-            review.setCommunityId(savedBoard.getId());
-            review.setMenu(menu);
-
-            review.setNoodleThickness(menuReviewDto.getNoodleThickness());
-            review.setNoodleTexture(menuReviewDto.getNoodleTexture());
-            review.setNoodleBoilLevel(menuReviewDto.getNoodleBoiledLevel());
-            review.setSoupDensity(menuReviewDto.getSoupThickness());
-            review.setSoupTemperature(menuReviewDto.getSoupTemperature());
-            review.setSoupSaltiness(menuReviewDto.getSoupSaltiness());
-            review.setSoupSpicinessLevel(menuReviewDto.getSoupSpiciness());
-            review.setSoupOiliness(menuReviewDto.getSoupOiliness());
-            review.setReviewImageUrl(reviewImageUrl);
-
-            review.setContent(menuReviewDto.getContent());
-
+            review.setBoard(board);
+            review.setMenu(menuRepository.getReferenceById(r.getMenuId()));
+            review.setNoodleThickness(r.getNoodleThickness());
+            review.setNoodleTexture(r.getNoodleTexture());
+            review.setNoodleBoilLevel(r.getNoodleBoiledLevel());
+            review.setSoupDensity(r.getSoupThickness());
+            review.setSoupTemperature(r.getSoupTemperature());
+            review.setSoupSaltiness(r.getSoupSaltiness());
+            review.setSoupSpicinessLevel(r.getSoupSpiciness());
+            review.setSoupOiliness(r.getSoupOiliness());
+            review.setContent(r.getContent());
             ramenReviewRepository.save(review);
 
-            if (menuReviewDto.getToppingIds() != null) {
-                for (Long toppingId : menuReviewDto.getToppingIds()) {
+            // 토핑 처리
+            if (r.getToppingIds() != null) {
+                for (Long toppingId : r.getToppingIds()) {
                     StoreExtraTopping storeExtraTopping = storeExtraToppingRepository.getReferenceById(toppingId);
-                    ReviewTopping reviewTopping = new ReviewTopping();
-                    reviewTopping.setRamenReview(review);
-                    reviewTopping.setStoreExtraTopping(storeExtraTopping);
-                    reviewToppingRepository.save(reviewTopping);
+                    ReviewTopping rTopping = new ReviewTopping();
+                    rTopping.setRamenReview(review);
+                    rTopping.setStoreExtraTopping(storeExtraTopping);
+                    reviewToppingRepository.save(rTopping);
                 }
             }
 
-            ramenReviews.add(review);
+            reviewIds.add(review.getId());
         }
+
+        return reviewIds;
+    }
+
+    @Override
+    public void saveReviewImage(Long reviewId, MultipartFile imageFile) {
+        if (imageFile == null || imageFile.isEmpty()) return;
+
+        RamenReview review = ramenReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ErrorStatus._BAD_REQUEST));
+
+        String imageUrl = fileUtil.fileupload("review", imageFile).get("fullPath"); // 저장 및 경로 반환
+        review.setReviewImageUrl(imageUrl);
+        ramenReviewRepository.save(review);
     }
 }

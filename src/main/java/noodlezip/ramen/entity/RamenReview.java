@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import noodlezip.community.entity.Board;
 import noodlezip.store.entity.Menu;
 
 @AllArgsConstructor
@@ -23,9 +24,12 @@ public class RamenReview {
     @Column(name = "ramen_review_id", nullable = false)
     private Long id;
 
-    @NotNull
-    @Column(name = "community_id", nullable = false)
+    @Column(name = "community_id", insertable = false, updatable = false)
     private Long communityId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community_id")
+    private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", insertable = false, updatable = false)

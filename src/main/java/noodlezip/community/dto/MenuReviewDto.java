@@ -12,10 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MenuReviewDto {
-
-    private Long reviewId;
     private Long menuId;
-
     private int noodleThickness;
     private int noodleTexture;
     private int noodleBoiledLevel;
@@ -24,9 +21,6 @@ public class MenuReviewDto {
     private int soupSaltiness;
     private int soupSpiciness;
     private int soupOiliness;
-
-    private List<Long> toppingIds;
-
     private String content;
-    private MultipartFile imageFile;
+    private List<Long> toppingIds;
 }

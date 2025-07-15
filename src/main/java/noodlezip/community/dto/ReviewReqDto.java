@@ -14,14 +14,9 @@ public class ReviewReqDto {
 
     private String title;
     private String content;
-
-    private Long bizNum;
     private String ocrKeyHash;
     private String visitDate;
-
-    private String imageUrl;
-
+    private Long bizNum;
     private List<MenuReviewDto> reviews;
-
 
 }

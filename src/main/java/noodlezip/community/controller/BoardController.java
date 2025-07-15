@@ -42,10 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequestMapping("/board")
@@ -80,43 +77,24 @@ public class BoardController {
         return "/board/leave-review";
     }
 
-    @PostMapping(value = "/registReview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "리뷰게시글 등록 처리", description = "새로운 리뷰게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
-    @Parameters({
-            @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true),
-            @Parameter(name = "reviewReqDto", description = "게시글의 제목과 리뷰와 내용을 포함하는 요청 DTO", required = true,
-                    schema = @Schema(implementation = ReviewReqDto.class)),
-            @Parameter(name = "reviews[n].imageFile", description = "각 메뉴 리뷰에 첨부할 이미지 파일", required = false,
-                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
-    })
-    public String registReview(
-            @AuthenticationPrincipal MyUserDetails user,
-            @Validated(ValidationGroups.OnCreate.class) @ModelAttribute ReviewReqDto reviewReqDto) {
+    @PostMapping("/registReviewJson")
+    public ResponseEntity<Map<String, Object>> registReview(@RequestBody ReviewReqDto dto,
+                                                            @AuthenticationPrincipal MyUserDetails userDetails) {
+        List<Long> reviewIds = boardService.saveReviewJson(dto, userDetails.getUser());
+        Map<String, Object> response = new HashMap<>();
+        response.put("reviewIds", reviewIds); // 각 슬라이드에 해당하는 리뷰 ID 목록 반환
+        return ResponseEntity.ok(response);
+    }
 
-        // 1. 사용자 인증 확인
-        if (user == null || user.getUser() == null) {
-            log.warn("비로그인 사용자가 게시글 등록 시도.");
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
-        }
-
-        if (reviewReqDto.getReviews() == null || reviewReqDto.getReviews().isEmpty()) {
-            log.warn("리뷰가 없는 요청입니다.");
-            throw new CustomException(ErrorStatus._BAD_REQUEST);
-        }
-
-        // Spring이 @ModelAttribute를 통해 자동으로 MultipartFile을 DTO에 바인딩해줍니다.
-        // 수동으로 파일을 추출할 필요가 없습니다.
-
-        try {
-            boardService.registReview(reviewReqDto, user.getUser());
-            return "redirect:/board/list";
-        } catch (CustomException e) {
-            log.error("게시글 등록 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("게시글 등록 중 예상치 못한 서버 오류 발생: {}", e.getMessage(), e);
-            throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
-        }
+    @PostMapping("/uploadReviewImages")
+    public ResponseEntity<Void> uploadReviewImages(@RequestParam Map<String, MultipartFile> files) {
+        files.forEach((key, file) -> {
+            if (key.startsWith("image_")) {
+                Long reviewId = Long.parseLong(key.substring("image_".length()));
+                boardService.saveReviewImage(reviewId, file); // 리뷰 ID 기준으로 이미지 저장
+            }
+        });
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/registBoard")
