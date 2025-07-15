@@ -195,7 +195,9 @@
         window.ocrResultCache = {
           ocr,
           ocrKeyHash: data.ocrKeyHash,
-          visitDate: ocr.date
+          visitDate: ocr.date,
+          bizNum: ocr.bizNum
+
         };
 
         $('#storeName').text(ocr.storeName || "없음");

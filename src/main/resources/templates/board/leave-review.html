@@ -194,7 +194,7 @@
 						</div>
 						<button id="startReviewBtn" class="btn btn-primary">리뷰 작성하기</button>
 					</div>
-					<form id="reviewForm" style="display:none;" enctype="multipart/form-data">
+					<form id="reviewForm"  method="POST" style="display:none;" enctype="multipart/form-data">
 
 						<div class="form-group">
 							<label>제목</label>
@@ -214,9 +214,9 @@
 							<button type="button" class="btn btn-success" id="submitReviewBtn">리뷰 제출</button>
 						</div>
 
-						<input type="hidden" name="ocrKeyHash" th:value="${hash}" />
-						<input type="hidden" name="visitDate" th:value="${date}" />
-						<input type="hidden" name="bizNum" th:value="${bizNum}" />
+						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />
+						<input type="hidden" name="visitDate" th:value="${reviewInitDto.visitDate}" />
+						<input type="hidden" name="bizNum" th:value="${reviewInitDto.bizNum}" />
 
 					</form>
 				</div>
@@ -314,11 +314,19 @@
 	const addedMenuIds = new Set();
 
 	$('#startReviewBtn').on('click', function () {
+		const MAX_REVIEW_COUNT = 10;
+
 		addedMenuIds.clear();
 
 		const selectedMenus = $('.menu-checkbox:checked');
+
 		if (selectedMenus.length === 0) {
 			alert("리뷰할 메뉴를 1개 이상 선택해주세요.");
+			return;
+		}
+
+		if (selectedMenus.length > MAX_REVIEW_COUNT) {
+			alert(`리뷰는 최대 ${MAX_REVIEW_COUNT}개까지 가능합니다.`);
 			return;
 		}
 
@@ -355,6 +363,13 @@
 	let pendingMenuToAdd = null;
 
 	$(document).on('click', '.addMenuBtn', function () {
+		const MAX_REVIEW_COUNT = 10;
+
+		if ($('.review-slider .slick-item').length >= MAX_REVIEW_COUNT) {
+			alert(`리뷰는 최대 ${MAX_REVIEW_COUNT}개까지만 등록할 수 있습니다.`);
+			return;
+		}
+
 		const menuId = String($(this).data('id'));
 		const menuName = $(this).data('name');
 		pendingMenuToAdd = { id: menuId, name: menuName };
@@ -471,6 +486,10 @@
 
 		const form = document.getElementById('reviewForm');
 		const formData = new FormData(form); // 폼 전체 가져옴
+		console.log("총 필드 수:", [...formData.entries()].length);
+		for (let [key, value] of formData.entries()) {
+			console.log(`${key}:`, value);
+		}
 
 		// 디버깅용 - 실제 데이터 확인
 		for (let pair of formData.entries()) {
@@ -487,6 +506,7 @@
 					return response.text(); // 또는 .json()
 				})
 				.then(data => {
+					console.log("서버 응답:", data);
 					alert("🎉 리뷰가 성공적으로 등록되었습니다!");
 					location.href = "/"; // 성공 후 이동
 				})
@@ -498,5 +518,4 @@
 
 </script>
 </body>
-</script>
 </html>
