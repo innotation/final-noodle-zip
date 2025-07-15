@@ -86,4 +86,41 @@ $(".close_panel_mobile").on('click', function (event){
     $(".box_booking").hide();
   });
 
+document.addEventListener('DOMContentLoaded', function() {
+  // Follow 버튼 토글 기능
+  const followBtn = document.getElementById('follow-btn');
+  if (followBtn) {
+    followBtn.addEventListener('click', function(e) {
+      // 로그인 상태 체크 - 로그인이 안 되어 있으면 이벤트 중단 (login-required가 처리)
+      var isLoggedInInput = document.getElementById('is-logged-in');
+      var isLoggedIn = isLoggedInInput && isLoggedInInput.value === 'true';
+      if (!isLoggedIn) {
+        return; // common_func.js의 login-required 로직이 처리하도록 함
+      }
+      e.preventDefault();
+      const userId = followBtn.getAttribute('data-user-id');
+      fetch(`/users/${userId}/subscribe`, { method: 'GET', credentials: 'same-origin' })
+        .then(res => {
+          if (res.ok) {
+            // 상태 토글
+            const isFollowed = followBtn.classList.contains('followed');
+            if (isFollowed) {
+              followBtn.classList.remove('followed');
+              followBtn.textContent = 'Follow';
+              followBtn.insertAdjacentHTML('afterbegin', '<i class="icon_profile"></i> ');
+            } else {
+              followBtn.classList.add('followed');
+              followBtn.textContent = 'Unfollow';
+              followBtn.insertAdjacentHTML('afterbegin', '<i class="icon_profile"></i> ');
+            }
+            // TODO: 팔로워 수 갱신(ajax로 받아서 갱신하거나, 새로고침)
+          } else {
+            alert('팔로우 처리에 실패했습니다.');
+          }
+        })
+        .catch(() => alert('네트워크 오류로 팔로우 처리에 실패했습니다.'));
+    });
+  }
+});
+
 })(window.jQuery); 

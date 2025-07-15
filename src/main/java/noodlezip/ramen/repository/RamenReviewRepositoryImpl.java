@@ -32,31 +32,38 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
         QRamenReview review = QRamenReview.ramenReview;
         QMenu menu = QMenu.menu;
         QBoard board = QBoard.board;
+        noodlezip.store.entity.QStore store = noodlezip.store.entity.QStore.store;
 
         List<StoreReviewDto> content = queryFactory
-                .select(Projections.constructor(
+                .select(Projections.fields(
                         StoreReviewDto.class,
-                        review.id,
-                        review.communityId,
-                        menu.id,
-                        menu.menuName,
-                        review.noodleThickness,
-                        review.noodleTexture,
-                        review.noodleBoilLevel,
-                        review.soupDensity,
-                        review.soupTemperature,
-                        review.soupSaltiness,
-                        review.soupSpicinessLevel,
-                        review.soupOiliness,
-                        review.soupFlavorKeywords,
-                        review.content,
-                        review.reviewImageUrl,
-                        review.isReceiptReview,
-                        board.user.userName, // 작성자 이름
-                        board.user.id        // 작성자 id
+                        review.id.as("id"),
+                        review.communityId.as("communityId"),
+                        menu.id.as("menuId"),
+                        menu.menuName.as("menuName"),
+                        review.noodleThickness.as("noodleThickness"),
+                        review.noodleTexture.as("noodleTexture"),
+                        review.noodleBoilLevel.as("noodleBoilLevel"),
+                        review.soupDensity.as("soupDensity"),
+                        review.soupTemperature.as("soupTemperature"),
+                        review.soupSaltiness.as("soupSaltiness"),
+                        review.soupSpicinessLevel.as("soupSpicinessLevel"),
+                        review.soupOiliness.as("soupOiliness"),
+                        review.soupFlavorKeywords.as("soupFlavorKeywords"),
+                        review.content.as("content"),
+                        review.reviewImageUrl.as("reviewImageUrl"),
+                        review.isReceiptReview.as("isReceiptReview"),
+                        board.user.userName.as("userName"),
+                        board.user.id.as("userId"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+                        store.id.as("storeId"),
+                        store.storeName.as("storeName"),
+                        store.address.as("storeAddress")
                 ))
                 .from(review)
                 .join(review.menu, menu)
+                .join(menu.store, store)
                 .join(board).on(review.communityId.eq(board.id))
                 .where(menu.store.id.eq(storeId))
                 .offset(pageable.getOffset())
@@ -293,6 +300,61 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                     .where(soup.soupName.eq(tag))
                     .fetchOne();
         }
+
+        return new PageImpl<>(content, pageable, count);
+    }
+
+    @Override
+    public Page<StoreReviewDto> findReviewsByUserId(Long userId, Pageable pageable) {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+        QBoard board = QBoard.board;
+        noodlezip.store.entity.QStore store = noodlezip.store.entity.QStore.store;
+
+        List<StoreReviewDto> content = queryFactory
+                .select(Projections.fields(
+                        StoreReviewDto.class,
+                        review.id.as("id"),
+                        review.communityId.as("communityId"),
+                        menu.id.as("menuId"),
+                        menu.menuName.as("menuName"),
+                        review.noodleThickness.as("noodleThickness"),
+                        review.noodleTexture.as("noodleTexture"),
+                        review.noodleBoilLevel.as("noodleBoilLevel"),
+                        review.soupDensity.as("soupDensity"),
+                        review.soupTemperature.as("soupTemperature"),
+                        review.soupSaltiness.as("soupSaltiness"),
+                        review.soupSpicinessLevel.as("soupSpicinessLevel"),
+                        review.soupOiliness.as("soupOiliness"),
+                        review.soupFlavorKeywords.as("soupFlavorKeywords"),
+                        review.content.as("content"),
+                        review.reviewImageUrl.as("reviewImageUrl"),
+                        review.isReceiptReview.as("isReceiptReview"),
+                        board.user.userName.as("userName"),
+                        board.user.id.as("userId"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+                        store.id.as("storeId"),
+                        store.storeName.as("storeName"),
+                        store.address.as("storeAddress"),
+                        store.storeLegalCode.as("storeLegalCode"),
+                        menu.category.categoryName.as("categoryName")
+                ))
+                .from(review)
+                .join(review.menu, menu)
+                .join(menu.store, store)
+                .join(board).on(review.communityId.eq(board.id))
+                .where(board.user.id.eq(userId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long count = queryFactory
+                .select(review.count())
+                .from(review)
+                .join(board).on(review.communityId.eq(board.id))
+                .where(board.user.id.eq(userId))
+                .fetchOne();
 
         return new PageImpl<>(content, pageable, count);
     }
