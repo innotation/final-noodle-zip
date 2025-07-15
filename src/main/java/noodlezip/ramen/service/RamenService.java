@@ -101,5 +101,10 @@ public class RamenService {
     public Page<StoreReviewDto> findReviewsByTag(String tag, String type, Pageable pageable) {
         return ramenReviewRepository.findReviewsByTag(tag, type, pageable);
     }
+
+    // userId로 내가 쓴 리뷰만 조회
+    public Page<StoreReviewDto> findReviewsByUserId(Long userId, Pageable pageable) {
+        return ramenReviewRepository.findReviewsByUserId(userId, pageable);
+    }
 }
 
