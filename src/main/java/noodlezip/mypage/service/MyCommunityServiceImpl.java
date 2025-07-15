@@ -35,7 +35,7 @@ public class MyCommunityServiceImpl implements MyCommunityService {
                 .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
 
         List<CategoryCountDto> communityTypeList = boardService.getCategoryCountsByUser(userId);
-        Map<String, Object> boardPageInfo = boardService.findBoardByUser(userId, communityType, pageable);
+        Map<String, Object> boardPageInfo = boardService.findBoardByUserByCategory(userId, communityType, pageable);
 
         MyBoardListPageResponse boardList = MyBoardListPageResponse.of(boardPageInfo);
         boardList.setBoardList((List<BoardRespDto>) boardPageInfo.get("list"));
@@ -54,7 +54,7 @@ public class MyCommunityServiceImpl implements MyCommunityService {
 
         List<Long> boardIdList = boardService.getBoardIdByUserLiked(userId);
         List<CategoryCountDto> communityTypeList = boardService.getCategoryCountsByBoardIds(boardIdList);
-        Map<String, Object> boardPageInfo = boardService.findBoardLiked(userId, boardIdList, communityType, pageable);
+        Map<String, Object> boardPageInfo = boardService.findBoardLikedByCategory(userId, boardIdList, communityType, pageable);
 
         MyBoardListPageResponse boardList = MyBoardListPageResponse.of(boardPageInfo);
         boardList.setBoardList((List<BoardRespDto>) boardPageInfo.get("list"));

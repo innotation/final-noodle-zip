@@ -90,10 +90,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> findBoardLiked(Long userId,
-                                              List<Long> boardIdList,
-                                              String category,
-                                              Pageable pageable
+    public Map<String, Object> findBoardLikedByCategory(Long userId,
+                                                        List<Long> boardIdList,
+                                                        String category,
+                                                        Pageable pageable
     ) {
         Page<BoardRespDto> boardPage = boardRepository.findBoardsByIdsAndStatusPostedWithPaging(
                 boardIdList, category, pageable);
@@ -104,9 +104,23 @@ public class BoardServiceImpl implements BoardService {
         return map;
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> findBoardByUser(Long userId, String category, Pageable pageable) {
+    public Map<String, Object> findBoardByUser(Long userId,  Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByWriterAndCommunityTypeWithPagination(
+                userId, null, pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+        map.put("list", boardPage.getContent());
+
+        return map;
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> findBoardByUserByCategory(Long userId, String category, Pageable pageable) {
         Page<BoardRespDto> boardPage = boardRepository.findBoardByWriterAndCommunityTypeWithPagination(
                 userId, category, pageable);
 
