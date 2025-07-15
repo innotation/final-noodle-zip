@@ -134,11 +134,11 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
 
     @Override
     public boolean existsByOcrKeyHash(String ocrKeyHash) {
-        QRamenReview review = QRamenReview.ramenReview;
+        QBoard board = QBoard.board;
         Long count = queryFactory
-                .select(review.count())
-                .from(review)
-                .where(review.ocrKeyHash.eq(ocrKeyHash))
+                .select(board.count())
+                .from()
+                .where(board.ocrKeyHash.eq(ocrKeyHash))
                 .fetchOne();
 
         return count > 0;
