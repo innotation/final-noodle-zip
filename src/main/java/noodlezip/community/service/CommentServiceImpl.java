@@ -2,6 +2,8 @@ package noodlezip.community.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.badge.constants.UserEventType;
+import noodlezip.badge.events.BasicBadgeEvent;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.PageUtil;
@@ -13,6 +15,7 @@ import noodlezip.community.repository.BoardRepository;
 import noodlezip.community.repository.CommentRepository;
 import noodlezip.mypage.dto.response.MyCommentResponse;
 import noodlezip.user.repository.UserRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +31,7 @@ import java.util.Map;
 @Slf4j
 public class CommentServiceImpl implements CommentService {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final CommentRepository commentRepository;
     private final PageUtil pageUtil;
     private final UserRepository userRepository;
@@ -76,6 +80,8 @@ public class CommentServiceImpl implements CommentService {
         Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
         map.put("comments", commentDtoPage.getContent());
         map.put("totalComments", commentDtoPage.getTotalElements());
+
+        publishCommentBadgeEvent(commentReqDto);
         return map;
     }
 
@@ -98,4 +104,13 @@ public class CommentServiceImpl implements CommentService {
         map.put("totalComments", commentDtoPage.getTotalElements());
         return map;
     }
+
+
+    private void publishCommentBadgeEvent(CommentReqDto info) {
+        eventPublisher.publishEvent(new BasicBadgeEvent(
+                info.getUserId(),
+                UserEventType.COMMENT_POST
+        ));
+    }
+
 }
