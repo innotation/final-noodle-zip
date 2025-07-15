@@ -1,7 +1,7 @@
 <aside th:fragment="mypage-sidebar">
   <!-- 팔로우/팔로워 -->
   <div class="widget">
-    <div class="widget-title"><h4>팔로우/팔로워</h4></div>
+    <div class="widget-title"><h4>구독자/구독중</h4></div>
     <div class="mypage-follow-stat-box">
       <a th:href="@{'/users/' + ${myPage.id} + '/follower'}" class="mypage-follow-stat active" style="text-decoration:none;">
         <div class="stat-num" th:text="${followerCount}">0</div>
