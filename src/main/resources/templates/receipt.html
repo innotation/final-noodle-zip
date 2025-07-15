@@ -103,6 +103,12 @@
         <p><strong>주문메뉴:</strong> <span id="menuNames"></span></p>
       </div>
 
+      <form id="proceedForm" method="POST" action="/board/review">
+        <input type="hidden" name="bizNum" />
+        <input type="hidden" name="ocrKeyHash" />
+        <input type="hidden" name="visitDate" />
+      </form>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-default"
                 data-dismiss="modal">닫기</button>
@@ -186,7 +192,11 @@
         }
 
         const ocr = data.ocrData || {};
-        window.ocrResultCache = ocr;
+        window.ocrResultCache = {
+          ocr,
+          ocrKeyHash: data.ocrKeyHash,
+          visitDate: ocr.date
+        };
 
         $('#storeName').text(ocr.storeName || "없음");
         $('#date').text(ocr.date || "없음");
@@ -213,16 +223,18 @@
 
   /* ========== 4) 리뷰 작성 페이지로 이동 ========== */
   function proceedToReview() {
-    const ocr = window.ocrResultCache; // 이전 fetch에서 저장해둔 객체
-    const bizNum = ocr?.bizNum;
-
-    if (!bizNum) {
-      alert("사업자 번호 정보가 없습니다. 다시 시도해주세요.");
+    const ocr = window.ocrResultCache;
+    if (!ocr?.bizNum || !ocr?.ocrKeyHash || !ocr?.visitDate) {
+      alert("정보가 누락되었습니다.");
       return;
     }
 
-    // 쿼리 파라미터로 bizNum을 넘김
-    window.location.href = `/board/review?bizNum=${encodeURIComponent(bizNum)}`;
+    const form = document.getElementById("proceedForm");
+    form.bizNum.value = ocr.bizNum;
+    form.ocrKeyHash.value = ocr.ocrKeyHash;
+    form.visitDate.value = ocr.visitDate;
+
+    form.submit();  // POST 방식 전송
   }
 </script>
 </body>

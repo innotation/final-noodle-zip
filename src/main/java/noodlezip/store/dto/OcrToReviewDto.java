@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class OcrToReviewDto {
+    private Long storeId;
     private String storeName;
     private List<MenuDetailDto> menuList;
     private List<ToppingResponseDto> toppingList;
