@@ -137,7 +137,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
         QBoard board = QBoard.board;
         Long count = queryFactory
                 .select(board.count())
-                .from()
+                .from(board)
                 .where(board.ocrKeyHash.eq(ocrKeyHash))
                 .fetchOne();
 
