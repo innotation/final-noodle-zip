@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.mypage.dto.response.MyPageResponse;
+import noodlezip.subscription.service.SubscribeService;
 import noodlezip.user.entity.User;
 import noodlezip.user.service.UserService;
 import noodlezip.community.dto.BoardRespDto;
@@ -43,7 +44,7 @@ public class MyPageMainController extends MyBaseController {
     private final ModelMapper modelMapper;
     private final noodlezip.ramen.service.RamenService ramenService;
     private final MyBadgeService myBadgeService;
-    private final UserSubscriptionRepository userSubscriptionRepository;
+    private final SubscribeService subscribeService;
 
     @Operation(
             summary = "마이페이지 메인페이지 정보 조회",
@@ -127,8 +128,8 @@ public class MyPageMainController extends MyBaseController {
         model.addAttribute("boards", boards);
         model.addAttribute("myReviews", myReviews);
         // 팔로우/팔로워 수 조회 및 모델에 추가
-        long followingCount = userSubscriptionRepository.countByFollowerId(userId); // 내가 팔로우하는 사람 수
-        long followerCount = userSubscriptionRepository.countByFolloweeId(userId); // 나를 팔로우하는 사람 수
+        int followingCount = subscribeService.getCountByFollowerById(userId); // 내가 팔로우하는 사람 수
+        int followerCount = subscribeService.getCountByFolloweeById(userId); // 나를 팔로우하는 사람 수
         model.addAttribute("followingCount", followingCount);
         model.addAttribute("followerCount", followerCount);
         // 총 리뷰수 모델에 추가
@@ -142,6 +143,9 @@ public class MyPageMainController extends MyBaseController {
         // 본인 여부 모델에 추가
         boolean isOwner = (myUserDetails != null) && user.getId().equals(myUserDetails.getUser().getId());
         model.addAttribute("isOwner", isOwner);
+        // 구독 여부
+        boolean isSubscribed = subscribeService.isSubscribed(userAccessInfo.getRequestUserId(),userAccessInfo.getTargetUserId());
+        model.addAttribute("isSubscribed", isSubscribed);
         return "mypage/main";
     }
 
