@@ -259,6 +259,7 @@ public class BoardServiceImpl implements BoardService {
 //    }
 
     @Override
+    @Transactional
     public List<Long> saveReviewJson(ReviewReqDto dto, User user) {
         Board board = new Board();
         board.setTitle(dto.getTitle());
@@ -271,9 +272,12 @@ public class BoardServiceImpl implements BoardService {
         List<Long> reviewIds = new ArrayList<>();
 
         for (MenuReviewDto r : dto.getReviews()) {
+            Menu menu = menuRepository.findById(r.getMenuId())
+                    .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
             RamenReview review = new RamenReview();
             review.setBoard(board);
-            review.setMenu(menuRepository.getReferenceById(r.getMenuId()));
+            review.setMenu(menu);
             review.setNoodleThickness(r.getNoodleThickness());
             review.setNoodleTexture(r.getNoodleTexture());
             review.setNoodleBoilLevel(r.getNoodleBoiledLevel());

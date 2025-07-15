@@ -32,7 +32,7 @@ public class RamenReview {
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", insertable = false, updatable = false)
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     // 1 ~ 10 범위로 정수 저장

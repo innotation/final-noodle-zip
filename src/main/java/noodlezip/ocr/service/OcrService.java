@@ -24,6 +24,7 @@ public class OcrService {
         String ocrJson = ocrUtil.process(file);
         String hashKey = ocrParser.hashKeyInfo(ocrJson);
         boolean isDuplicate = reviewRepository.existsByOcrKeyHash(hashKey);
+        System.out.println(ocrJson);
 
         OcrDataDto ocrData = ocrParser.visitCheckingInfo(ocrJson);
 
