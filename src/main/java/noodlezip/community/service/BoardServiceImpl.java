@@ -2,6 +2,8 @@ package noodlezip.community.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.badge.constants.UserEventType;
+import noodlezip.badge.events.BasicBadgeEvent;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
@@ -22,6 +24,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,7 @@ import java.util.Optional;
 @Slf4j
 public class BoardServiceImpl implements BoardService {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final BoardRepository boardRepository;
     private final PageUtil pageUtil;
     private final ModelMapper modelMapper;
@@ -229,6 +233,8 @@ public class BoardServiceImpl implements BoardService {
             likeRepository.save(newLike);
             board.setLikesCount(board.getLikesCount() + 1);
             isLiked = true;
+
+            publishCommunityLikeBadgeEvent(board);
         }
 
         boardRepository.save(board);
@@ -315,6 +321,25 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<Long> getBoardIdByUserLiked(Long userId) {
         return likeRepository.findCommunityIdsByUserId(userId);
+    }
+
+
+    private void publishCommunityLikeBadgeEvent(Board board) {
+        String communityType = board.getCommunityType();
+
+        if ("community".equals(communityType)) {
+            eventPublisher.publishEvent(new BasicBadgeEvent(
+                    board.getUser().getId(),
+                    UserEventType.COMMUNITY_LIKE
+            ));
+
+        } else if ("review".equals(communityType)) {
+            eventPublisher.publishEvent(new BasicBadgeEvent(
+                    board.getUser().getId(),
+                    UserEventType.RAMEN_REVIEW_LIKE
+            ));
+        }
+
     }
 
 }
