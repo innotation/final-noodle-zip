@@ -6,6 +6,8 @@ import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.MenuReviewDto;
+import noodlezip.community.dto.ReviewReqDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.entity.CommunityActiveStatus;
@@ -14,6 +16,19 @@ import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.community.repository.LikeRepository;
+import noodlezip.ramen.entity.RamenReview;
+import noodlezip.ramen.entity.RamenTopping;
+import noodlezip.ramen.entity.ReviewTopping;
+import noodlezip.ramen.entity.Topping;
+import noodlezip.ramen.repository.RamenReviewRepository;
+import noodlezip.ramen.repository.ReviewToppingRepository;
+import noodlezip.ramen.repository.ToppingRepository;
+import noodlezip.store.dto.MenuRequestDto;
+import noodlezip.store.entity.Menu;
+import noodlezip.store.entity.StoreExtraTopping;
+import noodlezip.store.repository.MenuRepository;
+import noodlezip.store.repository.StoreExtraToppingRepository;
+import noodlezip.store.service.StoreService;
 import noodlezip.user.entity.User;
 import noodlezip.user.repository.UserRepository;
 import org.jsoup.Jsoup;
@@ -44,6 +59,12 @@ public class BoardServiceImpl implements BoardService {
     private final FileUtil fileUtil;
     private final ViewCountService viewCountService;
     private final LikeRepository likeRepository;
+    private final RamenReviewRepository ramenReviewRepository;
+    private final ReviewToppingRepository reviewToppingRepository;
+    private final ToppingRepository toppingRepository;
+    private final StoreExtraToppingRepository storeExtraToppingRepository;
+    private final StoreService storeService;
+    private final MenuRepository menuRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -178,5 +199,72 @@ public class BoardServiceImpl implements BoardService {
             log.error("upload images is empty");
         }
         return imageInfos;
+    }
+
+    @Override
+    public void registReview(ReviewReqDto reviewReqDto, User user) {
+
+        Long storeId = storeService.findStoreIdByBizNum(reviewReqDto.getBizNum());
+
+        Board board = modelMapper.map(reviewReqDto, Board.class);
+        board.setReviewStoreId(storeId);
+        board.setCommunityType("community");
+        board.setPostStatus(CommunityActiveStatus.POSTED);
+        board.setUser(user);
+        boardRepository.save(board);
+        Board savedBoard = boardRepository.save(board);
+        List<RamenReview> ramenReviews = new ArrayList<>();
+
+        // 2. 각 메뉴별 리뷰 처리
+        for (MenuReviewDto menuReviewDto : reviewReqDto.getReviews()) {
+
+            MultipartFile reviewImage = menuReviewDto.getImageFile();
+            String reviewImageUrl = "";
+
+            RamenReview review = new RamenReview();
+
+            if (reviewImage != null && !reviewImage.isEmpty()) {
+                try {
+                    Map<String, String> uploadResult = fileUtil.fileupload("store", reviewImage);
+                    reviewImageUrl = uploadResult.get("fileUrl");
+                } catch (Exception e) {
+                    throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+                }
+            }
+
+            Menu menu = menuRepository.findById(menuReviewDto.getMenuId())
+                    .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+
+            review.setId(menuReviewDto.getReviewId());
+            review.setCommunityId(savedBoard.getId());
+            review.setMenu(menu);
+
+            review.setNoodleThickness(menuReviewDto.getNoodleThickness());
+            review.setNoodleTexture(menuReviewDto.getNoodleTexture());
+            review.setNoodleBoilLevel(menuReviewDto.getNoodleBoiledLevel());
+            review.setSoupDensity(menuReviewDto.getSoupThickness());
+            review.setSoupTemperature(menuReviewDto.getSoupTemperature());
+            review.setSoupSaltiness(menuReviewDto.getSoupSaltiness());
+            review.setSoupSpicinessLevel(menuReviewDto.getSoupSpiciness());
+            review.setSoupOiliness(menuReviewDto.getSoupOiliness());
+            review.setReviewImageUrl(reviewImageUrl);
+
+            review.setContent(menuReviewDto.getContent());
+
+            ramenReviewRepository.save(review);
+
+            if (menuReviewDto.getToppingIds() != null) {
+                for (Long toppingId : menuReviewDto.getToppingIds()) {
+                    StoreExtraTopping storeExtraTopping = storeExtraToppingRepository.getReferenceById(toppingId);
+                    ReviewTopping reviewTopping = new ReviewTopping();
+                    reviewTopping.setRamenReview(review);
+                    reviewTopping.setStoreExtraTopping(storeExtraTopping);
+                    reviewToppingRepository.save(reviewTopping);
+                }
+            }
+
+            ramenReviews.add(review);
+        }
     }
 }

@@ -18,9 +18,7 @@ import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.CookieUtil;
 import noodlezip.common.util.RequestParserUtil;
 import noodlezip.common.validation.ValidationGroups;
-import noodlezip.community.dto.BoardReqDto;
-import noodlezip.community.dto.BoardRespDto;
-import noodlezip.community.dto.LikeResponseDto;
+import noodlezip.community.dto.*;
 import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
@@ -62,18 +60,67 @@ public class BoardController {
     private static final int MAX_RECENT_BOARDS = 3;
     private final StoreService storeService;
 
-    @GetMapping("/review")
+    @RequestMapping(value = "/review", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public String review(@RequestParam Long bizNum, Model model) {
-        OcrToReviewDto dto = storeService.findStoreWithMenusByBizNum(bizNum);
-        model.addAttribute("storeName", dto.getStoreName());
-        model.addAttribute("menuList", dto.getMenuList());
-        model.addAttribute("toppings", dto.getToppingList());
+    public String review(@ModelAttribute ReviewInitDto reviewInitDto,
+                         Model model) {
+        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(reviewInitDto.getBizNum());
+        model.addAttribute("storeId", ocrToReviewDto.getStoreId());
+        model.addAttribute("storeName",ocrToReviewDto.getStoreName());
+        model.addAttribute("menuList", ocrToReviewDto.getMenuList());
+        model.addAttribute("toppings", ocrToReviewDto.getToppingList());
+
+        model.addAttribute("reviewInitDto", reviewInitDto);
         return "/board/leave-review";
+    }
+
+    @PostMapping("/registReview")
+    @Operation(summary = "리뷰게시글 등록 처리", description = "새로운 리뷰게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
+    @Parameters({
+            @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true),
+            @Parameter(name = "reviewReqDto", description = "게시글의 제목과 리뷰와 내용을 포함하는 요청 DTO", required = true,
+                    schema = @Schema(implementation = ReviewReqDto.class)),
+            @Parameter(name = "bindingResult", description = "유효성 검사 결과", hidden = true),
+            @Parameter(name = "boardImage", description = "게시글에 첨부할 이미지 파일 (선택 사항)", required = false,
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
+    })
+    public String registReview(
+            @AuthenticationPrincipal MyUserDetails user,
+            @Validated(ValidationGroups.OnCreate.class) @ModelAttribute ReviewReqDto reviewReqDto) {
+        // 1. 사용자 인증 확인
+        if (user == null || user.getUser() == null) {
+            log.warn("비로그인 사용자가 게시글 등록 시도.");
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
+//        if (bindingResult.hasErrors()) {
+//            String errorMessage = bindingResult.getFieldErrors().stream()
+//                    .map(FieldError::getDefaultMessage)
+//                    .collect(Collectors.joining(", "));
+//            log.error("게시글 작성 유효성 검사 실패: {}", errorMessage);
+//            throw new CustomException(ErrorStatus._BAD_REQUEST);
+//        }
+
+        if (reviewReqDto.getReviews() == null || reviewReqDto.getReviews().isEmpty()) {
+            log.warn("리뷰가 없는 요청입니다.");
+            throw new CustomException(ErrorStatus._BAD_REQUEST);
+        }
+
+
+        try {
+            boardService.registReview(reviewReqDto, user.getUser());
+            return "redirect:/board/list";
+        } catch (CustomException e) {
+            log.error("게시글 등록 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("게시글 등록 중 예상치 못한 서버 오류 발생: {}", e.getMessage(), e);
+            throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/registBoard")
