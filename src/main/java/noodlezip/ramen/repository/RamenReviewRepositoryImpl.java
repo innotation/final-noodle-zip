@@ -358,4 +358,27 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
 
         return new PageImpl<>(content, pageable, count);
     }
+
+    @Override
+    public List<Long> findIdsByBoardId(Long boardId) {
+        QRamenReview ramenReview = QRamenReview.ramenReview;
+
+        return queryFactory
+                .select(ramenReview.id)
+                .from(ramenReview)
+                .where(ramenReview.communityId.eq(boardId))
+                .fetch();
+    }
+
+
+    @Override
+    public void deleteByBoardId(Long boardId) {
+        QRamenReview ramenReview = QRamenReview.ramenReview;
+
+        queryFactory
+                .delete(ramenReview)
+                .where(ramenReview.communityId.eq(boardId))
+                .execute();
+
+    }
 }
