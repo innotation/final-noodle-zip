@@ -85,7 +85,7 @@ public class Store extends BaseTimeEntity {
     // 법정코드
     @NotNull
     @Column(name = "store_legal_code", nullable = false)
-    private Integer storeLegalCode;
+    private Long storeLegalCode;
 
     // 사업자등록번호
     @NotNull
