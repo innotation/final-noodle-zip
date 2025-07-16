@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.badge.constants.UserEventType;
 import noodlezip.badge.event.BasicBadgeEvent;
+import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.PageUtil;
@@ -31,7 +32,7 @@ import java.util.Map;
 @Slf4j
 public class CommentServiceImpl implements CommentService {
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final BadgeEventPublisher eventPublisher;
     private final CommentRepository commentRepository;
     private final PageUtil pageUtil;
     private final UserRepository userRepository;
@@ -81,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
         map.put("comments", commentDtoPage.getContent());
         map.put("totalComments", commentDtoPage.getTotalElements());
 
-        publishCommentBadgeEvent(commentReqDto);
+        eventPublisher.publishCommentBadgeEvent(commentReqDto);
         return map;
     }
 
@@ -103,14 +104,6 @@ public class CommentServiceImpl implements CommentService {
         map.put("comments", commentDtoPage.getContent());
         map.put("totalComments", commentDtoPage.getTotalElements());
         return map;
-    }
-
-
-    private void publishCommentBadgeEvent(CommentReqDto info) {
-        eventPublisher.publishEvent(new BasicBadgeEvent(
-                info.getUserId(),
-                UserEventType.COMMENT_POST
-        ));
     }
 
 }

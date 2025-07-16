@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.badge.constants.UserEventType;
 import noodlezip.badge.event.BasicBadgeEvent;
+import noodlezip.badge.event.RamenReviewBadgeEvent;
+import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +59,7 @@ import java.util.Optional;
 @Slf4j
 public class BoardServiceImpl implements BoardService {
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final BadgeEventPublisher eventPublisher;
     private final BoardRepository boardRepository;
     private final PageUtil pageUtil;
     private final ModelMapper modelMapper;
@@ -219,7 +222,7 @@ public class BoardServiceImpl implements BoardService {
         board.setUser(user);
         boardRepository.save(board);
 
-        publishCommunityPostBadgeEvent(user);
+        eventPublisher.publishCommunityPostBadgeEvent(user);
         log.info("board save : {}", board);
     }
 
@@ -255,7 +258,7 @@ public class BoardServiceImpl implements BoardService {
             board.setLikesCount(board.getLikesCount() + 1);
             isLiked = true;
 
-            publishCommunityLikeBadgeEvent(board);
+            eventPublisher.publishCommunityLikeBadgeEvent(board);
         }
 
         boardRepository.save(board);
@@ -398,6 +401,7 @@ public class BoardServiceImpl implements BoardService {
             reviewIds.add(review.getId());
         }
 
+        eventPublisher.publishRamenReviewBadgeEvent(user, dto);
         return reviewIds;
     }
 
@@ -412,31 +416,6 @@ public class BoardServiceImpl implements BoardService {
         String imageUrl = fileUtil.fileupload("review", imageFile).get("fileUrl"); // 저장 및 경로 반환
         review.setReviewImageUrl(imageUrl);
         ramenReviewRepository.save(review);
-    }
-
-    private void publishCommunityLikeBadgeEvent(Board board) {
-        String communityType = board.getCommunityType();
-
-        if ("community".equals(communityType)) {
-            eventPublisher.publishEvent(new BasicBadgeEvent(
-                    board.getUser().getId(),
-                    UserEventType.COMMUNITY_LIKE
-            ));
-
-        } else if ("review".equals(communityType)) {
-            eventPublisher.publishEvent(new BasicBadgeEvent(
-                    board.getUser().getId(),
-                    UserEventType.RAMEN_REVIEW_LIKE
-            ));
-        }
-
-    }
-
-    private void publishCommunityPostBadgeEvent(User user) {
-        eventPublisher.publishEvent(new BasicBadgeEvent(
-                user.getId(),
-                UserEventType.COMMUNITY_POST
-        ));
     }
 
 }
