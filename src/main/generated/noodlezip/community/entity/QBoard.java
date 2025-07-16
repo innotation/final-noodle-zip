@@ -37,11 +37,13 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final NumberPath<Integer> likesCount = createNumber("likesCount", Integer.class);
 
+    public final StringPath ocrKeyHash = createString("ocrKeyHash");
+
     public final EnumPath<CommunityActiveStatus> postStatus = createEnum("postStatus", CommunityActiveStatus.class);
 
     public final NumberPath<Long> reviewStoreId = createNumber("reviewStoreId", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> reviewVisitDate = createDateTime("reviewVisitDate", java.time.LocalDateTime.class);
+    public final DatePath<java.time.LocalDate> reviewVisitDate = createDate("reviewVisitDate", java.time.LocalDate.class);
 
     public final StringPath title = createString("title");
 
