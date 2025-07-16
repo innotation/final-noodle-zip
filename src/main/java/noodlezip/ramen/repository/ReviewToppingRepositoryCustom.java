@@ -7,4 +7,5 @@ public interface ReviewToppingRepositoryCustom {
 
     Map<Long, List<String>> findToppingNamesByReviewIds(List<Long> reviewIds);
 
+    void deleteByRamenReviewIdIn(List<Long> ramenReviewIds);
 }
