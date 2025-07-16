@@ -3,7 +3,7 @@ package noodlezip.community.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.badge.constants.UserEventType;
-import noodlezip.badge.events.BasicBadgeEvent;
+import noodlezip.badge.event.BasicBadgeEvent;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;

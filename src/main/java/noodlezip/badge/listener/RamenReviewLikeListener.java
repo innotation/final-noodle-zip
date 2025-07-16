@@ -1,10 +1,10 @@
-package noodlezip.badge.service.listeners;
+package noodlezip.badge.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.badge.constants.LevelBadgeCategoryType;
 import noodlezip.badge.constants.UserEventType;
-import noodlezip.badge.events.BasicBadgeEvent;
+import noodlezip.badge.event.BasicBadgeEvent;
 import noodlezip.badge.service.process.level.LevelDirectUpdateProcessor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

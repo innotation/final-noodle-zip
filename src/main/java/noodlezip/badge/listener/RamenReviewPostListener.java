@@ -1,11 +1,11 @@
-package noodlezip.badge.service.listeners;
+package noodlezip.badge.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.badge.constants.LevelBadgeCategoryType;
 import noodlezip.badge.constants.Region;
 import noodlezip.badge.constants.UserEventType;
-import noodlezip.badge.events.RamenReviewBadgeEvent;
+import noodlezip.badge.event.RamenReviewBadgeEvent;
 import noodlezip.badge.service.process.level.LevelDirectUpdateProcessor;
 import noodlezip.badge.service.process.level.RamenReviewCategoryBadge;
 import noodlezip.badge.service.process.level.RamenReviewSidoRegionBadge;

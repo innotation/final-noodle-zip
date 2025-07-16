@@ -1,4 +1,4 @@
-package noodlezip.badge.events;
+package noodlezip.badge.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
