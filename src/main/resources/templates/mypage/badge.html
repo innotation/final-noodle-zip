@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
-  <meta name="author" content="Ansonika">
-  <title>Foogra - Discover & Book the best restaurants at the best price</title>
-
-  <!-- Favicons-->
-  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
-  <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
-  <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
-  <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
-
-  <!-- GOOGLE WEB FONT -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- BASE CSS -->
-  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
   <!-- SPECIFIC CSS -->
   <link th:href="@{/css/home.css}" rel="stylesheet">
   <!-- YOUR CUSTOM CSS -->
   <link th:href="@{/css/badge.css}" rel="stylesheet">
 
+  <!-- 모바일 안됨 -->
 </head>
 
 <body>
-<div th:replace="/fragments/subHeader::subHeader"></div>
-<main>
+<div th:replace="~{fragments/subHeader :: subHeader}"></div>
 
-  <h1 th:text="${userName}"></h1>
+<main>
+  <h1 style="margin-top: 70px"></h1>
 
   <th:block th:each="groupDto : ${userBadgeList}">
     <div class="bg_gray">

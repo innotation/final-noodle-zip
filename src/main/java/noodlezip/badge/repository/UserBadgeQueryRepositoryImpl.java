@@ -22,6 +22,7 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+
     @Override
     public Optional<UserBadge> findUserLevelBadge(long userId, long badgeCategoryId) {
         QUserBadge userBadge = QUserBadge.userBadge;
