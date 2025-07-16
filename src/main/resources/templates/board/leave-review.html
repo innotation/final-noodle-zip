@@ -19,6 +19,9 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+	<!-- Quill -->
+	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
 	<!-- BASE CSS -->
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/css/style.css" rel="stylesheet">
@@ -205,8 +208,8 @@
 
 						<div class="form-group">
 							<label>내용</label>
-<!--							<div id="editor"></div>-->
-							<textarea class="form-control" id="content" name="content" rows="5" placeholder="리뷰 내용을 입력하세요."></textarea>
+							<div id="editor"></div>
+							<textarea style="display: none" class="form-control" id="content" name="content" rows="5" placeholder="리뷰 내용을 입력하세요."></textarea>
 						</div>
 
 						<div class="text-center" style="margin-top: 30px;">
@@ -214,9 +217,13 @@
 							<button type="button" class="btn btn-success" id="submitReviewBtn">리뷰 제출</button>
 						</div>
 
-						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />
-						<input type="hidden" name="visitDate" th:value="${reviewInitDto.visitDate}" />
-						<input type="hidden" name="bizNum" th:value="${reviewInitDto.bizNum}" />
+<!--						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />-->
+<!--						<input type="hidden" name="visitDate" th:value="${reviewInitDto.visitDate}" />-->
+<!--						<input type="hidden" name="storeId" th:value="${storeId}" />-->
+<!--						===================테스트용 임시 값 최종시 삭제 후 위 코드 주석 제거!!=================-->
+						<input type="hidden" name="ocrKeyHash" value="6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d" />
+						<input type="hidden" name="visitDate" value="2025-07-07" />
+						<input type="hidden" name="storeId" value="87" />
 
 					</form>
 				</div>
@@ -305,6 +312,7 @@
 <script src="/assets/validate.js"></script>
 
 <!-- SPECIFIC SCRIPTS -->
+<script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -312,108 +320,64 @@
 
 <script>
 	const addedMenuIds = new Set();
-
-	$('#startReviewBtn').on('click', function () {
-		const MAX_REVIEW_COUNT = 10;
-
-		addedMenuIds.clear();
-
-		const selectedMenus = $('.menu-checkbox:checked');
-
-		if (selectedMenus.length === 0) {
-			alert("리뷰할 메뉴를 1개 이상 선택해주세요.");
-			return;
-		}
-
-		if (selectedMenus.length > MAX_REVIEW_COUNT) {
-			alert(`리뷰는 최대 ${MAX_REVIEW_COUNT}개까지 가능합니다.`);
-			return;
-		}
-
-		const slider = $('.review-slider');
-		slider.empty();
-
-		selectedMenus.each(function (index) {
-			const menuId = $(this).val();
-			const menuName = $(this).data('name');
-			addedMenuIds.add(String(menuId));
-			const html = getReviewSlideHtml(menuId, menuName, index);
-			slider.append(html);
-		});
-
-		$('#menu-selection').hide();
-		$('#reviewForm').show();
-		$('#menuAddBtnContainer').show();
-
-		slider.slick({
-			slidesToShow: 1,
-			centerMode: true,
-			centerPadding: '60px',
-			arrows: true,
-			infinite: false
-		});
-	});
-
-	$('#openMenuModal').on('click', function () {
-		$('body').removeClass('modal-open');
-		refreshMenuModalList();
-		$('#menuSelectModal').modal('show');
-	});
-
 	let pendingMenuToAdd = null;
 
-	$(document).on('click', '.addMenuBtn', function () {
-		const MAX_REVIEW_COUNT = 10;
+	function getNextReviewIndex() {
+		let maxIndex = -1;
+		document.querySelectorAll('.slick-item[data-index]').forEach(item => {
+			const idx = parseInt(item.getAttribute('data-index'));
+			if (!isNaN(idx)) maxIndex = Math.max(maxIndex, idx);
+		});
+		return maxIndex + 1;
+	}
 
-		if ($('.review-slider .slick-item').length >= MAX_REVIEW_COUNT) {
-			alert(`리뷰는 최대 ${MAX_REVIEW_COUNT}개까지만 등록할 수 있습니다.`);
-			return;
-		}
+	function getReviewSlideHtml(menuId, menuName, index) {
+		let toppingOptions = '';
+		toppings.forEach(topping => {
+			toppingOptions += `
+      <label class="checkbox-inline">
+        <input type="checkbox" name="reviews[${index}].toppingIds" value="${topping.id}"> ${topping.name}
+      </label>`;
+		});
 
-		const menuId = String($(this).data('id'));
-		const menuName = $(this).data('name');
-		pendingMenuToAdd = { id: menuId, name: menuName };
-		$('#menuSelectModal').modal('hide'); // 모달만 닫고, 추가는 나중에
-	});
-
-	// 모달이 완전히 닫힌 후 슬라이드 추가
-	$('#menuSelectModal').on('hidden.bs.modal', function () {
-		setTimeout(() => {
-			$('body').removeClass('modal-open');
-			$('.modal-backdrop').remove();
-			$('#openMenuModal').blur();
-
-			if (pendingMenuToAdd !== null) {
-				const menuId = pendingMenuToAdd.id;
-				const menuName = pendingMenuToAdd.name;
-				const index = $('.review-slider .slick-item').length;
-				const html = getReviewSlideHtml(menuId, menuName, index);
-				$('.review-slider').slick('slickAdd', html);
-				addedMenuIds.add(menuId);
-				$('.menu-checkbox[value="' + menuId + '"]').prop('checked', true);
-				refreshMenuModalList();
-				pendingMenuToAdd = null;
-			}
-		}, 300);
-	});
-
-
-	$(document).on('click', '.remove-slide', function () {
-		const $slide = $(this).closest('.slick-item');
-		const index = $slide.attr('data-slick-index');
-		const menuId = String($(this).data('menu-id'));
-
-		const slideIndex = $slide.index();
-		$('.review-slider').slick('slickRemove', slideIndex);
-		addedMenuIds.delete(menuId);
-		$('.menu-checkbox[value="' + menuId + '"]').prop('checked', false);
-		refreshMenuModalList();
-	});
+		return `
+    <div class="slick-item" data-index="${index}">
+      <div class="card p-3">
+        <h4>${menuName}에 대한 리뷰</h4>
+        <input type="hidden" name="reviews[${index}].menuId" value="${menuId}" />
+        <div class="row">
+          <div class="col-xs-6"><label>면 굵기</label><input type="range" name="reviews[${index}].noodleThickness" min="0" max="10" value="5"/></div>
+          <div class="col-xs-6"><label>면 식감</label><input type="range" name="reviews[${index}].noodleTexture" min="0" max="10" value="5"/></div>
+          <div class="col-xs-6"><label>면 삶기</label><input type="range" name="reviews[${index}].noodleBoiledLevel" min="0" max="10" value="5"/></div>
+          <div class="col-xs-6"><label>국물 농도</label><input type="range" name="reviews[${index}].soupThickness" min="0" max="10" value="5"/></div>
+          <div class="col-xs-6"><label>온도</label><input type="range" name="reviews[${index}].soupTemperature" min="0" max="10" value="5"/></div>
+          <div class="col-xs-6"><label>염도</label><input type="range" name="reviews[${index}].soupSaltiness" min="0" max="10" value="5"/></div>
+          <div class="col-xs-6"><label>맵기</label><input type="range" name="reviews[${index}].soupSpiciness" min="0" max="10" value="5"/></div>
+          <div class="col-xs-6"><label>기름</label><input type="range" name="reviews[${index}].soupOiliness" min="0" max="10" value="5"/></div>
+        </div>
+        <div class="form-group">
+          <label>국물 키워드</label>
+          <input type="text" name="reviews[${index}].soupFlavorKeywords" class="form-control" maxlength="100" placeholder="예: 진한, 담백한 등 키워드를 입력하세요."/>
+          <label>먹은 토핑 선택</label><br/>
+          ${toppingOptions}
+        </div>
+        <div class="form-group">
+          <label>내용</label>
+          <textarea class="form-control" name="reviews[${index}].content" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>사진 첨부</label>
+          <input type="file" name="reviews[${index}].imageFile" accept="image/*" class="form-control" data-max-size="5242880" />
+          <small class="text-muted">지원 형식: JPG, PNG, GIF, WebP (최대 5MB)</small>
+        </div>
+        <button type="button" class="btn btn-danger remove-slide" data-menu-id="${menuId}">삭제</button>
+      </div>
+    </div>`;
+	}
 
 	function refreshMenuModalList() {
 		const $list = $('#menuListContainer');
 		$list.empty();
-
 		$('.menu-checkbox').each(function () {
 			const id = String($(this).val());
 			const name = $(this).data('name');
@@ -427,113 +391,139 @@
 	function forceCloseModal() {
 		$('#menuSelectModal').modal('hide');
 		$('.modal-backdrop').remove();
-		$('body').removeClass('modal-open');
-		$('body').css('padding-right', '');
+		$('body').removeClass('modal-open').css('padding-right', '');
 	}
+
+	// 초기 메뉴 선택 버튼
+	$('#startReviewBtn').on('click', function () {
+		addedMenuIds.clear();
+		const selectedMenus = $('.menu-checkbox:checked');
+		if (selectedMenus.length === 0) return alert("리뷰할 메뉴를 선택해주세요.");
+		if (selectedMenus.length > 10) return alert("최대 10개까지만 가능합니다.");
+
+		const slider = $('.review-slider');
+		slider.empty();
+
+		selectedMenus.each(function () {
+			const menuId = $(this).val();
+			const menuName = $(this).data('name');
+			const index = getNextReviewIndex();
+			const html = getReviewSlideHtml(menuId, menuName, index);
+			slider.append(html);
+			addedMenuIds.add(menuId);
+		});
+
+		$('#menu-selection').hide();
+		$('#reviewForm').show();
+		slider.slick({
+			slidesToShow: 1,
+			centerMode: true,
+			centerPadding: '60px',
+			arrows: true,
+			infinite: false
+		});
+	});
+
+	$(document).on('click', '.remove-slide', function () {
+		const $slide = $(this).closest('.slick-item');
+		const slickIndex = $slide.index();
+		const menuId = $(this).data('menu-id');
+		$('.review-slider').slick('slickRemove', slickIndex);
+		addedMenuIds.delete(menuId);
+		$('.menu-checkbox[value="' + menuId + '"]').prop('checked', false);
+		refreshMenuModalList();
+	});
+
+	$('#openMenuModal').on('click', function () {
+		$('body').removeClass('modal-open');
+		refreshMenuModalList();
+		$('#menuSelectModal').modal('show');
+	});
+
+	$(document).on('click', '.addMenuBtn', function () {
+		if ($('.review-slider .slick-item').length >= 10) return alert("최대 10개까지만 가능합니다.");
+		pendingMenuToAdd = {
+			id: String($(this).data('id')),
+			name: $(this).data('name')
+		};
+		$('#menuSelectModal').modal('hide');
+	});
 
 	$('#menuSelectModal').on('hidden.bs.modal', function () {
 		forceCloseModal();
 		$('#openMenuModal').blur();
+		if (pendingMenuToAdd) {
+			const { id, name } = pendingMenuToAdd;
+			const index = getNextReviewIndex();
+			const html = getReviewSlideHtml(id, name, index);
+			$('.review-slider').slick('slickAdd', html);
+			addedMenuIds.add(id);
+			$('.menu-checkbox[value="' + id + '"]').prop('checked', true);
+			refreshMenuModalList();
+			pendingMenuToAdd = null;
+		}
 	});
 
-	function getReviewSlideHtml(menuId, menuName, index) {
-		let toppingOptions = '';
-		toppings.forEach(topping => {
-			toppingOptions += `
-      <label class="checkbox-inline">
-        <input type="checkbox" name="reviews[${index}].toppingIds" value="${topping.id}"> ${topping.name}
-      </label>`;
-		});
-
-		return `
-        <div class="slick-item" data-slick-index="${index}">
-          <div class="card p-3">
-            <h4>${menuName}에 대한 리뷰</h4>
-            <input type="hidden" name="reviews[${index}].menuId" value="${menuId}" />
-            <div class="row">
-              <div class="col-xs-6"><label>면 굵기</label><input type="range" name="reviews[${index}].noodleThickness" min="0" max="10" value="5"/></div>
-              <div class="col-xs-6"><label>면 식감</label><input type="range" name="reviews[${index}].noodleTexture" min="0" max="10" value="5"/></div>
-              <div class="col-xs-6"><label>면 삶기</label><input type="range" name="reviews[${index}].noodleBoiledLevel" min="0" max="10" value="5"/></div>
-              <div class="col-xs-6"><label>국물 농도</label><input type="range" name="reviews[${index}].soupThickness" min="0" max="10" value="5"/></div>
-              <div class="col-xs-6"><label>온도</label><input type="range" name="reviews[${index}].soupTemperature" min="0" max="10" value="5"/></div>
-              <div class="col-xs-6"><label>염도</label><input type="range" name="reviews[${index}].soupSaltiness" min="0" max="10" value="5"/></div>
-              <div class="col-xs-6"><label>맵기</label><input type="range" name="reviews[${index}].soupSpiciness" min="0" max="10" value="5"/></div>
-              <div class="col-xs-6"><label>기름</label><input type="range" name="reviews[${index}].soupOiliness" min="0" max="10" value="5"/></div>
-            </div>
-            <div class="form-group">
-          <label>먹은 토핑 선택</label><br/>
-          ${toppingOptions}
-       		 </div>
-            <div class="form-group">
-              <label>내용</label>
-              <textarea class="form-control" name="reviews[${index}].content" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-              <label>사진 첨부</label>
-              <input type="file"
-       	name="reviews[${index}].imageFile"
-       	accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-       	class="form-control"
-       	data-max-size="5242880" />
-			<small class="text-muted">지원 형식: JPG, PNG, GIF, WebP (최대 5MB)</small>
-            </div>
-            <button type="button" class="btn btn-danger remove-slide" data-menu-id="${menuId}">삭제</button>
-          </div>
-        </div>`;
-	}
-
 	document.getElementById('submitReviewBtn').addEventListener('click', function () {
+		document.getElementById('content').value = quill.root.innerHTML;
 
 		const form = document.getElementById('reviewForm');
-
-// 리뷰 데이터 JSON 객체 생성
 		const reviews = [];
-		document.querySelectorAll('.slick-item').forEach((slide, index) => {
-			const review = {
-				menuId: slide.querySelector(`input[name="reviews[${index}].menuId"]`).value,
-				noodleThickness: slide.querySelector(`input[name="reviews[${index}].noodleThickness"]`).value,
-				noodleTexture: slide.querySelector(`input[name="reviews[${index}].noodleTexture"]`).value,
-				noodleBoiledLevel: slide.querySelector(`input[name="reviews[${index}].noodleBoiledLevel"]`).value,
-				soupThickness: slide.querySelector(`input[name="reviews[${index}].soupThickness"]`).value,
-				soupTemperature: slide.querySelector(`input[name="reviews[${index}].soupTemperature"]`).value,
-				soupSaltiness: slide.querySelector(`input[name="reviews[${index}].soupSaltiness"]`).value,
-				soupSpiciness: slide.querySelector(`input[name="reviews[${index}].soupSpiciness"]`).value,
-				soupOiliness: slide.querySelector(`input[name="reviews[${index}].soupOiliness"]`).value,
-				content: slide.querySelector(`textarea[name="reviews[${index}].content"]`).value,
-				toppingIds: Array.from(slide.querySelectorAll(`input[name="reviews[${index}].toppingIds"]:checked`)).map(input => input.value)
-			};
-			reviews.push(review);
+
+		document.querySelectorAll('.slick-item[data-index]').forEach(slide => {
+			const index = slide.getAttribute('data-index');
+			const safeVal = (name) => slide.querySelector(`[name="reviews[${index}].${name}"]`)?.value ?? null;
+
+			reviews.push({
+				menuId: safeVal('menuId'),
+				noodleThickness: safeVal('noodleThickness'),
+				noodleTexture: safeVal('noodleTexture'),
+				noodleBoiledLevel: safeVal('noodleBoiledLevel'),
+				soupThickness: safeVal('soupThickness'),
+				soupTemperature: safeVal('soupTemperature'),
+				soupSaltiness: safeVal('soupSaltiness'),
+				soupSpiciness: safeVal('soupSpiciness'),
+				soupOiliness: safeVal('soupOiliness'),
+				soupFlavorKeywords: safeVal('soupFlavorKeywords'),
+				content: slide.querySelector(`textarea[name="reviews[${index}].content"]`)?.value ?? '',
+				toppingIds: Array.from(slide.querySelectorAll(`input[name="reviews[${index}].toppingIds"]:checked`)).map(i => i.value)
+			});
 		});
 
-// 기타 데이터 수집
 		const payload = {
 			title: document.getElementById('title').value,
 			content: document.getElementById('content').value,
 			ocrKeyHash: form.querySelector('input[name="ocrKeyHash"]').value,
 			visitDate: form.querySelector('input[name="visitDate"]').value,
-			bizNum: form.querySelector('input[name="bizNum"]').value,
-			reviews: reviews
+			storeId: form.querySelector('input[name="storeId"]').value,
+			imageUrl: getFirstImageUrlFromHtml(quill.root.innerHTML),
+			isReceiptReview: true,
+			reviews
 		};
 
 		const fileData = new FormData();
-		document.querySelectorAll('input[type="file"]').forEach((input, index) => {
-			if (input.files[0]) {
-				// 슬라이드 index와 매핑해서 서버에서 구분 가능하도록 이름 지정
-				fileData.append(`images[${index}]`, input.files[0]);
+		document.querySelectorAll('.slick-item[data-index]').forEach((slide, idx) => {
+			const index = slide.getAttribute('data-index');
+			const fileInput = slide.querySelector(`input[name="reviews[${index}].imageFile"]`);
+			if (fileInput?.files?.length > 0) {
+				fileData.append(`images[${idx}]`, fileInput.files[0]); // 인덱스 순서로 매핑
 			}
 		});
 
-		fetch('/board/registReviewJson	', {
+		fetch('/board/registReviewJson', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
 		})
 			.then(response => response.json())
 			.then(data => {
-				// data.reviewIds = [23, 24, 25] 같은 식
-				data.reviewIds.forEach((id, idx) => {
-					const file = fileData.get(`images[${idx}]`);
-					if (file) fileData.set(`image_${id}`, file); // 리뷰 ID와 연결
+				// 매핑된 리뷰 ID에 따라 이미지 이름 재설정
+				data.reviewIds.forEach((reviewId, i) => {
+					const file = fileData.get(`images[${i}]`);
+					if (file) {
+						fileData.set(`image_${reviewId}`, file);
+						fileData.delete(`images[${i}]`);
+					}
 				});
 
 				return fetch('/board/uploadReviewImages', {
@@ -554,4 +544,6 @@
 
 </script>
 </body>
+<script type="text/javascript" src="/js/quill.js"/>
+</script>
 </html>
