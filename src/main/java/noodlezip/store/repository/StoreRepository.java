@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface StoreRepository extends JpaRepository<Store, Long>, StoreRepositoryCustom {
 
+    Long findStoreLegalCodeById(Long storeId);
+
 }

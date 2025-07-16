@@ -337,4 +337,9 @@ public class StoreService {
                 });
         return result;
     }
+
+    public Long getStoreLegalCodeById(Long storeId) {
+        return storeRepository.findStoreLegalCodeById(storeId);
+    }
+
 }
