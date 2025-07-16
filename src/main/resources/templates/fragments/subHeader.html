@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="subHeader">
+  <header class="header_in is_sticky clearfix">
+    <div class="container">
+      <div id="logo">
+        <a th:href="@{/}">
+          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="">
+        </a>
+      </div>
+
+      <!-- 중앙 검색바 -->
+      <div class="search_bar_list">
+        <!-- 라멘 상세 검색 모달 칸 -->
+        <div class="search-filter-container"
+             data-bs-toggle="modal"
+             data-bs-target="#searchModal"
+             style="cursor: pointer;">
+          <input type="text"
+                 id="filterDisplay"
+                 class="form-control"
+                 placeholder="라멘 상세 검색"
+                 readonly>
+          <button type="button"
+                  class="search-modal-trigger">
+            <i class="bi bi-funnel"></i>
+          </button>
+        </div>
+
+        <!-- 검색어 검색 칸 -->
+        <div class="search-keyword-container">
+          <input type="text"
+                 id="keywordSearch"
+                 class="form-control"
+                 placeholder="매장명 또는 메뉴명 검색">
+        </div>
+
+        <!-- 검색 카테고리 칸 -->
+        <div class="search-category-container">
+          <select id="searchCategory" class="form-control">
+            <option value="ALL">전체</option>
+            <option value="STORE_NAME">매장명</option>
+            <option value="MENU_NAME">메뉴명</option>
+          </select>
+        </div>
+
+        <!-- 검색 버튼 -->
+        <button type="button"
+                id="searchButton"
+                class="search-execute-btn">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+
+      <!-- /top_menu -->
+      <ul id="top_menu">
+        <div sec:authorize="isAnonymous()">
+          <li><a href="#sign-in-dialog" class="sign-in login">Sign In</a></li>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+          <li>
+            <div class="dropdown user clearfix">
+              <a href="#" data-bs-toggle="dropdown">
+                <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure>
+                <span th:text="${#authentication.principal.user.userName}"></span>
+              </a>
+              <div class="dropdown-menu">
+                <div class="dropdown-menu-content">
+                  <ul>
+                    <li>
+                      <a th:href="@{|/mypage/${#authentication.principal.user.id}|}">
+                        <i class="icon_cog"></i>
+                        마이페이지
+                      </a>
+                    </li>
+                    <li><a href="/logout" class="logout-link"><i class="icon_key"></i>Log Out</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- /dropdown -->
+          </li>
+        </div>
+      </ul>
+      <!-- /top_menu -->
+
+      <!-- 햄버거 메뉴 버튼 -->
+      <a href="#0" class="open_close">
+        <i class="icon_menu"></i><span>Menu</span>
+      </a>
+
+      <nav class="main-menu">
+        <!-- 사이드바 내부 헤더 -->
+        <div id="header_menu">
+          <a href="#0" class="open_close">
+            <i class="icon_close"></i><span>Menu</span>
+          </a>
+          <a th:href="@{/}"><img th:src="@{/img/logo.svg}" width="140" height="35" alt=""></a>
+        </div>
+        <ul>
+          <li><a th:href="@{/search/list}">검색페이지</a></li>
+          <li><a th:href="@{/board/list}">커뮤니티페이지</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 검색모달 include -->
+  <div th:replace="~{fragments/searchModal :: searchModal}"></div>
+
+  <!-- Layer 요소 - 사이드바 메뉴용 -->
+  <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
+
+  <!-- 모바일 스크롤 시 나타나는 검색창 -->
+  <div class="mobile-search-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="search_bar_list">
+            <!-- 라멘 상세 검색 모달 칸 -->
+            <div class="search-filter-container"
+                 data-bs-toggle="modal"
+                 data-bs-target="#searchModal"
+                 style="cursor: pointer;">
+              <input type="text"
+                     id="mobileFilterDisplay"
+                     class="form-control"
+                     placeholder="라멘 상세 검색"
+                     readonly>
+              <button type="button"
+                      class="search-modal-trigger">
+                <i class="bi bi-funnel"></i>
+              </button>
+            </div>
+
+            <!-- 검색어 검색 칸 -->
+            <div class="search-keyword-container">
+              <input type="text"
+                     id="mobileKeywordSearch"
+                     class="form-control"
+                     placeholder="매장명 또는 메뉴명 검색">
+            </div>
+
+            <!-- 검색 카테고리 칸 -->
+            <div class="search-category-container">
+              <select id="mobileSearchCategory" class="form-control">
+                <option value="ALL">전체</option>
+                <option value="STORE_NAME">매장명</option>
+                <option value="MENU_NAME">메뉴명</option>
+              </select>
+            </div>
+
+            <!-- 검색 버튼 -->
+            <button type="button"
+                    id="mobileSearchButton"
+                    class="search-execute-btn">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 로그인 모달 -->
+  <div th:replace="~{fragments/signin-modal :: signin-modal}"></div>
+</div>
+<!--form -->
+
+<!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용
+<div th:replace="~{fragments/subHeader::subHeader}"></div>
+  구문 삽입해서 사용-->
+
+</html>

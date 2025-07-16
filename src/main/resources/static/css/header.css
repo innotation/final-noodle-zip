@@ -1,0 +1,237 @@
+/*============================================================================================*/
+/* HEADER CSS */
+/*============================================================================================*/
+
+/* Tabelog 스타일 검색바 - 원본 반응형 컨셉 유지 */
+.header_in .search_bar_list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    max-width: 50%;
+    z-index: 5;
+}
+
+.search-filter-container,
+.search-keyword-container,
+.search-category-container {
+    position: relative;
+    flex: 1;
+}
+
+.search-filter-container input,
+.search-keyword-container input,
+.search-category-container select {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+}
+
+.search-filter-container input {
+    cursor: pointer;
+    padding-right: 30px;
+}
+
+.search-modal-trigger {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+}
+
+.search-execute-btn {
+    background: #589442;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-execute-btn:hover {
+    background: #4a7a38;
+}
+
+/* 게시글 목록 검색바 - 원본 스타일과 동일하게 적용 */
+.board_search_bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.board_search_bar input[type="text"] {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+    flex: 1;
+}
+
+.board_search_bar input[type="submit"] {
+    background: #589442;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.board_search_bar input[type="submit"]:hover {
+    background: #4a7a38;
+}
+
+/* 지역 선택 셀렉트박스 스타일 */
+#modal-region-select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+#modal-region-select:focus {
+    border-color: #589442;
+    box-shadow: 0 0 0 0.2rem rgba(88, 148, 66, 0.25);
+}
+
+#modal-region-select option {
+    padding: 8px 12px;
+}
+
+#modal-region-select option:hover {
+    background-color: #f8f9fa;
+}
+
+/* 검색바가 top_menu와 겹치지 않도록 미디어 쿼리 추가 */
+@media (max-width: 991px) {
+    .header_in .search_bar_list {
+        display: none !important; /* 헤더 내부 검색바만 숨김 */
+    }
+    .mobile-search-header .search_bar_list {
+        display: flex !important; /* 모바일 검색창 내부는 항상 보이게 */
+    }
+    
+    .board_search_bar {
+        max-width: 100%;
+    }
+}
+
+/* 모바일 검색창 스타일 */
+.mobile-search-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: transparent;
+    z-index: 2000 !important;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    display: none;
+}
+
+.mobile-search-header.sticky {
+    background: #589442;
+    transform: translateY(0);
+    display: block;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 10px 0;
+}
+
+.mobile-search-header .search_bar_list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    margin: 0 15px;
+    width: calc(100% - 30px);
+}
+
+.mobile-search-header .search_bar_list input[type='text'],
+.mobile-search-header .search_bar_list input[type='text']::placeholder {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+}
+
+.mobile-search-header .search_bar_list select {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    padding: 8px 12px;
+    width: 100%;
+    outline: none;
+}
+
+.mobile-search-header .search_bar_list select option {
+    background: #fff;
+    color: #333;
+}
+
+.mobile-search-header .search_bar_list button {
+    background: #589442;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header_in {
+    z-index: 1000 !important;
+}
+
+header {
+    z-index: 1000 !important;
+}
+
+/* 모바일에서만 모바일 검색창 표시 */
+@media (max-width: 991px) {
+    .mobile-search-header {
+        display: block !important;
+        z-index: 2000 !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        transform: translateY(-100%); /* 기본적으로 숨김 */
+    }
+} 

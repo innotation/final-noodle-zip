@@ -10,6 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -23,5 +27,23 @@ public class SearchService {
 
     public Page<SearchStoreDto> searchStoresByFilter(SearchFilterDto filter, Pageable pageable) {
         return storeRepository.searchStoresByFilter(filter, pageable);
+    }
+
+    public Map<String, Object> getFilterOptions() {
+        Map<String, Object> options = new HashMap<>();
+        
+        // 카테고리 목록
+        List<String> categories = storeRepository.findDistinctCategories();
+        options.put("categories", categories);
+        
+        // 육수 목록
+        List<String> soups = storeRepository.findDistinctSoups();
+        options.put("soups", soups);
+        
+        // 토핑 목록
+        List<String> toppings = storeRepository.findDistinctToppings();
+        options.put("toppings", toppings);
+        
+        return options;
     }
 }

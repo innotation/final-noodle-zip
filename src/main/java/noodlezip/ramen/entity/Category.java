@@ -5,7 +5,6 @@ import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.store.entity.Menu;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,7 +22,7 @@ public class Category extends BaseTimeEntity {
     private Integer id;
 
     @Column(name = "category_name", nullable = false, length = 50)
-    private String name;
+    private String categoryName;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Menu> menus;

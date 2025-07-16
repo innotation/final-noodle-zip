@@ -9,7 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,8 +23,28 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/list")
-    public String searchStore(){
-        return "/search/listing-map";
+    public String searchStore(@ModelAttribute SearchFilterDto filter, Model model){
+        // 검색 파라미터를 모델에 추가
+        if (filter.getKeyword() != null && !filter.getKeyword().trim().isEmpty()) {
+            model.addAttribute("searchKeyword", filter.getKeyword());
+        }
+        if (filter.getSearchType() != null) {
+            model.addAttribute("searchType", filter.getSearchType());
+        }
+        if (filter.getRegion() != null && !filter.getRegion().isEmpty()) {
+            model.addAttribute("searchRegions", filter.getRegion());
+        }
+        if (filter.getRamenCategory() != null && !filter.getRamenCategory().isEmpty()) {
+            model.addAttribute("searchCategories", filter.getRamenCategory());
+        }
+        if (filter.getRamenSoup() != null && !filter.getRamenSoup().isEmpty()) {
+            model.addAttribute("searchSoups", filter.getRamenSoup());
+        }
+        if (filter.getTopping() != null && !filter.getTopping().isEmpty()) {
+            model.addAttribute("searchToppings", filter.getTopping());
+        }
+        
+        return "search/listing-map";
     }
 
     @GetMapping("/stores")
@@ -60,6 +83,12 @@ public class SearchController {
         }
 
         return searchService.searchStoresByFilter(filter, pageable);
+    }
+
+    @GetMapping("/filter-options")
+    @ResponseBody
+    public Map<String, Object> getFilterOptions() {
+        return searchService.getFilterOptions();
     }
 
 }

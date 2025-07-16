@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <th:block th:replace="~{fragments/head :: head}"></th:block>
+    <!-- SPECIFIC CSS -->
+    <link href="/css/blog.css" rel="stylesheet">
+</head>
+
+<body class="margin_sticky">
+
+<div th:replace="~{fragments/subHeader :: subHeader}"></div>
+
+<main>
+    <div class="page_header element_to_stick">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
+                    <div class="breadcrumbs blog">
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Category</a></li>
+                            <li>Page active</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-5 col-md-5">
+                    <div class="search_bar_list">
+                        <input id="searchInput" type="text" class="form-control" placeholder="Search in blog...">
+                        <input type="submit" value="Search" onclick="performSearch()">
+                    </div>
+                </div>
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+    <!-- /page_header -->
+
+    <div class="container margin_30_40">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-md-6" th:each="item : ${board}">
+                        <article class="blog">
+                            <figure>
+                                <a th:href="@{/board/detail/{id}(id=${item.boardId})}">
+                                    <img th:src="${#strings.isEmpty(item.imageUrl) ? '/img/blog-1.jpg' : item.imageUrl}"
+                                         alt="게시글 이미지">
+                                    <div class="preview"><span>더 보기</span></div>
+                                </a>
+                            </figure>
+                            <div class="post_info">
+                                <small>
+                                    <span th:text="${item.communityType}">카테고리</span> -
+                                    <span th:text="${#temporals.format(item.createdAt, 'yyyy.MM.dd')}">2023.01.01</span>
+                                </small>
+                                <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
+                                    제목</a>
+                                </h2>
+                                <!--                                <p th:utext="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>-->
+                                <ul>
+                                    <li>
+                                        <div class="thumb"><img
+                                                th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
+                                                alt="작성자 프로필 이미지"></div>
+                                        <span th:text="${item.userName}">작성자</span>
+                                    </li>
+                                    <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
+                                    <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
+                                </ul>
+                            </div>
+                        </article>
+                        <!-- /article -->
+                    </div>
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+
+                <div class="pagination_fg" th:if="${totalPage > 0}">
+                    <a th:href="${category != null and #strings.length(category) > 0} ?
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/{category}/list(page=${page - 1}, category=${category}, search=${searchKeyword})} :
+            @{/board/{category}/list(page=${page - 1}, category=${category})}
+        ) :
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/list(page=${page - 1}, search=${searchKeyword})} :
+            @{/board/list(page=${page - 1})}
+        )"
+                       th:if="${!isFirst}">&laquo;</a>
+
+                    <th:block th:each="i : ${#numbers.sequence(beginPage, endPage)}">
+                        <a th:href="${category != null and #strings.length(category) > 0} ?
+            ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+                @{/board/{category}/list(page=${i}, category=${category}, search=${searchKeyword})} :
+                @{/board/{category}/list(page=${i}, category=${category})}
+            ) :
+            ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+                @{/board/list(page=${i}, search=${searchKeyword})} :
+                @{/board/list(page=${i})}
+            )"
+                           th:classappend="${i eq page} ? 'active' : ''">
+                            <span th:text="${i}"></span>
+                        </a>
+                    </th:block>
+
+                    <a th:href="${category != null and #strings.length(category) > 0} ?
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/{category}/list(page=${page + 1}, category=${category}, search=${searchKeyword})} :
+            @{/board/{category}/list(page=${page + 1}, category=${category})}
+        ) :
+        ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
+            @{/board/list(page=${page + 1}, search=${searchKeyword})} :
+            @{/board/list(page=${page + 1})}
+        )"
+                       th:if="${!isLast}">&raquo;</a>
+                </div>
+
+            </div>
+            <!-- /col -->
+
+            <th:block th:replace="~{fragments/boardSidebar :: boardSidebar}"></th:block>
+            <!-- /aside -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</main>
+<!-- /main -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<!--/footer-->
+
+<div id="toTop"></div><!-- Back to top button -->
+
+<!-- 최근 본 게시글 위젯 JavaScript -->
+<th:block th:replace="~{fragments/boardSidebar :: recentBoardsScript}"></th:block>
+
+<script>
+    function performSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const keyword = searchInput.value.trim();
+
+        if (keyword === "") {
+            alert("검색어를 입력해주세요.");
+            searchInput.focus();
+            return;
+        }
+
+        const encodedKeyword = encodeURIComponent(keyword);
+
+        // 현재 URL의 경로 부분을 가져옵니다. (예: /board/free/list)
+        const currentPath = window.location.pathname;
+
+        let targetUrl = "/board/list"; // 기본 검색 대상 URL (모든 게시글 검색 시)
+        let communityType = null;
+
+        // 정규 표현식을 사용하여 경로에서 communityType을 추출합니다.
+        // 예: /board/free/list, /board/notice/list 등
+        const pathMatch = currentPath.match(/\/board\/([a-zA-Z0-9]+)\/list/);
+
+        if (pathMatch && pathMatch[1]) {
+            // 정규 표현식에 매칭되면 두 번째 캡처 그룹([1])이 communityType입니다.
+            communityType = pathMatch[1];
+        }
+
+        if (communityType) {
+            targetUrl = `/board/${encodeURIComponent(communityType)}/list?search=${encodedKeyword}`;
+        } else {
+            targetUrl = `/board/list?search=${encodedKeyword}`;
+        }
+
+        location.href = targetUrl;
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            performSearch();
+        }
+    });
+</script>
+<!-- COMMON SCRIPTS -->
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
+
+</body>
+</html>

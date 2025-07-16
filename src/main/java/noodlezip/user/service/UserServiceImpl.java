@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
+import noodlezip.mypage.status.MyPageErrorStatus;
+
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
 import noodlezip.user.entity.User;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -150,5 +153,11 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         log.info("User with ID: {} has been soft-deleted and data cleared.", userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<User> findExistingUserByUserId(Long userId) {
+        return userRepository.findById(userId);
     }
 }

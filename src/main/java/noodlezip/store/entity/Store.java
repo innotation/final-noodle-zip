@@ -5,6 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Builder
 @AllArgsConstructor
@@ -46,15 +53,18 @@ public class Store extends BaseTimeEntity {
     @Column(name = "is_child_allowed", nullable = false)
     private Boolean isChildAllowed;
 
-    @Size(max = 30)
-    @NotNull
+    // Enum 타입 3개 parking, operationstatus, approvalstatus
+    @Enumerated(EnumType.STRING)
     @Column(name = "has_parking", nullable = false, length = 30)
-    private String hasParking;
+    private ParkingType hasParking;
 
-    @Size(max = 30)
-    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "operation_status", nullable = false, length = 30)
-    private String operationStatus;
+    private OperationStatus operationStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", nullable = false, length = 30)
+    private ApprovalStatus approvalStatus;
 
     @Size(max = 300)
     @Column(name = "owner_comment", length = 300)
@@ -72,10 +82,13 @@ public class Store extends BaseTimeEntity {
     @Column(name = "store_lng", nullable = false)
     private Double storeLng;
 
-    @Column(name = "store_legal_code")
-    private Integer storeLegalCode;
+    // 법정코드
+    @NotNull
+    @Column(name = "store_legal_code", nullable = false)
+    private Long storeLegalCode;
 
-    @Column(name = "approval_status")
-    private String approvalStatus;
-
+    // 사업자등록번호
+    @NotNull
+    @Column(name = "biz_num", nullable = false)
+    private Long bizNum;
 }

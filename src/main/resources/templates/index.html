@@ -1,139 +1,338 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
-  <meta name="author" content="Ansonika">
-  <title>Foogra - Discover & Book the best restaurants at the best price</title>
-  <!-- Favicons-->
-  <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
-  <link rel="apple-touch-icon" type="image/x-icon" th:href="@{/img/apple-touch-icon-57x57-precomposed.png}">
-  <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" th:href="@{/img/apple-touch-icon-72x72-precomposed.png}">
-  <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" th:href="@{/img/apple-touch-icon-114x114-precomposed.png}">
-  <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" th:href="@{/img/apple-touch-icon-144x144-precomposed.png}">
-  <!-- GOOGLE WEB FONT -->
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- BASE CSS -->
-  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-  <link th:href="@{/css/style.css}" rel="stylesheet">
-  <!-- SPECIFIC CSS -->
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
+    <!-- SPECIFIC CSS -->
   <link th:href="@{/css/home.css}" rel="stylesheet">
-  <!-- YOUR CUSTOM CSS -->
-  <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
 <body>
-<div th:replace="fragements/subHeader::subHeader"></div>
+<div th:replace="~{fragments/mainHeader :: mainHeader}"></div>
+
 <main>
-  <div class="hero_single version_2">
-    <div class="opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-xl-9 col-lg-10 col-md-8">
-            <h1>Discover &amp; Book</h1>
-            <p>The best restaurants at the best price</p>
-            <form method="post" action="grid-listing-filterscol.html">
-              <div class="row g-0 custom-search-input">
-                <div class="col-lg-4">
-                  <div class="form-group">
-                    <input class="form-control" type="text" placeholder="What are you looking for...">
-                    <i class="icon_search"></i>
-                  </div>
+    <div class="hero_single version_2">
+        <div class="opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-9 col-lg-10 col-md-8">
+                        <h1>Discover &amp; Book</h1>
+                        <p>The best restaurants at the best price</p>
+                                <form method="post" action="grid-listing-filterscol.html">
+                                    <div class="row g-0 custom-search-input">
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <input class="form-control" type="text"
+                                                       placeholder="What are you looking for...">
+                                                <i class="icon_search"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <input class="form-control no_border_r" type="text"
+                                                       placeholder="Address, neighborhood...">
+                                                <i class="icon_pin_alt"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <input type="submit" value="Search">
+                                        </div>
+                                    </div>
+                                    <!-- /row -->
+                                </form>
+                    </div>
                 </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <input class="form-control no_border_r" type="text" placeholder="Address, neighborhood...">
-                    <i class="icon_pin_alt"></i>
-                  </div>
+                <!-- /row -->
+            </div>
+        </div>
+    </div>
+    <!-- /hero_single -->
+    <div class="bg_gray">
+        <div class="container margin_60_40">
+            <div class="main_title center">
+                <span><em></em></span>
+                <h2>Popular Categories</h2>
+                <p>Cum doctus civibus efficiantur in imperdiet deterruisset</p>
+            </div>
+            <!-- /main_title -->
+            <div class="owl-carousel owl-theme categories_carousel">
+                <div class="item_version_2">
+                    <a href="grid-listing-filterscol.html">
+                        <figure>
+                            <span>98</span>
+                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_pizza.jpg" alt=""
+                                 class="owl-lazy">
+                            <div class="info">
+                                <h3>Pizza</h3>
+                                <small>Avg price $40</small>
+                            </div>
+                        </figure>
+                    </a>
                 </div>
-                <div class="col-lg-2">
-                  <input type="submit" value="Search">
+                <div class="item_version_2">
+                    <a href="grid-listing-filterscol.html">
+                        <figure>
+                            <span>87</span>
+                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_sushi.jpg" alt=""
+                                 class="owl-lazy">
+                            <div class="info">
+                                <h3>Japanese</h3>
+                                <small>Avg price $50</small>
+                            </div>
+                        </figure>
+                    </a>
                 </div>
-              </div>
-              <!-- /row -->
-            </form>
-          </div>
+                <div class="item_version_2">
+                    <a href="grid-listing-filterscol.html">
+                        <figure>
+                            <span>55</span>
+                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_hamburgher.jpg" alt=""
+                                 class="owl-lazy">
+                            <div class="info">
+                                <h3>Burghers</h3>
+                                <small>Avg price $55</small>
+                            </div>
+                        </figure>
+                    </a>
+                </div>
+                <div class="item_version_2">
+                    <a href="grid-listing-filterscol.html">
+                        <figure>
+                            <span>55</span>
+                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_vegetarian.jpg" alt=""
+                                 class="owl-lazy">
+                            <div class="info">
+                                <h3>Vegetarian</h3>
+                                <small>Avg price $40</small>
+                            </div>
+                        </figure>
+                    </a>
+                </div>
+                <div class="item_version_2">
+                    <a href="grid-listing-filterscol.html">
+                        <figure>
+                            <span>65</span>
+                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_bakery.jpg" alt=""
+                                 class="owl-lazy">
+                            <div class="info">
+                                <h3>Bakery</h3>
+                                <small>Avg price $60</small>
+                            </div>
+                        </figure>
+                    </a>
+                </div>
+                <div class="item_version_2">
+                    <a href="grid-listing-filterscol.html">
+                        <figure>
+                            <span>25</span>
+                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_chinesse.jpg" alt=""
+                                 class="owl-lazy">
+                            <div class="info">
+                                <h3>Chinese</h3>
+                                <small>Avg price $40</small>
+                            </div>
+                        </figure>
+                    </a>
+                </div>
+                <div class="item_version_2">
+                    <a href="grid-listing-filterscol.html">
+                        <figure>
+                            <span>35</span>
+                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_mexican.jpg" alt=""
+                                 class="owl-lazy">
+                            <div class="info">
+                                <h3>Mexican</h3>
+                                <small>Avg price $35</small>
+                            </div>
+                        </figure>
+                    </a>
+                </div>
+            </div>
+            <!-- /carousel -->
+        </div>
+        <!-- /container -->
+    </div>
+    <!-- /bg_gray -->
+    <div class="container margin_60_40">
+        <div class="main_title">
+            <span><em></em></span>
+            <h2>인기 가게</h2>
+            <p>현재 인기있는 가게들을 소개해드립니다.</p>
+            <a href="#0">전체 보기</a>
+        </div>
+        <!-- /main_title -->
+        <div class="owl-carousel owl-theme carousel_4">
+            <div class="item"> <!-- 각 아이템마다 루프 돌리면 됨-->
+                <div class="strip">
+                    <figure>
+                        <span class="ribbon off">-30%</span>
+                        <img src="/img/lazy-placeholder.png" data-src="img/location_1.jpg" class="owl-lazy" alt="">
+                        <a href="detail-restaurant.html" class="strip_info">
+                            <small>Pizza</small>
+                            <div class="item_title">
+                                <h3>Da Alfredo</h3>
+                                <small>27 Old Gloucester St</small>
+                            </div>
+                        </a>
+                    </figure>
+                    <ul>
+                        <li><span class="loc_open">Now Open</span></li>
+                        <li>
+                            <div class="score"><span>Superb<em>350 Reviews</em></span><strong>8.9</strong></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- item -->
+        </div>
+        <!-- /carousel -->
+
+        <div class="banner lazy" data-bg="url(img/banner_bg_desktop.jpg)">
+            <div class="wrapper d-flex align-items-center opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.2)">
+                <div>
+                    <small>Noodle-Zip</small>
+                    <h3>3천여개 이상의 라멘 가게</h3>
+                    <a href="grid-listing-filterscol.html" class="btn_1">전체 보기</a>
+                </div>
+            </div>
+            <!-- /wrapper -->
+        </div>
+        <!-- /banner -->
+
+        <div class="row">
+            <div class="col-12">
+                <div class="main_title version_2">
+                    <span><em></em></span>
+                    <h2>인기 게시글</h2>
+                    <p>현재 인기있는 게시글들을 확인해보세요.</p>
+                    <a th:href="@{/board/list}">전체보기</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="list_home">
+                    <ul id="community-board-list-container">
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="list_home">
+                    <ul id="review-board-list-container">
+                    </ul>
+                </div>
+            </div>
         </div>
         <!-- /row -->
-      </div>
-    </div>
-  </div>
-  <!-- /hero_single -->
-  <div class="bg_gray">
-    <div class="container margin_60_40">
-      <div class="main_title center">
-        <span><em></em></span>
-        <h2>Popular Categories</h2>
-        <p>Cum doctus civibus efficiantur in imperdiet deterruisset</p>
-      </div>
-      <!-- /main_title -->
-      <div class="owl-carousel owl-theme categories_carousel">
-        <div class="item">
-          <a href="#0">
-            <span>98</span>
-            <i class="icon-food_icon_pizza"></i>
-            <h3>Pizza - Italian</h3>
-            <small>Avg price $40</small>
-          </a>
+        <p class="text-center d-block d-md-block d-lg-none"><a href="grid-listing-filterscol.html" class="btn_1">View
+            All</a></p>
+        <!-- /button visibile on tablet/mobile only -->
+
+        <div class="owl-carousel owl-theme carousel_1 testimonials add_top_30">
+            <div class="item">
+                <blockquote>"Quaerendum liberavisse no cum, at copiosae pericula maluisset per. Eos eros etiam ei, nibh
+                    elit mel ad. Quo mnesarchum disputando ne, id per delectus disputationi".
+                </blockquote>
+                <figure><img src="img/avatar-placeholder.jpg" data-src="img/avatar_1.svg" alt="" class="lazy"></figure>
+                <cite>
+                    <strong>James Powell</strong>
+                    <span>3 October 2019</span>
+                </cite>
+            </div>
+            <div class="item">
+                <blockquote>"Quaerendum liberavisse no cum, at copiosae pericula maluisset per. Eos eros etiam ei, nibh
+                    elit mel ad. Quo mnesarchum disputando ne, id per delectus disputationi".
+                </blockquote>
+                <figure><img src="img/avatar-placeholder.jpg" data-src="img/avatar_2.svg" alt="" class="lazy"></figure>
+                <cite>
+                    <strong>Frederick Smith</strong>
+                    <span>25 November 2019</span>
+                </cite>
+            </div>
+            <div class="item">
+                <blockquote>"Quaerendum liberavisse no cum, at copiosae pericula maluisset per. Eos eros etiam ei, nibh
+                    elit mel ad. Quo mnesarchum disputando ne, id per delectus disputationi".
+                </blockquote>
+                <figure><img src="img/avatar-placeholder.jpg" data-src="img/avatar_3.svg" alt="" class="lazy"></figure>
+                <cite>
+                    <strong>Jhon Rabbit</strong>
+                    <span>31 November 2019</span>
+                </cite>
+            </div>
         </div>
-        <div class="item">
-          <a href="#0">
-            <span>87</span>
-            <i class="icon-food_icon_sushi"></i>
-            <h3>Japanese - Sushi</h3>
-            <small>Avg price $50</small>
-          </a>
-        </div>
-        <div class="item">
-          <a href="#0">
-            <span>96</span>
-            <i class="icon-food_icon_burgher"></i>
-            <h3>Burghers</h3>
-            <small>Avg price $55</small>
-          </a>
-        </div>
-        <div class="item">
-          <a href="#0">
-            <span>78</span>
-            <i class="icon-food_icon_vegetarian"></i>
-            <h3>Vegetarian</h3>
-            <small>Avg price $40</small>
-          </a>
-        </div>
-        <div class="item">
-          <a href="#0">
-            <span>65</span>
-            <i class="icon-food_icon_cake_2"></i>
-            <h3>Bakery</h3>
-            <small>Avg price $60</small>
-          </a>
-        </div>
-        <div class="item">
-          <a href="#0">
-            <span>65</span>
-            <i class="icon-food_icon_chinese"></i>
-            <h3>Chinese</h3>
-            <small>Avg price $40</small>
-          </a>
-        </div>
-        <div class="item">
-          <a href="#0">
-            <span>65</span>
-            <i class="icon-food_icon_burrito"></i>
-            <h3>Mexican</h3>
-            <small>Avg price $35</small>
-          </a>
-        </div>
-      </div>
-      <!-- /carousel -->
+        <!-- /carousel testimonials-->
+
     </div>
     <!-- /container -->
-  </div>
-  <!-- /bg_gray -->
-  <!-- COMMON SCRIPTS -->
-  <script th:src="@{/js/common_scripts.min.js}"></script>
-  <script th:src="@{/js/slider.js}"></script>
-  <script th:src="@{/js/common_func.js}"></script>
-  <script th:src="@{/assets/validate.js}"></script>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- COMMON SCRIPTS -->
+<script th:src="@{/js/common_scripts.min.js}"></script>
+<script th:src="@{/js/slider.js}"></script>
+<script th:src="@{/js/common_func.js}"></script>
+<script th:src="@{/assets/validate.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const communityBoardListContainer = document.getElementById('community-board-list-container');
+        const reviewBoardListContainer = document.getElementById('review-board-list-container');
+        async function loadBoardData(boardName) {
+            console.log(boardName);
+            try {
+                const response = await fetch(`/board/popular/${boardName}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const pageData = await response.json();
+
+                const boardItems = pageData.payload;
+
+                if (!boardItems || boardItems.length === 0) {
+                    console.log(`${boardName} 게시판에 표시할 데이터가 없습니다.`);
+                    return;
+                }
+
+                boardItems.forEach(item => {
+                    const htmlliElement = document.createElement('li');
+                    const aElement = document.createElement('a');
+                    const figureElement = document.createElement('figure');
+                    const imgElement = document.createElement('img');
+                    const divStrongElement = document.createElement('div');
+                    divStrongElement.classList.add('score');
+                    const strongElement = document.createElement('strong');
+                    const emElement = document.createElement('em');
+                    const h3Element = document.createElement('h3');
+                    const smallElement = document.createElement('small');
+                    if (boardName == 'community')
+                    {
+                        communityBoardListContainer.appendChild(htmlliElement);
+                    } else if (boardName == 'review') {
+                        reviewBoardListContainer.appendChild(htmlliElement);
+                    }
+                    htmlliElement.appendChild(aElement);
+                    aElement.appendChild(figureElement);
+                    figureElement.appendChild(imgElement);
+                    imgElement.classList.add('lazy');
+                    aElement.appendChild(divStrongElement);
+                    divStrongElement.appendChild(strongElement);
+                    aElement.appendChild(emElement);
+                    aElement.appendChild(h3Element);
+                    aElement.appendChild(smallElement);
+                    aElement.href = `/board/detail/${item.boardId}`;
+                    imgElement.src = item.imageUrl;
+                    strongElement.textContent = item.likesCount;
+                    emElement.textContent = item.communityType;
+                    h3Element.textContent = item.title;
+                    smallElement.textContent = item.content;
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        loadBoardData('community');
+        loadBoardData('review');
+    });
+</script>
 </body>
 </html>

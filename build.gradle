@@ -58,6 +58,8 @@ dependencies {
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
 	runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.0'
 	implementation 'javax.xml.bind:jaxb-api:2.3.0'
+	// jsoup 통해 html 정제
+	implementation 'org.jsoup:jsoup:1.17.2'
 }
 
 tasks.named('test') {
@@ -66,4 +68,9 @@ tasks.named('test') {
 
 tasks.named('jar'){
 	enabled = false;
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	options.compilerArgs << "-parameters"
 }

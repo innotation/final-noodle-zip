@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Ansonika">
+  <title>FOOGRA - Admin dashboard</title>
+  <!-- Favicons-->
+  <link rel="shortcut icon" th:href="@{/admin_section/img/favicon.ico}" type="image/x-icon">
+  <!-- Bootstrap core CSS-->
+  <link th:href="@{/admin_section/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <!-- Main styles -->
+  <link th:href="@{/admin_section/css/admin.css}" rel="stylesheet">
+  <!-- Icon fonts-->
+  <link th:href="@{/admin_section/vendor/font-awesome/css/font-awesome.min.css}" rel="stylesheet" type="text/css">
+  <!-- Plugin styles -->
+  <link th:href="@{/admin_section/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+  <!-- Your custom styles -->
+  <link th:href="@{/admin_section/css/custom.css}" rel="stylesheet">
+</head>
+
+<body class="fixed-nav sticky-footer" id="page-top">
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-default fixed-top" id="mainNav">
+  <a class="navbar-brand" th:href="@{/admin/main}"><img th:src="@{/admin_section/img/logo.svg}" alt="" width="142" height="36"></a>
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarResponsive">
+    <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+        <a class="nav-link" th:href="@{/admin/main}">
+          <i class="fa fa-fw fa-dashboard"></i>
+          <span class="nav-link-text">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="신고내역">
+        <a class="nav-link" th:href="@{/admin/reportList}">
+          <i class="fa fa-fw fa-exclamation-triangle"></i>
+          <span class="nav-link-text">신고내역</span>
+        </a>
+      </li>
+      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="매장등록요청">
+        <a class="nav-link" th:href="@{/admin/registList}">
+          <i class="fa fa-fw fa-folder-open"></i>
+          <span class="nav-link-text">매장등록요청</span>
+        </a>
+      </li>
+      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="신규매장추천">
+        <a class="nav-link" th:href="@{/admin/recommendList}">
+          <i class="fa fa-fw fa-folder-open"></i>
+          <span class="nav-link-text">추천매장목록</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="navbar-nav sidenav-toggler">
+      <li class="nav-item">
+        <a class="nav-link text-center" id="sidenavToggler">
+          <i class="fa fa-fw fa-angle-left"></i>
+        </a>
+      </li>
+    </ul>
+    <!-- 로그아웃 모달 -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<!-- /Navigation-->
+<div class="content-wrapper">
+  <div class="container-fluid">
+    <!-- Breadcrumbs-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="#">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item active">Listings</li>
+    </ol>
+    <div class="box_general">
+      <div class="header_box">
+        <h2 class="d-inline-block">Listings</h2>
+        <div class="filter">
+<!--          조건변경 (상태에 따라 보기로 바꿀듯?)-->
+          <div class="styled-select short">
+            <select name="orderby">
+              <option value="Any time">Any time</option>
+              <option value="Latest">Latest</option>
+              <option value="Oldest">Oldest</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="list_general">
+        <ul id="storeListContainer">
+<!--          <li th:each="store : ${registList}">-->
+<!--            <figure><img th:src="@{/admin_section/img/item_1.jpg}" alt=""></figure>-->
+<!--            <small>매장 등록 요청</small>-->
+<!--            <h4 th:text="|매장명 : ${store.storeName}|">매장 이름</h4>-->
+<!--            <p><strong th:text="|등록자 ID : ${store.loginId}|"></strong></p>-->
+<!--            <p><strong th:text="|등록일 : ${store.createdAt}|"></strong></p>-->
+<!--            <p>-->
+<!--              <a href="#" class="btn_1 gray">-->
+<!--                <i class="fa fa-fw fa-eye"></i> View item-->
+<!--              </a>-->
+<!--            </p>-->
+<!--          </li>-->
+        </ul>
+      </div>
+    <!-- /box_general-->
+      <nav aria-label="...">
+        <ul class="pagination pagination-sm add_bottom_30" id="paginationArea">
+<!--          <li class="page-item" th:classappend="${isFirst} ? 'disabled'">-->
+<!--            <a class="page-link" href="#" th:onclick="${!isFirst} ? 'loadStoreList(' + (${page - 1}) + '); return false;' : null">이전</a>-->
+<!--          </li>-->
+
+<!--          <li class="page-item"-->
+<!--              th:each="p : ${#numbers.sequence(beginPage, endPage)}"-->
+<!--              th:classappend="${p == page} ? 'active'">-->
+<!--            <a class="page-link"-->
+<!--               href="#"-->
+<!--               th:text="${p}"-->
+<!--               th:onclick="'loadStoreList(' + ${p} + '); return false;'"></a>-->
+<!--          </li>-->
+
+<!--          <li class="page-item" th:classappend="${isLast} ? 'disabled'">-->
+<!--            <a class="page-link" href="#" th:onclick="${!isLast} ? 'loadStoreList(' + (${page + 1}) + '); return false;' : null">다음</a>-->
+<!--          </li>-->
+        </ul>
+      </nav>
+    <!-- /pagination-->
+  </div>
+  <!-- /container-fluid-->
+</div>
+<!-- /container-wrapper-->
+<footer class="sticky-footer">
+  <div class="container">
+    <div class="text-center">
+      <small>Copyright © FOOGRA 2021</small>
+    </div>
+  </div>
+</footer>
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fa fa-angle-up"></i>
+</a>
+
+  <!-- 등록 신청 매장 상세보기 모달 -->
+  <div class="modal fade" id="openStoreDetailModal" tabindex="-1" role="dialog" aria-labelledby="openStoreDetailModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">매장 상세</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body p-0" style="height: 600px;">
+          <iframe id="storeDetailFrame" src="" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" onclick="changeStoreStatus('APPROVED')">승인</button>
+          <button class="btn btn-danger" onclick="changeStoreStatus('REJECTED')">거절</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/admin_section/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- Core plugin JavaScript-->
+<script th:src="@{/admin_section/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<!-- Page level plugin JavaScript-->
+<script th:src="@{/admin_section/vendor/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/admin_section/vendor/datatables/dataTables.bootstrap4.js}"></script>
+<script th:src="@{/admin_section/vendor/jquery.magnific-popup.min.js}"></script>
+<!-- Custom scripts for all pages-->
+<script th:src="@{/admin_section/js/admin.js}"></script>
+
+<script>
+
+  let currentStoreId = null;
+
+  document.addEventListener("DOMContentLoaded", () =>{
+    document.getElementById('storeListContainer')
+      .addEventListener('click', e => {
+        const btn = e.target.closest('.btn-view-report');
+        if (btn) {
+          e.preventDefault();
+          openStoreDetailModal(btn);
+        }
+      });
+    loadStoreList(0);
+  })
+
+  function loadStoreList(page) {
+    fetch(`/admin/registList/data?page=${page}`)
+      .then(response => response.json())
+      .then(data => {
+        const listHtml = data.registList.map(store => `
+          <li>
+            <figure><img src="/admin_section/img/item_1.jpg" alt=""></figure>
+            <small>매장 등록 요청</small>
+            <h4>${store.storeName}</h4>
+            <p><strong>등록자 ID : ${store.loginId}</strong></p>
+            <p><strong>등록일 : ${store.createdAt}</strong></p>
+            <p>
+              <a href="#" class="btn_1 gray btn-view-report"
+         data-id="${store.id}">
+        <i class="fa fa-fw fa-eye"></i> 상세보기
+      </a>
+            </p>
+          </li>
+        `).join('');
+
+        document.getElementById("storeListContainer").innerHTML = listHtml;
+
+        // 페이징 UI 렌더링
+        const pagination = document.getElementById("paginationArea");
+        let html = '';
+        const current = data.page;         // 1
+        const total = data.totalPage;      // 1
+
+        // 이전 버튼
+        if (!data.isFirst) {
+          html += `<li class="page-item">
+              <a class="page-link" href="#" onclick="loadStoreList(${current - 2}); return false;">이전</a>
+           </li>`;
+        } else {
+          html += `<li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">이전</a>
+           </li>`;
+        }
+
+// 페이지 번호
+        for (let i = 1; i <= total; i++) {
+          html += `<li class="page-item ${i === current ? 'active' : ''}">
+              <a class="page-link" href="#" onclick="loadStoreList(${i-1}); return false;">${i}</a>
+           </li>`;
+        }
+
+// 다음 버튼
+        if (!data.isLast) {
+          html += `<li class="page-item">
+              <a class="page-link" href="#" onclick="loadStoreList(${current}); return false;">다음</a>
+           </li>`;
+        } else {
+          html += `<li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">다음</a>
+           </li>`;
+        }
+
+        pagination.innerHTML = html;
+
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth' // 부드럽게 이동
+        });
+      })
+      .catch(error => {
+        console.error("비동기 요청 실패:", error);
+      });
+  }
+
+  // 매장 상세 모달용 js
+  function openStoreDetailModal(button) {
+    currentStoreId = button.getAttribute('data-id');
+
+    let url = '';
+    url = `/store/storeDetail/${currentStoreId}`;
+
+    document.getElementById('storeDetailFrame').src = url;
+    $('#openStoreDetailModal').modal('show');
+  }
+  $('#openStoreDetailModal').on('hidden.bs.modal', () => {
+    document.getElementById('storeDetailFrame').src = '';
+  });
+
+  function changeStoreStatus(status) {
+    if (!currentStoreId) return;
+
+    const confirmMsg = status === 'APPROVED' ? '정말 승인하시겠습니까?' : '정말 거절하시겠습니까?';
+    if (!confirm(confirmMsg)) return;  // 취소하면 종료
+
+    fetch(`/admin/regist/${currentStoreId}/status?status=${status}`, {
+      method: 'PUT'
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('매장 상태 변경 실패');
+        alert(status === 'APPROVED' ? '승인되었습니다.' : '거절되었습니다.');
+        $('#openStoreDetailModal').modal('hide');
+
+        location.reload();
+      })
+      .catch(err => alert(err.message));
+  }
+
+</script>
+</body>
+
+</html>

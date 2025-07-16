@@ -8,12 +8,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.util.AntPathMatcher;
+import java.util.Arrays;
+import java.util.List;
 
 
 @EnableWebSecurity
 @Configuration
 @Slf4j
 public class SecurityConfig {
+
+    // permitAll 패턴을 상수로 분리
+    private static final List<String> PERMIT_ALL_PATTERNS = Arrays.asList(
+        "/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
+        "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**",
+        "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
+        "/store/**", "/admin_section/**", "/admin/**", "/receipt/**", "/location/**", "/ramen/**",
+        "/board/**", "/comments/**", "/users/**", "/mypage/**"
+    );
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -25,13 +38,9 @@ public class SecurityConfig {
 
         // URL 접근 제어( 인가 설정 )
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/", "/check-login-id", "/check-email","/verify-email", "/signup", "/login", "/images/**", "css/**", "img/**", "js/**", "assets/**", "/v3/api-docs/**","/swagger-ui/**").permitAll();
-            auth.requestMatchers("/",  "/login", "/signup", "/img/**", "/images/**", "/send-verification-code").permitAll()
-                    .requestMatchers("/css/**", "/js/**", "/assets/**").permitAll()
-                    .requestMatchers("/fragments/**").permitAll()
+            auth.requestMatchers(PERMIT_ALL_PATTERNS.toArray(new String[0])).permitAll()
                     .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                     .requestMatchers("/user/**").hasAnyAuthority("NORMAL")
-                    .requestMatchers("/search/**").permitAll()
                     .anyRequest().authenticated();
         });
 
@@ -45,7 +54,20 @@ public class SecurityConfig {
                         if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))) {
                             resp.sendRedirect("/admin/main"); // 응답 -> /admin/main
                         } else {
-                            resp.sendRedirect("/"); // 응답 -> /main
+                            // 1. 파라미터로 redirectUrl이 있으면 우선 적용 (외부 URL 차단)
+                            String redirectUrl = req.getParameter("redirectUrl");
+                            if (redirectUrl != null && redirectUrl.startsWith("/")) {
+                                resp.sendRedirect(redirectUrl);
+                                return;
+                            }
+                            // 2. Spring Security가 저장한 원래 요청이 있는지 확인
+                            SavedRequest savedRequest = (org.springframework.security.web.savedrequest.SavedRequest)
+                                    req.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+                            if (savedRequest != null) {
+                                resp.sendRedirect(savedRequest.getRedirectUrl()); // 원래 요청으로 이동
+                            } else {
+                                resp.sendRedirect("/"); // 없을 시 메인
+                            }
                         }
                     })
                     .failureHandler((req, resp, exce) -> {
@@ -54,10 +76,28 @@ public class SecurityConfig {
                     });
         });
 
-        // 로그아웃 처리 설정( 인증 설정 )
+        AntPathMatcher matcher = new AntPathMatcher();
+
+        // 로그아웃 처리 설정( 인증 설정 ) 로그아웃 시 permitAll 페이지면 해당 페이지로 이동 or "/"
         http.logout(logout -> {
             logout.logoutUrl("/logout")
-                    .logoutSuccessUrl("/login?logout")
+                    .logoutSuccessHandler((req, resp, auth) -> {
+                        String redirectUrl = req.getParameter("redirectUrl");
+                        boolean isPermit = false;
+                        if (redirectUrl != null && redirectUrl.startsWith("/")) {
+                            for (String pattern : PERMIT_ALL_PATTERNS) {
+                                if (matcher.match(pattern, redirectUrl)) {
+                                    isPermit = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (isPermit) {
+                            resp.sendRedirect(redirectUrl);
+                        } else {
+                            resp.sendRedirect("/");
+                        }
+                    })
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID");
         });
@@ -67,8 +107,10 @@ public class SecurityConfig {
             csrf.disable();
         });
 
+        // 동일 도메인에서 iframe 접근 가능 설정
+        http.headers().frameOptions().sameOrigin();
+
         return http.build();
 
     }
 }
-

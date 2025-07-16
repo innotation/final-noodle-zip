@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en"
+			xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
+
+  <!-- SPECIFIC CSS -->
+  <link href="/css/detail-page.css" rel="stylesheet">
+  <link href="/css/blog.css" rel="stylesheet">
+
+  <!-- YOUR CUSTOM CSS -->
+  <link href="/css/detail-custom.css" rel="stylesheet">
+
+</head>
+
+<body class="margin_sticky">
+
+  <!-- header -->
+  <th:block th:replace="~{fragments/subHeader::subHeader}"></th:block>
+
+  <main>
+		
+		<div class="container margin_detail">
+		    <div class="row">
+		        <div class="col-lg-8">
+		            <div class="detail_page_head clearfix">
+		                <div class="breadcrumbs">
+		                    <ul>
+		                        <li><a href="#">Home</a></li>
+		                        <li><a href="#">Category</a></li>
+		                        <li>Page active</li>
+		                    </ul>
+		                </div>
+		                <div class="title">
+		                    <h1 th:text="${store.storeName}">매장명</h1>
+											<span th:text="${store.address}">주소</span>
+											<a th:href="'https://map.naver.com/v5/search/' + ${store.storeName} + '?c=' + ${store.storeLng} + ',' + ${store.storeLat} + ',16,0,0'"
+												 target="_blank">
+												네이버 지도로 길찾기
+											</a>
+		                    <ul class="tags">
+		                        <li><a href="#0">Pizza</a></li>
+		                        <li><a href="#0">Italian Food</a></li>
+		                        <li><a href="#0">Best Price</a></li>
+		                    </ul>
+		                </div>
+									<!-- 이거 뭘로 바꾸지 -->
+		                <div class="rating">
+		                    <div class="score"><span>Superb<em>350 Reviews</em></span><strong>8.9</strong></div>
+		                </div>
+		            </div>
+		            <!-- /detail_page_head -->
+
+		            <div class="owl-carousel owl-theme carousel_1 magnific-gallery">
+		                <div class="item">
+		                    <a th:href="${store.storeMainImageUrl}" title="매장사진" data-effect="mfp-zoom-in">
+													<img th:src="@{|${store.storeMainImageUrl} ?: '/img/detail_1.jpg'|}"
+															 alt="store image"
+															 onerror="this.onerror=null;this.src='/img/detail_1.jpg';">
+												</a>
+		                </div>
+		            </div>
+		            <!-- /carousel -->
+
+		            <div class="tabs_detail">
+		                <ul class="nav nav-tabs" role="tablist">
+		                    <li class="nav-item">
+		                        <a id="tab-A" href="#pane-A" class="nav-link active" data-bs-toggle="tab" role="tab">Information</a>
+		                    </li>
+												<li class="nav-item">
+													<a id="tab-C" href="#pane-C" class="nav-link" data-bs-toggle="tab" role="tab">Menus</a>
+												</li>
+		                    <li class="nav-item">
+		                        <a id="tab-B" href="#pane-B" class="nav-link" data-bs-toggle="tab" role="tab">Reviews</a>
+		                    </li>
+		                </ul>
+
+		                <div class="tab-content" role="tablist">
+		                    <div id="pane-A" class="card tab-pane fade show active" role="tabpanel" aria-labelledby="tab-A">
+													<div th:replace="~{/store/fragments/tab-basic-info :: basic-info-tab}"></div>
+		                    </div>
+		                    <!-- /tab -->
+											<input type="hidden" id="store-id" th:value="${store.id}">
+											<div class="tab-pane fade" id="pane-C" role="tabpanel" aria-labelledby="tab-C"></div>
+											<!-- tab-menu fragment -->
+
+											<div class="tab-pane fade" id="pane-B" role="tabpanel" aria-labelledby="tab-B"></div>
+											<!-- tab-review fragment-->
+
+										</div>
+									<!-- /tab-content -->
+		            </div>
+		            <!-- /tabs_detail -->
+		        </div>
+		        <!-- /col -->
+
+          <div class="col-lg-4" id="sidebar_fixed">
+          <div class="box_booking">
+                <div class="head">
+                    <h3>매장 위치</h3>
+                </div>
+                <!-- /head -->
+                <div class="main">
+                    <div id="store_map" style="width: 100%; height: 300px; border-radius: 5px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+                    <div class="store_info" style="padding: 15px 0; border-top: 1px solid #eee;">
+                        <h5 th:text="${store.storeName}" style="margin: 0 0 10px 0; color: #333; font-weight: 600;">매장명</h5>
+                        <p th:text="${store.address}" style="margin: 0 0 8px 0; color: #666; font-size: 14px;">주소</p>
+                        <p th:if="${store.phone}" th:text="'전화: ' + ${store.phone}" style="margin: 0; color: #666; font-size: 14px;">전화번호</p>
+                    </div>
+                    <a th:href="'https://map.naver.com/v5/search/' + ${store.storeName} + '?c=' + ${store.storeLng} + ',' + ${store.storeLat} + ',16,0,0'"
+                       target="_blank" class="btn_1 full-width mb_5">
+                        <i class="icon_location"></i> 네이버 지도에서 보기
+                    </a>
+                    <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
+                </div>
+            </div>
+            <!-- /box_booking -->
+            <ul class="share-buttons">
+                <li><a class="fb-share" href="#0"><i class="social_facebook"></i> Share</a></li>
+                <li><a class="twitter-share" href="#0"><i class="social_twitter"></i> Share</a></li>
+                <li><a class="gplus-share" href="#0"><i class="social_googleplus"></i> Share</a></li>
+            </ul>
+        </div>
+
+		    </div>
+		    <!-- /row -->
+		</div>
+		<!-- /container -->
+		
+	</main>
+	<!-- /main -->
+
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const tabC = document.getElementById("tab-C");
+			const paneC = document.getElementById("pane-C");
+			const storeId = document.getElementById("store-id").value; // storeId를 숨겨놓고 가져옴
+
+			let menuLoaded = false; // 중복 요청 방지
+
+			tabC.addEventListener("click", () => {
+				if (menuLoaded) return; // 이미 로드된 경우는 생략
+				fetch(`/store/detail/${storeId}/menuList`)
+					.then(response => {
+						if (!response.ok) throw new Error("Menu tab load failed");
+						return response.text();
+					})
+					.then(html => {
+						paneC.innerHTML = html;
+						initMenuFilter();
+						// 추가 토핑 목록 로드
+						loadExtraToppings();
+						// DOM 렌더링 완료 후 갤러리 초기화
+						setTimeout(() => {
+							initMenuGallery(); // 메뉴 갤러리 초기화 추가
+						}, 100);
+						menuLoaded = true;
+					})
+					.catch(err => {
+						console.error(err);
+					});
+			});
+
+			// 추가 토핑 목록 로드 함수
+			function loadExtraToppings() {
+				fetch(`/store/detail/${storeId}/toppings`)
+					.then(response => {
+						if (!response.ok) throw new Error("Toppings load failed");
+						return response.json();
+					})
+					.then(toppings => {
+						const extraToppingsSection = document.getElementById('extra-toppings-section');
+						const extraToppingsList = document.getElementById('extra-toppings-list');
+						
+						if (toppings && toppings.length > 0) {
+							extraToppingsList.innerHTML = '';
+							toppings.forEach(topping => {
+								const toppingCard = document.createElement('div');
+								toppingCard.className = 'col-md-4 mb-3';
+								toppingCard.innerHTML = `
+									<div class="card h-100" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+										<div class="card-body text-center">
+											<h6 class="card-title mb-2">${topping.name}</h6>
+											<p class="card-text text-muted mb-0">
+												${topping.price ? topping.price.toLocaleString() + '원' : '가격 정보 없음'}
+											</p>
+										</div>
+									</div>
+								`;
+								extraToppingsList.appendChild(toppingCard);
+							});
+							extraToppingsSection.style.display = 'block';
+						} else {
+							extraToppingsSection.style.display = 'none';
+						}
+					})
+					.catch(err => {
+						console.error('추가 토핑 로드 실패:', err);
+						document.getElementById('extra-toppings-section').style.display = 'none';
+					});
+			}
+
+			function initMenuFilter() {
+					const tagEls = paneC.querySelectorAll(".filter-tag");
+					const menuEls = paneC.querySelectorAll(".review_card");
+
+					if (tagEls.length === 0 || menuEls.length === 0) return;
+
+					const activeFilters = {
+						category: new Set(),
+						soup: new Set(),
+						topping: new Set()
+					};
+
+					// 초기 활성화 상태 설정 (모든 태그가 기본적으로 활성화)
+					tagEls.forEach(tag => {
+						const type = tag.dataset.type;
+						const value = tag.dataset.value;
+						activeFilters[type].add(value);
+						tag.classList.add("active"); // 모든 필터 태그를 초기에 active 상태로 설정
+						tag.classList.remove("inactive"); // inactive 클래스 제거
+					});
+
+
+					tagEls.forEach(tag => {
+						tag.addEventListener("click", () => {
+							const type = tag.dataset.type;
+							const value = tag.dataset.value;
+
+							// active 클래스 토글
+							tag.classList.toggle("active");
+							if (tag.classList.contains("active")) {
+								tag.classList.remove("inactive");
+							} else {
+								tag.classList.add("inactive");
+							}
+
+							if (activeFilters[type].has(value)) {
+								activeFilters[type].delete(value);
+							} else {
+								activeFilters[type].add(value);
+							}
+
+							filterMenus();
+						});
+					});
+
+					function filterMenus() {
+						menuEls.forEach(menu => {
+							const category = menu.dataset.category;
+							const soup = menu.dataset.soup;
+							const toppings = (menu.dataset.toppings || "").split(",");
+
+							const categoryMatch = activeFilters.category.size === 0 || activeFilters.category.has(category);
+							const soupMatch = activeFilters.soup.size === 0 || activeFilters.soup.has(soup);
+							const toppingMatch = activeFilters.topping.size === 0 || toppings.some(t => activeFilters.topping.has(t.trim()));
+
+							if (categoryMatch && soupMatch && toppingMatch) {
+								menu.style.display = "";
+							} else {
+								menu.style.display = "none";
+							}
+
+							// 메뉴 카드 내 태그들의 활성화/비활성화 상태 업데이트
+							const menuTags = menu.querySelectorAll(".widget.tags a");
+							menuTags.forEach(menuTag => {
+								const tagType = menuTag.dataset.type;
+								const tagValue = menuTag.dataset.value;
+
+								if (activeFilters[tagType] && activeFilters[tagType].has(tagValue)) {
+									menuTag.classList.add("active");
+									menuTag.classList.remove("inactive"); // Ensure inactive is removed
+								} else {
+									menuTag.classList.remove("active");
+									menuTag.classList.add("inactive"); // Add inactive class
+								}
+							});
+						});
+					}
+					filterMenus(); // Call filterMenus initially to set the correct display state
+				}
+
+				// 메뉴 갤러리 초기화 함수
+				function initMenuGallery() {
+					console.log('메뉴 갤러리 초기화 시작');
+					
+					// 메뉴 탭 내의 모든 이미지 링크에 대해 직접 클릭 이벤트 추가
+					const menuImageLinks = paneC.querySelectorAll('a[data-effect="mfp-zoom-in"]');
+					console.log('찾은 이미지 링크:', menuImageLinks.length);
+					
+					menuImageLinks.forEach((link, index) => {
+						console.log(`링크 ${index} 설정:`, link.href);
+						
+						// 기존 클릭 이벤트 제거
+						link.removeEventListener('click', link._magnificHandler);
+						
+						// 새로운 클릭 이벤트 추가
+						link._magnificHandler = function(e) {
+							e.preventDefault();
+							console.log('이미지 클릭됨:', this.href);
+							
+							// Magnific Popup으로 이미지 열기
+							$.magnificPopup.open({
+								items: {
+									src: this.href
+								},
+								type: 'image',
+								preloader: true,
+								removalDelay: 500,
+								callbacks: {
+									beforeOpen: function () {
+										this.st.image.markup = this.st.image.markup.replace('mfp-figure', 'mfp-figure mfp-with-anim');
+										this.st.mainClass = 'mfp-zoom-in';
+									}
+								},
+								closeOnContentClick: true,
+								midClick: true,
+								showCloseBtn: false
+							});
+						};
+						
+						link.addEventListener('click', link._magnificHandler);
+					});
+					
+					console.log('메뉴 갤러리 초기화 완료');
+				}
+		});
+	</script>
+	<!-- menu-tab 실행 -->
+
+
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const tabB = document.getElementById("tab-B");
+			const paneB = document.getElementById("pane-B");
+			const storeId = document.getElementById("store-id").value;
+
+			let reviewLoaded = false;
+
+			tabB.addEventListener("click", () => {
+				if (reviewLoaded) return;
+				fetch(`/store/detail/${storeId}/reviews?page=1`)
+					.then(res => res.text())
+					.then(html => {
+						paneB.innerHTML = html;
+						initLoadMore();
+						initReviewMenuFilter(); // 새로운 필터 초기화 함수 호출
+						// DOM 렌더링 완료 후 갤러리 초기화
+						setTimeout(() => {
+							initReviewGallery(); // 리뷰 갤러리 초기화 추가
+						}, 100);
+						reviewLoaded = true;
+					})
+					.catch(err => console.error("리뷰 탭 로딩 실패", err));
+			});
+
+			function initLoadMore() {
+				const container = document.getElementById("reviews");
+				const loadMoreWrapper = document.getElementById("load-more-review-wrapper");
+				if (!loadMoreWrapper) return;
+
+				loadMoreWrapper.addEventListener("click", (e) => {
+					const btn = e.target.closest("#load-more-review-btn");
+					if (!btn) return;
+
+					const nextPage = btn.dataset.nextPage;
+
+					fetch(`/store/detail/${storeId}/reviews?page=${nextPage}`)
+						.then(res => res.text())
+						.then(html => {
+							const tempDiv = document.createElement("div");
+							tempDiv.innerHTML = html;
+
+							const newCards = tempDiv.querySelectorAll(".review_card");
+							const newWrapper = tempDiv.querySelector("#load-more-review-wrapper");
+
+							newCards.forEach(card => container.appendChild(card));
+							loadMoreWrapper.remove(); // 기존 버튼 제거
+							if (newWrapper) container.after(newWrapper); // 새 버튼 삽입
+
+							// 새로운 리뷰가 로드될 때마다 필터링 다시 적용
+							filterReviewsByMenu();
+							
+							// DOM 렌더링 완료 후 갤러리 초기화
+							setTimeout(() => {
+								initReviewGallery(); // 새로운 리뷰에 대해서도 갤러리 초기화
+							}, 100);
+						})
+						.catch(err => console.error("더보기 실패", err));
+				});
+			}
+
+			function initReviewMenuFilter() {
+				const menuFilterTagsContainer = document.getElementById("menu-filter-tags");
+				const reviewCards = document.querySelectorAll("#reviews .review_card");
+
+				// 모든 메뉴 이름 추출 및 중복 제거
+				const allMenuNames = new Set();
+				reviewCards.forEach(card => {
+					const menuName = card.dataset.menuName;
+					if (menuName) {
+						allMenuNames.add(menuName);
+					}
+				});
+
+				// 기존 태그 초기화
+				menuFilterTagsContainer.innerHTML = '';
+
+				// '모두 보기' 태그 추가
+				const allTag = document.createElement('a');
+				allTag.href = '#0';
+				allTag.classList.add('filter-tag', 'active');
+				allTag.textContent = '모두 보기';
+				allTag.dataset.menuName = 'all';
+				menuFilterTagsContainer.appendChild(allTag);
+
+				// 각 메뉴 이름에 대한 태그 추가
+				allMenuNames.forEach(menuName => {
+					const tag = document.createElement('a');
+					tag.href = '#0';
+					tag.classList.add('filter-tag');
+					tag.textContent = menuName;
+					tag.dataset.menuName = menuName;
+					menuFilterTagsContainer.appendChild(tag);
+				});
+
+				// 태그 클릭 이벤트 리스너
+				menuFilterTagsContainer.addEventListener('click', (e) => {
+					const clickedTag = e.target.closest('.filter-tag');
+					if (!clickedTag) return;
+
+					// 모든 태그의 active 상태 초기화
+					menuFilterTagsContainer.querySelectorAll('.filter-tag').forEach(tag => {
+						tag.classList.remove('active');
+					});
+
+					// 클릭된 태그 활성화
+					clickedTag.classList.add('active');
+
+					filterReviewsByMenu();
+				});
+
+				// 초기 필터링 적용
+				filterReviewsByMenu();
+			}
+
+			function filterReviewsByMenu() {
+				const activeMenuTag = document.querySelector('#menu-filter-tags .filter-tag.active');
+				const selectedMenuName = activeMenuTag ? activeMenuTag.dataset.menuName : 'all';
+				const reviewCards = document.querySelectorAll('#reviews .review_card');
+
+				reviewCards.forEach(card => {
+					const cardMenuName = card.dataset.menuName;
+					if (selectedMenuName === 'all' || cardMenuName === selectedMenuName) {
+						card.style.display = '';
+					} else {
+						card.style.display = 'none';
+					}
+				});
+
+				// 리뷰 요약 업데이트
+				updateReviewSummary(selectedMenuName);
+			}
+
+			function updateReviewSummary(menuName) {
+				const storeId = document.getElementById("store-id").value;
+				let url = `/store/detail/${storeId}/reviews/summary/all`; // 기본은 전체 요약
+
+				if (menuName !== 'all') {
+					url = `/store/detail/${storeId}/reviews/summary?menuName=${encodeURIComponent(menuName)}`;
+				}
+
+				fetch(url)
+					.then(response => {
+						if (!response.ok) throw new Error("리뷰 요약 로드 실패");
+						return response.json();
+					})
+					.then(summary => {
+						// 리뷰 요약 영역 업데이트
+						document.querySelector('#review_summary strong').textContent = summary.totalCount;
+						document.querySelector('#review_summary em').textContent = '리뷰 수'; // 텍스트 고정
+						document.querySelector('#review_summary small').textContent = '각 항목 별 리뷰 평균'; // 텍스트 고정
+
+						// 각 항목별 평균 업데이트
+						document.querySelector('.noodle-thickness-progress').style.width = (summary.noodleThickness * 10) + '%';
+						document.querySelector('.noodle-thickness-value').textContent = summary.noodleThickness.toFixed(1);
+
+						document.querySelector('.noodle-texture-progress').style.width = (summary.noodleTexture * 10) + '%';
+						document.querySelector('.noodle-texture-value').textContent = summary.noodleTexture.toFixed(1);
+
+						document.querySelector('.noodle-boil-level-progress').style.width = (summary.noodleBoilLevel * 10) + '%';
+						document.querySelector('.noodle-boil-level-value').textContent = summary.noodleBoilLevel.toFixed(1);
+
+						document.querySelector('.soup-temperature-progress').style.width = (summary.soupTemperature * 10) + '%';
+						document.querySelector('.soup-temperature-value').textContent = summary.soupTemperature.toFixed(1);
+
+						document.querySelector('.soup-saltiness-progress').style.width = (summary.soupSaltiness * 10) + '%';
+						document.querySelector('.soup-saltiness-value').textContent = summary.soupSaltiness.toFixed(1);
+
+						document.querySelector('.soup-spiciness-level-progress').style.width = (summary.soupSpicinessLevel * 10) + '%';
+						document.querySelector('.soup-spiciness-level-value').textContent = summary.soupSpicinessLevel.toFixed(1);
+
+						document.querySelector('.soup-oiliness-progress').style.width = (summary.soupOiliness * 10) + '%';
+						document.querySelector('.soup-oiliness-value').textContent = summary.soupOiliness.toFixed(1);
+
+						document.querySelector('.soup-density-progress').style.width = (summary.soupDensity * 10) + '%';
+						document.querySelector('.soup-density-value').textContent = summary.soupDensity.toFixed(1);
+
+					})
+					.catch(err => console.error("리뷰 요약 업데이트 실패", err));
+			}
+
+			// 리뷰 갤러리 초기화 함수
+			function initReviewGallery() {
+				console.log('리뷰 갤러리 초기화 시작');
+				
+				// 리뷰 탭 내의 모든 이미지 링크에 대해 직접 클릭 이벤트 추가
+				const reviewImageLinks = paneB.querySelectorAll('a[data-effect="mfp-zoom-in"]');
+				console.log('찾은 리뷰 이미지 링크:', reviewImageLinks.length);
+				
+				reviewImageLinks.forEach((link, index) => {
+					console.log(`리뷰 링크 ${index} 설정:`, link.href);
+					
+					// 기존 클릭 이벤트 제거
+					link.removeEventListener('click', link._magnificHandler);
+					
+					// 새로운 클릭 이벤트 추가
+					link._magnificHandler = function(e) {
+						e.preventDefault();
+						console.log('리뷰 이미지 클릭됨:', this.href);
+						
+						// Magnific Popup으로 이미지 열기
+						$.magnificPopup.open({
+							items: {
+								src: this.href
+							},
+							type: 'image',
+							preloader: true,
+							removalDelay: 500,
+							callbacks: {
+								beforeOpen: function () {
+									this.st.image.markup = this.st.image.markup.replace('mfp-figure', 'mfp-figure mfp-with-anim');
+									this.st.mainClass = 'mfp-zoom-in';
+								}
+							},
+							closeOnContentClick: true,
+							midClick: true,
+							showCloseBtn: false
+						});
+					};
+					
+					link.addEventListener('click', link._magnificHandler);
+				});
+				
+				console.log('리뷰 갤러리 초기화 완료');
+			}
+		});
+	</script>
+
+	<!-- footer -->
+	<th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+	<div id="toTop"></div><!-- Back to top button -->
+	
+	<div class="layer"></div><!-- Opacity Mask Menu Mobile -->
+
+    <!-- 위시리스트 모달 -->
+    <div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="wishlistModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="wishlistModalLabel">위시리스트에 추가</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="wishlistForm">
+              <div class="mb-3">
+                <label class="form-label">저장할 카테고리 선택</label>
+                <div id="wishlist-category-list">
+                  <!-- 카테고리 목록이 여기에 동적으로 추가됩니다 -->
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="wishlistMemo" class="form-label">메모 (선택사항)</label>
+                <textarea
+                  class="form-control"
+                  id="wishlistMemo"
+                  rows="3"
+                  maxlength="300"
+                  placeholder="이 가게에 대한 메모를 입력하세요."></textarea>
+                <div class="form-text">최대 300자까지 입력 가능합니다.</div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-outline-secondary" id="openAddCategoryModalBtn">+ 새 카테고리 추가</button>
+                <div>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                  <button type="button" class="btn btn-primary" id="saveWishlistBtn">저장</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 새 카테고리 추가 모달 -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addCategoryModalLabel">새 카테고리 추가</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addCategoryForm">
+              <div class="mb-3">
+                <label for="addCategoryName" class="form-label">카테고리명</label>
+                <input type="text" class="form-control" id="addCategoryName" maxlength="30" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">공개 여부</label>
+                <div>
+                  <input class="form-check-input" type="radio" name="addCategoryPublic" id="addCategoryPublicTrue" value="true" checked>
+                  <label class="form-check-label me-3" for="addCategoryPublicTrue">공개</label>
+                  <input class="form-check-input" type="radio" name="addCategoryPublic" id="addCategoryPublicFalse" value="false">
+                  <label class="form-check-label" for="addCategoryPublicFalse">비공개</label>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">취소</button>
+                <button type="submit" class="btn btn-primary">추가</button>
+              </div>
+            </form>
+            <div id="addCategoryErrorMsg" style="color:red; margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Naver Map API -->
+    <script type="text/javascript"
+            th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='
+            + ${@environment.getProperty('naver.maps.client.id')}
+            + '&submodules=geocoder,markerclusterer'}">
+    </script>
+
+    <!-- Custom CSS for Gallery -->
+    <style>
+        /* 메뉴와 리뷰 이미지에만 돋보기 효과 적용 */
+        #pane-C .magnific-gallery img,
+        #pane-B .magnific-gallery img {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        #pane-C .magnific-gallery img:hover,
+        #pane-B .magnific-gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        #pane-C .magnific-gallery a,
+        #pane-B .magnific-gallery a {
+            display: block;
+            position: relative;
+        }
+        
+        #pane-C .magnific-gallery a::after,
+        #pane-B .magnific-gallery a::after {
+            content: '🔍';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        #pane-C .magnific-gallery a:hover::after,
+        #pane-B .magnific-gallery a:hover::after {
+            opacity: 1;
+        }
+      /* 템플릿 포인트 컬러에 맞춘 위시리스트 버튼 활성화 스타일 */
+      .wishlist.active, .wishlist.wishlist-active {
+        color: #007bff !important;
+        border-color: #007bff !important;
+        background: #eaf4ff !important;
+      }
+    </style>
+
+    <!-- Store Map Script -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // 매장 위치 정보
+            const storeLat = /*[[${store.storeLat}]]*/ 37.5665;
+            const storeLng = /*[[${store.storeLng}]]*/ 126.9780;
+            const storeName = /*[[${store.storeName}]]*/ '매장명';
+            const storeAddress = /*[[${store.address}]]*/ '주소';
+            
+            // 지도 초기화
+            const map = new naver.maps.Map('store_map', {
+                center: new naver.maps.LatLng(storeLat, storeLng),
+                zoom: 16,
+                mapTypeControl: false,
+                scaleControl: false,
+                logoControl: false,
+                mapDataControl: false,
+                zoomControl: true,
+                zoomControlOptions: {
+                    position: naver.maps.Position.TOP_RIGHT
+                }
+            });
+            
+            // 매장 마커 생성
+            const marker = new naver.maps.Marker({
+                position: new naver.maps.LatLng(storeLat, storeLng),
+                map: map,
+                title: storeName
+            });
+            
+            // 인포 윈도우 생성
+            const infoWindow = new naver.maps.InfoWindow({
+                content: `
+                    <div style="padding: 10px; min-width: 200px;">
+                        <h6 style="margin: 0 0 5px 0; font-weight: bold;">${storeName}</h6>
+                        <p style="margin: 0; font-size: 12px; color: #666;">${storeAddress}</p>
+                    </div>
+                `
+            });
+            
+            // 마커 클릭 시 인포 윈도우 표시
+            naver.maps.Event.addListener(marker, 'click', function() {
+                if (infoWindow.getMap()) {
+                    infoWindow.close();
+                } else {
+                    infoWindow.open(map, marker);
+                }
+            });
+            
+            // 페이지 로드 시 인포 윈도우 자동 표시
+            setTimeout(() => {
+                infoWindow.open(map, marker);
+            }, 1000);
+        });
+    </script>
+
+    <!-- 로그인 여부 hidden input 수정 -->
+    <input type="hidden" id="is-logged-in"
+      th:value="${#authentication.authenticated and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails)}" />
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var isLoggedIn = document.getElementById('is-logged-in').value === 'true';
+      var storeIdInput = document.getElementById('store-id');
+      var storeId = storeIdInput ? storeIdInput.value : null;
+      var wishlistBtn = document.querySelector('.wishlist');
+      var lastSavedCategoryIds = [];
+
+      // 1. 페이지 진입 시 버튼 활성화 - isSavedStore API 사용
+      if (isLoggedIn && storeId && wishlistBtn) {
+        fetch(`/stores/${storeId}/saved-store/check`)
+          .then(res => res.json())
+          .then(isSaved => {
+            if (isSaved) {
+              wishlistBtn.classList.add('active');
+            } else {
+              wishlistBtn.classList.remove('active');
+            }
+          })
+          .catch(err => {
+            console.error('위시리스트 상태 확인 실패:', err);
+            wishlistBtn.classList.remove('active');
+          });
+      }
+
+      // 2. 위시리스트 버튼 클릭 시
+      if (wishlistBtn) {
+        wishlistBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+
+          // 로그인 상태 체크 - 로그인이 안 되어 있으면 이벤트 중단
+          if (!isLoggedIn) {
+            return; // common_func.js의 login-required 로직이 처리하도록 함
+          }
+          
+          const storeId = document.getElementById("store-id").value;
+
+          fetch(`/stores/${storeId}/saved-store/memo`)
+            .then(response => response.text())
+            .then(memo => {
+              document.getElementById("wishlistMemo").value = memo;
+            })
+            .catch(err => console.error("메모 로딩 실패", err));
+
+          // fetch로 목록 받아와서 체크박스 렌더링 후 모달 오픈
+          fetch(`/stores/${storeId}/saved-store/categoryList`)
+            .then(res => res.json())
+            .then(data => {
+              var listDiv = document.getElementById('wishlist-category-list');
+              listDiv.innerHTML = '';
+              lastSavedCategoryIds = [];
+              data.forEach(cat => {
+                if (cat.active) lastSavedCategoryIds.push(String(cat.categoryId));
+                var checked = cat.active ? 'checked' : '';
+                listDiv.innerHTML += `
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${cat.categoryId}" id="wishlist-cat-${cat.categoryId}" ${checked}>
+                    <label class="form-check-label" for="wishlist-cat-${cat.categoryId}">
+                      ${cat.categoryName}
+                    </label>
+                  </div>
+                `;
+              });
+              var wishlistModal = new bootstrap.Modal(document.getElementById('wishlistModal'));
+              wishlistModal.show();
+            })
+            .catch(() => alert('위시리스트 정보를 불러오지 못했습니다.'));
+        });
+      }
+
+
+      // 3. 저장 버튼 클릭 시
+      var saveBtn = document.getElementById('saveWishlistBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          var checkedBoxes = document.querySelectorAll('#wishlist-category-list input[type="checkbox"]:checked');
+          var categoryIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+          var memo = document.getElementById('wishlistMemo').value.trim();
+
+          if (memo.length > 300) {
+            showWishlistError('메모는 최대 300자까지 입력 가능합니다.');
+            return;
+          }
+
+          if (categoryIds.length === 0 && lastSavedCategoryIds.length === 0) {
+            showWishlistError('카테고리를 하나 이상 선택해주세요!');
+            return;
+          }
+
+          // 모든 체크된 카테고리 ID만 전송
+          var checkedCategoryIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+          fetch(`/stores/${storeId}/saved-store/save`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ 
+              storeId: parseInt(storeId), 
+              saveStoreCategoryIds: checkedCategoryIds,
+              memo: memo
+            })
+          })
+          .then(res => {
+            if (res.ok) {
+              var wishlistModal = bootstrap.Modal.getInstance(document.getElementById('wishlistModal'));
+              wishlistModal.hide();
+              // 저장 후 버튼 상태 다시 확인
+              if (wishlistBtn && isLoggedIn && storeId) {
+                fetch(`/stores/${storeId}/saved-store/check`)
+                  .then(res => res.json())
+                  .then(isSaved => {
+                    if (isSaved) {
+                      wishlistBtn.classList.add('active');
+                    } else {
+                      wishlistBtn.classList.remove('active');
+                    }
+                  })
+                  .catch(err => {
+                    console.error('위시리스트 상태 업데이트 실패:', err);
+                  });
+              }
+            } else {
+              showWishlistError('저장에 실패했습니다.');
+            }
+          })
+          .catch(() => showWishlistError('저장 중 오류가 발생했습니다.'));
+        });
+      }
+
+      // 4. 새 카테고리 추가
+      var addCategoryBtn = document.getElementById('openAddCategoryModalBtn');
+      if (addCategoryBtn) {
+        addCategoryBtn.addEventListener('click', function() {
+          var addCategoryModal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+          addCategoryModal.show();
+        });
+      }
+
+      // 5. 새 카테고리 추가 모달 제출 시
+      var addCategoryForm = document.getElementById('addCategoryForm');
+      if (addCategoryForm) {
+        addCategoryForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var categoryName = document.getElementById('addCategoryName').value.trim();
+          var isPublic = document.getElementById('addCategoryPublicTrue').checked;
+
+          if (!categoryName) {
+            showWishlistError('카테고리명을 입력해주세요!');
+            return;
+          }
+
+          fetch(`/stores/${storeId}/saved-store/add-category`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              storeId: parseInt(storeId),
+              categoryName: categoryName,
+              isPublic: isPublic
+            })
+          })
+          .then(res => {
+            if (res.ok) {
+              var addCategoryModal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+              addCategoryModal.hide();
+              // 새로 추가된 카테고리를 위시리스트 목록에 반영
+              fetch(`/stores/${storeId}/saved-store/categoryList`)
+                .then(res => res.json())
+                .then(data => {
+                  var listDiv = document.getElementById('wishlist-category-list');
+                  listDiv.innerHTML = '';
+                  lastSavedCategoryIds = [];
+                  data.forEach(cat => {
+                    if (cat.active) lastSavedCategoryIds.push(String(cat.categoryId));
+                    var checked = cat.active ? 'checked' : '';
+                    listDiv.innerHTML += `
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${cat.categoryId}" id="wishlist-cat-${cat.categoryId}" ${checked}>
+                        <label class="form-check-label" for="wishlist-cat-${cat.categoryId}">
+                          ${cat.categoryName}
+                        </label>
+                      </div>
+                    `;
+                  });
+                })
+                .catch(() => showWishlistError('카테고리 목록 새로고침에 실패했습니다.'));
+            } else {
+              showWishlistError('새 카테고리 추가에 실패했습니다.');
+            }
+          })
+          .catch(() => showWishlistError('새 카테고리 추가 중 오류가 발생했습니다.'));
+        });
+      }
+
+      function showWishlistError(msg) {
+        var errMsg = document.getElementById('wishlist-error-msg');
+        if (!errMsg) {
+          errMsg = document.createElement('div');
+          errMsg.id = 'wishlist-error-msg';
+          errMsg.style.color = 'red';
+          errMsg.style.marginTop = '10px';
+          document.getElementById('wishlistForm').appendChild(errMsg);
+        }
+        errMsg.textContent = msg;
+      }
+    });
+    </script>
+
+
+  <!-- COMMON SCRIPTS -->
+  <script src="/js/common_scripts.min.js"></script>
+  <script src="/js/common_func.js"></script>
+  <script src="/assets/validate.js"></script>
+
+  <!-- SPECIFIC SCRIPTS -->
+  <script src="/js/sticky_sidebar.min.js"></script>
+  <script src="/js/specific_detail.js"></script>
+  <script src="/js/datepicker.min.js"></script>
+  <script src="/js/datepicker_func_1.js"></script>
+
+</body>
+</html>

@@ -1,7 +1,6 @@
 package noodlezip.user.service;
 
 import noodlezip.common.exception.CustomException;
-import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;
@@ -87,10 +86,6 @@ class UserServiceImplTest {
                 "profileImage", "new_profile.jpg", "image/jpeg", "profile-data".getBytes());
         mockBannerImage = new MockMultipartFile(
                 "bannerImage", "new_banner.jpg", "image/jpeg", "banner-data".getBytes());
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test

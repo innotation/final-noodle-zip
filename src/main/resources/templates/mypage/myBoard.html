@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <th:block th:replace="~{fragments/head :: head}"></th:block>
+    <!-- SPECIFIC CSS -->
+    <link href="/css/blog.css" rel="stylesheet">
+</head>
+
+<body class="margin_sticky">
+
+<div th:replace="~{fragments/subHeader :: subHeader}"></div>
+
+<main>
+    <div class="page_header element_to_stick">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
+                    <div class="breadcrumbs blog">
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Category</a></li>
+                            <li>Page active</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-5 col-md-5">
+                    <div class="search_bar_list">
+                        <input id="searchInput" type="text" class="form-control" placeholder="Search in blog...">
+                        <input type="submit" value="Search" onclick="performSearch()">
+                    </div>
+                </div>
+            </div>
+            <!-- /row -->
+        </div>
+    </div>
+    <!-- /page_header -->
+
+    <div class="container margin_30_40">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-md-6" th:each="item : ${boardList.boardList}">
+                        <article class="blog">
+                            <figure>
+                                <a th:href="@{/board/detail/{id}(id=${item.boardId})}">
+                                    <img th:src="${#strings.isEmpty(item.imageUrl) ? '/img/blog-1.jpg' : item.imageUrl}"
+                                         alt="게시글 이미지">
+                                    <div class="preview"><span>더 보기</span></div>
+                                </a>
+                            </figure>
+                            <div class="post_info">
+                                <small>
+                                    <span th:text="${item.communityType}">카테고리</span> -
+                                    <span th:text="${#temporals.format(item.createdAt, 'yyyy.MM.dd')}">2023.01.01</span>
+                                </small>
+                                <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
+                                    제목</a>
+                                </h2>
+                                <ul>
+                                    <li>
+                                        <div class="thumb"><img
+                                                th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
+                                                alt="작성자 프로필 이미지"></div>
+                                        <span th:text="${item.userName}">작성자</span>
+                                    </li>
+                                    <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
+                                    <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
+
+                                    <li th:if="${path == 'boards' and userAccessInfo.isOwner}">
+                                        <a href="#0"
+                                           th:onclick="'deleteBoard(' + ${item.boardId} + '); return false;'"
+                                           class="wish_bt"
+                                           style="color: red;">
+                                            <i class="icon_trash_alt"> 게시글 삭제</i>
+                                        </a>
+                                    </li>
+
+                                    <li th:if="${path == 'liked-boards' and userAccessInfo.isOwner}">
+                                        <a href="#0"
+                                           th:onclick="'cancelLike(' + ${item.boardId} + '); return false;'"
+                                           class="wish_bt"
+                                           style="color: red;">
+                                            <i class="icon_heart"> 좋아요 취소</i>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="pagination_fg" th:if="${boardList.totalPage > 0}">
+                    <a th:href="@{|?page=${boardList.page - 1}|}"
+                       th:if="${!boardList.isFirst}">
+                        &laquo;
+                    </a>
+                    <th:block th:each="i : ${#numbers.sequence(boardList.beginPage, boardList.endPage)}">
+                        <a th:href="@{|?page=${i}|}"
+                           th:classappend="${i eq boardList.page} ? 'active' : ''">
+                            <span th:text="${i}"></span>
+                        </a>
+                    </th:block>
+                    <a th:href="@{|?page=${boardList.page + 1}|}"
+                       th:if="${!boardList.isLast}">
+                        &raquo;
+                    </a>
+                </div>
+            </div>
+            <!-- /col -->
+            <aside class="col-lg-3" th:fragment="myBoardSidebar">
+                <!-- 게시판 카테고리 위젯 -->
+                <div class="widget">
+                    <div class="widget-title">
+                        <h4>게시판</h4>
+                    </div>
+                    <ul class="cats" id="category-widget">
+                        <li>
+                            <a th:href="@{/users/{userId}/{path}(userId=${userAccessInfo.targetUserId}, path=${path})}">
+                                <strong>전체 게시글 보기</strong>
+                            </a>
+                        </li>
+                        <li th:each="category : ${communityTypeList}">
+                            <a th:href="@{/users/{userId}/{path}/{communityType}(
+                                            userId=${userAccessInfo.targetUserId},
+                                            path=${path},
+                                            communityType=${category.communityType}
+                                        )}"
+                               th:text="${category.displayName + ' (' + category.count + ')'}">
+                                카테고리명 (0)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+            <!-- /aside -->
+        </div>
+        <!-- /row -->
+    </div>
+    <!-- /container -->
+</main>
+<!-- /main -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<!--/footer-->
+
+<div id="toTop"></div><!-- Back to top button -->
+<!-- /Sign In Modal -->
+<script>
+    function deleteBoard(boardId) {
+        if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
+
+        fetch(`/users/my/${boardId}/delete`, {
+            method: 'POST'
+        })
+            .then(res => {
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+                if (res.ok) {
+                    alert('삭제가 완료되었습니다.');
+                    location.reload();
+                } else {
+                    return res.json().then(err => {
+                        throw new Error(err.message || '삭제 실패');
+                    });
+                }
+            })
+            .catch(err => {
+                alert('삭제 실패: ' + err.message);
+            });
+    }
+
+    function cancelLike(boardId) {
+        if (!confirm('정말 이 게시글에 누른 좋아요를 취소하시겠습니까?')) return;
+
+        fetch(`/board/like/${boardId}`, { method: 'POST' })
+            .then(res => {
+                if (!res.ok) return res.json().then(err => { throw new Error(err.message || '좋아요 취소 실패'); });
+                return res.json();
+            })
+            .then(data => {
+                alert('좋아요를 취소했습니다.');
+                location.reload(); // 혹은 DOM만 업데이트
+            })
+            .catch(err => alert('좋아요 취소 오류: ' + err.message));
+    }
+</script>
+
+<!-- COMMON SCRIPTS -->
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
+
+</body>
+</html>

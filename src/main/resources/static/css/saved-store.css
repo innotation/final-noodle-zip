@@ -1,0 +1,291 @@
+.memo-tooltip {
+    display: inline-block;
+    max-width: 250px;  /* 메모 글자수 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+}
+
+.pagination_fg a.disabled {
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.pagination_fg a.disabled:hover {
+    background-color: transparent !important;
+    color: #ccc !important;
+}
+
+
+
+.category-item {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.container_check span#checkmark-update {
+    margin-top: 9px;
+    margin-right: 5px;
+}
+
+.category-item .category-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.category-item .category_name_input {
+    min-width: 220px;
+    padding: 6px 10px;
+}
+
+.category-item .radio-group {
+    font-size: 14px;
+}
+
+.category-item .radio-group label {
+    margin-right: 6px;
+}
+
+.category-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.category-buttons .btn_1 {
+    flex: 1;
+}
+
+
+
+
+
+
+
+
+#collapseMap .map {
+    width: 100%;
+    height: 500px;
+}
+
+
+
+
+
+
+
+
+
+
+
+.marker_info {
+    max-width: 220px;
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+.marker_header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.marker_header em {
+    display: block;
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.infobox_badge {
+    display: inline-block;
+    background: #ff6f61;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.marker_memo strong {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin: 6px 0;
+}
+
+.marker_image img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 6px 0;
+}
+
+.marker_actions {
+    margin-top: 8px;
+}
+
+.marker_actions a {
+    display: inline-block;
+    background: #ff6f61;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+
+/* 인포윈도우 메인 컨테이너 */
+.map_infowindow {
+    width: 280px;
+    min-height: 180px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    position: relative;
+}
+
+/* 닫기 버튼 */
+.map_infowindow .info_close_btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #6c757d;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+.map_infowindow .info_close_btn:hover {
+    background: #f8f9fa;
+    color: #495057;
+}
+
+.map_infowindow .info_close_btn:active {
+    transform: scale(0.95);
+}
+
+/* 이미지 컨테이너 */
+.map_infowindow .info_image {
+    width: 100%;
+    height: 120px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.map_infowindow .info_image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 이미지가 없을 때 플레이스홀더 */
+.map_infowindow .info_image.no_image {
+    background: #e9ecef;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* 컨텐츠 영역 */
+.map_infowindow .info_content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 카테고리 레이트 */
+.map_infowindow .info_category {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #007bff;
+    color: white;
+    font-size: 12px;
+    border-radius: 12px;
+    align-self: flex-start;
+}
+
+/* 가게 이름 */
+.map_infowindow .info_title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #212529;
+    line-height: 1.3;
+}
+
+/* 주소 */
+.map_infowindow .info_address {
+    font-size: 13px;
+    color: #6c757d;
+    font-style: normal;
+    line-height: 1.4;
+}
+
+/* 메모 - 회색으로 스타일링 */
+.map_infowindow .info_memo {
+    font-size: 13px;
+    color: #868e96;
+    font-weight: normal;
+    line-height: 1.4;
+    margin: 4px 0;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #dee2e6;
+}
+
+
+
+
+
+
+/* 상세보기 버튼 - 아래쪽에 배치 */
+.map_infowindow .info_detail_btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 8px;
+    transition: background-color 0.2s;
+}
+
+.map_infowindow .info_detail_btn:hover {
+    background: #0056b3;
+    color: white;
+    text-decoration: none;
+}
+
+/* 메모가 없을 때 숨김 */
+.map_infowindow .info_memo:empty {
+    display: none;
+}

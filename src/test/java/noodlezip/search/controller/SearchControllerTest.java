@@ -10,6 +10,9 @@ import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.Store;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreRepository;
+import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
+import noodlezip.store.status.ParkingType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -45,47 +48,17 @@ class SearchControllerTest {
     @Test
     void 검색필터_적용_매장조회_성공() throws Exception {
         // given
-        // ─────── 1. 가게 저장 ───────
-        Store store = Store.builder()
-                .userId(1L)
-                .storeName("테스트 라멘집")
-                .address("서울시 테스트구")
-                .phone("010-1234-5655")
-                .isLocalCard(true)
-                .isChildAllowed(true)
-                .hasParking("있음")
-                .operationStatus("운영중")
-                .ownerComment("테스트용 가게입니다.")
-                .storeMainImageUrl("https://example.com/image.jpg")
-                .storeLat(37.5665)
-                .storeLng(126.9780)
-                .approvalStatus("APPROVED")
-                .storeLegalCode(12401293)
-                .build();
-        storeRepository.save(store);
-
-        // ─────── 2. 라멘 카테고리 저장 ───────
+         // ─────── 1. 라멘 카테고리 저장 ───────
         Category category = categoryRepository.save(
                 Category.builder()
-                        .name("돈코츠")
+                        .categoryName("돈코츠")
                         .build()
         );
 
-        // ─────── 3. 라멘 국물 저장 ───────
+        // ─────── 2. 라멘 국물 저장 ───────
         RamenSoup soup = ramenSoupRepository.save(
                 RamenSoup.builder()
                         .soupName("진한국물")
-                        .build()
-        );
-
-        // ─────── 4. 메뉴 저장 ───────
-        Menu menu = menuRepository.save(
-                Menu.builder()
-                        .storeId(store.getId())
-                        .menuName("기본라멘")
-                        .price(9000)
-                        .ramenCategoryId(category.getId())
-                        .ramenSoupId(soup.getId())
                         .build()
         );
 
@@ -97,11 +70,42 @@ class SearchControllerTest {
                         .build()
         );
 
-        // ─────── 6. 메뉴-토핑 연결 ───────
-        RamenToppingId ramenToppingId = new RamenToppingId(menu.getId(), saveTopping.getId());
-        RamenTopping ramentopping = new RamenTopping();
-        ramentopping.setToppingId(ramenToppingId);
-        ramenToppingRepository.save(ramentopping);
+        // ─────── 3. 가게 저장 ───────
+        Store store = Store.builder()
+                .userId(1L)
+                .storeName("테스트 라멘집")
+                .address("서울시 테스트구")
+                .phone("010-1234-5655")
+                .isLocalCard(true)
+                .isChildAllowed(true)
+                .hasParking(ParkingType.FREE)
+                .operationStatus(OperationStatus.OPEN)
+                .approvalStatus(ApprovalStatus.APPROVED)
+                .ownerComment("테스트용 가게입니다.")
+                .storeMainImageUrl("https://example.com/image.jpg")
+                .storeLat(37.5665)
+                .storeLng(126.9780)
+                .storeLegalCode(12401293L)
+                .build();
+        storeRepository.save(store);
+
+        // ─────── 4. 메뉴 저장 ───────
+        Menu menu = menuRepository.save(
+                Menu.builder()
+                        .store(store)
+                        .menuName("기본라멘")
+                        .price(9000)
+                        .category(category)
+                        .ramenSoup(soup)
+                        .build()
+        );
+
+        // ─────── 5. 메뉴-토핑 연결 ───────
+        RamenTopping ramenTopping = new RamenTopping();
+        ramenTopping.setMenu(menu);
+        ramenTopping.setTopping(saveTopping);
+        ramenToppingRepository.save(ramenTopping);
+
 
         String lat = "37.5665";
         String lng = "126.9780";
@@ -144,14 +148,14 @@ class SearchControllerTest {
                 .phone("010-1234-5655")
                 .isLocalCard(true)
                 .isChildAllowed(true)
-                .hasParking("있음")
-                .operationStatus("운영중")
+                .hasParking(ParkingType.FREE)
+                .operationStatus(OperationStatus.OPEN)
                 .ownerComment("테스트용 가게입니다.")
                 .storeMainImageUrl("https://example.com/image.jpg")
                 .storeLat(37.5665)
                 .storeLng(126.9780)
-                .approvalStatus("WAITING")
-                .storeLegalCode(12401293)
+                .approvalStatus(ApprovalStatus.WAITING)
+                .storeLegalCode(12401293L)
                 .build();
         storeRepository.save(store);
 
@@ -209,29 +213,32 @@ class SearchControllerTest {
                 .phone("010-1111-1111")
                 .isLocalCard(true)
                 .isChildAllowed(true)
-                .hasParking("있음")
-                .operationStatus("운영중")
+                .hasParking(ParkingType.FREE)
+                .operationStatus(OperationStatus.OPEN)
                 .ownerComment("맛집")
                 .storeMainImageUrl("url")
                 .storeLat(37.5665)
                 .storeLng(126.9780)
-                .approvalStatus("APPROVED")
-                .storeLegalCode(11110)
+                .approvalStatus(ApprovalStatus.APPROVED)
+                .storeLegalCode(11110L)
                 .build());
     }
 
     private void createDummyMenuWith(Store store, String categoryName, String soupName, String toppingName, boolean toppingActive) {
-        Category category = categoryRepository.save(Category.builder().name(categoryName).build());
+        Category category = categoryRepository.save(Category.builder().categoryName(categoryName).build());
         RamenSoup soup = ramenSoupRepository.save(RamenSoup.builder().soupName(soupName).build());
         Menu menu = menuRepository.save(Menu.builder()
-                .storeId(store.getId())
+                .store(store)
                 .menuName("라멘")
                 .price(8000)
-                .ramenCategoryId(category.getId())
-                .ramenSoupId(soup.getId())
+                .category(category)
+                .ramenSoup(soup)
                 .build());
         Topping topping = toppingRepository.save(Topping.builder().toppingName(toppingName).isActive(toppingActive).build());
-        ramenToppingRepository.save(new RamenTopping(new RamenToppingId(menu.getId(), topping.getId())));
+        RamenTopping ramenTopping = new RamenTopping();
+        ramenTopping.setMenu(menu);
+        ramenTopping.setTopping(topping);
+        ramenToppingRepository.save(ramenTopping);
     }
 
     @Test @Transactional
