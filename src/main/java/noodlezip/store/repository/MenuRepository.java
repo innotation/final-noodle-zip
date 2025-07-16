@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long>, MenuRepositoryCustom {
 
-    List<Menu> findMenuIdByStoreId(Store storeId);
     boolean existsByStoreIdAndMenuName(Long storeId, String menuName);
 
     void deleteByStore(Store store);
+    List<Menu> findByStore(Store store);
 }

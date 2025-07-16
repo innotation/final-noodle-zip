@@ -8,6 +8,8 @@ import noodlezip.common.entity.BaseTimeEntity;
 import noodlezip.ramen.entity.Category;
 import noodlezip.ramen.entity.RamenSoup;
 
+import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -53,4 +55,5 @@ public class Menu extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ramen_soup_id", nullable = false)
     private RamenSoup ramenSoup;
+
 }

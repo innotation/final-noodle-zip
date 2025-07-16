@@ -56,7 +56,7 @@
 		            <div class="owl-carousel owl-theme carousel_1 magnific-gallery">
 		                <div class="item">
 		                    <a th:href="${store.storeMainImageUrl}" title="매장사진" data-effect="mfp-zoom-in">
-													<img th:src="@{|${store.storeMainImageUrl} ?: '/img/detail_1.jpg'|}"
+													<img th:src="${store.storeMainImageUrl != null ? store.storeMainImageUrl : '/img/detail_1.jpg'}"
 															 alt="store image"
 															 onerror="this.onerror=null;this.src='/img/detail_1.jpg';">
 												</a>

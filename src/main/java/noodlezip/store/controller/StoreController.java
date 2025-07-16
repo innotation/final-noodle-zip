@@ -1,13 +1,18 @@
 package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.dto.ApiResponse;
 import noodlezip.common.util.PageUtil;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.ramen.dto.CategoryResponseDto;
+import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
 import noodlezip.store.service.StoreService;
-import noodlezip.user.entity.User;
+import noodlezip.store.status.StoreErrorCode;
+import noodlezip.store.status.StoreSuccessCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,15 +21,18 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/store")
 @Controller
 public class StoreController {
     private final StoreService storeService;
+
     private final PageUtil pageUtil;
     private final RamenService ramenService;
 
@@ -37,7 +45,7 @@ public class StoreController {
         if (myUserDetails != null) {
             userId = myUserDetails.getUser().getId();
         }
-        
+
         StoreDto store = storeService.getStore(no, userId);
         model.addAttribute("store", store);
         return "store/detail";
@@ -113,12 +121,70 @@ public class StoreController {
         return storeService.getStoreToppings(storeId);
     }
 
-    // 매장 삭제 API
+
+
+
+    // 매장 삭제
     @DeleteMapping("/{storeId}")
     public ResponseEntity<?> deleteStore(@PathVariable Long storeId,
                                          @AuthenticationPrincipal MyUserDetails myUserDetails) {
         storeService.deleteStore(storeId, myUserDetails.getUser());
         return ResponseEntity.ok(Map.of("message", "삭제 완료"));
     }
-}
 
+    // 매장 수정
+    @PostMapping("/update/{storeId}")
+    public ResponseEntity<ApiResponse<Object>> updateStore(
+            @PathVariable Long storeId,
+            @RequestPart("dto") StoreRequestDto dto,
+            @RequestPart(value = "storeMainImage", required = false) MultipartFile storeMainImage,
+            @RequestPart(value = "existingStoreMainImageUrl", required = false) String existingStoreMainImageUrl,
+            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles,
+            @AuthenticationPrincipal MyUserDetails userDetails) {
+        log.debug("처음 menuImage: {}", menuImageFiles);
+        // 대표 이미지가 새로 업로드 되지 않은 경우 기존 URL 유지
+        if (dto.getStoreMainImage() == null && existingStoreMainImageUrl != null) {
+            dto.setStoreMainImageUrl(existingStoreMainImageUrl);
+        }/* else {
+            dto.setStoreMainImage(storeMainImage);
+        }*/
+
+        if (menuImageFiles != null) {
+            for (int i = 0; i < dto.getMenus().size(); i++) {
+                if (i < menuImageFiles.size()) {
+                    dto.getMenus().get(i).setMenuImageFile(menuImageFiles.get(i));
+                }
+            }
+        }
+        log.debug("메뉴imagefiles dto에 넣은거: {} ", dto.getMenus().toString());
+        storeService.updateStore(storeId, dto, storeMainImage, menuImageFiles, userDetails.getUser());
+
+        return ApiResponse.onSuccess(StoreSuccessCode._SUCCESS_STORE_UPDATE);
+    }
+
+    @GetMapping("/update/{storeId}")
+    public String showUpdatePage(@PathVariable Long storeId,
+                                 @AuthenticationPrincipal MyUserDetails userDetails,
+                                 Model model) {
+        // 매장 엔티티 → DTO로 변환
+        StoreRequestDto storeRequestDto = storeService.getStoreRequestDto(storeId, userDetails.getUser());
+        List<CategoryResponseDto> categories = ramenService.getAllCategories();
+        List<RamenSoupResponseDto> soups = ramenService.getAllSoups();
+
+        model.addAttribute("storeRequestDto", storeRequestDto);
+        model.addAttribute("categories",categories);
+        model.addAttribute("soups", soups);
+        model.addAttribute("toppings", ramenService.getAllToppings());
+
+        return "store/update";
+    }
+
+    // 매장 상세 조회
+    @GetMapping("/{storeId}")
+    @ResponseBody
+    public ResponseEntity<StoreRequestDto> getStore(@PathVariable Long storeId,
+                                                    @AuthenticationPrincipal MyUserDetails userDetails) {
+        StoreRequestDto storeRequestDto = storeService.getStoreRequestDto(storeId, userDetails.getUser());
+        return ResponseEntity.ok(storeRequestDto);
+    }
+}

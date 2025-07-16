@@ -69,7 +69,6 @@ public class MyPageMainController extends MyBaseController {
                                          @AuthenticationPrincipal MyUserDetails userDetails) {
         Long loginUserId = userDetails.getUser().getId();
 
-        // storeService에 폐업처리 메서드가 있다고 가정
         try {
             storeService.markStoreAsClosed(storeId, loginUserId);
             return ResponseEntity.ok().build();

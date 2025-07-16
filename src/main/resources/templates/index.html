@@ -131,7 +131,11 @@
       <p th:text="${store.address}">매장 주소</p>
 
       <!-- 수정 버튼 -->
-      <button class="btn btn-outline-primary btn-sm">수정</button>
+      <button type="button"
+              class="btn btn-outline-primary btn-sm"
+              th:onclick="|location.href='@{/store/update/{id}(id=${store.id})}'|">
+        수정
+      </button>
 
       <!-- 폐업 버튼 -->
       <button class="btn btn-outline-danger btn-sm"
