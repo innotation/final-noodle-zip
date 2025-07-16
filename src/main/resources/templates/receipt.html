@@ -1,128 +1,177 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>영수증 OCR 업로드</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-  <!-- Bootstrap 3 & jQuery -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<head>
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
+  <!-- SPECIFIC CSS -->
+  <link href="/css/listing.css" rel="stylesheet">
+  <link href="/css/search-custom.css" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
   <style>
-    /* ── 미리보기 + 스캔 애니메이션 ─────────────────────────────── */
-    .preview-wrapper {                /* 이미지·스캔라인 감싸는 컨테이너 */
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    /* 전체 배경 */
+    body {
+      background-color: #f5f5f5;
+    }
+
+    main {
+      min-height: calc(100vh - 150px);
+      padding-top: 100px;
+      padding-bottom: 120px;
+      box-sizing: border-box;
+    }
+
+    /* 메인 컨테이너: 너비 줄임 */
+    .container {
+      max-width: 380px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+
+    /* 카드 스타일 */
+    .ocr-card {
+      background: #fff;
+      padding: 25px 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    .preview-wrapper {
       position: relative;
-      display: none;                  /* 파일 선택 전에는 숨김 */
       max-width: 100%;
       margin-top: 10px;
+      min-height: 280px;         /* ✅ 이미지 공간 확보 */
+      background-color: #fafafa;
+      border: 1px dashed #ccc;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    #preview {                         /* 실제 미리보기 이미지 */
+
+    .placeholder-box {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+    }
+
+    #preview {
+      display: none;
       max-width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin: 0 auto;
     }
-    #scan-filter { /* 스캔 필터 배경 */
+
+    /* 스캔 필터 */
+    #scan-filter {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background-color: rgba(0, 255, 0, 0.08); /* 약간 연한 초록빛 */
-      pointer-events: none; /* 마우스 이벤트 무시 */
+      background-color: rgba(0, 255, 0, 0.08);
+      pointer-events: none;
       display: none;
       z-index: 1;
     }
-    #scan-line {                       /* 스캔 라인 */
+
+    /* 스캔 라인 */
+    #scan-line {
       position: absolute;
       top: 0; left: 0;
-      width: 100%; height: 5px;
-      background: rgba(0,255,0,.35);  /* 연녹색 */
-      display: none;                  /* 분석 중일 때만 보임 */
+      width: 100%;
+      height: 5px;
+      background: rgba(0, 255, 0, 0.35);
+      display: none;
       z-index: 2;
       animation: scanMove 2s linear infinite alternate;
     }
+
+    /* 스캔 애니메이션 */
     @keyframes scanMove {
       0%   { top: 0; }
       100% { top: 100%; }
     }
+
+    /* 고정 버튼 내부 스타일 */
+    .fixed-action-buttons .btn {
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 20px;   /* ✅ pill 모양 */
+      margin-left: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
   </style>
 </head>
 
-<body class="container">
-<h2>영수증 OCR 업로드</h2>
+<body class="margin_sticky">
+<!-- header -->
+<div th:replace="~{fragments/subHeader :: subHeader}"></div>
 
 <!-- 리뷰 작성 버튼 -->
-<button type="button" class="btn btn-primary" onclick="checkLoginBeforeUpload()">
-  리뷰 작성하기
-</button>
+<!--<button type="button" class="btn btn-primary" onclick="checkLoginBeforeUpload()">-->
+<!--  리뷰 작성하기-->
+<!--</button>-->
 
-<!-- ───────────────────── ① 업로드 모달 ───────────────────── -->
-<div id="ocrModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ocrModalLabel">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<main>
+  <div class="container">
+    <div class="ocr-card">
+
+      <!-- OCR Form -->
       <form id="ocrForm" enctype="multipart/form-data">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="ocrModalLabel">영수증 업로드</h4>
-        </div>
+        <input type="file" id="file" name="file" accept="image/*" class="form-control mb-3" required>
 
-        <div class="modal-body">
-          <input type="file" id="file" name="file" accept="image/*"
-                 class="form-control" required>
-
-          <!-- 미리보기 + 스캔라인 -->
-          <div class="preview-wrapper" id="previewWrapper">
-            <img id="preview" src="#" alt="미리보기">
-            <div id="scan-filter"></div>
-            <div id="scan-line"></div>
+        <div class="preview-wrapper" id="previewWrapper">
+          <img id="preview" src="#" alt="미리보기" style="display: none;">
+          <div id="scan-filter"></div>
+          <div id="scan-line"></div>
+          <div id="previewPlaceholder" class="placeholder-box">
+            <p>여기에 영수증 이미지가 표시됩니다</p>
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-          <button type="submit" class="btn btn-primary">분석하기</button>
-        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-3">분석하기</button>
       </form>
-    </div>
-  </div>
-</div>
 
-<!-- ───────────────────── ② 결과 모달 ───────────────────── -->
-<div id="ocrResultModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" id="resultModalLabel">OCR 결과 확인</h4>
-      </div>
-
-      <div class="modal-body">
+      <!-- OCR 결과 -->
+      <div id="ocrResultBox" style="display:none;" class="mt-4">
+        <h4 class="mb-3">OCR 결과 확인</h4>
         <p><strong>매장명:</strong> <span id="storeName"></span></p>
         <p><strong>방문일:</strong> <span id="date"></span></p>
         <p><strong>주문메뉴:</strong> <span id="menuNames"></span></p>
-      </div>
 
-      <form id="proceedForm" method="POST" action="/board/review">
-        <input type="hidden" name="bizNum" />
-        <input type="hidden" name="ocrKeyHash" />
-        <input type="hidden" name="visitDate" />
-        <input type="hidden" name="isReceiptReview" value="true" />
-      </form>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default"
-                data-dismiss="modal">닫기</button>
-        <button type="button" class="btn btn-success"
-                onclick="proceedToReview()">맞아요! 리뷰 작성</button>
+        <form id="proceedForm" method="POST" action="/board/review">
+          <input type="hidden" name="bizNum" />
+          <input type="hidden" name="ocrKeyHash" />
+          <input type="hidden" name="visitDate" />
+          <input type="hidden" name="isReceiptReview" value="true" />
+          <div id="ocrActionButtons" class="mt-4" style="text-align: right;">
+            <button type="button" class="btn btn-success btn-sm" onclick="proceedToReview()">✔ 맞아요! 리뷰 작성</button>
+            <!-- <button type="button" class="btn btn-secondary btn-sm" disabled>✖ 아니요! 수정할래요</button> -->
+          </div>
+        </form>
       </div>
     </div>
   </div>
-</div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
 
 <!-- ───────────────────── 스크립트 ───────────────────── -->
 <script>
-
+  // 로그인 확인
   function checkLoginBeforeUpload() {
     fetch("/auth/check")
       .then(res => {
@@ -130,8 +179,6 @@
           alert("로그인이 필요한 기능입니다.");
           return;
         }
-
-        // 로그인 상태면 모달 열기
         $('#ocrModal').modal('show');
       })
       .catch(err => {
@@ -140,55 +187,67 @@
       });
   }
 
-  /* ========== 1) 파일 선택 → 미리보기 표시 ========== */
+  // ① 파일 선택 → 미리보기 표시 및 OCR 결과 영역 초기화
   $('#file').on('change', function () {
     const file = this.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = function (e) {
-      $('#preview').attr('src', e.target.result);
-      $('#previewWrapper').show();
+      $('#preview').attr('src', e.target.result).show();
+      $('#previewPlaceholder').hide();
     };
     reader.readAsDataURL(file);
+
+    // ✅ OCR 결과 영역 초기화
+    $('#ocrResultBox').hide();
+    $('#ocrActionButtons').hide();
+    $('#ocrForm button[type="submit"]').show(); // 분석 버튼 다시 보이기
   });
 
-  /* 스캔 애니메이션 */
-  function startScanning() { $('#scan-line').show(); $('#scan-filter').show(); }
-  function stopScanning()  { $('#scan-line').hide(); $('#scan-filter').hide(); }
+  // ② 스캔 애니메이션 제어
+  function startScanning() {
+    $('#scan-line').show();
+    $('#scan-filter').show();
+  }
 
-  /* ========== 2) OCR 요청 ========== */
+  function stopScanning() {
+    $('#scan-line').hide();
+    $('#scan-filter').hide();
+  }
+
+  // ③ OCR 요청 처리
   $('#ocrForm').on('submit', function (e) {
     e.preventDefault();
 
     const file = $('#file')[0].files[0];
-    if (!file) { alert("파일을 선택해주세요."); return; }
+    if (!file) {
+      alert("파일을 선택해주세요.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", file);
 
-    startScanning();   // 스캔 애니메이션 시작
+    startScanning();
 
-    fetch("/receipt", { method: "POST", body: formData })
+    fetch("/receipt", {
+      method: "POST",
+      body: formData
+    })
       .then(res => res.json())
       .then(data => {
         stopScanning();
 
         if (data.error) {
           alert(data.error);
-          $('#ocrForm')[0].reset();
-          $('#previewWrapper').hide();
-          $('#preview').attr('src', '#');
-          stopScanning();
+          resetForm();
           return;
         }
 
         if (data.isDuplicate) {
           alert("이미 등록된 영수증입니다.");
-          $('#ocrForm')[0].reset();
-          $('#previewWrapper').hide();
-          $('#preview').attr('src', '#');
-          stopScanning();
+          resetForm();
           return;
         }
 
@@ -198,16 +257,15 @@
           ocrKeyHash: data.ocrKeyHash,
           visitDate: ocr.date,
           bizNum: ocr.bizNum
-
         };
 
         $('#storeName').text(ocr.storeName || "없음");
         $('#date').text(ocr.date || "없음");
         $('#menuNames').text((ocr.menuNames || []).join(', ') || "없음");
 
-        /* 모달 전환 */
-        $('#ocrModal').modal('hide');
-        $('#ocrResultModal').modal('show');
+        $('#ocrResultBox').show();
+        $('#ocrActionButtons').show();
+        $('#ocrForm button[type="submit"]').hide(); // ✅ 분석 버튼 숨기기
       })
       .catch(err => {
         stopScanning();
@@ -216,15 +274,19 @@
       });
   });
 
-  /* ========== 3) 업로드 모달 닫힐 때 초기화 ========== */
-  $('#ocrModal').on('hidden.bs.modal', function () {
+  // ④ 폼 초기화 (placeholder 포함)
+  function resetForm() {
     $('#ocrForm')[0].reset();
+    $('#preview').attr('src', '#').hide();
+    $('#previewPlaceholder').show();
     $('#previewWrapper').hide();
-    $('#preview').attr('src', '#');
     stopScanning();
-  });
+    $('#ocrResultBox').hide();
+    $('#ocrActionButtons').hide();
+    $('#ocrForm button[type="submit"]').show(); // 분석 버튼 복구
+  }
 
-  /* ========== 4) 리뷰 작성 페이지로 이동 ========== */
+  // ⑤ 리뷰 작성 페이지로 이동
   function proceedToReview() {
     const ocr = window.ocrResultCache;
     if (!ocr?.bizNum || !ocr?.ocrKeyHash || !ocr?.visitDate) {
@@ -238,8 +300,18 @@
     form.visitDate.value = ocr.visitDate;
     form.isReceiptReview.value = true;
 
-    form.submit();  // POST 방식 전송
+    form.submit();
   }
 </script>
+
+<!-- COMMON SCRIPTS -->
+<script src="/js/common_scripts.min.js"></script>
+<script src="/js/common_func.js"></script>
+<script src="/assets/validate.js"></script>
+
+<!-- SPECIFIC SCRIPTS -->
+<script src="/js/sticky_sidebar.min.js"></script>
+<script src="/js/specific_listing.js"></script>
+
 </body>
 </html>
