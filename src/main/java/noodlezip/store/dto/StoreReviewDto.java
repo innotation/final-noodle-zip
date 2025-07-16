@@ -31,45 +31,12 @@ public class StoreReviewDto {
     private List<String> toppingNames;
     private String userName;
     private Long userId;
-
-    public StoreReviewDto(
-            Long id,
-            Long communityId,
-            Long menuId,
-            String menuName,
-            Integer noodleThickness,
-            Integer noodleTexture,
-            Integer noodleBoilLevel,
-            Integer soupDensity,
-            Integer soupTemperature,
-            Integer soupSaltiness,
-            Integer soupSpicinessLevel,
-            Integer soupOiliness,
-            String soupFlavorKeywords,
-            String content,
-            String reviewImageUrl,
-            Boolean isReceiptReview,
-            String userName,
-            Long userId
-    ) {
-        this.id = id;
-        this.communityId = communityId;
-        this.menuId = menuId;
-        this.menuName = menuName;
-        this.noodleThickness = noodleThickness;
-        this.noodleTexture = noodleTexture;
-        this.noodleBoilLevel = noodleBoilLevel;
-        this.soupDensity = soupDensity;
-        this.soupTemperature = soupTemperature;
-        this.soupSaltiness = soupSaltiness;
-        this.soupSpicinessLevel = soupSpicinessLevel;
-        this.soupOiliness = soupOiliness;
-        this.soupFlavorKeywords = soupFlavorKeywords;
-        this.content = content;
-        this.reviewImageUrl = reviewImageUrl;
-        this.isReceiptReview = isReceiptReview;
-        this.userName = userName;
-        this.userId = userId;
-    }
+    private java.time.LocalDateTime createdAt;
+    private java.time.LocalDateTime updatedAt;
+    private Long storeId;
+    private String storeName;
+    private String storeAddress;
+    private Long storeLegalCode;
+    private String categoryName;
 
 }

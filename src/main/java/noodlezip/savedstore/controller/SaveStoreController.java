@@ -73,7 +73,6 @@ public class SaveStoreController {
                            @PathVariable Long storeId,
                            @RequestBody @Validated SaveStoreRequest saveStoreRequest
     ) {
-        System.out.println(saveStoreRequest);
         User user = myUserDetails.getUser();
         saveStoreService.saveSavedStore(user.getId(), storeId, saveStoreRequest);
     }

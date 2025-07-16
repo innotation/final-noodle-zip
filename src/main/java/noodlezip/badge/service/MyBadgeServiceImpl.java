@@ -7,10 +7,14 @@ import noodlezip.badge.constants.Region;
 import noodlezip.badge.dto.UserNoOptionBadgeDto;
 import noodlezip.badge.dto.UserOptionBadgeDto;
 import noodlezip.badge.dto.response.*;
+import noodlezip.badge.entity.Badge;
 import noodlezip.badge.entity.BadgeCategory;
+import noodlezip.badge.entity.BadgeExtraOption;
+import noodlezip.badge.entity.UserBadge;
 import noodlezip.badge.status.BadgeErrorStatus;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
+import noodlezip.ramen.entity.Category;
 import noodlezip.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,69 @@ public class MyBadgeServiceImpl implements MyBadgeService {
     private final BadgeCategoryService badgeCategoryService;
     private final BadgeService badgeService;
     private final UserBadgeService userBadgeService;
+
+    // TODO 마이페이지 메인페이지 배지 3개
+
+    /**
+     * ╔═════════════════════╗
+     * ║                     ║
+     * ║     badgeImageUrl   ║
+     * ║                     ║
+     * ╠═════════════════════╣
+     * ║    badgeTitleName   ║
+     * ║    badgeLevelName   ║
+     * ╚═════════════════════╝
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserBadgeResponse> getUserBadgeForMyPageProfile(Long userId) {
+        List<UserBadgeResponse> result = new ArrayList<>();
+
+        List<UserBadge> userBadgeList = userBadgeService.getUserBadgeForMyPageProfile(userId);
+        for (UserBadge userBadge : userBadgeList) {
+            UserBadgeResponse userBadgeResponse = new UserBadgeResponse();
+
+            Badge badge = userBadge.getBadge();
+            BadgeCategory badgeCategory = badge.getBadgeCategory();
+
+            userBadgeResponse.setUserBadgeId(userBadge.getId());
+            userBadgeResponse.setBadgeId(badge.getId());
+            userBadgeResponse.setBadgeImageUrl(badge.getBadgeImageUrl());
+
+            if (badge.isOptionalBadge()) {
+                BadgeExtraOption extraOption = badge.getBadgeExtraOption();
+                String optionName = decideOptionBadgeTitleNameOnExtraOption(extraOption);
+                userBadgeResponse.setBadgeTitleName(optionName);
+            } else {
+                userBadgeResponse.setBadgeTitleName(badgeCategory.getBadgeDescription());
+            }
+            if (badge.isLevelBadge()) {
+                userBadgeResponse.setBadgeLevelName(badge.getBadgeName());
+            }
+
+            result.add(userBadgeResponse);
+        }
+        return result;
+    }
+
+    private String decideOptionBadgeTitleNameOnExtraOption(BadgeExtraOption extraOption) {
+        if (extraOption != null) {
+            Category ramenCategory = extraOption.getRamenCategory();
+            if (ramenCategory != null) {
+                return ramenCategory.getCategoryName();
+            }
+
+            Integer storeSidoLegalCode = extraOption.getStoreSidoLegalCode();
+            if (storeSidoLegalCode != null) {
+                Region region = Region.getRegionBySidoCode(storeSidoLegalCode);
+                if (region == null) {
+                    throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+                }
+                return region.getName();
+            }
+        }
+        throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+    }
 
     @Override
     @Transactional(readOnly = true)

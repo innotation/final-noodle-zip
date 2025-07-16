@@ -21,9 +21,14 @@ import noodlezip.common.validation.ValidationGroups;
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.dto.LikeResponseDto;
+import noodlezip.community.dto.*;
+import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.status.BoardSuccessStatus;
+import noodlezip.store.dto.OcrToReviewDto;
+import noodlezip.store.entity.Store;
+import noodlezip.store.service.StoreService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -37,10 +42,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import noodlezip.community.dto.CategoryCountDto;
 import noodlezip.community.dto.PopularTagDto;
@@ -57,11 +61,51 @@ public class BoardController {
 
     private static final String RECENT_VIEWED_BOARDS = "recentViewedBoards";
     private static final int MAX_RECENT_BOARDS = 3;
+    private final StoreService storeService;
 
-    @GetMapping("/review")
+    @RequestMapping(value = "/review", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
-    public String review() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
+    })
+    public String review(@ModelAttribute ReviewInitDto reviewInitDto,
+                         Model model) {
+//      ==================테스트용 임시 값 확인작업 맘무리 후 삭제===========================
+        if (reviewInitDto.getBizNum() == null) {
+            reviewInitDto.setBizNum("4578502690");
+            reviewInitDto.setVisitDate("2025-07-07");
+            reviewInitDto.setOcrKeyHash("6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d");
+        }
+
+        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
+        model.addAttribute("storeId", ocrToReviewDto.getStoreId());
+        model.addAttribute("storeName",ocrToReviewDto.getStoreName());
+        model.addAttribute("menuList", ocrToReviewDto.getMenuList());
+        model.addAttribute("toppings", ocrToReviewDto.getToppingList());
+
+        model.addAttribute("reviewInitDto", reviewInitDto);
         return "/board/leave-review";
+    }
+
+    @PostMapping("/registReviewJson")
+    public ResponseEntity<Map<String, Object>> registReview(@RequestBody ReviewReqDto dto,
+                                                            @AuthenticationPrincipal MyUserDetails userDetails) {
+        List<Long> reviewIds = boardService.saveReviewJson(dto, userDetails.getUser());
+        Map<String, Object> response = new HashMap<>();
+        response.put("reviewIds", reviewIds); // 각 슬라이드에 해당하는 리뷰 ID 목록 반환
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/uploadReviewImages")
+    public ResponseEntity<Void> uploadReviewImages(@RequestParam Map<String, MultipartFile> files) {
+        files.forEach((key, file) -> {
+            if (key.startsWith("image_")) {
+                Long reviewId = Long.parseLong(key.substring("image_".length()));
+                boardService.saveReviewImage(reviewId, file); // 리뷰 ID 기준으로 이미지 저장
+            }
+        });
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/registBoard")
@@ -116,6 +160,7 @@ public class BoardController {
     @GetMapping({"/list", "/{category}/list"})
     @Operation(summary = "게시글 목록 조회", description = "모든 게시글 또는 특정 카테고리의 게시글을 최신 순으로 페이지네이션하여 조회합니다.")
     @Parameters({
+            @Parameter(name = "category", description = "조회할 게시글의 카테고리 (선택 사항). 예: 'community', 'qna'", required = false, example = "community"),
             @Parameter(name = "page", description = "조회할 페이지 번호 (기본값: 0, 1부터 요청 시 내부적으로 0으로 변환)", example = "1"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 게시글 개수 (기본값: 6)", example = "6"),
             @Parameter(name = "sort", description = "정렬 기준 (예: id, createdAt). 기본값은 id,desc", example = "id,desc", hidden = true),
@@ -137,7 +182,7 @@ public class BoardController {
         boolean hasTag = tag != null && !tag.trim().isEmpty();
 
         Map<String, Object> map;
-        
+
         if (hasTag && "review".equals(pathCommunityType)) {
             // 리뷰 카테고리에서 태그로 필터링
             map = boardService.findReviewListByTag(tag, type, pageable);
@@ -163,7 +208,14 @@ public class BoardController {
         model.addAttribute("isFirst", map.get("isFirst"));
         model.addAttribute("isLast", map.get("isLast"));
 
-        return "/board/list";
+        return "board/list";
+    }
+
+    @GetMapping("/popular/{category}")
+    @ResponseBody
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> getPopularBoards (@PathVariable String category) {
+        List<BoardRespDto> popularBoards = boardService.getPopularBoards(category);
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularBoards);
     }
 
     @GetMapping("/detail/{id}")
@@ -199,7 +251,7 @@ public class BoardController {
         }
         CookieUtil.updateRecentViewedItemsCookie(id, RECENT_VIEWED_BOARDS, MAX_RECENT_BOARDS, request, response);
         model.addAttribute("board", board);
-        return "/board/detail";
+        return "board/detail";
     }
 
     @PostMapping("/delete/{boardId}")
@@ -285,12 +337,12 @@ public class BoardController {
         try {
             List<CategoryCountDto> categoryCounts = boardService.getCategoryCounts();
             List<PopularTagDto> popularTags = boardService.getPopularTags();
-            
+
             Map<String, Object> widgets = Map.of(
                 "categoryCounts", categoryCounts,
                 "popularTags", popularTags
             );
-            
+
             return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, widgets);
         } catch (Exception e) {
             log.error("사이드바 위젯 데이터 조회 중 오류 발생", e);

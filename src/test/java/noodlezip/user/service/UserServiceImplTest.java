@@ -1,7 +1,6 @@
 package noodlezip.user.service;
 
 import noodlezip.common.exception.CustomException;
-import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.ActiveStatus;

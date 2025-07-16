@@ -3,15 +3,15 @@ package noodlezip.ramen.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 @EqualsAndHashCode
 public class ReviewToppingId implements Serializable {
 

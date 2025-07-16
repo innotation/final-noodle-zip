@@ -6,7 +6,7 @@
     <div class="container">
       <div id="logo">
         <a th:href="@{/}">
-          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="">
+          <img th:src="@{/img/noodlezip-Logo-stickhead-face.svg}" width="140" height="35" alt="">
         </a>
       </div>
 
@@ -68,7 +68,12 @@
               <div class="dropdown-menu">
                 <div class="dropdown-menu-content">
                   <ul>
-                    <li><a href="#0"><i class="icon_cog"></i>마이페이지</a></li>
+                    <li>
+                      <a th:href="@{|/mypage/${#authentication.principal.user.id}|}">
+                        <i class="icon_cog"></i>
+                        마이페이지
+                      </a>
+                    </li>
                     <li><a href="/logout" class="logout-link"><i class="icon_key"></i>Log Out</a></li>
                   </ul>
                 </div>

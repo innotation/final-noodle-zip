@@ -50,7 +50,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// modelmapper
 	implementation("org.modelmapper:modelmapper:3.2.3")
-	testImplementation 'com.h2database:h2'
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	// aws s3

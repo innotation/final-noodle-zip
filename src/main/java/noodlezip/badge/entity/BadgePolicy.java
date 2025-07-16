@@ -33,4 +33,8 @@ public class BadgePolicy {
         return nextBadgeId == null;
     }
 
+    public boolean hasNotLevel() {
+        return badgeLevel == null;
+    }
+
 }

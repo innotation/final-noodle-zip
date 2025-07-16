@@ -29,5 +29,6 @@ public class BoardRespDto {
     private String imageUrl;
     private Boolean isWriter;
     private Boolean isLike;
+    private String plainContent;
 
 }

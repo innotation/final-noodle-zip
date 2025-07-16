@@ -3,7 +3,6 @@ package noodlezip.user.service;
 import noodlezip.user.dto.UserDto;
 import noodlezip.user.entity.User;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Optional;
 
 public interface UserService {

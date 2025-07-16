@@ -10,7 +10,7 @@ import noodlezip.user.entity.User;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -54,7 +54,7 @@ public class Board extends BaseTimeEntity {
     private Long reviewStoreId;
 
     @Column(name = "review_visit_date")
-    private Instant reviewVisitDate;
+    private LocalDate reviewVisitDate;
 
     @ColumnDefault("0")
     @Column(name = "likes_count", nullable = false)
@@ -66,5 +66,8 @@ public class Board extends BaseTimeEntity {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @Column(name = "ocr_key_hash")
+    private String ocrKeyHash;
 
 }

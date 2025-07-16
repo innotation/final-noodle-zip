@@ -12,6 +12,8 @@ import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.entity.Like;
 import noodlezip.community.repository.BoardRepository;
 import noodlezip.community.repository.LikeRepository;
+import noodlezip.ramen.repository.RamenReviewRepository;
+import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,6 +60,13 @@ class BoardServiceImplTest {
 
     @Mock
     private FileUtil fileUtil;
+
+    @Mock
+    private RamenReviewRepository ramenReviewRepository;
+
+    @Mock
+    private ReviewToppingRepository reviewToppingRepository;
+
 
     private User testUser;
     private Board testBoard;
@@ -391,4 +400,51 @@ class BoardServiceImplTest {
         // Verify
         verify(boardRepository, times(1)).findById(testBoard.getId());
     }
+
+    @Test
+    @DisplayName("게시글 삭제 성공 - communityType이 review일 경우 리뷰와 토핑도 삭제")
+    void deleteBoard_WithReviewType_Success() {
+        // Given
+        Long boardId = 1L;
+        testBoard.setCommunityType("review");
+        List<Long> reviewIds = List.of(101L, 102L);
+
+        when(boardRepository.findById(boardId)).thenReturn(Optional.of(testBoard));
+        when(ramenReviewRepository.findIdsByBoardId(boardId)).thenReturn(reviewIds);
+        doNothing().when(reviewToppingRepository).deleteByRamenReviewIdIn(reviewIds);
+        doNothing().when(ramenReviewRepository).deleteByBoardId(boardId);
+        doNothing().when(boardRepository).delete(testBoard);
+
+        // When
+        boardService.deleteBoard(boardId, testUser.getId());
+
+        // Then
+        verify(ramenReviewRepository, times(1)).findIdsByBoardId(boardId);
+        verify(reviewToppingRepository, times(1)).deleteByRamenReviewIdIn(reviewIds);
+        verify(ramenReviewRepository, times(1)).deleteByBoardId(boardId);
+        verify(boardRepository, times(1)).delete(testBoard);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 성공 - communityType이 review지만 리뷰가 없는 경우")
+    void deleteBoard_WithReviewType_NoRamenReview() {
+        // Given
+        Long boardId = 1L;
+        testBoard.setCommunityType("review");
+        List<Long> emptyIds = List.of();
+
+        when(boardRepository.findById(boardId)).thenReturn(Optional.of(testBoard));
+        when(ramenReviewRepository.findIdsByBoardId(boardId)).thenReturn(emptyIds);
+        doNothing().when(ramenReviewRepository).deleteByBoardId(boardId);
+        doNothing().when(boardRepository).delete(testBoard);
+
+        // When
+        boardService.deleteBoard(boardId, testUser.getId());
+
+        // Then
+        verify(reviewToppingRepository, never()).deleteByRamenReviewIdIn(any());
+        verify(ramenReviewRepository, times(1)).deleteByBoardId(boardId);
+        verify(boardRepository, times(1)).delete(testBoard);
+    }
+
 }
