@@ -67,6 +67,13 @@ public class BoardController {
     })
     public String review(@ModelAttribute ReviewInitDto reviewInitDto,
                          Model model) {
+//      ==================테스트용 임시 값 확인작업 맘무리 후 삭제===========================
+        if (reviewInitDto.getBizNum() == null) {
+            reviewInitDto.setBizNum("4578502690");
+            reviewInitDto.setVisitDate("2025-07-07");
+            reviewInitDto.setOcrKeyHash("6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d");
+        }
+
         OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
         model.addAttribute("storeId", ocrToReviewDto.getStoreId());
         model.addAttribute("storeName",ocrToReviewDto.getStoreName());
