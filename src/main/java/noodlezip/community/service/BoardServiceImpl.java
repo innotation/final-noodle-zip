@@ -2,6 +2,10 @@ package noodlezip.community.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.badge.constants.UserEventType;
+import noodlezip.badge.event.BasicBadgeEvent;
+import noodlezip.badge.event.RamenReviewBadgeEvent;
+import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
@@ -34,6 +38,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +59,7 @@ import java.util.Optional;
 @Slf4j
 public class BoardServiceImpl implements BoardService {
 
+    private final BadgeEventPublisher eventPublisher;
     private final BoardRepository boardRepository;
     private final PageUtil pageUtil;
     private final ModelMapper modelMapper;
@@ -214,6 +221,8 @@ public class BoardServiceImpl implements BoardService {
         board.setPostStatus(CommunityActiveStatus.POSTED);
         board.setUser(user);
         boardRepository.save(board);
+
+        eventPublisher.publishCommunityPostBadgeEvent(user);
         log.info("board save : {}", board);
     }
 
@@ -256,6 +265,8 @@ public class BoardServiceImpl implements BoardService {
             likeRepository.save(newLike);
             board.setLikesCount(board.getLikesCount() + 1);
             isLiked = true;
+
+            eventPublisher.publishCommunityLikeBadgeEvent(board);
         }
 
         boardRepository.save(board);
@@ -398,6 +409,7 @@ public class BoardServiceImpl implements BoardService {
             reviewIds.add(review.getId());
         }
 
+        eventPublisher.publishRamenReviewBadgeEvent(user, dto);
         return reviewIds;
     }
 
@@ -413,4 +425,5 @@ public class BoardServiceImpl implements BoardService {
         review.setReviewImageUrl(imageUrl);
         ramenReviewRepository.save(review);
     }
+
 }

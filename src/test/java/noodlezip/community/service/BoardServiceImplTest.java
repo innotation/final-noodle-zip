@@ -1,5 +1,6 @@
 package noodlezip.community.service;
 
+import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.FileUtil;
@@ -66,6 +67,9 @@ class BoardServiceImplTest {
 
     @Mock
     private ReviewToppingRepository reviewToppingRepository;
+
+    @Mock
+    private BadgeEventPublisher badgeEventPublisher;
 
 
     private User testUser;

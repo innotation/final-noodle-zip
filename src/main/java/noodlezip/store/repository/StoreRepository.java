@@ -16,4 +16,5 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
     List<Store> findByUserIdAndOperationStatusNot(Long userId, OperationStatus operationStatus);
 
     Long getStoreByBizNum(@NotNull Long bizNum);
+
 }

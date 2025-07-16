@@ -16,8 +16,6 @@ public interface BadgeQueryRepository {
 
     List<LevelBadgeDetailResponse> findNoOptionBadgeDetails(long userId, long badgeCategoryId);
 
-    List<LevelBadgeDetailResponse> findOptionBadgeDetails(long userId,
-                                                          long badgeId,
-                                                          long badgeCategoryId);
+    List<LevelBadgeDetailResponse> findOptionBadgeDetails(long userId, long badgeId, long badgeCategoryId);
 
 }

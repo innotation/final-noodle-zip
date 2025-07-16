@@ -715,4 +715,12 @@ public class StoreService {
             return rawPhone;
         }
     }
+
+    public Long getStoreLegalCodeById(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        return store.getStoreLegalCode();
+    }
+
 }
