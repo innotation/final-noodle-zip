@@ -135,7 +135,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="profileImageFile"profileImageFile>프로필 이미지</label>
+
+                                <label for="profileImageFile">프로필 이미지</label>
                                 <div class="image-preview-container">
                                     <img id="profileImagePreview" class="image-preview"
                                          th:src="${userProfile.profileImageUrl != null and !userProfile.profileImageUrl.isEmpty() ? userProfile.profileImageUrl : '/img/avatar.jpg'}"

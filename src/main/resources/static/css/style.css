@@ -2387,8 +2387,8 @@ ul#top_menu li a.login:before {
 }
 
 .hero_single.version_2 {
-    height: 580px;
-    background: #ededed url(../img/home_section_1.jpg) center center no-repeat;
+    height: 800px;
+    background: #ededed url(../img/main-banner-2.jpg) center center no-repeat;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

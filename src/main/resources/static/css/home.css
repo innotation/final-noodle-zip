@@ -928,3 +928,304 @@ a.btn_explore:hover {
 .call_section .box_1 h3 {
   color: #fff;
 }
+
+/* 메인페이지 검색바 커스텀 (style.css 오버라이드) */
+.hero_single .custom-search-input {
+  background-color: #fff;
+  box-shadow: 0 2px 12px rgba(88, 148, 66, 0.08);
+  margin: 30px auto 0 auto;
+  border-radius: 8px;
+  max-width: 600px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.hero_single .custom-search-input .form-group {
+  position: relative;
+  flex: 1 1 0;
+  margin-bottom: 0;
+}
+
+.hero_single .custom-search-input .form-group input {
+  height: 56px;
+  font-size: 1.1rem;
+  padding-right: 40px;
+  background: transparent;
+}
+
+.hero_single .custom-search-input .form-group i {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #589442;
+  font-size: 18px;
+}
+
+.hero_single .custom-search-input .d-flex {
+  gap: 8px;
+}
+
+.hero_single .custom-search-input select.form-control {
+  height: 44px;
+  min-width: 100px;
+  font-size: 1rem;
+}
+
+.hero_single .custom-search-input button.search-execute-btn {
+  height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 20px;
+  background: #589442;
+  color: #fff;
+  border-radius: 5px;
+  border: none;
+}
+
+@media (max-width: 991px) {
+  .hero_single .custom-search-input {
+    margin-top: 10px;
+    box-shadow: none;
+    background: #fff;
+    flex-direction: column;
+    max-width: 100%;
+    padding: 0 5px;
+  }
+  .hero_single .custom-search-input .form-group input,
+  .hero_single .custom-search-input button.search-execute-btn {
+    height: 44px;
+    font-size: 1rem;
+  }
+  .hero_single .custom-search-input button.search-execute-btn {
+    width: 44px;
+    font-size: 18px;
+  }
+}
+
+/* 검색바 전체 박스 */
+.main-search-box {
+  background: #fff;
+  border-radius: 0px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 0;
+  max-width: 1000px;
+  margin: 32px auto 0 auto;
+  display: block;
+}
+
+.search-flex {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 60px;
+}
+
+.search-col {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-width: 0;
+  background: transparent;
+}
+
+.search-border {
+  border-right: 1px solid #eee;
+}
+
+.search-col:last-child {
+  border-right: none;
+  flex: 0 0 120px;
+  justify-content: flex-end;
+}
+
+.search-input-group {
+  position: relative;
+  width: 100%;
+}
+.search-input-group input.form-control {
+  padding-right: 38px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  height: 60px;
+  font-size: 1.05rem;
+}
+
+.search-input-group .filter-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #589442;
+  font-size: 22px;
+  padding: 0;
+  z-index: 2;
+}
+
+.search-flex input.form-control,
+.search-flex select.form-control {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  height: 60px;
+  font-size: 1.05rem;
+  width: 100%;
+}
+
+.search-flex select.form-control {
+  padding-right: 10px;
+}
+
+.main-search-btn {
+  width: 100%;
+  height: 60px;
+  background: #589442;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 0;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.main-search-btn:hover {
+  background: #41732e;
+}
+
+@media (max-width: 991px) {
+  .main-search-box {
+    max-width: 100%;
+    margin: 16px 0 0 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .search-flex {
+    flex-direction: column;
+    min-height: unset;
+  }
+  .search-col, .search-col:last-child {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+  .search-col:last-child {
+    border-bottom: none;
+  }
+  .main-search-btn {
+    border-radius: 0 0 12px 12px;
+    height: 48px;
+    font-size: 1rem;
+  }
+  .search-flex input.form-control,
+  .search-flex select.form-control,
+  .search-input-group input.form-control {
+    height: 48px;
+    font-size: 1rem;
+  }
+}
+
+/* 데스크탑: 비율 맞추기 */
+.main-search-responsive {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.main-search-responsive .search-row-1 { flex: 4 4 0; min-width: 0; }
+.main-search-responsive .search-row-2 { flex: 7 7 0; min-width: 0; display: flex; gap: 0; }
+.main-search-responsive .search-row-2 input.form-control { flex: 5 5 0; min-width: 0; border-right: 1px solid #eee; border-radius: 0; }
+.main-search-responsive .search-row-2 select.form-control { flex: 2 2 0; min-width: 0; border-radius: 0; }
+.main-search-responsive .search-row-3 { flex: 2 2 0; min-width: 0; display: flex; align-items: stretch; }
+
+/* 경계선 */
+.main-search-responsive .search-row-1,
+.main-search-responsive .search-row-2 input.form-control {
+  border-right: 1px solid #eee;
+}
+.main-search-responsive .search-row-3 {
+  border-right: none;
+}
+
+/* 모바일: 3줄로 */
+@media (max-width: 991px) {
+  .main-search-responsive {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .main-search-responsive .search-row-1,
+  .main-search-responsive .search-row-2,
+  .main-search-responsive .search-row-3 {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+  }
+  .main-search-responsive .search-row-2 {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .main-search-responsive .search-row-2 input.form-control,
+  .main-search-responsive .search-row-2 select.form-control {
+    flex: 1 1 0;
+    min-width: 0;
+    border-right: none;
+    border-radius: 0;
+  }
+  .main-search-responsive .search-row-3 {
+    flex-direction: row;
+  }
+  .main-search-responsive .main-search-btn {
+    width: 100%;
+    border-radius: 0;
+    height: 48px;
+    font-size: 1rem;
+  }
+  .main-search-responsive .search-input-group input.form-control {
+    height: 48px;
+    font-size: 1rem;
+  }
+}
+
+.main-title {
+  display: flex;
+  align-items: end;
+  font-size: 2.5rem;
+  font-weight: 700;
+  gap: 18px;
+  margin-bottom: 24px;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.main-title .main-logo {
+  height: 4rem;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .main-title {
+    font-size: 1.4rem;
+    gap: 10px;
+  }
+  .main-title .main-logo {
+    height: 3rem;
+  }
+}

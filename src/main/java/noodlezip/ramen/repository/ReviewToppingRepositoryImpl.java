@@ -39,4 +39,19 @@ public class ReviewToppingRepositoryImpl implements ReviewToppingRepositoryCusto
                         Collectors.mapping(tuple -> tuple.get(topping.toppingName), Collectors.toList())
                 ));
     }
+
+    @Override
+    public void deleteByRamenReviewIdIn(List<Long> ramenReviewIds) {
+        QReviewTopping reviewTopping = QReviewTopping.reviewTopping;
+
+        if (ramenReviewIds == null || ramenReviewIds.isEmpty()) {
+            return;
+        }
+
+        queryFactory
+                .delete(reviewTopping)
+                .where(reviewTopping.ramenReview.id.in(ramenReviewIds))
+                .execute();
+    }
+
 }

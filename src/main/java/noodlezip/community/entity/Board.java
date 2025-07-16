@@ -10,9 +10,7 @@ import noodlezip.user.entity.User;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
