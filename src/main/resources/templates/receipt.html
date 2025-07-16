@@ -6,113 +6,9 @@
   <!-- SPECIFIC CSS -->
   <link href="/css/listing.css" rel="stylesheet">
   <link href="/css/search-custom.css" rel="stylesheet">
+  <link href="/css/ocr.css" rel="stylesheet">
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-
-  <style>
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    /* 전체 배경 */
-    body {
-      background-color: #f5f5f5;
-    }
-
-    main {
-      min-height: calc(100vh - 150px);
-      padding-top: 100px;
-      padding-bottom: 120px;
-      box-sizing: border-box;
-    }
-
-    /* 메인 컨테이너: 너비 줄임 */
-    .container {
-      max-width: 380px;
-      margin: 0 auto;
-      padding: 0 15px;
-    }
-
-
-    /* 카드 스타일 */
-    .ocr-card {
-      background: #fff;
-      padding: 25px 20px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
-      max-width: 580px;
-      margin: 0 auto;
-    }
-
-    .preview-wrapper {
-      position: relative;
-      max-width: 100%;
-      margin-top: 10px;
-      min-height: 280px;         /* ✅ 이미지 공간 확보 */
-      background-color: #fafafa;
-      border: 1px dashed #ccc;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .placeholder-box {
-      text-align: center;
-      color: #888;
-      font-size: 14px;
-    }
-
-    #preview {
-      display: none;
-      max-width: 100%;
-      max-height: 500px;
-      object-fit: contain;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin: 0 auto;
-    }
-
-    /* 스캔 필터 */
-    #scan-filter {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 255, 0, 0.08);
-      pointer-events: none;
-      display: none;
-      z-index: 1;
-    }
-
-    /* 스캔 라인 */
-    #scan-line {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 5px;
-      background: rgba(0, 255, 0, 0.35);
-      display: none;
-      z-index: 2;
-      animation: scanMove 2s linear infinite alternate;
-    }
-
-    /* 스캔 애니메이션 */
-    @keyframes scanMove {
-      0%   { top: 0; }
-      100% { top: 100%; }
-    }
-
-    /* 고정 버튼 내부 스타일 */
-    .fixed-action-buttons .btn {
-      padding: 8px 12px;
-      font-size: 13px;
-      border-radius: 20px;   /* ✅ pill 모양 */
-      margin-left: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    }
-  </style>
 </head>
 
 <body class="margin_sticky">
@@ -171,22 +67,6 @@
 
 <!-- ───────────────────── 스크립트 ───────────────────── -->
 <script>
-  // 로그인 확인
-  function checkLoginBeforeUpload() {
-    fetch("/auth/check")
-      .then(res => {
-        if (res.status === 401) {
-          alert("로그인이 필요한 기능입니다.");
-          return;
-        }
-        $('#ocrModal').modal('show');
-      })
-      .catch(err => {
-        console.error("❌ 인증 확인 실패:", err);
-        alert("시스템 오류가 발생했습니다.");
-      });
-  }
-
   // ① 파일 선택 → 미리보기 표시 및 OCR 결과 영역 초기화
   $('#file').on('change', function () {
     const file = this.files[0];
@@ -315,3 +195,6 @@
 
 </body>
 </html>
+
+<!--리뷰 작성버튼-->
+<!--<a href="/board/review" class="btn btn-primary">리뷰 작성하기</a>-->
