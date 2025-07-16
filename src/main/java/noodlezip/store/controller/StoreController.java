@@ -1,6 +1,7 @@
 package noodlezip.store.controller;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.util.PageUtil;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.service.RamenService;
@@ -14,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,38 +22,21 @@ import java.util.List;
 @RequestMapping("/store")
 @Controller
 public class StoreController {
-
     private final StoreService storeService;
+    private final PageUtil pageUtil;
     private final RamenService ramenService;
-
-    // 등록 폼 페이지 진입
-    @GetMapping("/regist")
-    public String showRegistPage(Model model) {
-        // 카테고리와 토핑 목록을 서비스에서 가져와서 model에 담기
-        model.addAttribute("categories", storeService.getRamenCategories());
-        model.addAttribute("toppings", storeService.getRamenToppings());
-
-        return "store/regist";
-    }
-
-    @PostMapping("/regist")
-    public String registerStore(@AuthenticationPrincipal MyUserDetails myUserDetails,
-                                @ModelAttribute StoreRequestDto dto,
-                                @RequestParam("storeMainImage") MultipartFile storeMainImage) {
-        // 로그인한 유저 객체 얻기
-        User user = myUserDetails.getUser();
-
-        // 가게 등록 처리
-        Long storeId = storeService.registerStore(dto, storeMainImage, user);
-
-        return "redirect:/store/detail/" + storeId;
-
-    }
 
     // 매장 상세페이지 진입
     @GetMapping("/detail/{no}")
-    public String showDetailPage(@PathVariable Long no, Model model) {
-        StoreDto store = storeService.getStore(no);
+    public String showDetailPage(@PathVariable Long no,
+                                 @AuthenticationPrincipal MyUserDetails myUserDetails,
+                                 Model model) {
+        Long userId = null;
+        if (myUserDetails != null) {
+            userId = myUserDetails.getUser().getId();
+        }
+        
+        StoreDto store = storeService.getStore(no, userId);
         model.addAttribute("store", store);
         return "store/detail";
     }

@@ -1,29 +1,54 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <div th:fragment="subHeader">
-
-  <header class="header clearfix element_to_stick">
+  <header class="header_in is_sticky clearfix">
     <div class="container">
       <div id="logo">
         <a th:href="@{/}">
-          <img th:src="@{/img/logo.svg}" width="140" height="35" alt="" class="logo_normal">
-          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="" class="logo_sticky">
+          <img th:src="@{/img/logo_sticky.svg}" width="140" height="35" alt="">
         </a>
       </div>
 
       <!-- 중앙 검색바 -->
-      <div class="search-bar">
-        <button type="button"
-                class="search-trigger d-flex align-items-center gap-2"
-                data-bs-toggle="modal"
-                data-bs-target="#searchModal">
+      <div class="search_bar_list">
+        <!-- 라멘 상세 검색 모달 칸 -->
+        <div class="search-filter-container"
+             data-bs-toggle="modal"
+             data-bs-target="#searchModal"
+             style="cursor: pointer;">
           <input type="text"
-                 placeholder="라멘 검색..."
-                 class="form-control border-0 bg-transparent p-0"
-                 readonly
-                 style="cursor:pointer"/>
+                 id="filterDisplay"
+                 class="form-control"
+                 placeholder="라멘 상세 검색"
+                 readonly>
+          <button type="button"
+                  class="search-modal-trigger">
+            <i class="bi bi-funnel"></i>
+          </button>
+        </div>
 
+        <!-- 검색어 검색 칸 -->
+        <div class="search-keyword-container">
+          <input type="text"
+                 id="keywordSearch"
+                 class="form-control"
+                 placeholder="매장명 또는 메뉴명 검색">
+        </div>
+
+        <!-- 검색 카테고리 칸 -->
+        <div class="search-category-container">
+          <select id="searchCategory" class="form-control">
+            <option value="ALL">전체</option>
+            <option value="STORE_NAME">매장명</option>
+            <option value="MENU_NAME">메뉴명</option>
+          </select>
+        </div>
+
+        <!-- 검색 버튼 -->
+        <button type="button"
+                id="searchButton"
+                class="search-execute-btn">
           <i class="bi bi-search"></i>
         </button>
       </div>
@@ -31,20 +56,25 @@
       <!-- /top_menu -->
       <ul id="top_menu">
         <div sec:authorize="isAnonymous()">
-          <li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
-          <li><a href="회원가입페이지" class="sign_up">Sign Up</a></li>
+          <li><a href="#sign-in-dialog" class="sign-in login">Sign In</a></li>
         </div>
         <div sec:authorize="isAuthenticated()">
           <li>
             <div class="dropdown user clearfix">
               <a href="#" data-bs-toggle="dropdown">
-                <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure><span th:text="${#authentication.principal.user.userName}"></span>
+                <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure>
+                <span th:text="${#authentication.principal.user.userName}"></span>
               </a>
               <div class="dropdown-menu">
                 <div class="dropdown-menu-content">
                   <ul>
-                    <li><a href="#0"><i class="icon_cog"></i>마이페이지</a></li>
-                    <li><a th:href="@{/logout}"><i class="icon_key"></i>Log Out</a></li>
+                    <li>
+                      <a th:href="@{|/mypage/${#authentication.principal.user.id}|}">
+                        <i class="icon_cog"></i>
+                        마이페이지
+                      </a>
+                    </li>
+                    <li><a href="/logout" class="logout-link"><i class="icon_key"></i>Log Out</a></li>
                   </ul>
                 </div>
               </div>
@@ -53,13 +83,24 @@
           </li>
         </div>
       </ul>
-
-
       <!-- /top_menu -->
+
+      <!-- 햄버거 메뉴 버튼 -->
+      <a href="#0" class="open_close">
+        <i class="icon_menu"></i><span>Menu</span>
+      </a>
+
       <nav class="main-menu">
+        <!-- 사이드바 내부 헤더 -->
+        <div id="header_menu">
+          <a href="#0" class="open_close">
+            <i class="icon_close"></i><span>Menu</span>
+          </a>
+          <a th:href="@{/}"><img th:src="@{/img/logo.svg}" width="140" height="35" alt=""></a>
+        </div>
         <ul>
-          <li><a href="검색페이지">검색페이지</a></li>
-          <li><a href="커뮤니티페이지">커뮤니티페이지</a></li>
+          <li><a th:href="@{/search/list}">검색페이지</a></li>
+          <li><a th:href="@{/board/list}">커뮤니티페이지</a></li>
         </ul>
       </nav>
     </div>
@@ -68,57 +109,67 @@
   <!-- 검색모달 include -->
   <div th:replace="~{fragments/searchModal :: searchModal}"></div>
 
-  <!-- 로그인 모달 -->
-  <div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
-    <div class="modal_header">
-      <h3>Sign In</h3>
-    </div>
+  <!-- Layer 요소 - 사이드바 메뉴용 -->
+  <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
 
-    <form th:action="@{/login}" method="post">
+  <!-- 모바일 스크롤 시 나타나는 검색창 -->
+  <div class="mobile-search-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="search_bar_list">
+            <!-- 라멘 상세 검색 모달 칸 -->
+            <div class="search-filter-container"
+                 data-bs-toggle="modal"
+                 data-bs-target="#searchModal"
+                 style="cursor: pointer;">
+              <input type="text"
+                     id="mobileFilterDisplay"
+                     class="form-control"
+                     placeholder="라멘 상세 검색"
+                     readonly>
+              <button type="button"
+                      class="search-modal-trigger">
+                <i class="bi bi-funnel"></i>
+              </button>
+            </div>
 
-      <form>
-        <div class="sign-in-wrapper">
-          <a href="#0" class="social_bt facebook">Login with Facebook</a>
-          <a href="#0" class="social_bt google">Login with Google</a>
-          <div class="divider"><span>Or</span></div>
-          <div class="form-group">
-            <label>Id</label>
-            <input type="text" class="form-control" name="userId" id="userId">
-            <i class="icon_mail_alt"></i>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-control" name="userPwd" id="userPwd">
-            <i class="icon_lock_alt"></i>
-          </div>
-          <div class="clearfix add_bottom_15">
-            <div class="checkboxes float-start">
-              <label class="container_check">Remember me
-                <input type="checkbox" name="remember-me">
-                <span class="checkmark"></span>
-              </label>
+            <!-- 검색어 검색 칸 -->
+            <div class="search-keyword-container">
+              <input type="text"
+                     id="mobileKeywordSearch"
+                     class="form-control"
+                     placeholder="매장명 또는 메뉴명 검색">
             </div>
-            <div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
-          </div>
-          <div class="text-center">
-            <input type="submit" value="Log In" class="btn_1 full-width mb_5">
-            Don’t have an account? <a href="회원가입페이지">Sign up</a>
-          </div>
-          <div id="forgot_pw">
-            <div class="form-group">
-              <label>Please confirm login email below</label>
-              <input type="email" class="form-control" name="email_forgot" id="email_forgot">
-              <i class="icon_mail_alt"></i>
+
+            <!-- 검색 카테고리 칸 -->
+            <div class="search-category-container">
+              <select id="mobileSearchCategory" class="form-control">
+                <option value="ALL">전체</option>
+                <option value="STORE_NAME">매장명</option>
+                <option value="MENU_NAME">메뉴명</option>
+              </select>
             </div>
-            <p>You will receive an email containing a link allowing you to reset your password to a new preferred
-              one.</p>
-            <div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
+
+            <!-- 검색 버튼 -->
+            <button type="button"
+                    id="mobileSearchButton"
+                    class="search-execute-btn">
+              <i class="bi bi-search"></i>
+            </button>
           </div>
         </div>
-      </form>
-    </form>
+      </div>
+    </div>
   </div>
-</div>
-      <!--form -->
 
-      <!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용 <link th:include="fragements/subHeader.html"/>  구문 삽입해서 사용-->
+  <!-- 로그인 모달 -->
+  <div th:replace="~{fragments/signin-modal :: signin-modal}"></div>
+</div>
+<!--form -->
+
+<!-- 메인페이지 작업시 <body> 안쪽 상단에 구문 삽입해서 사용
+<div th:replace="~{fragments/subHeader::subHeader}"></div>
+  구문 삽입해서 사용-->
+
+</html>

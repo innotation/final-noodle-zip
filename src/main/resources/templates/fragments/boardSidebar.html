@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- 게시판 사이드바 위젯들 -->
+    <aside class="col-lg-3" th:fragment="boardSidebar">
+        <!-- 최근 본 게시글 위젯 -->
+        <div class="widget">
+            <div class="widget-title first">
+                <h4>최근 본 게시글</h4>
+            </div>
+            <ul class="comments-list" id="recent-boards-list-container">
+                <li id="loading-message">로딩 중...</li>
+                <li id="no-boards-message" style="display:none;">최근 본 게시글이 없습니다.</li>
+            </ul>
+        </div>
+        <!-- /widget -->
+        
+        <!-- 게시판 카테고리 위젯 -->
+        <div class="widget">
+            <div class="widget-title">
+                <h4>게시판</h4>
+            </div>
+            <ul class="cats" id="category-widget">
+                <li><a href="/board/list"><strong>전체 게시글 보기</strong></a></li>
+                <li id="category-loading">로딩 중...</li>
+            </ul>
+        </div>
+        <!-- /widget -->
+        
+        <!-- Popular Tags 위젯 -->
+        <div class="widget">
+            <div class="widget-title">
+                <h4>Popular Tags</h4>
+            </div>
+            <div class="tags" id="tags-widget">
+                <span id="tags-loading">로딩 중...</span>
+            </div>
+        </div>
+        <!-- /widget -->
+    </aside>
+    
+    <!-- 최근 본 게시글 위젯 JavaScript -->
+    <script th:fragment="recentBoardsScript">
+        function initializeRecentBoardsWidget() {
+            const listContainer = document.getElementById('recent-boards-list-container');
+            const loadingMessage = document.getElementById('loading-message');
+            const noBoardsMessage = document.getElementById('no-boards-message');
+            if (!listContainer || !loadingMessage || !noBoardsMessage) {
+                console.warn("Recent boards widget elements not found. Skipping initialization.");
+                return; // 필수 DOM 요소가 없으면 함수 종료
+            }
+
+            // 이전에 추가된 게시글 목록 초기화
+            listContainer.innerHTML = ''; // 기존 내용을 모두 지움
+            listContainer.appendChild(loadingMessage); // 로딩 메시지 다시 삽입 (만약 HTML 구조상 제거되었다면)
+            loadingMessage.style.display = 'block';
+            noBoardsMessage.style.display = 'none';
+
+            fetch('/board/recent')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(boards => {
+                    loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
+                    if (boards.payload && boards.payload.length > 0) {
+                        // 게시글 목록이 있을 경우, 각 게시글에 대해 li 요소를 생성하여 추가
+                        boards.payload.forEach(board => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `
+                            <div class="alignleft">
+                                <a href="/board/detail/${board.id}">
+                                    <img src="${board.imageUrl ? board.imageUrl : '/img/blog-1.jpg'}" alt="게시글 이미지">
+                                </a>
+                            </div>
+                            <small>
+                                ${board.category ? board.category : 'General'} -
+                                ${board.createdAt ? new Date(board.createdAt).toLocaleDateString('ko-KR') : 'N/A'}
+                            </small>
+                            <h3><a href="/board/detail/${board.id}" title="${board.title}">${board.title}</a></h3>
+                        `;
+                            listContainer.appendChild(li);
+                        });
+                    } else {
+                        noBoardsMessage.style.display = 'block';
+                        listContainer.appendChild(noBoardsMessage);
+                    }
+                })
+                .catch(error => {
+                    loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
+                    noBoardsMessage.style.display = 'block'; // 메시지 표시
+                    noBoardsMessage.textContent = '최근 본 게시글을 불러오는 데 실패했습니다.';
+                    listContainer.appendChild(noBoardsMessage);
+                    console.error('Error fetching recent boards:', error);
+                });
+        }
+
+        // 사이드바 위젯 데이터 초기화
+        function initializeSidebarWidgets() {
+            fetch('/board/sidebar/widgets')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.isSuccess && data.payload) {
+                        // 카테고리 위젯 업데이트
+                        updateCategoryWidget(data.payload.categoryCounts);
+                        // 태그 위젯 업데이트
+                        updateTagsWidget(data.payload.popularTags);
+                    } else {
+                        console.error('Failed to load sidebar widgets:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching sidebar widgets:', error);
+                });
+        }
+
+        // 카테고리 위젯 업데이트
+        function updateCategoryWidget(categoryCounts) {
+            const categoryWidget = document.getElementById('category-widget');
+            const loadingElement = document.getElementById('category-loading');
+            
+            if (!categoryWidget || !loadingElement) return;
+            
+            // 로딩 메시지 제거
+            loadingElement.remove();
+            
+            // 카테고리 목록 추가
+            categoryCounts.forEach(category => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="/board/${category.communityType}/list">${category.displayName} (${category.count})</a>`;
+                categoryWidget.appendChild(li);
+            });
+        }
+
+        // 태그 위젯 업데이트
+        function updateTagsWidget(popularTags) {
+            const tagsWidget = document.getElementById('tags-widget');
+            const loadingElement = document.getElementById('tags-loading');
+            
+            if (!tagsWidget || !loadingElement) return;
+            
+            // 로딩 메시지 제거
+            loadingElement.remove();
+            
+            // 태그 목록 추가
+            popularTags.forEach(tag => {
+                const a = document.createElement('a');
+                a.href = `/board/review/list?tag=${encodeURIComponent(tag.tagName)}&type=${tag.tagType}`;
+                a.textContent = tag.tagName;
+                tagsWidget.appendChild(a);
+            });
+        }
+
+        // DOM이 로드되면 위젯들 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeRecentBoardsWidget();
+            initializeSidebarWidgets();
+        });
+    </script>
+</body>
+
+</html> 

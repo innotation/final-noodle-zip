@@ -1,11 +1,14 @@
 package noodlezip.savedstore.service;
 
 import lombok.RequiredArgsConstructor;
+import noodlezip.common.exception.CustomException;
 import noodlezip.savedstore.dto.request.SavedStoreCategoryFilterRequest;
 import noodlezip.savedstore.dto.response.MySavedStorePageResponse;
 import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
 import noodlezip.savedstore.dto.response.SavedStorePageResponse;
+import noodlezip.savedstore.status.SavedStoreErrorStatus;
+import noodlezip.subscription.status.SubscriptionErrorStatus;
 import noodlezip.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +50,8 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
     @Override
     @Transactional(readOnly = true)
     public SavedStorePageResponse getSavedStoreInitPage(Long userId) {
-        userService.validateMyPageExistingUserByUserId(userId);
+        userService.findExistingUserByUserId(userId)
+                .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_SAVED_STORE_PAGE_LOAD));
 
         List<SavedStoreCategoryResponse> searchFilter =
                 savedStoreService.getSaveCategoryListForSearch(userId, false);

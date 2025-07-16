@@ -51,7 +51,7 @@ public class StoreDto implements Serializable {
     @NotNull
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Integer storeLegalCode;
+    private Long storeLegalCode;
 
     // Store -> StoreDto
     public static StoreDto toDto(Store store) {

@@ -345,7 +345,7 @@ a.btn_filters i {
 }
 .map_view .margin_detail {
   padding-top: 10px;
-  margin: 0px -15px 0 -15px;
+  margin: 0 5px 0 5px;
 }
 
 .full-height {
@@ -376,8 +376,7 @@ a.btn_filters i {
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 0;
-  z-index: 9999;
+  z-index: 900;
 }
 @media (max-width: 991px) {
   .map-right {

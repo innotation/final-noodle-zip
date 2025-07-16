@@ -18,6 +18,9 @@ import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.CookieUtil;
 import noodlezip.common.util.RequestParserUtil;
 import noodlezip.common.validation.ValidationGroups;
+import noodlezip.community.dto.BoardReqDto;
+import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.LikeResponseDto;
 import noodlezip.community.dto.*;
 import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
@@ -29,7 +32,6 @@ import noodlezip.store.service.StoreService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,6 +46,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import noodlezip.community.dto.CategoryCountDto;
+import noodlezip.community.dto.PopularTagDto;
 
 @RequestMapping("/board")
 @Controller
@@ -128,7 +132,6 @@ public class BoardController {
             @Validated(ValidationGroups.OnCreate.class) @ModelAttribute BoardReqDto boardReqDto,
             BindingResult bindingResult) {
 
-        // 1. 사용자 인증 확인
         if (user == null || user.getUser() == null) {
             log.warn("비로그인 사용자가 게시글 등록 시도.");
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
@@ -164,44 +167,55 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String boardList(
-            @PathVariable(value = "category", required = false) Optional<String> categoryOptional,
+            @PathVariable(value = "category", required = false) String  pathCommunityType,
+            @RequestParam(value = "search", required = false) String searchKeyword,
+            // 태그 검색을 위한 request 추가
+            @RequestParam(value = "tag", required = false) String tag,
+            @RequestParam(value = "type", required = false) String type,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model) {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
-        String category = null;
+        boolean hasSearchKeyword = searchKeyword != null && !searchKeyword.trim().isEmpty();
+        boolean hasCommunityType = pathCommunityType != null && !pathCommunityType.trim().isEmpty();
+        boolean hasTag = tag != null && !tag.trim().isEmpty();
 
-        try {
-            Map<String, Object> map;
-            if (categoryOptional.isPresent() && !categoryOptional.get().isEmpty()) {
-                category = categoryOptional.get();
-                log.info("특정 카테고리 게시글 목록 조회 요청: {}", category);
-                map = boardService.findBoardListByCategory(category, pageable);
-            } else {
-                // 전체 게시글 목록 조회
-                log.info("전체 게시글 목록 조회 요청");
-                map = boardService.findBoardList(pageable);
-            }
+        Map<String, Object> map;
 
-            model.addAttribute("category", category);
-            model.addAttribute("board", map.get("list"));
-            model.addAttribute("page", map.get("page"));
-            model.addAttribute("beginPage", map.get("beginPage"));
-            model.addAttribute("endPage", map.get("endPage"));
-            model.addAttribute("isFirst", map.get("isFirst"));
-            model.addAttribute("isLast", map.get("isLast"));
-
-            return "/board/list"; // HTML 템플릿 경로 반환
-        } catch (CustomException e) {
-            log.error("게시글 목록 조회 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", e.getMessage());
-            return "/error/general-error"; // 오류 발생 시 보여줄 HTML 템플릿 (적절히 변경 필요)
-        } catch (Exception e) {
-            log.error("게시글 목록 조회 중 예상치 못한 서버 오류 발생: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", "게시글 목록을 불러오는 중 예상치 못한 오류가 발생했습니다.");
-            return "/error/general-error"; // 오류 발생 시 보여줄 HTML 템플릿
+        if (hasTag && "review".equals(pathCommunityType)) {
+            // 리뷰 카테고리에서 태그로 필터링
+            map = boardService.findReviewListByTag(tag, type, pageable);
+        } else if (hasCommunityType && hasSearchKeyword) {
+            map = boardService.searchBoardsByCommunityTypeAndKeyword(pathCommunityType, searchKeyword, pageable);
+        } else if (hasCommunityType) {
+            map = boardService.findBoardListByCategory(pathCommunityType, pageable);
+        } else if (hasSearchKeyword) {
+            map = boardService.searchBoards(searchKeyword, pageable);
+        } else {
+            map = boardService.findBoardList(pageable);
         }
+
+        model.addAttribute("category", pathCommunityType);
+        model.addAttribute("searchKeyword", searchKeyword);
+        model.addAttribute("tag", tag);
+        model.addAttribute("type", type);
+        model.addAttribute("board", map.get("list"));
+        model.addAttribute("page", map.get("page"));
+        model.addAttribute("totalPage", map.get("totalPage"));
+        model.addAttribute("beginPage", map.get("beginPage"));
+        model.addAttribute("endPage", map.get("endPage"));
+        model.addAttribute("isFirst", map.get("isFirst"));
+        model.addAttribute("isLast", map.get("isLast"));
+
+        return "/board/list";
+    }
+
+    @GetMapping("/popular/{category}")
+    @ResponseBody
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> getPopularBoards (@PathVariable String category) {
+        List<BoardRespDto> popularBoards = boardService.getPopularBoards(category);
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularBoards);
     }
 
     @GetMapping("/detail/{id}")
@@ -210,7 +224,7 @@ public class BoardController {
             @Parameter(name = "id", description = "조회할 게시글의 ID", required = true, example = "1"),
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
-    public String getBoardDetail (
+    public String getBoardDetail(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal MyUserDetails user,
             HttpServletRequest request,
@@ -290,4 +304,49 @@ public class BoardController {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED, boardService.uploadImages(uploadFiles));
     }
 
+    @GetMapping("/sidebar/categories")
+    @ResponseBody
+    @Operation(summary = "카테고리별 게시글 수 조회", description = "각 카테고리별 게시글 개수를 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<List<CategoryCountDto>>> getCategoryCounts() {
+        try {
+            List<CategoryCountDto> categoryCounts = boardService.getCategoryCounts();
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, categoryCounts);
+        } catch (Exception e) {
+            log.error("카테고리별 게시글 수 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sidebar/popular-tags")
+    @ResponseBody
+    @Operation(summary = "인기 태그 조회", description = "인기 태그 목록을 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<List<PopularTagDto>>> getPopularTags() {
+        try {
+            List<PopularTagDto> popularTags = boardService.getPopularTags();
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularTags);
+        } catch (Exception e) {
+            log.error("인기 태그 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sidebar/widgets")
+    @ResponseBody
+    @Operation(summary = "사이드바 위젯 데이터 조회", description = "카테고리별 게시글 개수와 인기 태그 데이터를 조회합니다.")
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Map<String, Object>>> getSidebarWidgets() {
+        try {
+            List<CategoryCountDto> categoryCounts = boardService.getCategoryCounts();
+            List<PopularTagDto> popularTags = boardService.getPopularTags();
+
+            Map<String, Object> widgets = Map.of(
+                "categoryCounts", categoryCounts,
+                "popularTags", popularTags
+            );
+
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, widgets);
+        } catch (Exception e) {
+            log.error("사이드바 위젯 데이터 조회 중 오류 발생", e);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
+    }
 }

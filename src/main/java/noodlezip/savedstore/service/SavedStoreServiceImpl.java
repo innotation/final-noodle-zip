@@ -56,8 +56,6 @@ public class SavedStoreServiceImpl implements SavedStoreService {
         List<SavedStore> savedStores = saveStoreRepository.findAllByUserIdAndStoreId(userId, storeId);
         if (!savedStores.isEmpty()) {
             checkCategorySavedStoreMultiple(savedStores, categoryList);
-        } else {
-            categoryList.get(0).setActive(true);
         }
         return categoryList;
     }

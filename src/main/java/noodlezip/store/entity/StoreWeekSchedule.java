@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -21,11 +21,11 @@ public class StoreWeekSchedule {
 
     @NotNull
     @Column(name = "opening_at", nullable = false)
-    private LocalDateTime openingAt;
+    private LocalTime openingAt;
 
     @NotNull
     @Column(name = "closing_at", nullable = false)
-    private LocalDateTime closingAt;
+    private LocalTime closingAt;
 
     @NotNull
     @Column(name = "is_closed_day", nullable = false)

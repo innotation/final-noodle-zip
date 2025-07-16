@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
+  <meta name="author" content="Ansonika">
+  <title>Foogra - Discover & Book the best restaurants at the best price</title>
+
+  <!-- Favicons-->
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+
+  <!-- GOOGLE WEB FONT -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- BASE CSS -->
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link th:href="@{/admin_section/css/admin.css}" rel="stylesheet">
+
+  <!-- SPECIFIC CSS -->
+  <link th:href="@{/css/subscription.css}" rel="stylesheet">
+
+</head>
+<body>
+<!--  <div th:replace="/fragments/subHeader::subHeader"></div>-->
+
+  <main>
+    <div>
+      <div class="container-fluid">
+        <div class="box_general">
+          <div class="header_box">
+            <a th:classappend="${list.subscriptionType.name() == 'FOLLOWER'} ? ' active' : ''"
+               th:href="@{/users/{userId}/follower(userId=${userAccessInfo.targetUserId})}">
+              구독자
+            </a>
+            |
+            <a th:classappend="${list.subscriptionType.name() == 'FOLLOWING'} ? ' active' : ''"
+               th:href="@{/users/{userId}/following(userId=${userAccessInfo.targetUserId})}">
+              구독중
+            </a>
+          </div>
+          <div class="list_general">
+            <ul>
+              <li th:each="item : ${list.subscriptionList}">
+                <figure>
+                  <img th:src="${item.profileImageUrl}" alt="profile">
+                </figure>
+                <small th:text="'ID: ' + ${item.loginId}"></small>
+                <h4>
+                  <a th:href="@{/mypage/{userId}(userId=${item.userId})}"
+                     th:text="${item.name}">Name</a>
+                </h4>
+                <ul class="buttons">
+                  <li th:if="${userAccessInfo.requestUserId != null and userAccessInfo.requestUserId != item.userId}">
+                    <a href="#0"
+                       class="btn_1 gray subscribe-btn"
+                       th:data-userId="${item.userId}"
+                       th:data-subscribed="${item.isSubscribed}"
+                       th:text="${item.isSubscribed} ? '구독 취소' : '구독'">
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="pagination_fg" th:if="${list.totalPage > 0}">
+        <a th:href="@{|?page=${list.page > 1 ? list.page - 1 : 1}|}"
+           th:classappend="${list.page == 1} ? ' disabled' : ''">
+          &laquo;
+        </a>
+        <a th:each="i : ${#numbers.sequence(list.beginPage, list.endPage)}"
+           th:href="@{|?page=${i}|}"
+           th:text="${i}"
+           th:classappend="${list.page == i} ? ' active' : ''"></a>
+        <a th:href="@{|?page=${list.page < list.totalPage ? list.page + 1 : list.totalPage}|}"
+           th:classappend="${list.page == list.totalPage} ? ' disabled' : ''">
+          &raquo;
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/common_scripts.min.js"></script>
+  <script src="/js/common_func.js"></script>
+  <script src="/assets/validate.js"></script>
+  <script src="/js/subscription.js"></script>
+
+</body>
+</html>

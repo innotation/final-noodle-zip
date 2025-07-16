@@ -42,8 +42,12 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE-005", "지원하지 않는 파일 형식입니다."),
     _FILE_SIZE_LIMIT_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "FILE-006", "파일 크기가 허용된 한도를 초과했습니다."),
     _INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "FILE-007", "파일 이름이 유효하지 않습니다."),
-     _STORAGE_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "FILE-008", "파일 저장 서비스에 문제가 발생했습니다.");
-;
+     _STORAGE_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "FILE-008", "파일 저장 서비스에 문제가 발생했습니다."),
+    _FILE_REQUIRED(HttpStatus.BAD_REQUEST, "FILE-009", "대표 이미지는 필수입니다."),
+
+    // Duplicated menuName
+    _DUPLICATE_MENU_NAME(HttpStatus.BAD_REQUEST, "MENU_001", "동일한 메뉴명이 이미 존재합니다.");
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

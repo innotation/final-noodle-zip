@@ -8,6 +8,8 @@ import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.dto.MenuReviewDto;
 import noodlezip.community.dto.ReviewReqDto;
+import noodlezip.community.dto.CategoryCountDto;
+import noodlezip.community.dto.PopularTagDto;
 import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.entity.CommunityActiveStatus;
@@ -16,6 +18,7 @@ import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.community.repository.LikeRepository;
+
 import noodlezip.ramen.entity.*;
 import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ReviewToppingRepository;
@@ -27,7 +30,6 @@ import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreExtraToppingRepository;
 import noodlezip.store.service.StoreService;
 import noodlezip.user.entity.User;
-import noodlezip.user.repository.UserRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
@@ -76,10 +78,94 @@ public class BoardServiceImpl implements BoardService {
         return map;
     }
 
+
+    @Override
+    public List<Board> findMostLikedBoardList() {
+        List<Board> boardList = boardRepository.findTop3ByPostStatusOrderByLikesCountDesc(CommunityActiveStatus.POSTED);
+
+        return boardList;
+    }
+
+    @Override
+    public List<Board> findMostViewedBoardList() {
+        List<Board> boardList = boardRepository.findTop3ByPostStatusOrderByLikesCountDesc(CommunityActiveStatus.POSTED);
+
+        return boardList;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> findBoardListByCategory(String category, Pageable pageable) {
-        Page<BoardRespDto> boardPage = boardRepository.findBoardWithPaginationAndCommunityType(category, pageable);
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByCommunityTypeWithPagination(category, pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+
+        map.put("list", boardPage.getContent());
+        map.put("category", category);
+
+        return map;
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> findBoardLikedByCategory(Long userId,
+                                                        List<Long> boardIdList,
+                                                        String category,
+                                                        Pageable pageable
+    ) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardsByIdsAndStatusPostedWithPaging(
+                boardIdList, category, pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+        map.put("list", boardPage.getContent());
+
+        return map;
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> findBoardByUser(Long userId,  Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByWriterAndCommunityTypeWithPagination(
+                userId, null, pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+        map.put("list", boardPage.getContent());
+
+        return map;
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> findBoardByUserByCategory(Long userId, String category, Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByWriterAndCommunityTypeWithPagination(
+                userId, category, pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+        map.put("list", boardPage.getContent());
+
+        return map;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> searchBoardsByCommunityTypeAndKeyword(String category, String keyword, Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByCommunityTypeAndKeywordWithPagination(category, keyword,pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
+
+        map.put("list", boardPage.getContent());
+        map.put("category", category);
+
+        return map;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> searchBoards(String keyword, Pageable pageable) {
+        Page<BoardRespDto> boardPage = boardRepository.findBoardByKeywordWithPagination(keyword,pageable);
 
         Map<String, Object> map = pageUtil.getPageInfo(boardPage, 5);
 
@@ -169,6 +255,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Integer getLikeCount(Long boardId) {
         return boardRepository.findById(boardId)
                 .map(Board::getLikesCount)
@@ -176,9 +263,17 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<Board> getBoardsByIds(List<Long> recentBoardIds) {
-        return boardRepository.findAllById(recentBoardIds);
+    @Transactional(readOnly = true)
+    public List<Board> getBoardsByIds(List<Long> BoardIds) {
+        return boardRepository.findAllById(BoardIds);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BoardRespDto> getPopularBoards(String category) {
+        return boardRepository.findPopularBoards(category);
+    }
+
 
     @Override
     public List<Map<String, String>> uploadImages(List<MultipartFile> uploadFiles) {
@@ -198,6 +293,49 @@ public class BoardServiceImpl implements BoardService {
         }
         return imageInfos;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryCountDto> getCategoryCounts() {
+        return boardRepository.findCategoryCounts();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryCountDto> getCategoryCountsByUser(Long userId) {
+        return boardRepository.findCategoryCountsByUser(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryCountDto> getCategoryCountsByBoardIds(List<Long> boardIdList) {
+        return boardRepository.findCategoryCountsByBoardIds(boardIdList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PopularTagDto> getPopularTags() {
+        return boardRepository.findPopularTags();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable) {
+        // Board 엔티티를 기반으로 태그별 리뷰 게시글 조회
+        Page<BoardRespDto> boardPage = boardRepository.findReviewBoardsByTag(tag, type, pageable);
+
+        Map<String, Object> map = pageUtil.getPageInfo(boardPage, pageable.getPageSize());
+        map.put("list", boardPage.getContent());
+        map.put("category", "review");
+
+        return map;
+    }
+
+    @Override
+    public List<Long> getBoardIdByUserLiked(Long userId) {
+        return likeRepository.findCommunityIdsByUserId(userId);
+    }
+
 
     @Override
     @Transactional

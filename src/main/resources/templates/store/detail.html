@@ -2,15 +2,25 @@
 <html lang="en"
 			xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{store/head :: head}"></head>
+<head>
 
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
 
+  <!-- SPECIFIC CSS -->
+  <link href="/css/detail-page.css" rel="stylesheet">
+  <link href="/css/blog.css" rel="stylesheet">
 
-<body>
-	<!-- header -->
-	<th:block th:replace="~{store/header :: header}"></th:block>
+  <!-- YOUR CUSTOM CSS -->
+  <link href="/css/detail-custom.css" rel="stylesheet">
 
-	<main>
+</head>
+
+<body class="margin_sticky">
+
+  <!-- header -->
+  <th:block th:replace="~{fragments/subHeader::subHeader}"></th:block>
+
+  <main>
 		
 		<div class="container margin_detail">
 		    <div class="row">
@@ -86,8 +96,8 @@
 		        </div>
 		        <!-- /col -->
 
-		                <div class="col-lg-4" id="sidebar_fixed">
-            <div class="box_booking">
+          <div class="col-lg-4" id="sidebar_fixed">
+          <div class="box_booking">
                 <div class="head">
                     <h3>매장 위치</h3>
                 </div>
@@ -103,7 +113,7 @@
                        target="_blank" class="btn_1 full-width mb_5">
                         <i class="icon_location"></i> 네이버 지도에서 보기
                     </a>
-                    <a href="#" class="btn_1 full-width outline wishlist"><i class="icon_heart"></i> 위시리스트에 추가</a>
+                    <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
                 </div>
             </div>
             <!-- /box_booking -->
@@ -140,6 +150,8 @@
 					.then(html => {
 						paneC.innerHTML = html;
 						initMenuFilter();
+						// 추가 토핑 목록 로드
+						loadExtraToppings();
 						// DOM 렌더링 완료 후 갤러리 초기화
 						setTimeout(() => {
 							initMenuGallery(); // 메뉴 갤러리 초기화 추가
@@ -150,6 +162,45 @@
 						console.error(err);
 					});
 			});
+
+			// 추가 토핑 목록 로드 함수
+			function loadExtraToppings() {
+				fetch(`/store/detail/${storeId}/toppings`)
+					.then(response => {
+						if (!response.ok) throw new Error("Toppings load failed");
+						return response.json();
+					})
+					.then(toppings => {
+						const extraToppingsSection = document.getElementById('extra-toppings-section');
+						const extraToppingsList = document.getElementById('extra-toppings-list');
+						
+						if (toppings && toppings.length > 0) {
+							extraToppingsList.innerHTML = '';
+							toppings.forEach(topping => {
+								const toppingCard = document.createElement('div');
+								toppingCard.className = 'col-md-4 mb-3';
+								toppingCard.innerHTML = `
+									<div class="card h-100" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+										<div class="card-body text-center">
+											<h6 class="card-title mb-2">${topping.name}</h6>
+											<p class="card-text text-muted mb-0">
+												${topping.price ? topping.price.toLocaleString() + '원' : '가격 정보 없음'}
+											</p>
+										</div>
+									</div>
+								`;
+								extraToppingsList.appendChild(toppingCard);
+							});
+							extraToppingsSection.style.display = 'block';
+						} else {
+							extraToppingsSection.style.display = 'none';
+						}
+					})
+					.catch(err => {
+						console.error('추가 토핑 로드 실패:', err);
+						document.getElementById('extra-toppings-section').style.display = 'none';
+					});
+			}
 
 			function initMenuFilter() {
 					const tagEls = paneC.querySelectorAll(".filter-tag");
@@ -265,7 +316,8 @@
 									}
 								},
 								closeOnContentClick: true,
-								midClick: true
+								midClick: true,
+								showCloseBtn: false
 							});
 						};
 						
@@ -453,6 +505,9 @@
 						document.querySelector('.soup-oiliness-progress').style.width = (summary.soupOiliness * 10) + '%';
 						document.querySelector('.soup-oiliness-value').textContent = summary.soupOiliness.toFixed(1);
 
+						document.querySelector('.soup-density-progress').style.width = (summary.soupDensity * 10) + '%';
+						document.querySelector('.soup-density-value').textContent = summary.soupDensity.toFixed(1);
+
 					})
 					.catch(err => console.error("리뷰 요약 업데이트 실패", err));
 			}
@@ -491,7 +546,8 @@
 								}
 							},
 							closeOnContentClick: true,
-							midClick: true
+							midClick: true,
+							showCloseBtn: false
 						});
 					};
 					
@@ -502,9 +558,6 @@
 			}
 		});
 	</script>
-<!--	<script th:src="@{/js/store_review_tab.js}"></script>-->
-	<!-- review 탭 설정 script -->
-
 
 	<!-- footer -->
 	<th:block th:replace="~{fragments/footer :: footer}"></th:block>
@@ -512,9 +565,6 @@
 	<div id="toTop"></div><!-- Back to top button -->
 	
 	<div class="layer"></div><!-- Opacity Mask Menu Mobile -->
-	
-	<!-- Sign In Modal -->
-	<th:block th:replace="~{store/signin-modal :: signin-modal}"></th:block>
 
     <!-- 위시리스트 모달 -->
     <div class="modal fade" id="wishlistModal" tabindex="-1" aria-labelledby="wishlistModalLabel" aria-hidden="true">
@@ -588,35 +638,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 로그인 안내 모달 삭제 -->
-    <!--
-    <div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="loginRequiredModalLabel">로그인 필요</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            이 기능은 로그인 후 이용하실 수 있습니다.<br>
-            <a href="/login" class="btn btn-primary mt-3 w-100">로그인 하러 가기</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    -->
-
-	    <!-- COMMON SCRIPTS -->
-    <script src="/js/common_scripts.min.js"></script>
-    <script src="/js/common_func.js"></script>
-    <script src="/assets/validate.js"></script>
-    
-    <!-- SPECIFIC SCRIPTS -->
-    <script src="/js/sticky_sidebar.min.js"></script>
-    <script src="/js/specific_detail.js"></script>
-	<script src="/js/datepicker.min.js"></script>
-	<script src="/js/datepicker_func_1.js"></script>
 
     <!-- Naver Map API -->
     <script type="text/javascript"
@@ -766,17 +787,12 @@
       if (wishlistBtn) {
         wishlistBtn.addEventListener('click', function(e) {
           e.preventDefault();
+
+          // 로그인 상태 체크 - 로그인이 안 되어 있으면 이벤트 중단
           if (!isLoggedIn) {
-            $.magnificPopup.open({
-              items: {
-                src: '#sign-in-dialog',
-                type: 'inline'
-              },
-              removalDelay: 500,
-              mainClass: 'my-mfp-zoom-in'
-            });
-            return;
+            return; // common_func.js의 login-required 로직이 처리하도록 함
           }
+          
           const storeId = document.getElementById("store-id").value;
 
           fetch(`/stores/${storeId}/saved-store/memo`)
@@ -947,6 +963,18 @@
       }
     });
     </script>
+
+
+  <!-- COMMON SCRIPTS -->
+  <script src="/js/common_scripts.min.js"></script>
+  <script src="/js/common_func.js"></script>
+  <script src="/assets/validate.js"></script>
+
+  <!-- SPECIFIC SCRIPTS -->
+  <script src="/js/sticky_sidebar.min.js"></script>
+  <script src="/js/specific_detail.js"></script>
+  <script src="/js/datepicker.min.js"></script>
+  <script src="/js/datepicker_func_1.js"></script>
 
 </body>
 </html>
