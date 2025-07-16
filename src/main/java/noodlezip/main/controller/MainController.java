@@ -11,10 +11,10 @@ public class MainController {
 
     private final BoardService boardService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String index() {
         boardService.findMostLikedBoardList();
         boardService.findMostViewedBoardList();
-        return "/index";
+        return "index";
     }
 }

@@ -38,8 +38,6 @@ public class QRamenReview extends EntityPathBase<RamenReview> {
 
     public final NumberPath<Integer> noodleThickness = createNumber("noodleThickness", Integer.class);
 
-    public final StringPath ocrKeyHash = createString("ocrKeyHash");
-
     public final StringPath reviewImageUrl = createString("reviewImageUrl");
 
     public final NumberPath<Integer> soupDensity = createNumber("soupDensity", Integer.class);

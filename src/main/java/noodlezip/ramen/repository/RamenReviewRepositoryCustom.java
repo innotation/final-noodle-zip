@@ -28,4 +28,8 @@ public interface RamenReviewRepositoryCustom {
     Page<StoreReviewDto> findReviewsByTag(String tag, String type, Pageable pageable);
 
     Page<StoreReviewDto> findReviewsByUserId(Long userId, Pageable pageable);
+
+    List<Long> findIdsByBoardId(Long boardId);
+
+    void deleteByBoardId(Long boardId);
 }
