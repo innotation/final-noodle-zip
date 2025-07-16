@@ -15,6 +15,6 @@ public class MainController {
     public String index() {
         boardService.findMostLikedBoardList();
         boardService.findMostViewedBoardList();
-        return "/index";
+        return "index";
     }
 }
