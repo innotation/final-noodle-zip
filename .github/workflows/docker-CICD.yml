@@ -67,7 +67,7 @@ jobs:
             -e S3_SECRETKEY=${{ secrets.S3_SECRETKEY }} \
             -e NAVER_MAPS_KEY=${{ secrets.NAVER_MAPS_KEY }} \
             -e KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }} \
-            -e NAVER_OCR_URL=${{ secrets.NAVER_OCR_URL }} \
+            -e NAVER_OCR_URL=${{ secrets.NAVER_OCR_URL }} 
             -e NAVER_OCR_SECRETKEY=${{ secrets.NAVER_OCR_SECRETKEY }} \
             --name ${{ vars.APP_NAME }} \
             ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
