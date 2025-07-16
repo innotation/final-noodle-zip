@@ -10,10 +10,9 @@ import java.util.List;
 @Setter
 @ToString
 @Builder
-public class visitCheckingDto {
+public class OcrDataDto {
     private String storeName;
     private String date;
     private List<String> menuNames;
-
-
+    private String bizNum;
 }

@@ -3,6 +3,7 @@ package noodlezip.community.service;
 
 import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.ReviewReqDto;
 import noodlezip.community.dto.CategoryCountDto;
 import noodlezip.community.dto.PopularTagDto;
 import noodlezip.community.entity.Board;
@@ -40,4 +41,8 @@ public interface BoardService {
     List<PopularTagDto> getPopularTags();
     Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable);
     List<Long> getBoardIdByUserLiked(Long userId);
+
+    List<Long> saveReviewJson(ReviewReqDto dto, User user);
+
+    void saveReviewImage(Long reviewId, MultipartFile file);
 }

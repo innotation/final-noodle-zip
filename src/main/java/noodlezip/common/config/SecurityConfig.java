@@ -24,7 +24,7 @@ public class SecurityConfig {
         "/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
         "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**",
         "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
-        "/store/**", "/admin_section/**", "/admin/**", "/receipt", "/location/**", "/ramen/**",
+        "/store/**", "/admin_section/**", "/admin/**", "/receipt/**", "/location/**", "/ramen/**",
         "/board/**", "/comments/**", "/users/**", "/mypage/**"
     );
 
