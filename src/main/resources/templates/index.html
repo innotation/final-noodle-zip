@@ -20,12 +20,11 @@
                             <img th:src="@{/img/noodlezipLogo-stickhead-white.svg}" alt="" class="main-logo"/>
                             누들집, 라멘검색 커뮤니티 사이트
                         </h1>
-<!--                        <p>라멘 전문 커뮤니티</p>-->
 
-                        <!-- 검색바 전체를 감싸는 박스 -->
+                        <!-- 검색바 -->
                         <div class="main-search-box">
                           <div class="search-flex main-search-responsive">
-                            <!-- 1줄: 라멘 상세 검색 (col-lg-4 비율) -->
+                            <!-- 1줄: 라멘 상세 검색 -->
                             <div class="search-row search-row-1">
                               <div class="search-input-group" data-bs-toggle="modal" data-bs-target="#searchModal">
                                 <input type="text" id="filterDisplay" class="form-control" placeholder="라멘 상세 검색" readonly style="cursor: pointer">
@@ -51,32 +50,7 @@
                             </div>
                           </div>
                         </div>
-
-
-<!--
-                                <form method="post" action="grid-listing-filterscol.html">
-                                    <div class="row g-0 custom-search-input">
-                                        <div class="col-lg-4">
-                                            <div class="form-group">
-                                                <input class="form-control" type="text"
-                                                       placeholder="What are you looking for...">
-                                                <i class="icon_search"></i>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <input class="form-control no_border_r" type="text"
-                                                       placeholder="Address, neighborhood...">
-                                                <i class="icon_pin_alt"></i>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            <input type="submit" value="Search">
-                                        </div>
-                                    </div>
-                                    &lt;!&ndash; /row &ndash;&gt;
-                                </form>
--->
+                        <!-- /검색바 -->
                     </div>
                 </div>
                 <!-- /row -->
@@ -88,98 +62,72 @@
         <div class="container margin_60_40">
             <div class="main_title center">
                 <span><em></em></span>
-                <h2>Popular Categories</h2>
-                <p>Cum doctus civibus efficiantur in imperdiet deterruisset</p>
+                <h2>라멘 카테고리</h2>
+                <p>종류 별로 라멘을 선택해 보세요.</p>
             </div>
             <!-- /main_title -->
             <div class="owl-carousel owl-theme categories_carousel">
                 <div class="item_version_2">
-                    <a href="grid-listing-filterscol.html">
+                    <a th:href="@{/search/list(ramenSoup=Tonkotsu)}">
                         <figure>
-                            <span>98</span>
-                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_pizza.jpg" alt=""
+<!--                            <span>98</span>-->
+                            <img src="/img/tonkotsu.jpg" data-src="/img/tonkotsu.jpg" alt=""
                                  class="owl-lazy">
                             <div class="info">
-                                <h3>Pizza</h3>
-                                <small>Avg price $40</small>
+                                <h3>돈코츠</h3>
+                                <small>돼지 고기 베이스 육수</small>
                             </div>
                         </figure>
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a href="grid-listing-filterscol.html">
+                    <a th:href="@{/search/list(ramenCategory=Shoyu)}">
                         <figure>
-                            <span>87</span>
-                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_sushi.jpg" alt=""
+<!--                            <span>87</span>-->
+                            <img src="/img/shoyu.jpg" data-src="/img/shoyu.jpg" alt=""
                                  class="owl-lazy">
                             <div class="info">
-                                <h3>Japanese</h3>
-                                <small>Avg price $50</small>
+                                <h3>쇼유</h3>
+                                <small>간장 베이스 육수</small>
                             </div>
                         </figure>
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a href="grid-listing-filterscol.html">
+                    <a th:href="@{/search/list(ramenCategory=Miso)}">
                         <figure>
-                            <span>55</span>
-                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_hamburgher.jpg" alt=""
+<!--                            <span>55</span>-->
+                            <img src="/img/miso.jpg" data-src="img/miso.jpg" alt=""
                                  class="owl-lazy">
                             <div class="info">
-                                <h3>Burghers</h3>
-                                <small>Avg price $55</small>
+                                <h3>미소</h3>
+                                <small>된장 베이스 육수</small>
                             </div>
                         </figure>
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a href="grid-listing-filterscol.html">
+                    <a th:href="@{/search/list}">
                         <figure>
-                            <span>55</span>
-                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_vegetarian.jpg" alt=""
+<!--                            <span>55</span>-->
+                            <img src="/img/tsukemen.jpg" data-src="img/tsukemen.jpg" alt=""
                                  class="owl-lazy">
                             <div class="info">
-                                <h3>Vegetarian</h3>
-                                <small>Avg price $40</small>
+                                <h3>츠케멘</h3>
+                                <small>국물에 찍어먹는 라멘</small>
                             </div>
                         </figure>
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a href="grid-listing-filterscol.html">
+                    <a th:href="@{/search/list}">
                         <figure>
-                            <span>65</span>
-                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_bakery.jpg" alt=""
+<!--                            <span>65</span>-->
+                            <img src="/img/mazaesoba.jpg" data-src="img/mazaesoba.jpg" alt=""
                                  class="owl-lazy">
                             <div class="info">
-                                <h3>Bakery</h3>
-                                <small>Avg price $60</small>
-                            </div>
-                        </figure>
-                    </a>
-                </div>
-                <div class="item_version_2">
-                    <a href="grid-listing-filterscol.html">
-                        <figure>
-                            <span>25</span>
-                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_chinesse.jpg" alt=""
-                                 class="owl-lazy">
-                            <div class="info">
-                                <h3>Chinese</h3>
-                                <small>Avg price $40</small>
-                            </div>
-                        </figure>
-                    </a>
-                </div>
-                <div class="item_version_2">
-                    <a href="grid-listing-filterscol.html">
-                        <figure>
-                            <span>35</span>
-                            <img src="img/home_cat_placeholder.jpg" data-src="img/home_cat_mexican.jpg" alt=""
-                                 class="owl-lazy">
-                            <div class="info">
-                                <h3>Mexican</h3>
-                                <small>Avg price $35</small>
+                                <h3>마제소바/아부라소바</h3>
+                                <small>비빔 라멘</small>
                             </div>
                         </figure>
                     </a>
@@ -224,7 +172,7 @@
         </div>
         <!-- /carousel -->
 
-        <div class="banner lazy" data-bg="url(img/banner_bg_desktop.jpg)">
+        <div class="banner lazy" data-bg="url(img/main-ramen-2.jpg)">
             <div class="wrapper d-flex align-items-center opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.2)">
                 <div>
                     <small>Noodle-Zip</small>
