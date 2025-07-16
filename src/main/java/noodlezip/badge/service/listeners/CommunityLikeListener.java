@@ -17,6 +17,7 @@ public class CommunityLikeListener {
 
     private final LevelDirectUpdateProcessor directUpdateProcessor;
 
+
     @Async
     @TransactionalEventListener
     public void processCommunityLikeCount(BasicBadgeEvent event) {
@@ -25,6 +26,7 @@ public class CommunityLikeListener {
             try {
                 directUpdateProcessor.process(
                         event.getUserId(), LevelBadgeCategoryType.COMMUNITY_GET_LIKE_COUNT_BADGE);
+
             } catch (Exception e) {
                 log.error("[BadgeFail] userId={} event={} badgeType={} reason={}",
                         event.getUserId(),
@@ -35,24 +37,5 @@ public class CommunityLikeListener {
             }
         }
     }
-
-    /**
-     *     private void publishBadgeEvent(Optional<Like> existingLike, boolean isLiked, Board board) {
-     *         if(existingLike.isEmpty() && isLiked) {
-     *             if("community".equals(board.getCommunityType())) {
-     *                 eventPublisher.publishEvent(new BasicBadgeEvent(
-     *                         board.getUser().getId(),
-     *                         UserEventType.COMMUNITY_LIKE
-     *                 ));
-     *             }
-     *             if("review".equals(board.getCommunityType())) {
-     *                 eventPublisher.publishEvent(new BasicBadgeEvent(
-     *                         board.getUser().getId(),
-     *                         UserEventType.RAMEN_REVIEW_LIKE
-     *                 ));
-     *             }
-     *         }
-     *     }
-     */
 
 }

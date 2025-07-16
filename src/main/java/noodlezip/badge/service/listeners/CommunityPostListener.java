@@ -17,6 +17,7 @@ public class CommunityPostListener {
 
     private final LevelDirectUpdateProcessor directUpdateProcessor;
 
+
     @Async
     @TransactionalEventListener
     public void processAllCommunityCount(BasicBadgeEvent event) {
@@ -25,6 +26,7 @@ public class CommunityPostListener {
             try {
                 directUpdateProcessor.process(
                         event.getUserId(), LevelBadgeCategoryType.ALL_COMMUNITY_POST_COUNT_BADGE);
+
             } catch (Exception e) {
                 log.error("[BadgeFail] userId={} event={} badgeType={} reason={}",
                         event.getUserId(),
@@ -35,12 +37,5 @@ public class CommunityPostListener {
             }
         }
     }
-
-    /**
-     *       eventPublisher.publishEvent(new BasicBadgeEvent(
-     *                 user.getId(),
-     *                 UserEventType.COMMUNITY_POST
-     *         ));
-     */
 
 }

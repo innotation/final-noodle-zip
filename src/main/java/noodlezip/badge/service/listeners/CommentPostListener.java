@@ -17,6 +17,7 @@ public class CommentPostListener {
 
     private final LevelDirectUpdateProcessor directUpdateProcessor;
 
+
     @Async
     @TransactionalEventListener
     public void processAllCommentPostCount(BasicBadgeEvent event) {
@@ -25,6 +26,7 @@ public class CommentPostListener {
             try {
                 directUpdateProcessor.process(
                         event.getUserId(), LevelBadgeCategoryType.ALL_COMMENT_POST_COUNT_BADGE);
+
             } catch (Exception e) {
                 log.error("[BadgeFail] userId={} event={} badgeType={} reason={}",
                         event.getUserId(),
@@ -35,14 +37,5 @@ public class CommentPostListener {
             }
         }
     }
-
-    /**
-     *     private void publishBadgeEvent(CommentReqDto info) {
-     *         eventPublisher.publishEvent(new BasicBadgeEvent(
-     *                 info.getUserId(),
-     *                 UserEventType.COMMENT_POST
-     *         ));
-     *     }
-     */
 
 }

@@ -17,6 +17,7 @@ public class RamenReviewLikeListener {
 
     private final LevelDirectUpdateProcessor directUpdateProcessor;
 
+
     @Async
     @TransactionalEventListener
     public void processReviewGetLikeCount(BasicBadgeEvent event) {
@@ -25,6 +26,7 @@ public class RamenReviewLikeListener {
             try {
                 directUpdateProcessor.process(
                         event.getUserId(), LevelBadgeCategoryType.REVIEW_GET_LIKE_COUNT_BADGE);
+
             } catch (Exception e) {
                 log.error("[BadgeFail] userId={} event={} badgeType={} reason={}",
                         event.getUserId(),
