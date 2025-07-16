@@ -10,7 +10,7 @@ import java.util.List;
 public class RamenReviewBadgeEvent {
 
     private Long userId;
-    private List<Long> menuIdList;
     private Long storeId;
+    private List<Long> menuIdList;
 
 }
