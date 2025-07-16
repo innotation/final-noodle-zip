@@ -58,16 +58,16 @@ jobs:
             -e PROD_REDIS_DB_HOST=${{ secrets.PROD_REDIS_DB_HOST }} \
             -e PROD_REDIS_DB_PORT=${{ secrets.PROD_REDIS_DB_PORT }} \
             -e SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }} \
-            -e PROD_MAIL_HOST=${{secrets.PROD_MAIL_HOST}} \
-            -e PROD_MAIL_PORT=${{secrets.PROD_MAIL_PORT}} \
-            -e PROD_MAIL_USERNAME=${{secrets.PROD_MAIL_USERNAME}} \
-            -e PROD_MAIL_PASSWORD=${{secrets.PROD_MAIL_PASSWORD}} \
-            -e APP_BASE_URL=${{secrets.APP_BASE_URL}} \ 
-            -e S3_ACCESSKEY=${{secrets.S3_ACCESSKEY}} \
-            -e S3_SECRETKEY=${{secrets.S3_SECRETKEY}} \
-            -e NAVER_MAPS_KEY=${{secrets.NAVER_MAPS_KEY}} \
-            -e KAKAO_REST_API_KEY=${{secrets.KAKAO_REST_API_KEY}} \
-            -e NAVER_OCR_URL=${{secrets.NAVER_OCR_URL}} \
-            -e NAVER_OCR_SECRETKEY=${{secrets.NAVER_OCR_SECRETKEY}} \
+            -e PROD_MAIL_HOST=${{ secrets.PROD_MAIL_HOST }} \
+            -e PROD_MAIL_PORT=${{ secrets.PROD_MAIL_PORT }} \
+            -e PROD_MAIL_USERNAME=${{ secrets.PROD_MAIL_USERNAME }} \
+            -e PROD_MAIL_PASSWORD=${{ secrets.PROD_MAIL_PASSWORD }} \
+            -e APP_BASE_URL=${{ secrets.APP_BASE_URL }} \ 
+            -e S3_ACCESSKEY=${{ secrets.S3_ACCESSKEY }} \
+            -e S3_SECRETKEY=${{ secrets.S3_SECRETKEY }} \
+            -e NAVER_MAPS_KEY=${{ secrets.NAVER_MAPS_KEY }} \
+            -e KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }} \
+            -e NAVER_OCR_URL=${{ secrets.NAVER_OCR_URL }} \
+            -e NAVER_OCR_SECRETKEY=${{ secrets.NAVER_OCR_SECRETKEY }} \
             --name ${{ vars.APP_NAME }} \
             ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
