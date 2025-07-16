@@ -107,6 +107,7 @@
         <input type="hidden" name="bizNum" />
         <input type="hidden" name="ocrKeyHash" />
         <input type="hidden" name="visitDate" />
+        <input type="hidden" name="isReceiptReview" value="true" />
       </form>
 
       <div class="modal-footer">
@@ -235,6 +236,7 @@
     form.bizNum.value = ocr.bizNum;
     form.ocrKeyHash.value = ocr.ocrKeyHash;
     form.visitDate.value = ocr.visitDate;
+    form.isReceiptReview.value = true;
 
     form.submit();  // POST 방식 전송
   }
