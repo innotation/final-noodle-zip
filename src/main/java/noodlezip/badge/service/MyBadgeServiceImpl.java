@@ -84,6 +84,7 @@ public class MyBadgeServiceImpl implements MyBadgeService {
         throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
     }
 
+
     @Override
     @Transactional(readOnly = true)
     public List<MyBadgeBadgeResponse> getUserBadgeListByGroup(Long userId) {
@@ -165,6 +166,7 @@ public class MyBadgeServiceImpl implements MyBadgeService {
         }
         throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
     }
+
 
     @Override
     @Transactional(readOnly = true)

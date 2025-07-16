@@ -15,6 +15,7 @@ public class BadgeGroupQueryRepositoryImpl implements BadgeGroupQueryRepository 
 
     private final JPAQueryFactory queryFactory;
 
+
     @Override
     public List<BadgeGroupResponse> getBadgeGroups() {
         QBadgeGroup badgeGroup = QBadgeGroup.badgeGroup;

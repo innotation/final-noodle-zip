@@ -20,7 +20,7 @@ public class CommentPostListener {
 
     @Async
     @TransactionalEventListener
-    public void processAllCommentPostCount(BasicBadgeEvent event) {
+    public void processAllCommentPostCount(final BasicBadgeEvent event) {
         if (event.getEventType() == UserEventType.COMMENT_POST) {
 
             try {

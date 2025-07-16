@@ -20,7 +20,7 @@ public class CommunityLikeListener {
 
     @Async
     @TransactionalEventListener
-    public void processCommunityLikeCount(BasicBadgeEvent event) {
+    public void processCommunityLikeCount(final BasicBadgeEvent event) {
         if (event.getEventType() == UserEventType.COMMUNITY_LIKE) {
 
             try {

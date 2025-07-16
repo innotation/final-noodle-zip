@@ -14,6 +14,7 @@ public class BadgeCategoryServiceImpl implements BadgeCategoryService {
 
     private final BadgeCategoryRepository badgeCategoryRepository;
 
+
     @Override
     @Transactional(readOnly = true)
     public BadgeCategory getBadgeCategoryById(Long badgeCategoryId) {

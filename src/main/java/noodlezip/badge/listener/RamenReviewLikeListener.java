@@ -20,7 +20,7 @@ public class RamenReviewLikeListener {
 
     @Async
     @TransactionalEventListener
-    public void processReviewGetLikeCount(BasicBadgeEvent event) {
+    public void processReviewGetLikeCount(final BasicBadgeEvent event) {
         if (event.getEventType() == UserEventType.RAMEN_REVIEW_LIKE) {
 
             try {

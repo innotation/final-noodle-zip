@@ -33,7 +33,7 @@ public class RamenReviewPostListener {
 
     @Async
     @TransactionalEventListener
-    public void processAllCommunityCount(RamenReviewBadgeEvent event) {
+    public void processAllCommunityCount(final RamenReviewBadgeEvent event) {
         try {
             directUpdateProcessor.process(
                     event.getUserId(), LevelBadgeCategoryType.ALL_COMMUNITY_POST_COUNT_BADGE);
@@ -51,7 +51,7 @@ public class RamenReviewPostListener {
 
     @Async
     @TransactionalEventListener
-    public void processRamenCategory(RamenReviewBadgeEvent event) {
+    public void processRamenCategory(final RamenReviewBadgeEvent event) {
         Long userId = event.getUserId();
         List<Long> menuIdList = event.getMenuIdList();
 
@@ -79,7 +79,7 @@ public class RamenReviewPostListener {
 
     @Async
     @TransactionalEventListener
-    public void processRamenStoreRegion(RamenReviewBadgeEvent event) {
+    public void processRamenStoreRegion(final RamenReviewBadgeEvent event) {
         Long userId = event.getUserId();
         Long storeId = event.getStoreId();
 

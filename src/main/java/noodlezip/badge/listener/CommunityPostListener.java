@@ -20,7 +20,7 @@ public class CommunityPostListener {
 
     @Async
     @TransactionalEventListener
-    public void processAllCommunityCount(BasicBadgeEvent event) {
+    public void processAllCommunityCount(final BasicBadgeEvent event) {
         if (event.getEventType() == UserEventType.COMMUNITY_POST) {
 
             try {
