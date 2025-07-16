@@ -24,12 +24,8 @@ public class RamenReview {
     @Column(name = "ramen_review_id", nullable = false)
     private Long id;
 
-    @Column(name = "community_id", insertable = false, updatable = false)
+    @Column(name = "community_id")
     private Long communityId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id")
-    private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")

@@ -12,11 +12,13 @@ import java.util.List;
 @Builder
 public class ReviewReqDto {
 
+    private Long storeId;
     private String title;
     private String content;
     private String ocrKeyHash;
     private String visitDate;
-    private Long bizNum;
+    private Boolean isReceiptReview;
+    private String imageUrl;
     private List<MenuReviewDto> reviews;
 
 }
