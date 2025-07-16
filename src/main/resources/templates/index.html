@@ -323,7 +323,7 @@
                     strongElement.textContent = item.likesCount;
                     emElement.textContent = item.communityType;
                     h3Element.textContent = item.title;
-                    smallElement.textContent = item.content;
+                    smallElement.innerHTML = item.content;
                 });
             } catch (error) {
                 console.error(error);

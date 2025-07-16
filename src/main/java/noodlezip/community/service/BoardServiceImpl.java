@@ -271,7 +271,19 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public List<BoardRespDto> getPopularBoards(String category) {
-        return boardRepository.findPopularBoards(category);
+        List<BoardRespDto> boardRespDtos =  boardRepository.findPopularBoards(category);
+        boardRespDtos.forEach(boardRespDto -> {
+            String originalContentHtml = boardRespDto.getContent();
+
+            Safelist customSafelist = Safelist.relaxed();
+
+            customSafelist.removeTags("img");
+
+            String sanitizedContentHtml = Jsoup.clean(originalContentHtml, customSafelist);
+
+            boardRespDto.setContent(sanitizedContentHtml);
+        });
+        return boardRespDtos;
     }
 
 
