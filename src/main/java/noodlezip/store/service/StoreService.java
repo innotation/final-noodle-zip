@@ -338,6 +338,22 @@ public class StoreService {
         return result;
     }
 
+    public OcrToReviewDto findStoreWithMenusByBizNum(Long bizNum) {
+        List<StoreIdNameDto> storeInfo = storeRepository.findIdNameByBizNum(bizNum);
+        List<MenuDetailDto> menuList = menuRepository.findMenuDetailByStoreId(storeInfo.get(0).getId());
+        List<ToppingResponseDto> toppingList = getStoreToppings(storeInfo.get(0).getId());
+        return OcrToReviewDto.builder()
+                .storeId(storeInfo.get(0).getId())
+                .storeName(storeInfo.get(0).getName())
+                .menuList(menuList)
+                .toppingList(toppingList)
+                .build();
+    }
+
+    public Long findStoreIdByBizNum(Long bizNum) {
+        return storeRepository.getStoreByBizNum(bizNum);
+    }
+
     public Long getStoreLegalCodeById(Long storeId) {
         return storeRepository.findStoreLegalCodeById(storeId);
     }

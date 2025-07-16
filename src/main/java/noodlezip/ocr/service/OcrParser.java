@@ -2,7 +2,7 @@ package noodlezip.ocr.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import noodlezip.ocr.dto.visitCheckingDto;
+import noodlezip.ocr.dto.OcrDataDto;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -69,13 +69,14 @@ public class OcrParser {
     }
 
     // 사용자에게 방문확인 받기 위한 정보
-    public visitCheckingDto visitCheckingInfo(String json) {
+    public OcrDataDto visitCheckingInfo(String json) {
         try {
             JsonNode root = mapper.readTree(json);
             JsonNode result = root.at("/images/0/receipt/result");
 
             String storeName = tryGetText(result, "/storeInfo/name/text").orElse("").replaceAll("[^가-힣a-zA-Z0-9\\s]", "");
             String date = tryGetText(result, "/paymentInfo/date/text").orElse("");
+            String bizNum = tryGetText(result, "/storeInfo/bizNum/text").orElse("").replaceAll("-", "");
 
             List<String> menuNames = new ArrayList<>();
             JsonNode itemNodes = result.at("/subResults/0/items");
@@ -88,9 +89,10 @@ public class OcrParser {
                     }
                 }
             }
-            return new visitCheckingDto(storeName, date, menuNames);
+            return new OcrDataDto(storeName, date, menuNames, bizNum);
         } catch (Exception e) {
             throw new RuntimeException("OCR 전체 정보 추출 실패", e);
         }
     }
+
 }
