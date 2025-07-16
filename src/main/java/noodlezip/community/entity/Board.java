@@ -11,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -54,7 +55,7 @@ public class Board extends BaseTimeEntity {
     private Long reviewStoreId;
 
     @Column(name = "review_visit_date")
-    private Instant reviewVisitDate;
+    private LocalDateTime reviewVisitDate;
 
     @ColumnDefault("0")
     @Column(name = "likes_count", nullable = false)
