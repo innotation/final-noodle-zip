@@ -41,7 +41,7 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final NumberPath<Long> reviewStoreId = createNumber("reviewStoreId", Long.class);
 
-    public final DateTimePath<java.time.Instant> reviewVisitDate = createDateTime("reviewVisitDate", java.time.Instant.class);
+    public final DateTimePath<java.time.LocalDateTime> reviewVisitDate = createDateTime("reviewVisitDate", java.time.LocalDateTime.class);
 
     public final StringPath title = createString("title");
 
