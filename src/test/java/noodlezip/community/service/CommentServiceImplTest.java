@@ -1,5 +1,6 @@
 package noodlezip.community.service;
 
+import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.PageUtil;
@@ -45,6 +46,9 @@ class CommentServiceImplTest {
 
     @Mock
     private BoardRepository boardRepository;
+
+    @Mock
+    private BadgeEventPublisher badgeEventPublisher;
 
     private User testUser;
     private CommentReqDto testCommentReqDto;
