@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import noodlezip.community.entity.Board;
 import noodlezip.store.entity.Menu;
 
 @AllArgsConstructor
@@ -23,12 +24,11 @@ public class RamenReview {
     @Column(name = "ramen_review_id", nullable = false)
     private Long id;
 
-    @NotNull
-    @Column(name = "community_id", nullable = false)
+    @Column(name = "community_id")
     private Long communityId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", insertable = false, updatable = false)
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     // 1 ~ 10 범위로 정수 저장
@@ -95,7 +95,5 @@ public class RamenReview {
     @Column(name = "is_receipt_review")
     private Boolean isReceiptReview;
 
-    @Column(name = "ocr_key_hash")
-    private String ocrKeyHash;
 
 }

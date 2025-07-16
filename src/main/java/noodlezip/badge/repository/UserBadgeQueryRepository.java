@@ -19,6 +19,8 @@ public interface UserBadgeQueryRepository {
                                                      long badgeCategoryId,
                                                      int sidoRegionCode);
 
+    List<UserBadge> findUserBadgeForMyPageProfile(Long userId);
+
     List<UserNoOptionBadgeDto> findNoOptionBadgeList(Long userId, List<Long> notOptionBadge);
 
     List<UserOptionBadgeDto> findOptionBadgeList(Long userId, List<Long> optionBadge);

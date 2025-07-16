@@ -13,9 +13,13 @@ import noodlezip.ramen.repository.RamenSoupRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.store.dto.MenuDetailDto;
 import noodlezip.store.dto.ReviewSummaryDto;
+import noodlezip.store.dto.StoreReviewDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +52,7 @@ public class RamenService {
         return menus.stream()
                 .map(MenuDetailDto::getCategoryName)
                 .distinct()
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // 현재 매장의 메뉴가 포함한 육수 조회
@@ -56,7 +60,7 @@ public class RamenService {
         return menus.stream()
                 .map(MenuDetailDto::getSoupName)
                 .distinct()
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // 현재 매장의 메뉴가 포함한 토핑 조회
@@ -64,7 +68,7 @@ public class RamenService {
         return menus.stream()
                 .flatMap(menu -> menu.getToppingNames().stream())
                 .distinct()
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public ReviewSummaryDto getSummaryByStoreId(Long storeId) {
@@ -83,5 +87,24 @@ public class RamenService {
                 .collect(Collectors.toList());
     }
 
+    // 카테고리별 리뷰 개수 조회
+    public Map<String, Long> getReviewCountByCategory() {
+        return ramenReviewRepository.getReviewCountByCategory();
+    }
+
+    // 육수별 리뷰 개수 조회
+    public Map<String, Long> getReviewCountBySoup() {
+        return ramenReviewRepository.getReviewCountBySoup();
+    }
+
+    // 태그로 필터링된 리뷰 목록 조회
+    public Page<StoreReviewDto> findReviewsByTag(String tag, String type, Pageable pageable) {
+        return ramenReviewRepository.findReviewsByTag(tag, type, pageable);
+    }
+
+    // userId로 내가 쓴 리뷰만 조회
+    public Page<StoreReviewDto> findReviewsByUserId(Long userId, Pageable pageable) {
+        return ramenReviewRepository.findReviewsByUserId(userId, pageable);
+    }
 }
 

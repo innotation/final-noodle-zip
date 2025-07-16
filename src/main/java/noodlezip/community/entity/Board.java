@@ -67,4 +67,7 @@ public class Board extends BaseTimeEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "ocr_key_hash")
+    private String ocrKeyHash;
+
 }

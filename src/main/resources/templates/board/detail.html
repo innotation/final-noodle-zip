@@ -439,62 +439,6 @@
                     }
                 }
 
-                function initializeRecentBoardsWidget() {
-                    const listContainer = document.getElementById('recent-boards-list-container');
-                    const loadingMessage = document.getElementById('loading-message');
-                    const noBoardsMessage = document.getElementById('no-boards-message');
-                    if (!listContainer || !loadingMessage || !noBoardsMessage) {
-                        console.warn("Recent boards widget elements not found. Skipping initialization.");
-                        return; // 필수 DOM 요소가 없으면 함수 종료
-                    }
-
-                    // 이전에 추가된 게시글 목록 초기화
-                    listContainer.innerHTML = ''; // 기존 내용을 모두 지움
-                    listContainer.appendChild(loadingMessage); // 로딩 메시지 다시 삽입 (만약 HTML 구조상 제거되었다면)
-                    loadingMessage.style.display = 'block';
-                    noBoardsMessage.style.display = 'none';
-
-                    fetch('/board/recent')
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(boards => {
-                            loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
-                            if (boards.payload && boards.payload.length > 0) {
-                                // 게시글 목록이 있을 경우, 각 게시글에 대해 li 요소를 생성하여 추가
-                                boards.payload.forEach(board => {
-                                    const li = document.createElement('li');
-                                    li.innerHTML = `
-                        <div class="alignleft">
-                            <a href="/board/detail/${board.id}">
-                                <img src="${board.imageUrl ? board.imageUrl : '/img/blog-1.jpg'}" alt="게시글 이미지">
-                            </a>
-                        </div>
-                        <small>
-                            ${board.category ? board.category : 'General'} -
-                            ${board.createdAt ? new Date(board.createdAt).toLocaleDateString('ko-KR') : 'N/A'}
-                        </small>
-                        <h3><a href="/board/detail/${board.id}" title="${board.title}">${board.title}</a></h3>
-                    `;
-                                    listContainer.appendChild(li);
-                                });
-                            } else {
-                                noBoardsMessage.style.display = 'block';
-                                listContainer.appendChild(noBoardsMessage);
-                            }
-                        })
-                        .catch(error => {
-                            loadingMessage.style.display = 'none'; // 로딩 메시지 숨김
-                            noBoardsMessage.style.display = 'block'; // 메시지 표시
-                            noBoardsMessage.textContent = '최근 본 게시글을 불러오는 데 실패했습니다.';
-                            listContainer.appendChild(noBoardsMessage);
-                            console.error('Error fetching recent boards:', error);
-                        });
-                }
-
                 // 페이지 로드 시 댓글 가져오기
                 document.addEventListener('DOMContentLoaded', () => {
                     if (boardId) {
@@ -502,7 +446,6 @@
                     } else {
                         console.error("Board ID not found for fetching comments.");
                     }
-                    initializeRecentBoardsWidget();
                 });
 
                 const likeButton = document.getElementById('likeButton');
@@ -550,42 +493,11 @@
 
                 /*]]>*/
             </script>
-            <aside class="col-lg-3">
-                <div class="widget">
-                    <div class="widget-title first">
-                        <h4>최근 본 게시글</h4>
-                    </div>
-                    <ul class="comments-list" id="recent-boards-list-container">
-                        <li id="loading-message">로딩 중...</li> <li id="no-boards-message" style="display:none;">최근 본 게시글이 없습니다.</li> </ul>
-                </div>
-                <div class="widget">
-                    <div class="widget-title">
-                        <h4>Categories</h4>
-                    </div>
-                    <ul class="cats">
-                        <li><a href="#">Food <span>(12)</span></a></li>
-                        <li><a href="#">Places to visit <span>(21)</span></a></li>
-                        <li><a href="#">New Places <span>(44)</span></a></li>
-                        <li><a href="#">Suggestions and guides <span>(31)</span></a></li>
-                    </ul>
-                </div>
-                <!-- /widget -->
-                <div class="widget">
-                    <div class="widget-title">
-                        <h4>Popular Tags</h4>
-                    </div>
-                    <div class="tags">
-                        <a href="#">Food</a>
-                        <a href="#">Bars</a>
-                        <a href="#">Cooktails</a>
-                        <a href="#">Shops</a>
-                        <a href="#">Best Offers</a>
-                        <a href="#">Transports</a>
-                        <a href="#">Restaurants</a>
-                    </div>
-                </div>
-                <!-- /widget -->
-            </aside>
+            
+            <!-- 최근 본 게시글 위젯 JavaScript -->
+            <th:block th:replace="~{fragments/boardSidebar :: recentBoardsScript}"></th:block>
+            
+            <th:block th:replace="~{fragments/boardSidebar :: boardSidebar}"></th:block>
             <!-- /aside -->
         </div>
         <!-- /row -->

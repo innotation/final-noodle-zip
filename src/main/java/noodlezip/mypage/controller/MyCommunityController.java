@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.community.dto.CategoryCountDto;
 import noodlezip.community.service.BoardService;
 import noodlezip.mypage.constant.MyCommunityType;
 import noodlezip.mypage.dto.UserAccessInfo;
@@ -22,11 +23,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @Controller
-@Tag(name = "마이페이지", description = "미이페이지 연동 API")
 public class MyCommunityController extends MyBaseController {
 
     private final MyCommunityService myCommunityService;
@@ -35,24 +37,29 @@ public class MyCommunityController extends MyBaseController {
 
     @Operation(
             summary = "사용자가 작성한 게시글 목록 조회",
-            description = "사용자 마이페이지에서 해당 사용자가 작성한 게시글을 페이지 단위로 조회합니다."
+            description = "사용자 마이페이지에서 해당 사용자가 작성한 게시글을 카테고리별로 조회합니다."
     )
-    @Parameters({
-            @Parameter(name = "userId", description = "조회 대상 사용자 ID", required = true, example = "5"),
+    @Tag(name = "마이페이지", description = "미이페이지 연동 API")
+    @GetMapping({
+            "/{userId}/boards",
+            "/{userId}/boards/{communityType}",
     })
-    @GetMapping("/{userId}/boards")
     public String getMyPostBoards(
             @AuthenticationPrincipal MyUserDetails myUserDetails,
             @PathVariable Long userId,
+            @PathVariable(required = false) String communityType,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
-        UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
-        MyBoardListPageResponse boardList = myCommunityService.getMyPostBoardListPage(userId, pageable);
 
-        model.addAttribute("type", MyCommunityType.POST_BOARD.getValue());
+        UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
+        MyBoardListPageResponse boardList = myCommunityService.getMyPostBoardListPage(userId, communityType, pageable);
+        List<CategoryCountDto> communityTypeList = boardList.getCommunityTypeList();
+
+        model.addAttribute("path", MyCommunityType.POST_BOARD.getPath());
         model.addAttribute("boardList", boardList);
+        model.addAttribute("communityTypeList", communityTypeList);
         model.addAttribute("userAccessInfo", userAccessInfo);
 
         return "mypage/myBoard";
@@ -61,24 +68,29 @@ public class MyCommunityController extends MyBaseController {
 
     @Operation(
             summary = "사용자가 좋아요한 게시글 목록 조회",
-            description = "사용자 마이페이지에서 해당 사용자가 좋아요한 게시글을 페이지 단위로 조회합니다."
+            description = "사용자 마이페이지에서 해당 사용자가 좋아요한 카테고리별로 조회합니다."
     )
-    @Parameters({
-            @Parameter(name = "userId", description = "조회 대상 사용자 ID", required = true, example = "5"),
+    @Tag(name = "마이페이지", description = "미이페이지 연동 API")
+    @GetMapping({
+            "/{userId}/liked-boards",
+            "/{userId}/liked-boards/{communityType}"
     })
-    @GetMapping("/{userId}/liked-boards")
     public String getMyLikedBoards(
             @AuthenticationPrincipal MyUserDetails myUserDetails,
             @PathVariable Long userId,
+            @PathVariable(required = false) String communityType,
             @PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
-        UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
-        MyBoardListPageResponse boardList = myCommunityService.getMyLikedBoardListPage(userId, pageable);
 
-        model.addAttribute("type", MyCommunityType.LIKED_BOARD.getValue());
+        UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
+        MyBoardListPageResponse boardList = myCommunityService.getMyLikedBoardListPage(userId, communityType, pageable);
+        List<CategoryCountDto> communityTypeList = boardList.getCommunityTypeList();
+
+        model.addAttribute("path", MyCommunityType.LIKED_BOARD.getPath());
         model.addAttribute("boardList", boardList);
+        model.addAttribute("communityTypeList", communityTypeList);
         model.addAttribute("userAccessInfo", userAccessInfo);
 
         return "mypage/myBoard";
@@ -89,9 +101,6 @@ public class MyCommunityController extends MyBaseController {
             summary = "사용자가 작성한 댓글 목록 조회",
             description = "사용자 마이페이지에서 해당 사용자가 작성한 댓글을 페이지 단위로 조회합니다."
     )
-    @Parameters({
-            @Parameter(name = "userId", description = "조회 대상 사용자 ID", required = true, example = "5"),
-    })
     @GetMapping("{userId}/comments")
     public String getMyComments(
             @AuthenticationPrincipal MyUserDetails myUserDetails,

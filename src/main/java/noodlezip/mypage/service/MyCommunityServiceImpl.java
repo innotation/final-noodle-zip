@@ -3,6 +3,7 @@ package noodlezip.mypage.service;
 import lombok.RequiredArgsConstructor;
 import noodlezip.common.exception.CustomException;
 import noodlezip.community.dto.BoardRespDto;
+import noodlezip.community.dto.CategoryCountDto;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.service.CommentService;
 import noodlezip.mypage.dto.response.MyBoardListPageResponse;
@@ -29,13 +30,16 @@ public class MyCommunityServiceImpl implements MyCommunityService {
     @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
-    public MyBoardListPageResponse getMyPostBoardListPage(Long userId, Pageable pageable) {
+    public MyBoardListPageResponse getMyPostBoardListPage(Long userId, String communityType, Pageable pageable) {
         userService.findExistingUserByUserId(userId)
                 .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
 
-        Map<String, Object> boardPageInfo = boardService.findBoardByUser(userId, pageable);
+        List<CategoryCountDto> communityTypeList = boardService.getCategoryCountsByUser(userId);
+        Map<String, Object> boardPageInfo = boardService.findBoardByUserByCategory(userId, communityType, pageable);
+
         MyBoardListPageResponse boardList = MyBoardListPageResponse.of(boardPageInfo);
         boardList.setBoardList((List<BoardRespDto>) boardPageInfo.get("list"));
+        boardList.setCommunityTypeList(communityTypeList);
 
         return boardList;
     }
@@ -44,13 +48,17 @@ public class MyCommunityServiceImpl implements MyCommunityService {
     @SuppressWarnings("unchecked")
     @Override
     @Transactional(readOnly = true)
-    public MyBoardListPageResponse getMyLikedBoardListPage(Long userId, Pageable pageable) {
+    public MyBoardListPageResponse getMyLikedBoardListPage(Long userId, String communityType, Pageable pageable) {
         userService.findExistingUserByUserId(userId)
                 .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
 
-        Map<String, Object> boardPageInfo = boardService.findBoardLiked(userId, pageable);
+        List<Long> boardIdList = boardService.getBoardIdByUserLiked(userId);
+        List<CategoryCountDto> communityTypeList = boardService.getCategoryCountsByBoardIds(boardIdList);
+        Map<String, Object> boardPageInfo = boardService.findBoardLikedByCategory(userId, boardIdList, communityType, pageable);
+
         MyBoardListPageResponse boardList = MyBoardListPageResponse.of(boardPageInfo);
         boardList.setBoardList((List<BoardRespDto>) boardPageInfo.get("list"));
+        boardList.setCommunityTypeList(communityTypeList);
 
         return boardList;
     }
