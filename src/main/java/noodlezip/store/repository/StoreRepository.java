@@ -13,6 +13,4 @@ public interface StoreRepository extends JpaRepository<Store, Long>, StoreReposi
 
     Long getStoreByBizNum(@NotNull Long bizNum);
 
-    Long findStoreLegalCodeById(Long storeId);
-
 }

@@ -38,10 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import noodlezip.store.status.StoreErrorCode;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -355,7 +352,10 @@ public class StoreService {
     }
 
     public Long getStoreLegalCodeById(Long storeId) {
-        return storeRepository.findStoreLegalCodeById(storeId);
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        return store.getStoreLegalCode();
     }
 
 }
