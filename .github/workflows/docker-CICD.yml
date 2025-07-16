@@ -62,7 +62,7 @@ jobs:
             -e PROD_MAIL_PORT=${{ secrets.PROD_MAIL_PORT }} \
             -e PROD_MAIL_USERNAME=${{ secrets.PROD_MAIL_USERNAME }} \
             -e PROD_MAIL_PASSWORD=${{ secrets.PROD_MAIL_PASSWORD }} \
-            -e APP_BASE_URL=${{ secrets.APP_BASE_URL }} \ 
+            -e APP_BASE_URL=${{ secrets.APP_BASE_URL }} \
             -e S3_ACCESSKEY=${{ secrets.S3_ACCESSKEY }} \
             -e S3_SECRETKEY=${{ secrets.S3_SECRETKEY }} \
             -e NAVER_MAPS_KEY=${{ secrets.NAVER_MAPS_KEY }} \
