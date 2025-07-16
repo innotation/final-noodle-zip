@@ -16,10 +16,7 @@ import noodlezip.community.repository.BoardRepository;
 import noodlezip.common.util.FileUtil;
 import noodlezip.common.util.PageUtil;
 import noodlezip.community.repository.LikeRepository;
-import noodlezip.ramen.entity.RamenReview;
-import noodlezip.ramen.entity.RamenTopping;
-import noodlezip.ramen.entity.ReviewTopping;
-import noodlezip.ramen.entity.Topping;
+import noodlezip.ramen.entity.*;
 import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
@@ -41,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -201,72 +199,20 @@ public class BoardServiceImpl implements BoardService {
         return imageInfos;
     }
 
-//    @Override
-//    public void registReview(ReviewReqDto reviewReqDto, User user) {
-//
-//        Long storeId = storeService.findStoreIdByBizNum(reviewReqDto.getBizNum());
-//
-//        Board board = modelMapper.map(reviewReqDto, Board.class);
-//        board.setReviewStoreId(storeId);
-//        board.setCommunityType("community");
-//        board.setPostStatus(CommunityActiveStatus.POSTED);
-//        board.setUser(user);
-//        boardRepository.save(board);
-//        Board savedBoard = boardRepository.save(board);
-//        List<RamenReview> ramenReviews = new ArrayList<>();
-//
-//        // 2. 각 메뉴별 리뷰 처리
-//        for (MenuReviewDto menuReviewDto : reviewReqDto.getReviews()) {
-//
-//            String reviewImageUrl = "";
-//
-//            RamenReview review = new RamenReview();
-//
-//            Menu menu = menuRepository.findById(menuReviewDto.getMenuId())
-//                    .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
-//
-//
-//            review.setId(menuReviewDto.getReviewId());
-//            review.setCommunityId(savedBoard.getId());
-//            review.setMenu(menu);
-//
-//            review.setNoodleThickness(menuReviewDto.getNoodleThickness());
-//            review.setNoodleTexture(menuReviewDto.getNoodleTexture());
-//            review.setNoodleBoilLevel(menuReviewDto.getNoodleBoiledLevel());
-//            review.setSoupDensity(menuReviewDto.getSoupThickness());
-//            review.setSoupTemperature(menuReviewDto.getSoupTemperature());
-//            review.setSoupSaltiness(menuReviewDto.getSoupSaltiness());
-//            review.setSoupSpicinessLevel(menuReviewDto.getSoupSpiciness());
-//            review.setSoupOiliness(menuReviewDto.getSoupOiliness());
-//            review.setReviewImageUrl(reviewImageUrl);
-//
-//            review.setContent(menuReviewDto.getContent());
-//
-//            ramenReviewRepository.save(review);
-//
-//            if (menuReviewDto.getToppingIds() != null) {
-//                for (Long toppingId : menuReviewDto.getToppingIds()) {
-//                    StoreExtraTopping storeExtraTopping = storeExtraToppingRepository.getReferenceById(toppingId);
-//                    ReviewTopping reviewTopping = new ReviewTopping();
-//                    reviewTopping.setRamenReview(review);
-//                    reviewTopping.setStoreExtraTopping(storeExtraTopping);
-//                    reviewToppingRepository.save(reviewTopping);
-//                }
-//            }
-//
-//            ramenReviews.add(review);
-//        }
-//    }
-
     @Override
     @Transactional
     public List<Long> saveReviewJson(ReviewReqDto dto, User user) {
         Board board = new Board();
         board.setTitle(dto.getTitle());
         board.setContent(dto.getContent());
+        board.setOcrKeyHash(dto.getOcrKeyHash());
+        board.setReviewVisitDate(LocalDate.parse(dto.getVisitDate()));
         board.setUser(user);
-        board.setCommunityType("community");
+        board.setCommunityType("review");
         board.setPostStatus(CommunityActiveStatus.POSTED);
+        board.setImageUrl(dto.getImageUrl());
+        System.out.println("storeId" + dto.getStoreId());
+        board.setReviewStoreId(dto.getStoreId());
         boardRepository.save(board);
 
         List<Long> reviewIds = new ArrayList<>();
@@ -276,7 +222,7 @@ public class BoardServiceImpl implements BoardService {
                     .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
 
             RamenReview review = new RamenReview();
-            review.setBoard(board);
+            review.setCommunityId(board.getId());
             review.setMenu(menu);
             review.setNoodleThickness(r.getNoodleThickness());
             review.setNoodleTexture(r.getNoodleTexture());
@@ -286,7 +232,9 @@ public class BoardServiceImpl implements BoardService {
             review.setSoupSaltiness(r.getSoupSaltiness());
             review.setSoupSpicinessLevel(r.getSoupSpiciness());
             review.setSoupOiliness(r.getSoupOiliness());
+            review.setSoupFlavorKeywords(r.getSoupFlavorKeywords());
             review.setContent(r.getContent());
+            review.setIsReceiptReview(dto.getIsReceiptReview());
             ramenReviewRepository.save(review);
 
             // 토핑 처리
@@ -294,6 +242,7 @@ public class BoardServiceImpl implements BoardService {
                 for (Long toppingId : r.getToppingIds()) {
                     StoreExtraTopping storeExtraTopping = storeExtraToppingRepository.getReferenceById(toppingId);
                     ReviewTopping rTopping = new ReviewTopping();
+                    rTopping.setId((new ReviewToppingId(review.getId(),toppingId)));
                     rTopping.setRamenReview(review);
                     rTopping.setStoreExtraTopping(storeExtraTopping);
                     reviewToppingRepository.save(rTopping);
@@ -306,6 +255,7 @@ public class BoardServiceImpl implements BoardService {
         return reviewIds;
     }
 
+    @Transactional
     @Override
     public void saveReviewImage(Long reviewId, MultipartFile imageFile) {
         if (imageFile == null || imageFile.isEmpty()) return;
@@ -313,7 +263,7 @@ public class BoardServiceImpl implements BoardService {
         RamenReview review = ramenReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorStatus._BAD_REQUEST));
 
-        String imageUrl = fileUtil.fileupload("review", imageFile).get("fullPath"); // 저장 및 경로 반환
+        String imageUrl = fileUtil.fileupload("review", imageFile).get("fileUrl"); // 저장 및 경로 반환
         review.setReviewImageUrl(imageUrl);
         ramenReviewRepository.save(review);
     }
