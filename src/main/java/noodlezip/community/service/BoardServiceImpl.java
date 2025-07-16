@@ -226,19 +226,13 @@ public class BoardServiceImpl implements BoardService {
         }
         if ("review".equalsIgnoreCase(board.getCommunityType())) {
 
-            // 🥢 리뷰 ID들 조회
             List<Long> ramenReviewIds = ramenReviewRepository.findIdsByBoardId(boardId);
 
             if (!ramenReviewIds.isEmpty()) {
-                // 🧂 토핑 먼저 삭제
                 reviewToppingRepository.deleteByRamenReviewIdIn(ramenReviewIds);
             }
-
-            // 🍜 리뷰 삭제
             ramenReviewRepository.deleteByBoardId(boardId);
         }
-
-        // 🧹 게시글 삭제
         boardRepository.delete(board);
     }
 

@@ -45,7 +45,7 @@ public class ReviewToppingRepositoryImpl implements ReviewToppingRepositoryCusto
         QReviewTopping reviewTopping = QReviewTopping.reviewTopping;
 
         if (ramenReviewIds == null || ramenReviewIds.isEmpty()) {
-            return; // 아무 것도 삭제하지 않음
+            return;
         }
 
         queryFactory
