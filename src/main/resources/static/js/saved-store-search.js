@@ -35,7 +35,7 @@ function fetchAndRender(page, useLastSearchedCategories = false) {
       );
 
       window.scrollTo({
-        top: document.querySelector("#store-list").offsetTop,
+        top: 0,
         behavior: "smooth"
       });
     })
@@ -52,7 +52,7 @@ function renderStoreList(storeList) {
     div.innerHTML = `
                       <div class="strip">
                           <figure>
-                              <img src="img/lazy-placeholder.png" data-src="${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
+                              <img src="${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
                               <a href="/store/detail/${store.storeId}" class="strip_info" target="_blank" rel="noopener noreferrer">
                                   <small>${store.saveStoreCategoryName}</small>
                                   <div class="item_title">
