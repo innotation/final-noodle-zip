@@ -85,7 +85,7 @@ public class BoardController {
         model.addAttribute("toppings", ocrToReviewDto.getToppingList());
 
         model.addAttribute("reviewInitDto", reviewInitDto);
-        return "/board/leave-review";
+        return "board/leave-review";
     }
 
     @PostMapping("/registReview")
@@ -208,7 +208,7 @@ public class BoardController {
         model.addAttribute("isFirst", map.get("isFirst"));
         model.addAttribute("isLast", map.get("isLast"));
 
-        return "/board/list";
+        return "board/list";
     }
 
     @GetMapping("/popular/{category}")
@@ -251,7 +251,7 @@ public class BoardController {
         }
         CookieUtil.updateRecentViewedItemsCookie(id, RECENT_VIEWED_BOARDS, MAX_RECENT_BOARDS, request, response);
         model.addAttribute("board", board);
-        return "/board/detail";
+        return "board/detail";
     }
 
     @PostMapping("/delete/{boardId}")
