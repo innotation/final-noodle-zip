@@ -88,24 +88,24 @@ public class BoardController {
         return "/board/leave-review";
     }
 
-    @PostMapping("/registReviewJson")
-    public ResponseEntity<Map<String, Object>> registReview(@RequestBody ReviewReqDto dto,
-                                                            @AuthenticationPrincipal MyUserDetails userDetails) {
-        List<Long> reviewIds = boardService.saveReviewJson(dto, userDetails.getUser());
-        Map<String, Object> response = new HashMap<>();
-        response.put("reviewIds", reviewIds); // 각 슬라이드에 해당하는 리뷰 ID 목록 반환
-        return ResponseEntity.ok(response);
-    }
+    @PostMapping("/registReview")
+    @Operation(summary = "리뷰 등록", description = "OCR 기반 리뷰 등록")
+    public String registReview(@RequestBody ReviewReqDto dto,
+                                          @AuthenticationPrincipal MyUserDetails userDetails) {
+        if (userDetails == null || userDetails.getUser() == null) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
 
-    @PostMapping("/uploadReviewImages")
-    public ResponseEntity<Void> uploadReviewImages(@RequestParam Map<String, MultipartFile> files) {
-        files.forEach((key, file) -> {
-            if (key.startsWith("image_")) {
-                Long reviewId = Long.parseLong(key.substring("image_".length()));
-                boardService.saveReviewImage(reviewId, file); // 리뷰 ID 기준으로 이미지 저장
-            }
-        });
-        return ResponseEntity.ok().build();
+        try {
+            boardService.saveReviewJson(dto, userDetails.getUser());
+            return "redirect:/board/list";
+        } catch (CustomException e) {
+            log.error("리뷰 등록 중 비즈니스 오류: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("리뷰 등록 중 서버 오류: {}", e.getMessage(), e);
+            throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/registBoard")

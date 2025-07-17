@@ -42,7 +42,7 @@ public interface BoardService {
     Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable);
     List<Long> getBoardIdByUserLiked(Long userId);
 
-    List<Long> saveReviewJson(ReviewReqDto dto, User user);
+    void saveReviewJson(ReviewReqDto dto, User user);
 
     void saveReviewImage(Long reviewId, MultipartFile file);
 }

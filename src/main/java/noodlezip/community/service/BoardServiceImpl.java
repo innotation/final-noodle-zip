@@ -23,7 +23,6 @@ import noodlezip.ramen.entity.*;
 import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
-import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.StoreExtraTopping;
 import noodlezip.store.repository.MenuRepository;
@@ -347,7 +346,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public List<Long> saveReviewJson(ReviewReqDto dto, User user) {
+    public void saveReviewJson(ReviewReqDto dto, User user) {
         Board board = new Board();
         board.setTitle(dto.getTitle());
         board.setContent(dto.getContent());
@@ -381,6 +380,7 @@ public class BoardServiceImpl implements BoardService {
             review.setSoupFlavorKeywords(r.getSoupFlavorKeywords());
             review.setContent(r.getContent());
             review.setIsReceiptReview(dto.getIsReceiptReview());
+            review.setReviewImageUrl(r.getImageUrl());
             ramenReviewRepository.save(review);
 
             // 토핑 처리
@@ -398,7 +398,6 @@ public class BoardServiceImpl implements BoardService {
             reviewIds.add(review.getId());
         }
 
-        return reviewIds;
     }
 
     @Transactional
