@@ -91,6 +91,7 @@ public class StoreController {
             // 2페이지 이상부터는 리뷰 카드 목록만 더보기 fragment 로 반환
             model.addAttribute("reviewList", reviewPage.getContent());
             model.addAttribute("hasMore", reviewPage.hasNext());
+            model.addAttribute("nextPage", page + 1);
             return "store/fragments/tab-review :: moreReviews";  // 더보기 fragment
         }
     }
