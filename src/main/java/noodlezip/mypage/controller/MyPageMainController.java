@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.mypage.dto.response.MyPageResponse;
+import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.subscription.service.SubscribeService;
 import noodlezip.user.entity.User;
 import noodlezip.user.service.UserService;
@@ -92,16 +93,7 @@ public class MyPageMainController extends MyBaseController {
         int totalReviewCount = myReviews.size();
 
         // 방문 지역별 리뷰 수 집계
-        Map<String, Integer> visitedRegionCountMap = new HashMap<>();
-        for (noodlezip.store.dto.StoreReviewDto review : myReviews) {
-            Long legalCode = review.getStoreLegalCode();
-            if (legalCode != null) {
-                int regionCode = Integer.parseInt(legalCode.toString().substring(0, 2));
-                Region region = Region.getRegionBySidoCode(regionCode);
-                String regionName = (region != null) ? region.getName() : "기타";
-                visitedRegionCountMap.put(regionName, visitedRegionCountMap.getOrDefault(regionName, 0) + 1);
-            }
-        }
+        Map<String, Integer> visitedRegionCountMap = getStringIntegerMap(myReviews);
         // 방문횟수 내림차순 정렬
         Map<String, Integer> sortedRegionCountMap = visitedRegionCountMap.entrySet().stream()
             .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
@@ -156,12 +148,27 @@ public class MyPageMainController extends MyBaseController {
         model.addAttribute("isSubscribed", isSubscribed);
 
         // 내가 등록한 매장 목록 조회
-        Long loginUserId = myUserDetails.getUser().getId();
-
-        List<StoreDto> myStores = storeService.getStoresByUserId(loginUserId);
-        model.addAttribute("myStores", myStores);
-
+        if (!(myUserDetails == null)) {
+            Long loginUserId = myUserDetails.getUser().getId();
+            List<StoreDto> myStores = storeService.getStoresByUserId(loginUserId);
+            model.addAttribute("myStores", myStores);
+        }
+        
         return "mypage/main";
+    }
+
+    private static Map<String, Integer> getStringIntegerMap(List<StoreReviewDto> myReviews) {
+        Map<String, Integer> visitedRegionCountMap = new HashMap<>();
+        for (StoreReviewDto review : myReviews) {
+            Long legalCode = review.getStoreLegalCode();
+            if (legalCode != null) {
+                int regionCode = Integer.parseInt(legalCode.toString().substring(0, 2));
+                Region region = Region.getRegionBySidoCode(regionCode);
+                String regionName = (region != null) ? region.getName() : "기타";
+                visitedRegionCountMap.put(regionName, visitedRegionCountMap.getOrDefault(regionName, 0) + 1);
+            }
+        }
+        return visitedRegionCountMap;
     }
 
     /**
