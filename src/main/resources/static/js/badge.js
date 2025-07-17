@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.categories_carousel .item a').forEach(a => {
     a.addEventListener('click', evt => {
       evt.preventDefault();
+
       const userId = a.dataset.userId;
       const badgeId = a.dataset.badgeId;
       const badgeCategoryId = a.dataset.badgeCategoryId;
@@ -35,17 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
       modalLoading.style.display = 'flex';
       modalContent.style.display = 'none';
 
-      fetch('/users/badges/detail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: userId,
-          badgeId: badgeId,
-          badgeCategoryId: badgeCategoryId
-        })
-      })
+      const params = new URLSearchParams({
+        userId: userId,
+        badgeCategoryId: badgeCategoryId
+      });
+
+      fetch(`/users/badges/${badgeId}?${params.toString()}`)
         .then(response => response.json())
         .then(data => {
           modalLoading.style.display = 'none';
