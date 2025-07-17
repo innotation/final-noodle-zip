@@ -17,6 +17,9 @@ import noodlezip.community.service.BoardService;
 import noodlezip.user.status.UserErrorStatus;
 import noodlezip.common.exception.CustomException;
 import org.modelmapper.ModelMapper;
+import noodlezip.store.dto.StoreDto;
+import noodlezip.store.service.StoreService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +35,9 @@ import noodlezip.subscription.repository.UserSubscriptionRepository;
 import noodlezip.badge.constants.Region;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,6 +51,8 @@ public class MyPageMainController extends MyBaseController {
     private final noodlezip.ramen.service.RamenService ramenService;
     private final MyBadgeService myBadgeService;
     private final SubscribeService subscribeService;
+
+    private final StoreService storeService;
 
     @Operation(
             summary = "마이페이지 메인페이지 정보 조회",
@@ -146,6 +154,13 @@ public class MyPageMainController extends MyBaseController {
         // 구독 여부
         boolean isSubscribed = subscribeService.isSubscribed(userAccessInfo.getRequestUserId(),userAccessInfo.getTargetUserId());
         model.addAttribute("isSubscribed", isSubscribed);
+
+        // 내가 등록한 매장 목록 조회
+        Long loginUserId = myUserDetails.getUser().getId();
+
+        List<StoreDto> myStores = storeService.getStoresByUserId(loginUserId);
+        model.addAttribute("myStores", myStores);
+
         return "mypage/main";
     }
 
@@ -158,5 +173,19 @@ public class MyPageMainController extends MyBaseController {
      * 내가 좋아요한 게시글 조회 :    /users/{userId}/liked-boards
      * 내가 단 댓글 조회 :          /users/{userId}/comments
      */
+    @DeleteMapping("/store/delete/{storeId}")
+    @ResponseBody
+    public ResponseEntity<?> deleteStore(@PathVariable Long storeId,
+                                         @AuthenticationPrincipal MyUserDetails userDetails) {
+        Long loginUserId = userDetails.getUser().getId();
+
+        try {
+            storeService.markStoreAsClosed(storeId, loginUserId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("폐업 처리 실패", e);
+            return ResponseEntity.status(500).body("폐업 처리 중 오류 발생");
+        }
+    }
 
 }
