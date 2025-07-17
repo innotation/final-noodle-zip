@@ -173,7 +173,7 @@ public class UserController {
         if (email == null || email.trim().isEmpty() || code == null || code.trim().isEmpty()) {
             model.addAttribute("message", "이메일 또는 인증 코드가 누락되었습니다.");
             model.addAttribute("status", "error");
-            return "/user/verification-result";
+            return "user/verification-result";
         }
         log.info("email: {}", email);
         log.info("code: {}", code);
@@ -196,12 +196,12 @@ public class UserController {
             } else if (e.getErrorCode() == UserErrorStatus._EXPIRED_AUTH_CODE) {
                 model.addAttribute("showResendButton", true);
             }
-            return "/user/verification-result";
+            return "user/verification-result";
         } catch (Exception e) {
             log.error("이메일 인증 중 서버 오류 발생 - Email: {}", email, e);
             model.addAttribute("message", "서버 오류로 인해 이메일 인증에 실패했습니다. 잠시 후 다시 시도해주세요.");
             model.addAttribute("status", "error");
-            return "/user/verification-result";
+            return "user/verification-result";
         }
     }
 
@@ -253,7 +253,7 @@ public class UserController {
         UserDto userDto = modelMapper.map(loggedInUser, UserDto.class);
         model.addAttribute("userProfile", userDto);
 
-        return "/user/edit-profile";
+        return "user/edit-profile";
     }
 
     @PostMapping("user/profile/update")

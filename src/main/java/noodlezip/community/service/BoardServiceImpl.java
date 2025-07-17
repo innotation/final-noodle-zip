@@ -224,7 +224,15 @@ public class BoardServiceImpl implements BoardService {
         if(!board.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorStatus._FORBIDDEN);
         }
+        if ("review".equalsIgnoreCase(board.getCommunityType())) {
 
+            List<Long> ramenReviewIds = ramenReviewRepository.findIdsByBoardId(boardId);
+
+            if (!ramenReviewIds.isEmpty()) {
+                reviewToppingRepository.deleteByRamenReviewIdIn(ramenReviewIds);
+            }
+            ramenReviewRepository.deleteByBoardId(boardId);
+        }
         boardRepository.delete(board);
     }
 
