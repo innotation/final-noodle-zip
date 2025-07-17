@@ -75,7 +75,7 @@ public class MyPageMainController extends MyBaseController {
         @SuppressWarnings("unchecked")
         java.util.List<BoardRespDto> boards = (java.util.List<BoardRespDto>) boardService.findBoardByUser(userId, pageable).get("list");
         for (BoardRespDto board : boards) {
-            board.setPlainContent(org.jsoup.Jsoup.parse(board.getContent()).text());
+            board.setContent(org.jsoup.Jsoup.parse(board.getContent()).text());
         }
         // 내가 쓴 리뷰 리스트 조회
         java.util.List<noodlezip.store.dto.StoreReviewDto> myReviews = ramenService.findReviewsByUserId(userId, pageable).getContent();

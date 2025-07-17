@@ -208,6 +208,39 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public BoardRespDto findReViewBoardById(Long id, String userIdOrIp) {
+
+        String[] infoAndIdOrIp = userIdOrIp.split(":");
+
+        boolean isLike = false;
+
+        if (infoAndIdOrIp[0].equals("user")) {
+            isLike = likeRepository.existsById(BoardUserId.builder().userId(Long.parseLong(infoAndIdOrIp[1])).communityId(id).build());
+        }
+
+        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id).orElseThrow( () -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+        String sanitizedContentHtml = boardRespDto.getContent();
+
+        Document doc = Jsoup.parse(sanitizedContentHtml);
+
+        sanitizedContentHtml = Jsoup.clean(doc.body().html(), Safelist.relaxed());
+
+        boardRespDto.setContent(sanitizedContentHtml);
+
+        if (boardRespDto == null) {
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        } else {
+            boardRespDto.setIsLike(isLike);
+        }
+
+        viewCountService.increaseViewCount(TargetType.BOARD, id, userIdOrIp);
+
+        return boardRespDto;
+    }
+
+    @Override
     public void registBoard(BoardReqDto boardReqDto, User user) {
         Board board = modelMapper.map(boardReqDto, Board.class);
         board.setCommunityType("community");
