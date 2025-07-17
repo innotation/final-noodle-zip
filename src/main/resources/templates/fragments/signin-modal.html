@@ -5,21 +5,21 @@
   <!-- 로그인 모달 -->
   <div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
     <div class="modal_header">
-      <h3>Sign In</h3>
+      <h3>로그인</h3>
     </div>
 
     <form th:action="@{/login}" method="post">
       <div class="sign-in-wrapper">
-        <a href="#0" class="social_bt facebook">Login with Facebook</a>
-        <a href="#0" class="social_bt google">Login with Google</a>
+        <a href="#0" class="social_bt facebook">Facebook ID로 로그인</a>
+        <a href="#0" class="social_bt google">Google ID로 로그인</a>
         <div class="divider"><span>Or</span></div>
         <div class="form-group">
-          <label>Id</label>
+          <label>아이디</label>
           <input type="text" class="form-control" name="userId" id="userId">
           <i class="icon_mail_alt"></i>
         </div>
         <div class="form-group">
-          <label>Password</label>
+          <label>패스워드</label>
           <input type="password" class="form-control" name="userPwd" id="userPwd">
           <i class="icon_lock_alt"></i>
         </div>
@@ -27,16 +27,16 @@
                th:value="${#httpServletRequest != null ? #httpServletRequest.requestURI + (#httpServletRequest.queryString != null ? '?' + #httpServletRequest.queryString : '') : '/'}" />
         <div class="clearfix add_bottom_15">
           <div class="checkboxes float-start">
-            <label class="container_check">Remember me
+            <label class="container_check">회원정보 저장하기
               <input type="checkbox" name="remember-me">
               <span class="checkmark"></span>
             </label>
           </div>
-          <div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
+          <div class="float-end"><a id="forgot" href="javascript:void(0);">비밀번호 재설정</a></div>
         </div>
         <div class="text-center">
-          <input type="submit" value="Log In" class="btn_1 full-width mb_5">
-          Don't have an account? <a href="회원가입페이지">Sign up</a>
+          <input type="submit" value="로그인" class="btn_1 full-width mb_5">
+          혹시 처음 방문하시나요? <a th:href="@{/signup.html}">회원가입</a>
         </div>
         <div id="forgot_pw">
           <div class="form-group">
