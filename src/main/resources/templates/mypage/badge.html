@@ -36,7 +36,7 @@
                   th:text="${badge.accumulativeValue}">
             </span>
               <i><img th:src="@{${badge.badgeImageUrl}}" class="badge-image"></i>
-              <h3 th:text="${badge.badgeTitleName}"></h3>
+              <h3 th:text="${badge.badgeTitleName}" style="margin-bottom: 5px"></h3>
               <small th:if="${badge.badgeLevelName != null}"
                      th:text="${badge.badgeLevelName}">
               </small>
