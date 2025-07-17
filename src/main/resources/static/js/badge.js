@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
               const div = document.createElement('div');
               div.className = 'level-badge-item';
               div.innerHTML = `
-                                <img src="${level.imageUrl}" alt="Level Badge">
+                                <img src="${level.imageUrl}" alt="Level Badge" class="badge-detail-image">
                                 <h6>${level.levelTitle}</h6>
                                 <small>${level.obtainedDate ? formatDate(level.obtainedDate) : '-미달성-'}</small>
                               `;
