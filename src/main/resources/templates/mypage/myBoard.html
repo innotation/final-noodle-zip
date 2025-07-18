@@ -147,6 +147,7 @@
 </main>
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteBoard', '알림', '<p>정말 이 게시글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteLike', '알림', '<p>정말 이 게시글에 누른 좋아요를 취소하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('failDelete', '알림', '', '확인', null)}"></div>
 <!-- /main -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--/footer-->
@@ -173,7 +174,7 @@
                   }
               })
               .catch(err => {
-                  alert('삭제 실패: ' + err.message);
+                  showErrorModal('failDelete', err.message);
               });
         })
     }
@@ -188,7 +189,9 @@
               .then(data => {
                   location.reload();
               })
-              .catch(err => alert('좋아요 취소 오류: ' + err.message));
+              .catch(err =>  {
+                  showErrorModal('failDelete', err.message);
+              });
         })
     }
 </script>
