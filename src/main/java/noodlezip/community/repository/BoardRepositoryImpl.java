@@ -1,6 +1,7 @@
 package noodlezip.community.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.Expressions;
@@ -8,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.dto.CategoryCountDto;
+import noodlezip.community.dto.MenuReviewDto;
 import noodlezip.community.dto.PopularTagDto;
 import noodlezip.community.entity.CommunityActiveStatus;
 import noodlezip.community.entity.QBoard;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.querydsl.core.types.Projections.list;
 import static noodlezip.community.entity.QBoard.board;
 import static noodlezip.user.entity.QUser.user;
 
@@ -159,7 +162,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
         return new PageImpl<>(results, pageable, totalCount);
     }
-
 
 
     @Override
@@ -438,5 +440,5 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
         return new PageImpl<>(results, pageable, totalCount);
     }
-    
+
 }

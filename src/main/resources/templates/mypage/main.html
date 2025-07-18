@@ -26,17 +26,12 @@
           <div class="main_info">
             <div class="row">
               <div class="col-xl-4 col-lg-5 col-md-6">
-                <!--
-                <div class="head">
-                  <div class="score"><span>Superb<em>350 Reviews</em></span><strong>8.9</strong></div>
-                </div>
-                -->
                 <div style="display: flex; align-items: center; gap: 32px; height: 160px;">
                   <img th:src="${myPage.profileImageUrl}" alt="프로필 이미지"
                        style="width:160px; height:160px; object-fit:cover; border-radius:16px; border:2px solid #eee;"/>
                   <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
                     <h1 th:text="${myPage.userName}"
-                        style="margin: 0 0 14px 0; font-size: 2.2rem;">Pizzeria da Alfredo</h1>
+                        style="margin: 0 0 14px 0; font-size: 2.2rem;">유저닉네임</h1>
                     <div class="badge-list"
                          style="display: flex; gap: 12px;">
                       <a th:each="badge : ${userBadges}"
@@ -514,7 +509,7 @@
                               <a th:href="@{'/board/detail/' + ${board.boardId}}" class="mypage-board-title-link">
                                 <h4 class="mypage-board-title" th:text="${board.title}"></h4>
                               </a>
-                              <p class="mypage-board-content" th:text="${board.plainContent}"></p>
+                              <p class="mypage-board-content" th:text="${board.content}"></p>
                             </div>
                           </div>
                         </div>
@@ -531,7 +526,7 @@
         </div>
 
         <div class="col-lg-4">
-          <div th:replace="~{mypage/fragments/mypage-sidebar :: mypage-sidebar}"></div>
+          <aside th:replace="~{mypage/fragments/mypage-sidebar :: mypage-sidebar}"></aside>
         </div>
 
       </div>

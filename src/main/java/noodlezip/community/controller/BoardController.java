@@ -85,7 +85,7 @@ public class BoardController {
         model.addAttribute("toppings", ocrToReviewDto.getToppingList());
 
         model.addAttribute("reviewInitDto", reviewInitDto);
-        return "/board/leave-review";
+        return "board/leave-review";
     }
 
     @PostMapping("/registReviewJson")
@@ -160,7 +160,7 @@ public class BoardController {
     @GetMapping({"/list", "/{category}/list"})
     @Operation(summary = "게시글 목록 조회", description = "모든 게시글 또는 특정 카테고리의 게시글을 최신 순으로 페이지네이션하여 조회합니다.")
     @Parameters({
-            @Parameter(name = "category", description = "조회할 게시글의 카테고리 (선택 사항). 예: 'community', 'qna'", required = false, example = "community"),
+            @Parameter(name = "category", description = "조회할 게시글의 카테고리 (선택 사항). 예: 'community', 'review'", required = false, example = "community"),
             @Parameter(name = "page", description = "조회할 페이지 번호 (기본값: 0, 1부터 요청 시 내부적으로 0으로 변환)", example = "1"),
             @Parameter(name = "size", description = "한 페이지에 보여줄 게시글 개수 (기본값: 6)", example = "6"),
             @Parameter(name = "sort", description = "정렬 기준 (예: id, createdAt). 기본값은 id,desc", example = "id,desc", hidden = true),
@@ -218,13 +218,15 @@ public class BoardController {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularBoards);
     }
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("{category}/detail/{id}")
     @Operation(summary = "게시글 상세 조회", description = "특정 게시글의 상세 내용을 조회하고 조회수를 증가시킵니다.")
     @Parameters({
+            @Parameter(name = "category", description = "조회할 게시글의 카테고리 예: 'community', 'review'", example = "community"),
             @Parameter(name = "id", description = "조회할 게시글의 ID", required = true, example = "1"),
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String getBoardDetail(
+            @PathVariable("category") String category,
             @PathVariable("id") Long id,
             @AuthenticationPrincipal MyUserDetails user,
             HttpServletRequest request,
@@ -243,8 +245,12 @@ public class BoardController {
         } else {
             userIdOrIp = "ip:" + requestParserUtil.getClientIp(request);
         }
-        BoardRespDto board = boardService.findBoardById(id, userIdOrIp);
-        log.info("board: {}", board);
+        BoardRespDto board = null;
+        if (category.equals("review")) {
+            board = boardService.findReviewBoardById(id, userIdOrIp);
+        } else {
+            board = boardService.findBoardById(id, userIdOrIp);
+        }
         if (board == null) {
             log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
