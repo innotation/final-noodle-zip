@@ -43,6 +43,4 @@ public interface BoardService {
     List<Long> getBoardIdByUserLiked(Long userId);
 
     void saveReviewJson(ReviewReqDto dto, User user);
-
-    void saveReviewImage(Long reviewId, MultipartFile file);
 }
