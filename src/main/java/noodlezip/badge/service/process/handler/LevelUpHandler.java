@@ -1,4 +1,4 @@
-package noodlezip.badge.service.process.level.handler;
+package noodlezip.badge.service.process.handler;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

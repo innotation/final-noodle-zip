@@ -1,7 +1,10 @@
 package noodlezip.store.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.ramen.dto.CategoryResponseDto;
+import noodlezip.ramen.dto.RamenSoupResponseDto;
+import noodlezip.ramen.dto.ToppingResponseDto;
+import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.StoreRequestDto;
 import noodlezip.store.service.StoreService;
 import noodlezip.user.entity.User;
@@ -18,28 +21,36 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/store")
 @Controller
-@Slf4j
 public class StoreRegistController {
 
     private final StoreService storeService;
 
+    private final RamenService ramenService;
+
     // 등록 폼 페이지 진입
     @GetMapping("/regist")
     public String showRegistPage(Model model) {
+        StoreRequestDto dto = new StoreRequestDto();
 
-        // 카테고리와 토핑, 육수 목록을 서비스에서 가져와서 model에 담기
-        model.addAttribute("toppings", List.of());
-        model.addAttribute("categories", List.of());
-        model.addAttribute("soups", List.of());
+        dto.setMenus(new ArrayList<>());
+        dto.setExtraToppings(new ArrayList<>());
+        dto.setWeekSchedule(new ArrayList<>());
+
+        model.addAttribute("storeRequestDto", dto);
+        model.addAttribute("categories", ramenService.getAllCategories());
+        model.addAttribute("toppings", ramenService.getAllToppings());
+        model.addAttribute("soups", ramenService.getAllSoups());
 
         return "store/regist";
     }
+
 
     @PostMapping(value = "/regist", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
@@ -61,7 +72,8 @@ public class StoreRegistController {
 
         System.out.println(dto);
 
-        Long storeId = storeService.registerStore(dto, storeMainImage, user);
+        Long storeId = storeService.registerStore(dto, user);
         return Map.of("storeId", storeId);
     }
+
 }

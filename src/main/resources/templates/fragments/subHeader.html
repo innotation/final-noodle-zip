@@ -6,7 +6,7 @@
     <div class="container">
       <div id="logo">
         <a th:href="@{/}">
-          <img th:src="@{/img/noodlezip-Logo-stickhead-face.svg}" width="140" height="35" alt="">
+          <img th:src="@{/img/noodlezip-logo-stickhead-clear.svg}" width="140" height="35" alt="">
         </a>
       </div>
 
@@ -62,7 +62,7 @@
           <li>
             <div class="dropdown user clearfix">
               <a href="#" data-bs-toggle="dropdown">
-                <figure><img th:src="@{/img/avatar1.jpg}" alt=""></figure>
+                <figure><img th:src="${#authentication.principal.user.profileImageUrl}" alt=""></figure>
                 <span th:text="${#authentication.principal.user.userName}"></span>
               </a>
               <div class="dropdown-menu">
@@ -96,7 +96,7 @@
           <a href="#0" class="open_close">
             <i class="icon_close"></i><span>Menu</span>
           </a>
-          <a th:href="@{/}"><img th:src="@{/img/logo.svg}" width="140" height="35" alt=""></a>
+          <a th:href="@{/}"><img th:src="@{/img/noodlezip-logo-stickhead-clear.svg}" width="140" height="35" alt=""></a>
         </div>
         <ul>
           <li><a th:href="@{/search/list}">검색페이지</a></li>

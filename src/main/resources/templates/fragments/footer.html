@@ -6,36 +6,35 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-3 col-md-6">
-        <h3 data-bs-target="#collapse_1">Quick Links</h3>
+        <h3 data-bs-target="#collapse_1">바로가기</h3>
         <div class="collapse dont-collapse-sm links" id="collapse_1">
           <ul>
-            <li><a th:href="@{/submit-rider}">Become a Rider</a></li>
-            <li><a th:href="@{/submit-restaurant}">Add your restaurant</a></li>
-            <li><a th:href="@{/help}">Help</a></li>
-            <li><a th:href="@{/account}">My account</a></li>
-            <li><a th:href="@{/blog}">Blog</a></li>
-            <li><a th:href="@{/contacts}">Contacts</a></li>
+            <li><a th:href="@{/search/list}">매장 검색 페이지</a></li>
+            <li><a th:href="@{/store/regist}">내 매장 추가하기</a></li>
+            <li><a th:href="@{/mypage/1}">마이페이지</a></li>
+            <li><a th:href="@{/board/list}">커뮤니티</a></li>
+            <li><a th:href="@{/store/detail/87}">매장 상세페이지</a></li>
+            <li><a th:href="@{/receipt}">영수증 OCR 업로드</a></li>
           </ul>
         </div>
       </div>
       <div class="col-lg-3 col-md-6">
-        <h3 data-bs-target="#collapse_2">Categories</h3>
+        <h3 data-bs-target="#collapse_2">커뮤니티 게시판</h3>
         <div class="collapse dont-collapse-sm links" id="collapse_2">
           <ul>
-            <li><a th:href="@{/grid-listing-filterscol}">Top Categories</a></li>
-            <li><a th:href="@{/grid-listing-filterscol-full-masonry}">Best Rated</a></li>
-            <li><a th:href="@{/grid-listing-filterscol-full-width}">Best Price</a></li>
-            <li><a th:href="@{/grid-listing-filterscol-full-masonry}">Latest Submissions</a></li>
+            <li><a th:href="@{/board/list}">전체 게시글</a></li>
+            <li><a th:href="@{/board/community/list}">커뮤니티</a></li>
+            <li><a th:href="@{/board/review/list}">리뷰</a></li>
           </ul>
         </div>
       </div>
       <div class="col-lg-3 col-md-6">
-        <h3 data-bs-target="#collapse_3">Contacts</h3>
+        <h3 data-bs-target="#collapse_3">회사소개</h3>
         <div class="collapse dont-collapse-sm contacts" id="collapse_3">
           <ul>
-            <li><i class="icon_house_alt"></i>97845 Baker st. 567<br>Los Angeles - US</li>
-            <li><i class="icon_mobile"></i>+94 423-23-221</li>
-            <li><i class="icon_mail_alt"></i><a th:href="@{mailto:info@domain.com}">info@domain.com</a></li>
+            <li><i class="icon_house_alt"></i>서울시 강남구 삼성로 534<br>6층 캠퍼스세븐</li>
+            <li><i class="icon_mobile"></i>02-485-3063</li>
+            <li><i class="icon_mail_alt"></i><a th:href="@{https://github.com/20250123-SSG/final-noodle-zip}">noodle-zip@github.com</a></li>
           </ul>
         </div>
       </div>
@@ -71,9 +70,10 @@
           <li>
             <div class="styled-select lang-selector">
               <select>
-                <option value="English" selected>English</option>
+                <option value="English">English</option>
                 <option value="French">French</option>
                 <option value="Spanish">Spanish</option>
+                <option value="Korean" selected>Korean</option>
                 <option value="Russian">Russian</option>
               </select>
             </div>
@@ -81,8 +81,9 @@
           <li>
             <div class="styled-select currency-selector">
               <select>
-                <option value="US Dollars" selected>US Dollars</option>
+                <option value="US Dollars">US Dollars</option>
                 <option value="Euro">Euro</option>
+                <option value="Won" selected>Won</option>
               </select>
             </div>
           </li>

@@ -82,6 +82,7 @@ public class FileUtil {
             result.put("filesystemName", filesystemName);
             result.put("fileUrl", fileUrl); // S3에서 접근 가능한 전체 URL, 이 값으로 이미지 출력
             log.info("파일 업로드 성공: {}", fileUrl);
+            log.info("S3 Object Key: {}", s3ObjectKey);
             return result;
 
         } catch (AmazonS3Exception e) {

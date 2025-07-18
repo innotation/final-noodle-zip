@@ -19,12 +19,12 @@
     <div class="menu_item">
         <em>local card</em>
         <h4>지역카드</h4>
-        <p th:text="${store.isLocalCard}">가능여부</p>
+        <p th:text="${store.isLocalCard ? '가맹' : '사용불가'}">가능여부</p>
     </div>
     <div class="menu_item">
         <em>child</em>
         <h4>유아동반</h4>
-        <p th:text="${store.isChildAllowed}">가능여부</p>
+        <p th:text="${store.isChildAllowed ? '동반 가능' : '동반 불가'}">가능여부</p>
     </div>
     <div class="menu_item">
         <em>parking</em>
