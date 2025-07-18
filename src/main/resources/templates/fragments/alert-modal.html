@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="alertModal(modalId, title, body, confirmText, cancelText)"> <!-- 모달아이디, 모달 제목, 모달 본문, 확인버튼 텍스트, 취소버튼 텍스트-->
+  <div class="modal fade" th:id="${modalId}" tabindex="-1" role="dialog" aria-labelledby="label-${modalId}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <!-- 모달 헤더 -->
+        <div class="modal-header">
+          <h4 class="modal-title" th:id="'label-' + ${modalId}" th:text="${title}">모달 제목</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- 모달 본문 -->
+        <div class="modal-body" th:utext="${body}">
+          본문 내용
+        </div>
+
+        <!-- 모달 푸터 -->
+        <div class="modal-footer">
+          <button type="button" class="btn_1 btn-confirm" data-bs-dismiss="modal" th:text="${confirmText}">확인</button>
+          <button type="button" class="btn_1 btn-cancel" data-bs-dismiss="modal" th:text="${cancelText}">취소</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</html>
+<!--
+1.           <script src="/js/alertModal.js"></script>          를 하단에 추가해서 사용해주세요.
+2.           myComment.html         하단 script문을 참고해주세요
+
+alert-model fragment사용 예시
+<div th:replace="fragments/alert-modal :: alertModal('confirmDeleteModal', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?.</p>', '삭제', '취소')"></div>
+-->
