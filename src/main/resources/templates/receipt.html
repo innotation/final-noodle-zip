@@ -119,22 +119,23 @@
       .then(data => {
         stopScanning();
 
-        if (data.error) {
-          alert(data.error);
+        if (!data.isSuccess) {
+          alert(data.message); // ← 서버에서 온 오류 메시지 출력
           resetForm();
           return;
         }
 
-        if (data.isDuplicate) {
+        const result = data.payload;
+        if (result.duplicate) {
           alert("이미 등록된 영수증입니다.");
           resetForm();
           return;
         }
 
-        const ocr = data.ocrData || {};
+        const ocr = result.ocrData || {};
         window.ocrResultCache = {
           ocr,
-          ocrKeyHash: data.ocrKeyHash,
+          ocrKeyHash: result.ocrKeyHash,
           visitDate: ocr.date,
           bizNum: ocr.bizNum
         };
@@ -145,7 +146,7 @@
 
         $('#ocrResultBox').show();
         $('#ocrActionButtons').show();
-        $('#ocrForm button[type="submit"]').hide(); // ✅ 분석 버튼 숨기기
+        $('#ocrForm button[type="submit"]').hide();
       })
       .catch(err => {
         stopScanning();
