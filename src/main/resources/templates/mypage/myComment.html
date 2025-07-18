@@ -126,6 +126,9 @@
     </div>
     <!-- /container -->
 </main>
+<div th:replace="fragments/alert-modal :: alertModal('confirmDeleteModal', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?.</p>', '삭제', '취소')"></div>
+
+
 <!-- /main -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--/footer-->
@@ -184,23 +187,23 @@
 <!-- /Sign In Modal -->
 <script>
     function deleteComment(id, boardId) {
-        if (!confirm('정말 삭제할까요?')) return;
+        showConfirmModal('confirmDeleteModal', () => { //사용자가 확인 버튼을 누르면 안의 구문이 실행됨
 
-        fetch('/comments/' + id + '?boardId=' + boardId, {
-            method: 'DELETE'
-        })
-            .then(res => {
-                if (res.ok) {
-                    alert('삭제되었습니다.');
-                    location.reload();
-                } else {
-                    return res.json().then(err => {
-                        let msg = err.message || err.reason || "삭제 실패";
-                        alert(msg);
-                    });
-                }
+            fetch('/comments/' + id + '?boardId=' + boardId, {
+                method: 'DELETE'
             })
-            .catch(() => alert('서버 오류'));
+              .then(res => {
+                  if (res.ok) {
+                      location.reload();
+                  } else {
+                      return res.json().then(err => {
+                          let msg = err.message || err.reason || "삭제 실패";
+                          alert(msg);
+                      });
+                  }
+              })
+              .catch(() => alert('서버 오류'));
+        });
     }
 </script>
 
@@ -208,6 +211,7 @@
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
+<script src="/js/alertModal.js"></script>
 
 </body>
 </html>
