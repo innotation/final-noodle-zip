@@ -16,6 +16,7 @@ public class BadgeServiceImpl implements BadgeService {
 
     private final BadgeRepository badgeRepository;
 
+
     @Override
     @Transactional(readOnly = true)
     public List<LevelBadgeDetailResponse> getNoOptionBadgeDetails(long userId, long badgeCategoryId) {
@@ -26,6 +27,7 @@ public class BadgeServiceImpl implements BadgeService {
 
         return result;
     }
+
 
     @Override
     @Transactional(readOnly = true)

@@ -63,6 +63,7 @@ public class StoreDto implements Serializable {
                 .phone(store.getPhone())
                 .isLocalCard(store.getIsLocalCard())
                 .isChildAllowed(store.getIsChildAllowed())
+                .hasParking(store.getHasParking().getValue())
                 .operationStatus(store.getOperationStatus().getValue())
                 .approvalStatus(store.getApprovalStatus().getValue())
                 .ownerComment(store.getOwnerComment())

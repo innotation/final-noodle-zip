@@ -2,6 +2,10 @@ package noodlezip.community.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.badge.constants.UserEventType;
+import noodlezip.badge.event.BasicBadgeEvent;
+import noodlezip.badge.event.RamenReviewBadgeEvent;
+import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.community.dto.BoardReqDto;
@@ -24,6 +28,7 @@ import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.store.dto.MenuRequestDto;
+import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.StoreExtraTopping;
 import noodlezip.store.repository.MenuRepository;
@@ -34,6 +39,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +60,7 @@ import java.util.Optional;
 @Slf4j
 public class BoardServiceImpl implements BoardService {
 
+    private final BadgeEventPublisher eventPublisher;
     private final BoardRepository boardRepository;
     private final PageUtil pageUtil;
     private final ModelMapper modelMapper;
@@ -61,10 +69,9 @@ public class BoardServiceImpl implements BoardService {
     private final LikeRepository likeRepository;
     private final RamenReviewRepository ramenReviewRepository;
     private final ReviewToppingRepository reviewToppingRepository;
-    private final ToppingRepository toppingRepository;
     private final StoreExtraToppingRepository storeExtraToppingRepository;
-    private final StoreService storeService;
     private final MenuRepository menuRepository;
+    private final RamenReviewRepository rareReviewRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -208,12 +215,46 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public BoardRespDto findReviewBoardById(Long id, String userIdOrIp) {
+
+        String[] infoAndIdOrIp = userIdOrIp.split(":");
+
+        boolean isLike = false;
+
+        if (infoAndIdOrIp[0].equals("user")) {
+            isLike = likeRepository.existsById(BoardUserId.builder().userId(Long.parseLong(infoAndIdOrIp[1])).communityId(id).build());
+        }
+
+        BoardRespDto boardRespDto = boardRepository.findBoardByBoardIdWithUser(id).orElseThrow( () -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+
+        String sanitizedContentHtml = boardRespDto.getContent();
+
+        Document doc = Jsoup.parse(sanitizedContentHtml);
+
+        sanitizedContentHtml = Jsoup.clean(doc.body().html(), Safelist.relaxed());
+
+        boardRespDto.setContent(sanitizedContentHtml);
+
+        List<StoreReviewDto> list = ramenReviewRepository.findReviewsByBoardId(id);
+        log.info("list : {}", list);
+        boardRespDto.setMenuReviews(list);
+        boardRespDto.setIsLike(isLike);
+
+        viewCountService.increaseViewCount(TargetType.BOARD, id, userIdOrIp);
+
+        return boardRespDto;
+    }
+
+    @Override
     public void registBoard(BoardReqDto boardReqDto, User user) {
         Board board = modelMapper.map(boardReqDto, Board.class);
         board.setCommunityType("community");
         board.setPostStatus(CommunityActiveStatus.POSTED);
         board.setUser(user);
         boardRepository.save(board);
+
+        eventPublisher.publishCommunityPostBadgeEvent(user);
         log.info("board save : {}", board);
     }
 
@@ -256,6 +297,8 @@ public class BoardServiceImpl implements BoardService {
             likeRepository.save(newLike);
             board.setLikesCount(board.getLikesCount() + 1);
             isLiked = true;
+
+            eventPublisher.publishCommunityLikeBadgeEvent(board);
         }
 
         boardRepository.save(board);
@@ -279,7 +322,19 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public List<BoardRespDto> getPopularBoards(String category) {
-        return boardRepository.findPopularBoards(category);
+        List<BoardRespDto> boardRespDtos =  boardRepository.findPopularBoards(category);
+        boardRespDtos.forEach(boardRespDto -> {
+            String originalContentHtml = boardRespDto.getContent();
+
+            Safelist customSafelist = Safelist.relaxed();
+
+            customSafelist.removeTags("img");
+
+            String sanitizedContentHtml = Jsoup.clean(originalContentHtml, customSafelist);
+
+            boardRespDto.setContent(sanitizedContentHtml);
+        });
+        return boardRespDtos;
     }
 
 
@@ -398,6 +453,7 @@ public class BoardServiceImpl implements BoardService {
             reviewIds.add(review.getId());
         }
 
+        eventPublisher.publishRamenReviewBadgeEvent(user, dto);
         return reviewIds;
     }
 
@@ -413,4 +469,5 @@ public class BoardServiceImpl implements BoardService {
         review.setReviewImageUrl(imageUrl);
         ramenReviewRepository.save(review);
     }
+
 }

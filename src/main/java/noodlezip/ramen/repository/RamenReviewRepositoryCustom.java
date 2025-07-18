@@ -31,5 +31,7 @@ public interface RamenReviewRepositoryCustom {
 
     List<Long> findIdsByBoardId(Long boardId);
 
+    List<StoreReviewDto> findReviewsByBoardId(Long boardId);
+
     void deleteByBoardId(Long boardId);
 }

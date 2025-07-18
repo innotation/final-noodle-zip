@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface StoreExtraToppingRepository extends JpaRepository<StoreExtraTopping, Long> {
     List<StoreExtraTopping> findStoreExtraToppingByStore(Store store);
+    void deleteByStore(Store store);
 }

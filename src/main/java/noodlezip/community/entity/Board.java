@@ -6,17 +6,20 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.common.entity.BaseTimeEntity;
+import noodlezip.ramen.entity.RamenReview;
 import noodlezip.user.entity.User;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_community")
-@ToString
+@ToString(exclude = "ramenReviews")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

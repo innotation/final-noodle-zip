@@ -24,7 +24,7 @@ public class UserBadge extends BaseTimeEntity {
     @Column(name = "user_badge_id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false) //User엔티티 필요
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,16 +45,8 @@ public class UserBadge extends BaseTimeEntity {
     private LocalDateTime obtainedAt;
 
 
-    public boolean isOverCompletionValue() {
-        return badge.isOverCompletionValue(currentValue);
-    }
-
-    public boolean isFinalBadgeAlreadyObtained() {
-        return obtainedAt != null && badge.hasNothingNextBadge();
-    }
-
-    public boolean isNextBadgeUpgradable() {
-        return isOverCompletionValue() && !badge.hasNothingNextBadge();
+    public void obtain() {
+        obtainedAt = LocalDateTime.now();
     }
 
     public void updateCurrentValueByOne() {
@@ -67,8 +59,16 @@ public class UserBadge extends BaseTimeEntity {
         accumulativeValue++;
     }
 
-    public void obtain() {
-        obtainedAt = LocalDateTime.now();
+    public boolean isOverCompletionValue() {
+        return badge.isOverCompletionValue(currentValue);
+    }
+
+    public boolean isFinalBadgeAlreadyObtained() {
+        return obtainedAt != null && badge.hasNothingNextBadge();
+    }
+
+    public boolean isNextBadgeUpgradable() {
+        return isOverCompletionValue() && !badge.hasNothingNextBadge();
     }
 
 }
