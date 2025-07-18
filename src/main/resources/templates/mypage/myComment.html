@@ -7,6 +7,30 @@
     <link href="/css/blog.css" rel="stylesheet">
     <!-- YOUR CUSTOM CSS -->
     <link href="/css/listing.css" rel="stylesheet">
+    <style>
+        .community-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .community-tag {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11px;
+            padding: 3px 6px;
+            border: 1px solid #ccc;
+            color: #666;
+            background-color: transparent;
+            border-radius: 10px;
+            line-height: 1;
+            text-decoration: none;
+        }
+        .community-tag-text {
+            font-family: inherit;
+            padding: 0 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -52,8 +76,18 @@
                             </div>
                             <div class="comment_right clearfix">
                                 <div class="comment_info">
-                                    <strong> 게시글 : <a th:href="@{/board/detail/{id}(id=${item.communityBoardId})}"
-                                                      th:text="${item.boardTitle != null ? item.boardTitle : '삭제된 게시글입니다'}"></a></strong>
+                                    <div class="community-info">
+                                        <strong> 게시글 : <a th:href="@{/board/{communityType}/detail/{id}
+                                                                  (communityType=${item.communityType},
+                                                                   id=${item.communityBoardId})}"
+                                                          th:text="${item.boardTitle != null ? item.boardTitle : '삭제된 게시글입니다'}"></a>
+                                        </strong>
+                                        <span th:if="${item.boardTitle != null}" style="padding: 0; margin-bottom: 3px">
+                                            <a class="community-tag">
+                                                <span th:text="${item.communityType}" class="community-tag-text"></span>
+                                            </a>
+                                        </span>
+                                    </div>
                                     <hr>
                                     By <a th:text="${item.author}">사용자 이름</a>
                                     <span>|</span>
