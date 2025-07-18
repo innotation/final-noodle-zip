@@ -461,16 +461,4 @@ public class BoardServiceImpl implements BoardService {
         eventPublisher.publishRamenReviewBadgeEvent(user, dto);
     }
 
-    @Transactional
-    @Override
-    public void saveReviewImage(Long reviewId, MultipartFile imageFile) {
-        if (imageFile == null || imageFile.isEmpty()) return;
-
-        RamenReview review = ramenReviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ErrorStatus._BAD_REQUEST));
-
-        String imageUrl = fileUtil.fileupload("review", imageFile).get("fileUrl"); // 저장 및 경로 반환
-        review.setReviewImageUrl(imageUrl);
-        ramenReviewRepository.save(review);
-    }
 }
