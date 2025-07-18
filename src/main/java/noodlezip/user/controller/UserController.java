@@ -49,14 +49,6 @@ public class UserController {
     private final EmailVerificationService emailVerificationService;
     private final ModelMapper modelMapper;
 
-    @GetMapping("/login")
-    @Operation(summary = "로그인 페이지", description = "사용자 로그인 페이지를 반환합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그인 페이지 반환 성공")
-    })
-    public void loginPage() {
-    }
-
     @GetMapping("/signup")
     @Operation(summary = "회원 가입 페이지", description = "사용자 회원 가입 폼 페이지를 반환합니다.")
     @ApiResponses(value = {
@@ -173,7 +165,7 @@ public class UserController {
         if (email == null || email.trim().isEmpty() || code == null || code.trim().isEmpty()) {
             model.addAttribute("message", "이메일 또는 인증 코드가 누락되었습니다.");
             model.addAttribute("status", "error");
-            return "/user/verification-result";
+            return "user/verification-result";
         }
         log.info("email: {}", email);
         log.info("code: {}", code);
@@ -196,12 +188,12 @@ public class UserController {
             } else if (e.getErrorCode() == UserErrorStatus._EXPIRED_AUTH_CODE) {
                 model.addAttribute("showResendButton", true);
             }
-            return "/user/verification-result";
+            return "user/verification-result";
         } catch (Exception e) {
             log.error("이메일 인증 중 서버 오류 발생 - Email: {}", email, e);
             model.addAttribute("message", "서버 오류로 인해 이메일 인증에 실패했습니다. 잠시 후 다시 시도해주세요.");
             model.addAttribute("status", "error");
-            return "/user/verification-result";
+            return "user/verification-result";
         }
     }
 
@@ -253,7 +245,7 @@ public class UserController {
         UserDto userDto = modelMapper.map(loggedInUser, UserDto.class);
         model.addAttribute("userProfile", userDto);
 
-        return "/user/edit-profile";
+        return "user/edit-profile";
     }
 
     @PostMapping("user/profile/update")
@@ -304,7 +296,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("userProfile", userDto);
         }
 
-        return "redirect:/";
+        return "redirect:/mypage/" + userDetails.getUser().getId();
     }
 
     @PostMapping("user/signout")

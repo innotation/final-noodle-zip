@@ -30,6 +30,7 @@ public interface BoardService {
     List<CategoryCountDto> getCategoryCountsByBoardIds(List<Long> boardIdList);
 
     BoardRespDto findBoardById(Long id, String userIdOrIp);
+    BoardRespDto findReviewBoardById(Long id, String userIdOrIp);
     void registBoard(BoardReqDto boardReqDto, User user);
     void deleteBoard(Long boardId, Long userId);
     boolean toggleLike(BoardUserId boardUserId);

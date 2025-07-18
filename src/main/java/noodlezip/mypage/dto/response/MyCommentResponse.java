@@ -15,6 +15,7 @@ public class MyCommentResponse {
 
     private Long id;
     private Long communityBoardId;
+    private String communityType;
     private String boardTitle;
     private String author;
     private String authorProfileImageUrl;

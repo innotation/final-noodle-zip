@@ -20,17 +20,20 @@ public class UserBadgeServiceImpl implements UserBadgeService {
     private final BadgeGroupRepository badgeGroupRepository;
     private final UserBadgeRepository userBadgeRepository;
 
+
     @Override
     @Transactional(readOnly = true)
     public List<BadgeGroupResponse> getBadgeGroupList() {
         return badgeGroupRepository.getBadgeGroups();
     }
 
+
     @Override
     @Transactional(readOnly = true)
     public List<UserBadge> getUserBadgeForMyPageProfile(Long userId) {
         return userBadgeRepository.findUserBadgeForMyPageProfile(userId);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -39,6 +42,7 @@ public class UserBadgeServiceImpl implements UserBadgeService {
 
         return userBadgeRepository.findNoOptionBadgeList(userIde, categoryIdList);
     }
+
 
     @Override
     @Transactional(readOnly = true)

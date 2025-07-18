@@ -370,6 +370,97 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                 .fetch();
     }
 
+//    @Override
+//    public List<StoreReviewDto> findReviewsByBoardId(Long boardId) {
+//        QRamenReview review = QRamenReview.ramenReview;
+//        QMenu menu = QMenu.menu;
+//        QBoard board = QBoard.board;
+//        noodlezip.store.entity.QStore store = noodlezip.store.entity.QStore.store;
+//
+//        List<StoreReviewDto> result = queryFactory
+//                .select(Projections.fields(
+//                        StoreReviewDto.class,
+//                        review.id.as("id"),
+//                        review.communityId.as("communityId"),
+//                        menu.id.as("menuId"),
+//                        menu.menuName.as("menuName"),
+//                        review.noodleThickness.as("noodleThickness"),
+//                        review.noodleTexture.as("noodleTexture"),
+//                        review.noodleBoilLevel.as("noodleBoilLevel"),
+//                        review.soupDensity.as("soupDensity"),
+//                        review.soupTemperature.as("soupTemperature"),
+//                        review.soupSaltiness.as("soupSaltiness"),
+//                        review.soupSpicinessLevel.as("soupSpicinessLevel"),
+//                        review.soupOiliness.as("soupOiliness"),
+//                        review.soupFlavorKeywords.as("soupFlavorKeywords"),
+//                        review.content.as("content"),
+//                        review.reviewImageUrl.as("reviewImageUrl"),
+//                        review.isReceiptReview.as("isReceiptReview"),
+//                        board.user.userName.as("userName"),
+//                        board.user.id.as("userId"),
+//                        board.createdAt.as("createdAt"),
+//                        board.updatedAt.as("updatedAt"),
+//                        store.id.as("storeId"),
+//                        store.storeName.as("storeName"),
+//                        store.address.as("storeAddress")
+//                ))
+//                .from(review)
+//                .join(review.menu, menu)
+//                .join(menu.store, store)
+//                .join(board).on(review.communityId.eq(boardId))
+//                .distinct()
+//                .where(review.communityId.eq(boardId))
+//                .fetch();
+//
+//        return result;
+//    }
+
+    @Override
+    public List<StoreReviewDto> findReviewsByBoardId(Long boardId) {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+        QBoard board = QBoard.board; // QBoard가 Community 엔티티를 나타낸다고 가정
+        noodlezip.store.entity.QStore store = noodlezip.store.entity.QStore.store;
+        // QUser user = QUser.user; // User 엔티티가 있다면 QUser 추가 (Board에 User가 포함되어 있다면 필요 없을 수 있음)
+
+        List<StoreReviewDto> result = queryFactory
+                .select(Projections.fields(
+                        StoreReviewDto.class,
+                        review.id.as("id"),
+                        review.communityId.as("communityId"), // 리뷰의 communityId
+                        menu.id.as("menuId"),
+                        menu.menuName.as("menuName"),
+                        review.noodleThickness.as("noodleThickness"),
+                        review.noodleTexture.as("noodleTexture"),
+                        review.noodleBoilLevel.as("noodleBoilLevel"),
+                        review.soupDensity.as("soupDensity"),
+                        review.soupTemperature.as("soupTemperature"),
+                        review.soupSaltiness.as("soupSaltiness"),
+                        review.soupSpicinessLevel.as("soupSpicinessLevel"),
+                        review.soupOiliness.as("soupOiliness"),
+                        review.soupFlavorKeywords.as("soupFlavorKeywords"),
+                        review.content.as("content"),
+                        review.reviewImageUrl.as("reviewImageUrl"),
+                        review.isReceiptReview.as("isReceiptReview"),
+                        board.user.userName.as("userName"),
+                        board.user.id.as("userId"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+                        store.id.as("storeId"),
+                        store.storeName.as("storeName"),
+                        store.address.as("storeAddress")
+                ))
+                .from(review)
+                .join(review.menu, menu)
+                .join(menu.store, store)
+                .join(board).on(review.communityId.eq(board.id))
+                .distinct()
+                .where(review.communityId.eq(boardId))
+                .fetch();
+
+        return result;
+    }
+
 
     @Override
     public void deleteByBoardId(Long boardId) {

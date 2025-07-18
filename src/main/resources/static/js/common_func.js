@@ -217,13 +217,21 @@
     function openLoginModal() {
         $.magnificPopup.open({
             items: {
-                src: '#sign-in-dialog',
-                type: 'inline'
+                src: '#sign-in-dialog'
             },
+            type: 'inline',
+            fixedContentPos: true,
+            fixedBgPos: true,
+            overflowY: 'auto',
             closeBtnInside: true,
+            preloader: false,
+            midClick: true,
+            removalDelay: 300,
+            closeMarkup: '<button title="%title%" type="button" class="mfp-close"></button>',
             mainClass: 'my-mfp-zoom-in',
             callbacks: {
                 open: function() {
+                    // 로그인 시 마지막 접속 url 저장
                     var url = window.location.pathname + window.location.search + window.location.hash;
                     $('#redirectUrlInput').val(url);
                 }

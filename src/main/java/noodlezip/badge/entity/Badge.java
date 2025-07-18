@@ -45,12 +45,16 @@ public class Badge extends BaseTimeEntity {
     private String badgeImageUrl;
 
 
+    public boolean isOptionalBadge() {
+        return badgeExtraOption != null;
+    }
+
     public boolean isLevelBadge() {
         return !badgePolicy.hasNotLevel();
     }
 
-    public boolean isOptionalBadge() {
-        return badgeExtraOption != null;
+    public boolean hasNothingNextBadge() {
+        return badgePolicy.hasNothingNextBadge();
     }
 
     public boolean isOverCompletionValue(int currentValue) {
@@ -59,10 +63,6 @@ public class Badge extends BaseTimeEntity {
 
     public Long getNextLevelBadgeId() {
         return badgePolicy.getNextBadgeId();
-    }
-
-    public boolean hasNothingNextBadge() {
-        return badgePolicy.hasNothingNextBadge();
     }
 
 }

@@ -28,8 +28,8 @@ public enum Region {
     private final int code;
     private final String name;
 
-    public static Region getRegionByCode(int legalCode) {
-        int sido = Integer.parseInt(String.valueOf(legalCode).substring(0, 2));
+    public static Region getRegionByCode(Long legalCode) {
+        int sido = Integer.parseInt(legalCode.toString().substring(0, 2));
 
         return getRegionBySidoCode(sido);
     }

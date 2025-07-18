@@ -58,7 +58,7 @@ public class OcrController {
 
     @GetMapping
     public String showOcrForm() {
-        return "/receipt";
+        return "receipt";
     }
 
 }

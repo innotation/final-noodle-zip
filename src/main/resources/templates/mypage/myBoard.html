@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <th:block th:replace="~{fragments/head :: head}"></th:block>
@@ -43,7 +43,9 @@
                     <div class="col-md-6" th:each="item : ${boardList.boardList}">
                         <article class="blog">
                             <figure>
-                                <a th:href="@{/board/detail/{id}(id=${item.boardId})}">
+                                <a th:href="@{/board/{communityType}/detail/{id}
+                                            (communityType=${item.communityType},
+                                             id=${item.boardId})}">
                                     <img th:src="${#strings.isEmpty(item.imageUrl) ? '/img/blog-1.jpg' : item.imageUrl}"
                                          alt="게시글 이미지">
                                     <div class="preview"><span>더 보기</span></div>
@@ -54,8 +56,12 @@
                                     <span th:text="${item.communityType}">카테고리</span> -
                                     <span th:text="${#temporals.format(item.createdAt, 'yyyy.MM.dd')}">2023.01.01</span>
                                 </small>
-                                <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
-                                    제목</a>
+                                <h2>
+                                    <a th:href="@{/board/{communityType}/detail/{id}
+                                                (communityType=${item.communityType},
+                                                 id=${item.boardId})}"
+                                       th:text="${item.title}">게시글 제목
+                                    </a>
                                 </h2>
                                 <ul>
                                     <li>

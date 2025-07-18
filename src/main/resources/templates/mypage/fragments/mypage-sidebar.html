@@ -29,6 +29,15 @@
       </a>
     </div>
   </div>
+  <!-- 배지 리스트 -->
+  <div class="widget">
+    <div class="widget-title"><h4>배지 리스트</h4></div>
+    <div class="main" style="text-align:center;">
+      <a th:href="@{'/users/' + ${myPage.id} + '/badges'}" class="btn_1 full-width" style="margin-top: 8px;">
+        배지 리스트
+      </a>
+    </div>
+  </div>
   <!-- 내가 쓴 게시글 -->
   <div class="widget">
     <div class="widget-title"><h4>내가 쓴 게시글</h4></div>
@@ -96,4 +105,20 @@
       </div>
     </div>
   </div>
+  <th:block th:if="${isOwner}">
+    <div class="widget">
+      <div class="widget-title"><h4>나의 매장 관리</h4></div>
+      <div class="main" style="text-align:center;">
+        <a th:href="@{/store/regist}" class="btn_1 full-width" style="margin-top: 8px;">
+          내 매장 추가
+        </a>
+        <th:block th:if="${!#lists.isEmpty(myStores)}">
+          <a th:href="@{/store/myStores}" class="btn_1 full-width" style="margin-top: 8px;">
+            내 매장 관리
+          </a>
+        </th:block>
+      </div>
+    </div>
+  </th:block>
+
 </aside> 
