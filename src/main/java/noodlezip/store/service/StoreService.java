@@ -566,12 +566,12 @@ public class StoreService {
     // ID로 활성화 된 매장 찾기
     public StoreDto getStore(Long storeId, Long requesterUserId) {
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new NoSuchElementException("해당 매장을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorStatus._NOT_FOUND_HANDLER));
 
         // 승인되지 않았고, 등록한 사용자가 아닐 경우만 막기
         if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus()) &&
                 (!store.getUserId().equals(requesterUserId))) {
-            throw new IllegalStateException("승인되지 않은 매장은 조회할 수 없습니다.");
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
 
         return StoreDto.toDto(store);
