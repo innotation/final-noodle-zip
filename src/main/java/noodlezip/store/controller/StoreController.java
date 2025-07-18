@@ -6,6 +6,7 @@ import noodlezip.common.auth.MyUserDetails;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
+import noodlezip.store.entity.Store;
 import noodlezip.store.service.StoreService;
 import noodlezip.user.entity.User;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class StoreController {
         if (myUserDetails != null) {
             userId = myUserDetails.getUser().getId();
         }
-        
+
         StoreDto store = storeService.getStore(no, userId);
         model.addAttribute("store", store);
         return "store/detail";
@@ -107,9 +109,18 @@ public class StoreController {
     // 메뉴 토핑 조회
     @GetMapping("/detail/{storeId}/toppings")
     @ResponseBody
-    public List<ToppingResponseDto> getToppingByStoreId(@PathVariable Long storeId){
+    public List<ToppingResponseDto> getToppingByStoreId(@PathVariable Long storeId) {
         return storeService.getStoreToppings(storeId);
     }
 
+    // 내가 등록한 매장
+    @GetMapping("/my-list")
+    public String myStoreList(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) {
+        Long userId = myUserDetails.getUser().getId(); // 로그인한 사용자 ID
+        List<Store> storeList = storeService.findStoresByUserId(userId);
+
+        model.addAttribute("storeList", storeList);
+        return "store/my-stores"; // templates/store/my-stores.html
+    }
 }
 

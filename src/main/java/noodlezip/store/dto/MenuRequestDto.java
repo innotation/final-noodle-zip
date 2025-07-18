@@ -1,5 +1,6 @@
 package noodlezip.store.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +15,8 @@ public class MenuRequestDto {
 
     private String menuName;
     private Integer price;
+
+    @Size(max = 100, message = "메뉴 설명은 100자 이하로 작성해주세요.")
     private String menuDescription;
 
     private String menuImageUrl;

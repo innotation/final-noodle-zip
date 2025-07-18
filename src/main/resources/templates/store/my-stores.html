@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>내 매장 목록</title>
+    <link rel="stylesheet" href="/css/store-list.css">
+</head>
+<body>
+<h2>내 매장 목록</h2>
+
+<div th:if="${#lists.isEmpty(storeList)}">
+    <p>등록한 매장이 없습니다.</p>
+</div>
+
+<div th:each="store : ${storeList}" class="store-card">
+    <img th:src="@{${store.imageUrl}}" alt="대표 이미지" class="thumbnail">
+    <div class="info">
+        <h3 th:text="${store.name}">매장 이름</h3>
+        <p th:text="${store.address}">주소</p>
+        <p th:text="${store.phoneNumber}">전화번호</p>
+        <a th:href="@{/store/update/{id}(id=${store.id})}" class="btn">수정</a>
+        <form th:action="@{/store/delete/{id}(id=${store.id})}" method="post" style="display:inline">
+            <button type="submit" class="btn delete">삭제</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

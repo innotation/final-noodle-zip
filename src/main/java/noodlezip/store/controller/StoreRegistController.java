@@ -1,5 +1,6 @@
 package noodlezip.store.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.store.dto.StoreRequestDto;
@@ -8,6 +9,7 @@ import noodlezip.user.entity.User;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -34,9 +36,9 @@ public class StoreRegistController {
     public String showRegistPage(Model model) {
 
         // 카테고리와 토핑, 육수 목록을 서비스에서 가져와서 model에 담기
-        model.addAttribute("toppings", List.of());
-        model.addAttribute("categories", List.of());
-        model.addAttribute("soups", List.of());
+        model.addAttribute("toppings", storeService.getRamenToppings());
+        model.addAttribute("categories", storeService.getRamenCategories());
+        model.addAttribute("soups", storeService.getAllSoups());
 
         return "store/regist";
     }
@@ -45,10 +47,30 @@ public class StoreRegistController {
     @ResponseBody
     public Map<String, Object> registerStore(
             @AuthenticationPrincipal MyUserDetails myUserDetails,
-            @RequestPart("store") StoreRequestDto dto,
+            @Valid @RequestPart("store") StoreRequestDto dto,
+            BindingResult bindingResult,
             @RequestPart(value = "storeMainImage", required = false) MultipartFile storeMainImage,
             @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles
     ) {
+
+        // 유효성 검사 실패 시 응답 반환
+        if (bindingResult.hasErrors()) {
+            String errorMessage = "요청값이 유효하지 않습니다.";
+
+            if (bindingResult.getFieldError() != null) {
+                String msg = bindingResult.getFieldError().getDefaultMessage();
+                if (msg != null) {
+                    errorMessage = msg;
+                }
+            }
+
+            return Map.of(
+                    "isSuccess", false,
+                    "code", "VALIDATION_ERROR",
+                    "message", errorMessage
+            );
+        }
+
         // 유저
         User user = myUserDetails.getUser();
 
@@ -58,8 +80,6 @@ public class StoreRegistController {
                 dto.getMenus().get(i).setMenuImageFile(menuImageFiles.get(i));  // 메뉴 이미지 주입
             }
         }
-
-        System.out.println(dto);
 
         Long storeId = storeService.registerStore(dto, storeMainImage, user);
         return Map.of("storeId", storeId);

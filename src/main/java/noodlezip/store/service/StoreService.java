@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import noodlezip.store.status.StoreErrorCode;
 
+import java.lang.reflect.Member;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -193,29 +194,14 @@ public class StoreService {
             }
         }
 
-        // ⑤ 매장 단위 추가 토핑 저장 (dto.getExtraToppings)
+        // ⑤ 매장 단위 추가 토핑 저장
         if (dto.getExtraToppings() != null && !dto.getExtraToppings().isEmpty()) {
             for (ExtraToppingRequestDto toppingDto : dto.getExtraToppings()) {
-                if (toppingDto == null || toppingDto.getName() == null || toppingDto.getName().isBlank()) continue;
+                Long toppingId = toppingDto.getToppingId();
+                Integer price = toppingDto.getPrice();
 
-                String toppingName = toppingDto.getName();
-                Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
-
-                if (defaultToppingNames.contains(toppingName)) {
-                    throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
-                }
-
-                Topping topping = toppingRepository.findByToppingName(toppingName)
-                        .orElseGet(() -> toppingRepository.save(
-                                Topping.builder()
-                                        .toppingName(toppingName)
-                                        .isActive(false)
-                                        .build()
-                        ));
-
-                if (topping == null) {
-                    throw new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME);
-                }
+                Topping topping = toppingRepository.findById(toppingId)
+                        .orElseThrow(() -> new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME));
 
                 StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
                 storeExtraTopping.setStore(savedStore);
@@ -352,5 +338,10 @@ public class StoreService {
 
     public Long findStoreIdByBizNum(Long bizNum) {
         return storeRepository.getStoreByBizNum(bizNum);
+    }
+
+    // 내가 등록한 매장
+    public List<Store> findStoresByUserId(Long userId) {
+        return storeRepository.findAllByUserId(userId);
     }
 }

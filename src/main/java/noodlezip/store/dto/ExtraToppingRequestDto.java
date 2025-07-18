@@ -7,8 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class ExtraToppingRequestDto {
-    private String name;
+    private Long toppingId;
     private Integer price;
 }
