@@ -6,11 +6,9 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.badge.dto.request.BadgeDetailRequest;
 import noodlezip.badge.dto.response.BadgeDetailResponse;
 import noodlezip.badge.dto.response.MyBadgeBadgeResponse;
 import noodlezip.badge.service.MyBadgeService;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +22,7 @@ import java.util.List;
 public class MyBadgeController {
 
     private final MyBadgeService myBadgeService;
+
 
     @Operation(
             summary = "사용자 배지 목록 조회",
@@ -46,14 +45,13 @@ public class MyBadgeController {
     }
 
 
-    @PostMapping(value = "/badges/detail", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/badges/{badgeId}")
     @ResponseBody
-    public BadgeDetailResponse getBadgeDetail(@RequestBody BadgeDetailRequest request) {
-        return myBadgeService.getBadgeDetailList(
-                request.getUserId(),
-                request.getBadgeId(),
-                request.getBadgeCategoryId()
-        );
+    public BadgeDetailResponse getBadgeDetail(@PathVariable Long badgeId,
+                                              @RequestParam Long userId,
+                                              @RequestParam Long badgeCategoryId
+    ) {
+        return myBadgeService.getBadgeDetailList(userId, badgeId, badgeCategoryId );
     }
 
 }

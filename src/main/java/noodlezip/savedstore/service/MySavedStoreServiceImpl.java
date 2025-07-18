@@ -8,7 +8,6 @@ import noodlezip.savedstore.dto.response.SavedStoreCategoryResponse;
 import noodlezip.savedstore.dto.response.SavedStoreListWithPageInfoResponse;
 import noodlezip.savedstore.dto.response.SavedStorePageResponse;
 import noodlezip.savedstore.status.SavedStoreErrorStatus;
-import noodlezip.subscription.status.SubscriptionErrorStatus;
 import noodlezip.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
 
     @Override
     @Transactional(readOnly = true)
-    public MySavedStorePageResponse getMySavedStoreInitPage(Long userId) {
+    public MySavedStorePageResponse getMySavedStoreInitPage(Long userId, SavedStoreCategoryFilterRequest filter) {
         List<SavedStoreCategoryResponse> searchFilter =
                 savedStoreService.getSaveCategoryListForSearch(userId, true);
         List<SavedStoreCategoryResponse> updateCategoryList =
@@ -33,9 +32,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
         SavedStoreListWithPageInfoResponse savedStoreList =
                 savedStoreService.getSavedStoreListWithPaging(
                         userId,
-                        SavedStoreCategoryFilterRequest.builder()
-                                .isAllCategory(true)
-                                .build(),
+                        filter,
                         1, true
                 );
 
@@ -49,7 +46,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
 
     @Override
     @Transactional(readOnly = true)
-    public SavedStorePageResponse getSavedStoreInitPage(Long userId) {
+    public SavedStorePageResponse getSavedStoreInitPage(Long userId, SavedStoreCategoryFilterRequest filter) {
         userService.findExistingUserByUserId(userId)
                 .orElseThrow(() -> new CustomException(SavedStoreErrorStatus._FAIL_SAVED_STORE_PAGE_LOAD));
 
@@ -58,9 +55,7 @@ public class MySavedStoreServiceImpl implements MySavedStoreService {
         SavedStoreListWithPageInfoResponse savedStoreList =
                 savedStoreService.getSavedStoreListWithPaging(
                         userId,
-                        SavedStoreCategoryFilterRequest.builder()
-                                .isAllCategory(true)
-                                .build(),
+                        filter,
                         1, false
                 );
 

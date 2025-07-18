@@ -35,8 +35,8 @@
             <span th:if="${badge.accumulativeValue != null}"
                   th:text="${badge.accumulativeValue}">
             </span>
-              <i><img th:src="@{${badge.badgeImageUrl}}"></i>
-              <h3 th:text="${badge.badgeTitleName}"></h3>
+              <i><img th:src="@{${badge.badgeImageUrl}}" class="badge-image"></i>
+              <h3 th:text="${badge.badgeTitleName}" style="margin-bottom: 5px"></h3>
               <small th:if="${badge.badgeLevelName != null}"
                      th:text="${badge.badgeLevelName}">
               </small>
@@ -63,7 +63,7 @@
     <div class="modal-content" id="modalContent" style="display: none;">
       <div class="modal-header">
         <img src="https://via.placeholder.com/120x120?text=Badge"
-             alt="배지이미지" class="badge-main-image" id="badgeMainImage">
+             alt="배지이미지" class="badge-image" id="badgeMainImage">
         <h2 class="badge-name" id="badgeName">배지 이름</h2>
         <p class="badge-description" id="badgeDescription">배지 설명</p>
       </div>
