@@ -157,11 +157,17 @@ public class MyPageMainController extends MyBaseController {
         boolean isSubscribed = subscribeService.isSubscribed(userAccessInfo.getRequestUserId(),userAccessInfo.getTargetUserId());
         model.addAttribute("isSubscribed", isSubscribed);
 
-        // 내가 등록한 매장 목록 조회
-        Long loginUserId = myUserDetails.getUser().getId();
+        /// 이 부분 떄문에 로그인하지 않은 경우 진입이 불가한 거 같습니다 (비로그인 = myUserDetails == null)
+//        // 내가 등록한 매장 목록 조회
+//        Long loginUserId = myUserDetails.getUser().getId();
+//
+//        List<StoreDto> myStores = storeService.getStoresByUserId(loginUserId);
+//        model.addAttribute("myStores", myStores);
 
-        List<StoreDto> myStores = storeService.getStoresByUserId(loginUserId);
-        model.addAttribute("myStores", myStores);
+        if(userAccessInfo.getRequestUserId() != null) {
+            List<StoreDto> myStores = storeService.getStoresByUserId(userAccessInfo.getRequestUserId());
+            model.addAttribute("myStores", myStores);
+        }
 
         return "mypage/main";
     }
