@@ -147,13 +147,14 @@ public class MyPageMainController extends MyBaseController {
         boolean isSubscribed = subscribeService.isSubscribed(userAccessInfo.getRequestUserId(),userAccessInfo.getTargetUserId());
         model.addAttribute("isSubscribed", isSubscribed);
 
+        List<StoreDto> myStores = null;
         // 내가 등록한 매장 목록 조회
         if (!(myUserDetails == null)) {
             Long loginUserId = myUserDetails.getUser().getId();
-            List<StoreDto> myStores = storeService.getStoresByUserId(loginUserId);
-            model.addAttribute("myStores", myStores);
+            myStores = storeService.getStoresByUserId(loginUserId);
         }
-        
+        model.addAttribute("myStores", myStores);
+
         return "mypage/main";
     }
 
