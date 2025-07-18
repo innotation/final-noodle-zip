@@ -247,9 +247,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void registBoard(BoardReqDto boardReqDto, User user) {
+    public void registBoard(BoardReqDto boardReqDto, User user, String category) {
         Board board = modelMapper.map(boardReqDto, Board.class);
-        board.setCommunityType("community");
+        board.setCommunityType(category);
         board.setPostStatus(CommunityActiveStatus.POSTED);
         board.setUser(user);
         boardRepository.save(board);

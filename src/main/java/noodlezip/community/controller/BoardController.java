@@ -22,16 +22,16 @@ import noodlezip.community.dto.BoardReqDto;
 import noodlezip.community.dto.BoardRespDto;
 import noodlezip.community.dto.LikeResponseDto;
 import noodlezip.community.dto.*;
-import noodlezip.community.entity.Board;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
 import noodlezip.community.status.BoardSuccessStatus;
+import noodlezip.community.status.CommunityType;
 import noodlezip.store.dto.OcrToReviewDto;
-import noodlezip.store.entity.Store;
 import noodlezip.store.service.StoreService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,10 +42,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 import noodlezip.community.dto.CategoryCountDto;
 import noodlezip.community.dto.PopularTagDto;
 
@@ -58,34 +58,46 @@ public class BoardController {
 
     private final BoardService boardService;
     private final RequestParserUtil requestParserUtil;
+    private final StoreService storeService;
 
     private static final String RECENT_VIEWED_BOARDS = "recentViewedBoards";
     private static final int MAX_RECENT_BOARDS = 3;
-    private final StoreService storeService;
 
-    @RequestMapping(value = "/review", method = {RequestMethod.GET, RequestMethod.POST})
-    @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
+    @GetMapping(value = "/{category}/new")
+    @Operation(summary = "게시글 작성 페이지", description = "사용자가 게시글 작성할 수 있는 HTML 폼 페이지 반환")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
+            @ApiResponse(responseCode = "200", description = "게시글 작성 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public String review(@ModelAttribute ReviewInitDto reviewInitDto,
-                         Model model) {
+    public String registBoardView(@PathVariable(name = "category") String category,
+                                  @ModelAttribute ReviewInitDto reviewInitDto,
+                                  Model model) {
 //      ==================테스트용 임시 값 확인작업 맘무리 후 삭제===========================
-        if (reviewInitDto.getBizNum() == null) {
-            reviewInitDto.setBizNum("4578502690");
-            reviewInitDto.setVisitDate("2025-07-07");
-            reviewInitDto.setOcrKeyHash("6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d");
+        CommunityType communityType;
+        communityType = CommunityType.fromValue(category);
+        if (communityType == null) {
+            throw new CustomException(ErrorStatus._FORBIDDEN);
         }
+        else if (communityType == CommunityType.REVIEW) {
+            if (reviewInitDto.getBizNum() == null) {
+                reviewInitDto.setBizNum("4578502690");
+                reviewInitDto.setVisitDate("2025-07-07");
+                reviewInitDto.setOcrKeyHash("6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d");
+            }
 
-        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
-        model.addAttribute("storeId", ocrToReviewDto.getStoreId());
-        model.addAttribute("storeName",ocrToReviewDto.getStoreName());
-        model.addAttribute("menuList", ocrToReviewDto.getMenuList());
-        model.addAttribute("toppings", ocrToReviewDto.getToppingList());
+            OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
+            model.addAttribute("storeId", ocrToReviewDto.getStoreId());
+            model.addAttribute("storeName", ocrToReviewDto.getStoreName());
+            model.addAttribute("menuList", ocrToReviewDto.getMenuList());
+            model.addAttribute("toppings", ocrToReviewDto.getToppingList());
 
-        model.addAttribute("reviewInitDto", reviewInitDto);
-        return "board/leave-review";
+            model.addAttribute("reviewInitDto", reviewInitDto);
+            model.addAttribute("category", category);
+            return "board/leave-review";
+        } else {
+            model.addAttribute("category", category);
+            return "board/registBoard";
+        }
     }
 
     @PostMapping("/registReviewJson")
@@ -93,7 +105,7 @@ public class BoardController {
                                                             @AuthenticationPrincipal MyUserDetails userDetails) {
         List<Long> reviewIds = boardService.saveReviewJson(dto, userDetails.getUser());
         Map<String, Object> response = new HashMap<>();
-        response.put("reviewIds", reviewIds); // 각 슬라이드에 해당하는 리뷰 ID 목록 반환
+        response.put("reviewIds", reviewIds);
         return ResponseEntity.ok(response);
     }
 
@@ -108,18 +120,11 @@ public class BoardController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/registBoard")
-    @Operation(summary = "게시글 등록 폼 페이지", description = "새로운 게시글을 작성하기 위한 HTML 폼 페이지를 반환합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "게시글 등록 페이지 반환 성공",
-                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
-    })
-    public void registBoard() {
-    }
-
-    @PostMapping("/regist")
+    @PostMapping("/{category}/new")
+    @ResponseBody
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
     @Parameters({
+            @Parameter(name = "category", description = "등록할 게시판 정보", required = true),
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true),
             @Parameter(name = "boardReqDto", description = "게시글의 제목과 내용을 포함하는 요청 DTO", required = true,
                     schema = @Schema(implementation = BoardReqDto.class)),
@@ -127,7 +132,8 @@ public class BoardController {
             @Parameter(name = "boardImage", description = "게시글에 첨부할 이미지 파일 (선택 사항)", required = false,
                     content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
     })
-    public String registBoard(
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> registBoard(
+            @PathVariable(name = "category") String category,
             @AuthenticationPrincipal MyUserDetails user,
             @Validated(ValidationGroups.OnCreate.class) @ModelAttribute BoardReqDto boardReqDto,
             BindingResult bindingResult) {
@@ -145,9 +151,15 @@ public class BoardController {
             throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
+        CommunityType communityType = CommunityType.fromValue(category);
+
+        if (communityType == null) {
+            throw new CustomException(ErrorStatus._FORBIDDEN);
+        }
+
         try {
-            boardService.registBoard(boardReqDto, user.getUser());
-            return "redirect:/board/list";
+            boardService.registBoard(boardReqDto, user.getUser(), category);
+            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_BOARD_ADDED);
         } catch (CustomException e) {
             log.error("게시글 등록 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
             throw e;
@@ -167,7 +179,7 @@ public class BoardController {
             @Parameter(name = "model", description = "View로 데이터를 전달하기 위한 Spring Model 객체", hidden = true)
     })
     public String boardList(
-            @PathVariable(value = "category", required = false) String  pathCommunityType,
+            @PathVariable(value = "category", required = false) String pathCommunityType,
             @RequestParam(value = "search", required = false) String searchKeyword,
             // 태그 검색을 위한 request 추가
             @RequestParam(value = "tag", required = false) String tag,
@@ -213,7 +225,7 @@ public class BoardController {
 
     @GetMapping("/popular/{category}")
     @ResponseBody
-    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> getPopularBoards (@PathVariable String category) {
+    public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> getPopularBoards(@PathVariable String category) {
         List<BoardRespDto> popularBoards = boardService.getPopularBoards(category);
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularBoards);
     }
@@ -345,8 +357,8 @@ public class BoardController {
             List<PopularTagDto> popularTags = boardService.getPopularTags();
 
             Map<String, Object> widgets = Map.of(
-                "categoryCounts", categoryCounts,
-                "popularTags", popularTags
+                    "categoryCounts", categoryCounts,
+                    "popularTags", popularTags
             );
 
             return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, widgets);

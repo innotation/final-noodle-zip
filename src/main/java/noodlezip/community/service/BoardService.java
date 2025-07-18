@@ -31,7 +31,7 @@ public interface BoardService {
 
     BoardRespDto findBoardById(Long id, String userIdOrIp);
     BoardRespDto findReviewBoardById(Long id, String userIdOrIp);
-    void registBoard(BoardReqDto boardReqDto, User user);
+    void registBoard(BoardReqDto boardReqDto, User user, String category);
     void deleteBoard(Long boardId, Long userId);
     boolean toggleLike(BoardUserId boardUserId);
     Integer getLikeCount(Long boardId);
