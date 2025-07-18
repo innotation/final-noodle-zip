@@ -47,6 +47,7 @@
     </div>
   </th:block>
 </main>
+<div th:replace="~{fragments/alert-modal :: alertModal('failShowBadge', '알림', '', '확인', null)}"></div>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
@@ -81,6 +82,7 @@
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/badge.js"></script>
 <script src="/assets/validate.js"></script>
+<script src="/js/alertModal.js"></script>
 <script>
   $(".categories_carousel .item a").hover(
     function () {

@@ -25,3 +25,15 @@ function showConfirmModal(modalId, onConfirm, onCancel) {
     }, { once: true });
   }
 }
+
+function showErrorModal(modalId, errorMessageHtml) {
+  const modalEl = document.getElementById(modalId);
+  const modal = new bootstrap.Modal(modalEl);
+
+  const bodyEl = modalEl.querySelector('.modal-body');
+  if (bodyEl) {
+    bodyEl.innerHTML = errorMessageHtml; // <p>태그 등 포함 가능
+  }
+
+  modal.show();
+}

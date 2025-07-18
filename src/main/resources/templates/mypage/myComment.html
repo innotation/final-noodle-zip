@@ -77,10 +77,18 @@
                             <div class="comment_right clearfix">
                                 <div class="comment_info">
                                     <div class="community-info">
-                                        <strong> 게시글 : <a th:href="@{/board/{communityType}/detail/{id}
-                                                                  (communityType=${item.communityType},
-                                                                   id=${item.communityBoardId})}"
-                                                          th:text="${item.boardTitle != null ? item.boardTitle : '삭제된 게시글입니다'}"></a>
+                                        게시글 :
+                                        <strong>
+                                            <a th:if="${item.communityType != null}"
+                                               th:href="@{/board/{communityType}/detail/{id}(communityType=${item.communityType}, id=${item.communityBoardId})}"
+                                               th:text="${item.boardTitle != null ? item.boardTitle : '삭제된 게시글입니다.'}">
+                                            </a>
+
+                                            <a th:if="${item.communityType == null}"
+                                               href="javascript:void(0);"
+                                               th:text="${item.boardTitle != null ? item.boardTitle : '삭제된 게시글입니다.'}"
+                                               onclick="showConfirmModal('deletedPostAlertModal');">
+                                            </a>
                                         </strong>
                                         <span th:if="${item.boardTitle != null}" style="padding: 0; margin-bottom: 3px">
                                             <a class="community-tag">
@@ -126,7 +134,9 @@
     </div>
     <!-- /container -->
 </main>
-<div th:replace="fragments/alert-modal :: alertModal('confirmDeleteModal', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?.</p>', '삭제', '취소')"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteComment', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('deletedPostAlertModal', '알림', '<p>삭제된 게시글에는 접근할 수 없습니다.</p>', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('failDeleteComment', '알림', '', '확인', null)}"></div>
 
 
 <!-- /main -->
@@ -187,7 +197,7 @@
 <!-- /Sign In Modal -->
 <script>
     function deleteComment(id, boardId) {
-        showConfirmModal('confirmDeleteModal', () => { //사용자가 확인 버튼을 누르면 안의 구문이 실행됨
+        showConfirmModal('confirmDeleteComment', () => {
 
             fetch('/comments/' + id + '?boardId=' + boardId, {
                 method: 'DELETE'
@@ -198,11 +208,11 @@
                   } else {
                       return res.json().then(err => {
                           let msg = err.message || err.reason || "삭제 실패";
-                          alert(msg);
+                          showErrorModal('failDeleteComment', msg);
                       });
                   }
               })
-              .catch(() => alert('서버 오류'));
+              .catch(() => showErrorModal('failDeleteComment', "삭제 실패"));
         });
     }
 </script>
