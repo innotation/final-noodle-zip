@@ -159,13 +159,13 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
     @Override
     public boolean existsByOcrKeyHash(String ocrKeyHash) {
         QBoard board = QBoard.board;
-        Long count = queryFactory
-                .select(board.count())
+        Integer result = queryFactory
+                .selectOne()
                 .from(board)
                 .where(board.ocrKeyHash.eq(ocrKeyHash))
-                .fetchOne();
+                .fetchFirst();
 
-        return count > 0;
+        return result != null;
     }
 
     @Override
