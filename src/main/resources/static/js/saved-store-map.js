@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
         currentOpenInfoWindow = null;
       }
     } catch (error) {
-      console.error('인포윈도우 닫기 오류:', error);
+      showErrorModal('failSavedStoreShow', '지도 데이터를 불러올 수 없습니다.');
     }
   };
 
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         currentOpenInfoWindow = null;
       }
     } catch (error) {
-      console.error('인포윈도우 닫기 오류:', error);
+      showErrorModal('failSavedStoreShow', '지도 데이터를 불러올 수 없습니다.');
     }
   };
 
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const selectedCategories = getSelectedCategories();
     if (selectedCategories.length === 0) {
-      alert("조회할 카테고리를 선택하세요.");
+      showConfirmModal('noCheckCategory');
       return;
     }
 
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const userId = document.body.getAttribute('userId');
 
     if (!selectedCategories || selectedCategories.length === 0) {
-      console.warn('선택된 카테고리가 없습니다.');
+      showConfirmModal('noCheckCategory');
       return;
     }
 
@@ -132,13 +132,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data && data.locationListByCategoryId) {
           renderMapMarkers(data.locationListByCategoryId);
         } else {
-          console.warn('받은 데이터가 예상 형식과 다릅니다:', data);
-          alert('지도 데이터를 불러올 수 없습니다.');
+          throw new Error('지도 데이터를 불러올 수 없습니다.');
         }
       })
       .catch(err => {
-        console.error('지도 데이터 불러오기 실패:', err);
-        alert('지도 데이터를 불러오는 중 오류가 발생했습니다.');
+        showErrorModal('failSavedStoreShow', err.message);
       });
   }
 
@@ -153,7 +151,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       stores.forEach(store => {
         if (!store.storeLat || !store.storeLng) {
-          console.warn('좌표가 없는 매장:', store);
           return;
         }
 
