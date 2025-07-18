@@ -70,6 +70,7 @@
       </div>
     </div>
   </main>
+  <div th:replace="~{fragments/alert-modal :: alertModal('failSubscription', '알림', '', '확인', null)}"></div>
 
   <footer th:replace="fragments/footer :: footer"></footer>
 
@@ -77,6 +78,7 @@
   <script src="/js/common_func.js"></script>
   <script src="/assets/validate.js"></script>
   <script src="/js/subscription.js"></script>
+  <script src="/js/alertModal.js"></script>
 
 </body>
 </html>
