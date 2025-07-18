@@ -145,6 +145,8 @@
     </div>
     <!-- /container -->
 </main>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteBoard', '알림', '<p>정말 이 게시글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteLike', '알림', '<p>정말 이 게시글에 누른 좋아요를 취소하시겠습니까?</p>', '확인', '취소')}"></div>
 <!-- /main -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--/footer-->
@@ -153,43 +155,41 @@
 <!-- /Sign In Modal -->
 <script>
     function deleteBoard(boardId) {
-        if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
-
-        fetch(`/users/my/${boardId}/delete`, {
-            method: 'POST'
-        })
-            .then(res => {
-                if (res.redirected) {
-                    window.location.href = res.url;
-                    return;
-                }
-                if (res.ok) {
-                    alert('삭제가 완료되었습니다.');
-                    location.reload();
-                } else {
-                    return res.json().then(err => {
-                        throw new Error(err.message || '삭제 실패');
-                    });
-                }
+        showConfirmModal('confirmDeleteBoard', () => {
+            fetch(`/users/my/${boardId}/delete`, {
+                method: 'POST'
             })
-            .catch(err => {
-                alert('삭제 실패: ' + err.message);
-            });
+              .then(res => {
+                  if (res.redirected) {
+                      window.location.href = res.url;
+                      return;
+                  }
+                  if (res.ok) {
+                      location.reload();
+                  } else {
+                      return res.json().then(err => {
+                          throw new Error(err.message || '삭제 실패');
+                      });
+                  }
+              })
+              .catch(err => {
+                  alert('삭제 실패: ' + err.message);
+              });
+        })
     }
 
     function cancelLike(boardId) {
-        if (!confirm('정말 이 게시글에 누른 좋아요를 취소하시겠습니까?')) return;
-
-        fetch(`/board/like/${boardId}`, { method: 'POST' })
-            .then(res => {
-                if (!res.ok) return res.json().then(err => { throw new Error(err.message || '좋아요 취소 실패'); });
-                return res.json();
-            })
-            .then(data => {
-                alert('좋아요를 취소했습니다.');
-                location.reload(); // 혹은 DOM만 업데이트
-            })
-            .catch(err => alert('좋아요 취소 오류: ' + err.message));
+        showConfirmModal('confirmDeleteLike', () => {
+            fetch(`/board/like/${boardId}`, { method: 'POST' })
+              .then(res => {
+                  if (!res.ok) return res.json().then(err => { throw new Error(err.message || '좋아요 취소 실패'); });
+                  return res.json();
+              })
+              .then(data => {
+                  location.reload();
+              })
+              .catch(err => alert('좋아요 취소 오류: ' + err.message));
+        })
     }
 </script>
 
@@ -197,6 +197,7 @@
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
+<script src="/js/alertModal.js"></script>
 
 </body>
 </html>
