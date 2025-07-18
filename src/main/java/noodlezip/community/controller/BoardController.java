@@ -85,7 +85,7 @@ public class BoardController {
         model.addAttribute("toppings", ocrToReviewDto.getToppingList());
 
         model.addAttribute("reviewInitDto", reviewInitDto);
-        return "/board/leave-review";
+        return "board/leave-review";
     }
 
     @PostMapping("/registReviewJson")

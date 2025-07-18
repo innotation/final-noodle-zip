@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <th:block th:replace="~{fragments/head :: head}"></th:block>
   <link th:href="@{/admin_section/css/admin.css}" rel="stylesheet">
@@ -10,7 +10,7 @@
   <!-- 모바일 안됨 -->
 
 </head>
-<body>
+<body class="margin_sticky">
 <div th:replace="~{fragments/subHeader :: subHeader}"></div>
 
   <main style="margin-top: 100px; margin-bottom: 100px">
@@ -70,6 +70,8 @@
       </div>
     </div>
   </main>
+
+  <footer th:replace="fragments/footer :: footer"></footer>
 
   <script src="/js/common_scripts.min.js"></script>
   <script src="/js/common_func.js"></script>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="ko"
 			xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -28,11 +28,12 @@
 		            <div class="detail_page_head clearfix">
 		                <div class="breadcrumbs">
 		                    <ul>
-		                        <li><a href="#">Home</a></li>
-		                        <li><a href="#">Category</a></li>
-		                        <li>Page active</li>
+		                        <li><a th:href="@{/}">메인</a></li>
+		                        <li><a th:href="@{/search/list}">검색페이지</a></li>
+		                        <li>매장상세페이지</li>
 		                    </ul>
 		                </div>
+                    <br>
 		                <div class="title">
 		                    <h1 th:text="${store.storeName}">매장명</h1>
 											<span th:text="${store.address}">주소</span>
@@ -40,18 +41,14 @@
 												 target="_blank">
 												네이버 지도로 길찾기
 											</a>
-		                    <ul class="tags">
-		                        <li><a href="#0">Pizza</a></li>
-		                        <li><a href="#0">Italian Food</a></li>
-		                        <li><a href="#0">Best Price</a></li>
-		                    </ul>
 		                </div>
 									<!-- 이거 뭘로 바꾸지 -->
 		                <div class="rating">
-		                    <div class="score"><span>Superb<em>350 Reviews</em></span><strong>8.9</strong></div>
+		                    <div class="score"><span>최고의 식당<em>리뷰 개수</em></span><strong>4.0</strong></div>
 		                </div>
 		            </div>
 		            <!-- /detail_page_head -->
+                <hr>
 
 		            <div class="owl-carousel owl-theme carousel_1 magnific-gallery">
 		                <div class="item">
@@ -113,6 +110,9 @@
                        target="_blank" class="btn_1 full-width mb_5">
                         <i class="icon_location"></i> 네이버 지도에서 보기
                     </a>
+                    <a th:href="@{/receipt}" class="btn_1 full-width mb_5">
+                      <i class="icon_location"></i> 리뷰 작성하러 가기
+                    </a>
                     <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
                 </div>
             </div>
@@ -159,7 +159,10 @@
 						menuLoaded = true;
 					})
 					.catch(err => {
-						console.error(err);
+						console.error('메뉴 탭 로딩 실패' + err);
+            paneC.innerHTML = `<h4>메뉴 조회에 실패하였습니다.</h4>
+                               <br>
+                               <div>운영자에게 문의 바랍니다.</div>`;
 					});
 			});
 
@@ -279,28 +282,24 @@
 							});
 						});
 					}
-					filterMenus(); // Call filterMenus initially to set the correct display state
+					filterMenus();
 				}
 
 				// 메뉴 갤러리 초기화 함수
 				function initMenuGallery() {
-					console.log('메뉴 갤러리 초기화 시작');
-					
+
 					// 메뉴 탭 내의 모든 이미지 링크에 대해 직접 클릭 이벤트 추가
 					const menuImageLinks = paneC.querySelectorAll('a[data-effect="mfp-zoom-in"]');
-					console.log('찾은 이미지 링크:', menuImageLinks.length);
-					
+
 					menuImageLinks.forEach((link, index) => {
-						console.log(`링크 ${index} 설정:`, link.href);
-						
+
 						// 기존 클릭 이벤트 제거
 						link.removeEventListener('click', link._magnificHandler);
 						
 						// 새로운 클릭 이벤트 추가
 						link._magnificHandler = function(e) {
 							e.preventDefault();
-							console.log('이미지 클릭됨:', this.href);
-							
+
 							// Magnific Popup으로 이미지 열기
 							$.magnificPopup.open({
 								items: {
@@ -323,9 +322,7 @@
 						
 						link.addEventListener('click', link._magnificHandler);
 					});
-					
-					console.log('메뉴 갤러리 초기화 완료');
-				}
+        }
 		});
 	</script>
 	<!-- menu-tab 실행 -->
@@ -353,7 +350,10 @@
 						}, 100);
 						reviewLoaded = true;
 					})
-					.catch(err => console.error("리뷰 탭 로딩 실패", err));
+					.catch(err => {
+            console.error("리뷰 탭 로딩 실패", err);
+            paneB.innerHTML = `<h4>현재 리뷰가 없습니다.</h4>`;
+          });
 			});
 
 			function initLoadMore() {
@@ -514,23 +514,19 @@
 
 			// 리뷰 갤러리 초기화 함수
 			function initReviewGallery() {
-				console.log('리뷰 갤러리 초기화 시작');
-				
+
 				// 리뷰 탭 내의 모든 이미지 링크에 대해 직접 클릭 이벤트 추가
 				const reviewImageLinks = paneB.querySelectorAll('a[data-effect="mfp-zoom-in"]');
-				console.log('찾은 리뷰 이미지 링크:', reviewImageLinks.length);
-				
+
 				reviewImageLinks.forEach((link, index) => {
-					console.log(`리뷰 링크 ${index} 설정:`, link.href);
-					
+
 					// 기존 클릭 이벤트 제거
 					link.removeEventListener('click', link._magnificHandler);
 					
 					// 새로운 클릭 이벤트 추가
 					link._magnificHandler = function(e) {
 						e.preventDefault();
-						console.log('리뷰 이미지 클릭됨:', this.href);
-						
+
 						// Magnific Popup으로 이미지 열기
 						$.magnificPopup.open({
 							items: {
@@ -554,7 +550,6 @@
 					link.addEventListener('click', link._magnificHandler);
 				});
 				
-				console.log('리뷰 갤러리 초기화 완료');
 			}
 		});
 	</script>

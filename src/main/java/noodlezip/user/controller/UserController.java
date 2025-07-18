@@ -49,14 +49,6 @@ public class UserController {
     private final EmailVerificationService emailVerificationService;
     private final ModelMapper modelMapper;
 
-    @GetMapping("/login")
-    @Operation(summary = "로그인 페이지", description = "사용자 로그인 페이지를 반환합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그인 페이지 반환 성공")
-    })
-    public void loginPage() {
-    }
-
     @GetMapping("/signup")
     @Operation(summary = "회원 가입 페이지", description = "사용자 회원 가입 폼 페이지를 반환합니다.")
     @ApiResponses(value = {
@@ -304,7 +296,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("userProfile", userDto);
         }
 
-        return "redirect:/";
+        return "redirect:/mypage/" + userDetails.getUser().getId();
     }
 
     @PostMapping("user/signout")
