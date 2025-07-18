@@ -293,7 +293,7 @@
                     aElement.appendChild(emElement);
                     aElement.appendChild(h3Element);
                     aElement.appendChild(smallElement);
-                    aElement.href = `/board/detail/${item.boardId}`;
+                    aElement.href = `/board/${item.communityType}/detail/${item.boardId}`;
                     imgElement.src = item.imageUrl;
                     strongElement.textContent = item.likesCount;
                     emElement.textContent = item.communityType;
