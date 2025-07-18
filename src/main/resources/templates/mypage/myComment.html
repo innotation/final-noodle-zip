@@ -126,7 +126,7 @@
     </div>
     <!-- /container -->
 </main>
-<div th:replace="fragments/alert-modal :: alertModal('confirmDeleteModal', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?.</p>', '삭제', '취소')"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteComment', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 
 
 <!-- /main -->
@@ -187,7 +187,7 @@
 <!-- /Sign In Modal -->
 <script>
     function deleteComment(id, boardId) {
-        showConfirmModal('confirmDeleteModal', () => { //사용자가 확인 버튼을 누르면 안의 구문이 실행됨
+        showConfirmModal('confirmDeleteComment', () => {
 
             fetch('/comments/' + id + '?boardId=' + boardId, {
                 method: 'DELETE'
