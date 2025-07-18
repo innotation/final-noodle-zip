@@ -63,7 +63,7 @@ public class BoardController {
     private static final int MAX_RECENT_BOARDS = 3;
     private final StoreService storeService;
 
-    @RequestMapping(value = "/review", method = {RequestMethod.GET, RequestMethod.POST})
+    @PostMapping("/review")
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
