@@ -75,6 +75,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .select(Projections.constructor(MyCommentResponse.class,
                         comment.id,
                         comment.communityId,
+                        board.communityType,
                         board.title,
                         comment.user.userName,
                         comment.user.profileImageUrl,

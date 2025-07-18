@@ -12,9 +12,10 @@
 
 	<!-- YOUR CUSTOM CSS -->
 	<link href="/css/custom.css" rel="stylesheet">
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+
+	<!-- 외부 플러그인 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
 
 	<style>
 		.review-slider {
@@ -34,11 +35,17 @@
 		.slick-next:before {
 			color: #333;
 		}
+		img.preview {
+			max-width: 100%;
+			max-height: 200px;
+			height: auto;
+			border-radius: 8px;
+			margin-top: 10px;
+		}
 	</style>
 
 	<script th:inline="javascript">
 		let toppings = /*[[${toppings}]]*/ [];
-		console.log("🍜 토핑:", toppings);
 	</script>
 
 </head>
@@ -60,7 +67,7 @@
 								<span th:text="${menu.menuName}"></span>
 							</label>
 						</div>
-						<button id="startReviewBtn" class="btn btn-primary">리뷰 작성하기</button>
+						<button id="startReviewBtn" class="btn_1 btn-sm">리뷰 작성하기</button>
 					</div>
 					<form id="reviewForm"  method="POST" style="display:none;" enctype="multipart/form-data">
 
@@ -78,8 +85,8 @@
 						</div>
 
 						<div class="text-center" style="margin-top: 30px;">
-							<button type="button" class="btn btn-sm btn-info" id="openMenuModal" data-toggle="modal" data-target="#menuSelectModal">+ 메뉴 추가</button>
-							<button type="button" class="btn btn-success" id="submitReviewBtn">리뷰 제출</button>
+							<button type="button" class="btn_1 btn-sm" id="openMenuModal">+ 메뉴 추가</button>
+							<button type="button" class="btn_1 btn-sm" id="submitReviewBtn">리뷰 제출</button>
 						</div>
 
 <!--						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />-->
@@ -105,18 +112,18 @@
 <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
 
 <!-- 메뉴 선택 모달 -->
-<div id="menuSelectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="menuModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+<div id="menuSelectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="menuModalLabel">메뉴 선택</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<ul id="menuListContainer"></ul>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+				<button type="button" class="btn_1 btn-sm" data-dismiss="modal">닫기</button>
 			</div>
 		</div>
 	</div>
@@ -157,38 +164,73 @@
 		});
 
 		return `
-    <div class="slick-item" data-index="${index}">
-      <div class="card p-3">
-        <h4>${menuName}에 대한 리뷰</h4>
-        <input type="hidden" name="reviews[${index}].menuId" value="${menuId}" />
-        <div class="row">
-          <div class="col-xs-6"><label>면 굵기</label><input type="range" name="reviews[${index}].noodleThickness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>면 식감</label><input type="range" name="reviews[${index}].noodleTexture" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>면 삶기</label><input type="range" name="reviews[${index}].noodleBoiledLevel" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>국물 농도</label><input type="range" name="reviews[${index}].soupThickness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>온도</label><input type="range" name="reviews[${index}].soupTemperature" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>염도</label><input type="range" name="reviews[${index}].soupSaltiness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>맵기</label><input type="range" name="reviews[${index}].soupSpiciness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>기름</label><input type="range" name="reviews[${index}].soupOiliness" min="0" max="10" value="5"/></div>
-        </div>
-        <div class="form-group">
-          <label>국물 키워드</label>
-          <input type="text" name="reviews[${index}].soupFlavorKeywords" class="form-control" maxlength="100" placeholder="예: 진한, 담백한 등 키워드를 입력하세요."/>
-          <label>먹은 토핑 선택</label><br/>
-          ${toppingOptions}
-        </div>
-        <div class="form-group">
-          <label>내용</label>
-          <textarea class="form-control" name="reviews[${index}].content" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label>사진 첨부</label>
-          <input type="file" name="reviews[${index}].imageFile" accept="image/*" class="form-control" data-max-size="5242880" />
-          <small class="text-muted">지원 형식: JPG, PNG, GIF, WebP (최대 5MB)</small>
-        </div>
-        <button type="button" class="btn btn-danger remove-slide" data-menu-id="${menuId}">삭제</button>
+<div class="slick-item" data-index="${index}">
+  <div class="box_general write_review">
+    <h4 class="add_bottom_15">"${menuName}"에 대한 리뷰</h4>
+    <input type="hidden" name="reviews[${index}].menuId" value="${menuId}" />
+
+    <div class="row">
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">면 굵기 <strong class="val-thickness"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleThickness" />
       </div>
-    </div>`;
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">면 식감 <strong class="val-texture"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleTexture" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">면 삶기 <strong class="val-boiled"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleBoiledLevel" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">국물 농도 <strong class="val-soup-thick"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupThickness" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">온도 <strong class="val-temp"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupTemperature" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">염도 <strong class="val-salt"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupSaltiness" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">맵기 <strong class="val-spicy"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupSpiciness" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">기름 <strong class="val-oil"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupOiliness" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>국물 키워드</label>
+      <input type="text" name="reviews[${index}].soupFlavorKeywords" class="form-control" maxlength="100" placeholder="예: 진한, 담백한 등 키워드를 입력하세요."/>
+    </div>
+
+    <div class="form-group">
+      <label>먹은 토핑 선택</label><br/>
+      ${toppingOptions}
+    </div>
+
+    <div class="form-group">
+      <label>내용</label>
+      <textarea class="form-control" name="reviews[${index}].content" rows="3" placeholder="이 메뉴에 대한 솔직한 후기를 남겨주세요."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>사진 첨부</label>
+  <input type="file" class="review-image-upload" data-index="${index}" accept="image/*">
+  <img class="preview" style="display:none;"  alt="미리보기"/>
+  <input type="hidden" name="reviews[${index}].imageUrl" />
+    </div>
+
+    <div class="text-end">
+      <button type="button" class="btn_1 btn-sm remove-slide mt-3" data-menu-id="${menuId}">삭제</button>
+    </div>
+  </div>
+</div>`;
 	}
 
 	function refreshMenuModalList() {
@@ -198,7 +240,7 @@
 			const id = String($(this).val());
 			const name = $(this).data('name');
 			if (!addedMenuIds.has(id)) {
-				const item = `<li class="mb-2"><button type="button" class="btn btn-info addMenuBtn" data-id="${id}" data-name="${name}">${name}</button></li>`;
+				const item = `<li class="mb-2"><button type="button" class="btn_1 btn-sm addMenuBtn" data-id="${id}" data-name="${name}">${name}</button></li>`;
 				$list.append(item);
 			}
 		});
@@ -226,7 +268,14 @@
 			const index = getNextReviewIndex();
 			const html = getReviewSlideHtml(menuId, menuName, index);
 			slider.append(html);
-			addedMenuIds.add(menuId);
+			addedMenuIds.add(String(menuId));
+		});
+
+		slider.find('input[type="range"]').rangeslider({
+			polyfill: false,
+			onSlide: function (position, value) {
+				$(this.$element).siblings('strong').text(value);
+			}
 		});
 
 		$('#menu-selection').hide();
@@ -243,7 +292,7 @@
 	$(document).on('click', '.remove-slide', function () {
 		const $slide = $(this).closest('.slick-item');
 		const slickIndex = $slide.index();
-		const menuId = $(this).data('menu-id');
+		const menuId = String($(this).data('menu-id'));
 		$('.review-slider').slick('slickRemove', slickIndex);
 		addedMenuIds.delete(menuId);
 		$('.menu-checkbox[value="' + menuId + '"]').prop('checked', false);
@@ -277,12 +326,52 @@
 			$('.menu-checkbox[value="' + id + '"]').prop('checked', true);
 			refreshMenuModalList();
 			pendingMenuToAdd = null;
+
+			const newSlide = $('.review-slider .slick-item').last();
+			newSlide.find('input[type="range"]').rangeslider({
+				polyfill: false,
+				onSlide: function (position, value) {
+					$(this.$element).siblings('strong').text(value);
+				}
+			});
 		}
+	});
+
+	document.addEventListener('change', function (e) {
+		if (!e.target.matches('.review-image-upload')) return;
+
+		const fileInput = e.target;
+		const file = fileInput.files[0];
+		if (!file) return;
+
+		const index = fileInput.dataset.index;
+		const formData = new FormData();
+		formData.append('uploadFiles', file);
+
+		fetch('/board/imageUpload', {
+			method: 'POST',
+			body: formData
+		})
+			.then(res => res.json())
+			.then(data => {
+				const imageUrl = data.payload[0].fileUrl;
+				const hiddenInput = document.querySelector(`input[name="reviews[${index}].imageUrl"]`);
+				if (hiddenInput) hiddenInput.value = imageUrl;
+
+				const previewImg = fileInput.closest('.form-group').querySelector('img.preview');
+				if (previewImg) {
+					previewImg.src = imageUrl;
+					previewImg.style.display = 'block';
+				}
+			})
+			.catch(err => {
+				console.error("❌ 이미지 업로드 실패", err);
+				alert("이미지 업로드 중 오류 발생");
+			});
 	});
 
 	document.getElementById('submitReviewBtn').addEventListener('click', function () {
 		document.getElementById('content').value = quill.root.innerHTML;
-
 		const form = document.getElementById('reviewForm');
 		const reviews = [];
 
@@ -301,6 +390,7 @@
 				soupSpiciness: safeVal('soupSpiciness'),
 				soupOiliness: safeVal('soupOiliness'),
 				soupFlavorKeywords: safeVal('soupFlavorKeywords'),
+				imageUrl: safeVal('imageUrl'),
 				content: slide.querySelector(`textarea[name="reviews[${index}].content"]`)?.value ?? '',
 				toppingIds: Array.from(slide.querySelectorAll(`input[name="reviews[${index}].toppingIds"]:checked`)).map(i => i.value)
 			});
@@ -317,38 +407,13 @@
 			reviews
 		};
 
-		const fileData = new FormData();
-		document.querySelectorAll('.slick-item[data-index]').forEach((slide, idx) => {
-			const index = slide.getAttribute('data-index');
-			const fileInput = slide.querySelector(`input[name="reviews[${index}].imageFile"]`);
-			if (fileInput?.files?.length > 0) {
-				fileData.append(`images[${idx}]`, fileInput.files[0]); // 인덱스 순서로 매핑
-			}
-		});
-
-		fetch('/board/registReviewJson', {
+		fetch('/board/registReview', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
 		})
-			.then(response => response.json())
-			.then(data => {
-				// 매핑된 리뷰 ID에 따라 이미지 이름 재설정
-				data.reviewIds.forEach((reviewId, i) => {
-					const file = fileData.get(`images[${i}]`);
-					if (file) {
-						fileData.set(`image_${reviewId}`, file);
-						fileData.delete(`images[${i}]`);
-					}
-				});
-
-				return fetch('/board/uploadReviewImages', {
-					method: 'POST',
-					body: fileData
-				});
-			})
 			.then(response => {
-				if (!response.ok) throw new Error("파일 업로드 실패");
+				if (!response.ok) throw new Error("리뷰 등록 실패");
 				alert("🎉 리뷰 등록 성공!");
 				location.href = "/";
 			})

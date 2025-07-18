@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.mypage.dto.response.MyPageResponse;
+import noodlezip.mypage.status.MyPageErrorStatus;
 import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.subscription.service.SubscribeService;
 import noodlezip.user.entity.User;
@@ -42,7 +43,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/mypage")
+@RequestMapping("/users")
 @Controller
 @Tag(name = "마이페이지", description = "미이페이지 연동 API")
 public class MyPageMainController extends MyBaseController {
@@ -64,7 +65,7 @@ public class MyPageMainController extends MyBaseController {
             @Parameter(name = "myUserDetails", hidden = true),
             @Parameter(name = "model", hidden = true)
     })
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/mypage")
     public String userMyPage(@AuthenticationPrincipal MyUserDetails myUserDetails,
                              @PathVariable Long userId,
                              Model model
@@ -72,7 +73,8 @@ public class MyPageMainController extends MyBaseController {
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
         // 유저 정보 조회
         User user = userService.findExistingUserByUserId(userId)
-            .orElseThrow(() -> new CustomException(UserErrorStatus._NOT_FOUND_USER));
+            .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
+
         MyPageResponse myPage = MyPageResponse.builder()
             .id(user.getId())
             .userName(user.getUserName())

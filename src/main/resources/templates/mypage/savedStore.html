@@ -104,8 +104,7 @@
                                                        : savedStorePageInfo.savedStoreList.savedStoreList)}">
                         <div class="strip">
                             <figure>
-                                <img src="/img/lazy-placeholder.png"
-                                     th:attr="data-src=${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
+                                <img th:src="${store.storeMainImageUrl}" class="img-fluid" alt="">
                                 <a th:href="@{'/store/detail/' + ${store.storeId}}" class="strip_info" target="_blank" rel="noopener noreferrer">
                                     <small th:text="${store.saveStoreCategoryName}"></small>
                                     <div class="item_title">

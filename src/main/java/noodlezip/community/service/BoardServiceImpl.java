@@ -402,7 +402,12 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public List<Long> saveReviewJson(ReviewReqDto dto, User user) {
+    public void saveReviewJson(ReviewReqDto dto, User user) {
+
+        if (dto == null) {
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        }
+
         Board board = new Board();
         board.setTitle(dto.getTitle());
         board.setContent(dto.getContent());
@@ -454,20 +459,6 @@ public class BoardServiceImpl implements BoardService {
         }
 
         eventPublisher.publishRamenReviewBadgeEvent(user, dto);
-        return reviewIds;
-    }
-
-    @Transactional
-    @Override
-    public void saveReviewImage(Long reviewId, MultipartFile imageFile) {
-        if (imageFile == null || imageFile.isEmpty()) return;
-
-        RamenReview review = ramenReviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ErrorStatus._BAD_REQUEST));
-
-        String imageUrl = fileUtil.fileupload("review", imageFile).get("fileUrl"); // 저장 및 경로 반환
-        review.setReviewImageUrl(imageUrl);
-        ramenReviewRepository.save(review);
     }
 
 }
