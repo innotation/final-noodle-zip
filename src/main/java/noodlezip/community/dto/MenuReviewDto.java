@@ -21,6 +21,7 @@ public class MenuReviewDto {
     private int soupSaltiness;
     private int soupSpiciness;
     private int soupOiliness;
+    private String imageUrl;
     private String soupFlavorKeywords;
     private String content;
     private List<Long> toppingIds;

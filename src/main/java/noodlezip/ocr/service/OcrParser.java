@@ -2,7 +2,9 @@ package noodlezip.ocr.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import noodlezip.common.exception.CustomException;
 import noodlezip.ocr.dto.OcrDataDto;
+import noodlezip.ocr.status.OcrErrorStatus;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -44,39 +46,55 @@ public class OcrParser {
         try {
             JsonNode root = mapper.readTree(json);
             JsonNode result = root.at("/images/0/receipt/result");
-            String raw = "";
-            if (result.isArray()) {
-                throw new Exception("OCR 결과로 고유 키를 생성할 수 없습니다.");
-            }else {
-                String bizNum = tryGetText(result, "/storeInfo/bizNum/text").orElse("").replaceAll("-", "");
-                String confirmNum = tryGetText(result, "/paymentInfo/confirmNum/text").orElse("").replaceAll("-", "");
-                String dateTime = tryGetText(result, "/paymentInfo/date/text").orElse("") + " " + tryGetText(result, "/paymentInfo/time/text").orElse("");
-                String storeName = tryGetText(result, "/storeInfo/name/text").orElse("").replaceAll("[^가-힣a-zA-Z0-9\\s]", "");
-                String totalPrice = tryGetText(result, "/totalPrice/price/text").orElse("/subResult/price/text");
 
-                if (!bizNum.isEmpty() && !confirmNum.isEmpty()) {
-                    raw = bizNum + "|" + confirmNum;
-                } else if (!bizNum.isEmpty() && !dateTime.isBlank()) {
-                    raw = bizNum + "|" + dateTime;
-                } else if (!storeName.isEmpty() && !totalPrice.isBlank() && !dateTime.isBlank()) {
-                    raw = storeName + "|" + totalPrice + "|" + dateTime;
-                }
-                return hash(raw);
+            if (result.isArray()) {
+                throw new CustomException(OcrErrorStatus._HASH_KEY_GENERATION_FAIL);
             }
+
+            String bizNum = tryGetText(result, "/storeInfo/bizNum/text").orElse("").replaceAll("-", "");
+            String confirmNum = tryGetText(result, "/paymentInfo/confirmNum/text").orElse("").replaceAll("-", "");
+            String dateTime = tryGetText(result, "/paymentInfo/date/text").orElse("") + " " +
+                    tryGetText(result, "/paymentInfo/time/text").orElse("");
+            String storeName = tryGetText(result, "/storeInfo/name/text").orElse("").replaceAll("[^가-힣a-zA-Z0-9\\s]", "");
+            String totalPrice = tryGetText(result, "/totalPrice/price/text").orElse("");
+
+            String raw = null;
+            if (!bizNum.isEmpty() && !confirmNum.isEmpty()) {
+                raw = bizNum + "|" + confirmNum;
+            } else if (!bizNum.isEmpty() && !dateTime.isBlank()) {
+                raw = bizNum + "|" + dateTime;
+            } else if (!storeName.isEmpty() && !totalPrice.isBlank() && !dateTime.isBlank()) {
+                raw = storeName + "|" + totalPrice + "|" + dateTime;
+            }
+
+            if (raw == null) {
+                throw new CustomException(OcrErrorStatus._HASH_KEY_GENERATION_FAIL);
+            }
+
+            return hash(raw);
+
+        } catch (CustomException ce) {
+            throw ce;
         } catch (Exception e) {
-            throw new RuntimeException("OCR 키 정보 추출 실패.",e);
+            throw new CustomException(OcrErrorStatus._HASH_KEY_GENERATION_FAIL);
         }
     }
 
-    // 사용자에게 방문확인 받기 위한 정보
     public OcrDataDto visitCheckingInfo(String json) {
         try {
             JsonNode root = mapper.readTree(json);
             JsonNode result = root.at("/images/0/receipt/result");
 
-            String storeName = tryGetText(result, "/storeInfo/name/text").orElse("").replaceAll("[^가-힣a-zA-Z0-9\\s]", "");
-            String date = tryGetText(result, "/paymentInfo/date/text").orElse("");
-            String bizNum = tryGetText(result, "/storeInfo/bizNum/text").orElse("").replaceAll("-", "");
+            String storeName = tryGetText(result, "/storeInfo/name/text")
+                    .orElse("")
+                    .replaceAll("[^가-힣a-zA-Z0-9\\s]", "");
+
+            String date = tryGetText(result, "/paymentInfo/date/text")
+                    .orElse("");
+
+            String bizNum = tryGetText(result, "/storeInfo/bizNum/text")
+                    .orElse("")
+                    .replaceAll("-", "");
 
             List<String> menuNames = new ArrayList<>();
             JsonNode itemNodes = result.at("/subResults/0/items");
@@ -89,9 +107,13 @@ public class OcrParser {
                     }
                 }
             }
+
             return new OcrDataDto(storeName, date, menuNames, bizNum);
+
+        } catch (CustomException ce) {
+            throw ce;
         } catch (Exception e) {
-            throw new RuntimeException("OCR 전체 정보 추출 실패", e);
+            throw new CustomException(OcrErrorStatus._PARSE_FAIL);
         }
     }
 
