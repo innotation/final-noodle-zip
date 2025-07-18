@@ -204,6 +204,63 @@
             <div class="col-lg-9">
                 <div class="singlepost">
                     <h1><span th:text="${board.title}"></span></h1>
+                    <div th:if="${not #lists.isEmpty(board.menuReviews)}" class="menu-reviews-section mt-4">
+                        <h3>등록된 메뉴 리뷰</h3>
+                        <div id="review-slick-carousel" class="slick-carousel-container">
+                            <div th:each="review, status : ${board.menuReviews}" class="slick-item" th:data-index="${status.index}">
+                                <div class="card p-3">
+                                    <h4 th:text="${review.menuName + '에 대한 리뷰'}">메뉴 이름에 대한 리뷰</h4>
+                                    <input type="hidden" th:name="'reviews[' + ${status.index} + '].menuId'" th:value="${review.menuId}" />
+                                    <div class="row">
+                                        <div class="col-xs-6"><label>면 굵기</label><input type="range" th:name="'reviews[' + ${status.index} + '].noodleThickness'" min="0" max="10" th:value="${review.noodleThickness}" disabled/></div>
+                                        <div class="col-xs-6"><label>면 식감</label><input type="range" th:name="'reviews[' + ${status.index} + '].noodleTexture'" min="0" max="10" th:value="${review.noodleTexture}" disabled/></div>
+                                        <div class="col-xs-6"><label>면 삶기</label><input type="range" th:name="'reviews[' + ${status.index} + '].noodleBoilLevel'" min="0" max="10" th:value="${review.noodleBoilLevel}" disabled/></div>
+                                        <div class="col-xs-6"><label>국물 농도</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupDensity'" min="0" max="10" th:value="${review.soupDensity}" disabled/></div>
+                                        <div class="col-xs-6"><label>온도</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupTemperature'" min="0" max="10" th:value="${review.soupTemperature}" disabled/></div>
+                                        <div class="col-xs-6"><label>염도</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupSaltiness'" min="0" max="10" th:value="${review.soupSaltiness}" disabled/></div>
+                                        <div class="col-xs-6"><label>맵기</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupSpicinessLevel'" min="0" max="10" th:value="${review.soupSpicinessLevel}" disabled/></div>
+                                        <div class="col-xs-6"><label>기름</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupOiliness'" min="0" max="10" th:value="${review.soupOiliness}" disabled/></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>국물 키워드</label>
+                                        <input type="text" th:name="'reviews[' + ${status.index} + '].soupFlavorKeywords'" class="form-control" th:value="${review.soupFlavorKeywords}" maxlength="100" placeholder="예: 진한, 담백한 등 키워드를 입력하세요." disabled/>
+                                        <label>먹은 토핑 선택</label><br/>
+                                        <div th:each="topping : ${toppings}" class="checkbox-inline">
+                                            <input type="checkbox" th:name="'reviews[' + ${status.index} + '].toppingIds'" th:value="${topping.id}" th:checked="${review.toppingIds != null and review.toppingIds.contains(topping.id)}" disabled> <span th:text="${topping.name}">토핑 이름</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>내용</label>
+                                        <textarea class="form-control" th:name="'reviews[' + ${status.index} + '].content'" rows="3" th:text="${review.content}" disabled></textarea>
+                                    </div>
+                                    <div class="form-group" th:if="${review.reviewImageUrl != null and review.reviewImageUrl != ''}">
+                                        <label>첨부된 사진</label><br/>
+                                        <img th:src="${review.reviewImageUrl}" alt="Review Image" style="max-width: 200px; max-height: 200px; object-fit: contain;"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script th:inline="javascript">
+                        /*<![CDATA[*/
+                        // 이 `toppings` 변수는 서버에서 넘어오는 토핑 목록 데이터입니다.
+                        const toppings = /*[[${toppings}]]*/ [];
+
+                        // 기존 리뷰가 있을 때만 slick 초기화
+                        if (document.querySelectorAll('.slick-item').length > 0) {
+                            $(document).ready(function(){
+                                $('#review-slick-carousel').slick({
+                                    infinite: true,
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1,
+                                    arrows: true,
+                                    dots: true,
+                                    // 반응형 설정 등 필요에 따라 추가
+                                });
+                            });
+                        }
+                        /*]]>*/
+                    </script>
                     <div class="postmeta">
                         <ul>
                             <li><a th:href="@{/board/{communityType}/list(communityType=${board.communityType})}"><i class="icon_folder-alt"></i><span
@@ -686,6 +743,7 @@
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
+<script src="/js/specific_review.js"></script>
 
 </body>
 </html>

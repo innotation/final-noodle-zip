@@ -24,6 +24,7 @@ import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ReviewToppingRepository;
 import noodlezip.ramen.repository.ToppingRepository;
 import noodlezip.store.dto.MenuRequestDto;
+import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.StoreExtraTopping;
 import noodlezip.store.repository.MenuRepository;
@@ -61,10 +62,9 @@ public class BoardServiceImpl implements BoardService {
     private final LikeRepository likeRepository;
     private final RamenReviewRepository ramenReviewRepository;
     private final ReviewToppingRepository reviewToppingRepository;
-    private final ToppingRepository toppingRepository;
     private final StoreExtraToppingRepository storeExtraToppingRepository;
-    private final StoreService storeService;
     private final MenuRepository menuRepository;
+    private final RamenReviewRepository rareReviewRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -209,7 +209,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardRespDto findReViewBoardById(Long id, String userIdOrIp) {
+    public BoardRespDto findReviewBoardById(Long id, String userIdOrIp) {
 
         String[] infoAndIdOrIp = userIdOrIp.split(":");
 
@@ -229,11 +229,10 @@ public class BoardServiceImpl implements BoardService {
 
         boardRespDto.setContent(sanitizedContentHtml);
 
-        if (boardRespDto == null) {
-            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
-        } else {
-            boardRespDto.setIsLike(isLike);
-        }
+        List<StoreReviewDto> list = ramenReviewRepository.findReviewsByBoardId(id);
+        log.info("list : {}", list);
+        boardRespDto.setMenuReviews(list);
+        boardRespDto.setIsLike(isLike);
 
         viewCountService.increaseViewCount(TargetType.BOARD, id, userIdOrIp);
 

@@ -246,10 +246,8 @@ public class BoardController {
             userIdOrIp = "ip:" + requestParserUtil.getClientIp(request);
         }
         BoardRespDto board = null;
-        if (category.equals("community")) {
-            board = boardService.findBoardById(id, userIdOrIp);
-        } else if (category.equals("review")) {
-            board = boardService.findBoardById(id, userIdOrIp);
+        if (category.equals("review")) {
+            board = boardService.findReviewBoardById(id, userIdOrIp);
         } else {
             board = boardService.findBoardById(id, userIdOrIp);
         }

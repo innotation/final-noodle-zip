@@ -3,8 +3,10 @@ package noodlezip.community.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import noodlezip.community.entity.CommunityActiveStatus;
+import noodlezip.store.dto.StoreReviewDto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -29,5 +31,6 @@ public class BoardRespDto {
     private String imageUrl;
     private Boolean isWriter;
     private Boolean isLike;
+    private List<StoreReviewDto> menuReviews;
 
 }
