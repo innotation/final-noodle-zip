@@ -62,11 +62,20 @@
   </div>
 </main>
 
+<div th:replace="~{fragments/alert-modal :: alertModal('simpleAlertModal', '알림', '', '확인', '')}"></div>
+
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 
 <!-- ───────────────────── 스크립트 ───────────────────── -->
 <script>
+  function showAlertModal(message, title = "알림") {
+    const $modal = $('#simpleAlertModal');
+    $modal.find('.modal-title').text(title);
+    $modal.find('.modal-body').html(message); // HTML도 가능 (e.g. <p>태그 포함)
+    $modal.modal('show');
+  }
+
   // ① 파일 선택 → 미리보기 표시 및 OCR 결과 영역 초기화
   $('#file').on('change', function () {
     const file = this.files[0];
@@ -102,7 +111,7 @@
 
     const file = $('#file')[0].files[0];
     if (!file) {
-      alert("파일을 선택해주세요.");
+      showAlertModal("파일을 선택해주세요.");
       return;
     }
 
@@ -120,14 +129,14 @@
         stopScanning();
 
         if (!data.isSuccess) {
-          alert(data.message); // ← 서버에서 온 오류 메시지 출력
+          showAlertModal(data.message); // ← 서버에서 온 오류 메시지 출력
           resetForm();
           return;
         }
 
         const result = data.payload;
         if (result.duplicate) {
-          alert("이미 등록된 영수증입니다.");
+          showAlertModal("이미 등록된 영수증입니다.");
           resetForm();
           return;
         }
@@ -151,7 +160,7 @@
       .catch(err => {
         stopScanning();
         console.error("❌ 오류 발생:", err);
-        alert("분석 중 오류가 발생했습니다.");
+        showAlertModal("분석 중 오류가 발생했습니다.");
       });
   });
 
@@ -160,18 +169,19 @@
     $('#ocrForm')[0].reset();
     $('#preview').attr('src', '#').hide();
     $('#previewPlaceholder').show();
-    $('#previewWrapper').hide();
+    $('#preview').attr('src', '#').hide();
+    $('#previewPlaceholder').show();
     stopScanning();
     $('#ocrResultBox').hide();
     $('#ocrActionButtons').hide();
-    $('#ocrForm button[type="submit"]').show(); // 분석 버튼 복구
+    $('#ocrForm button[type="submit"]').show();
   }
 
   // ⑤ 리뷰 작성 페이지로 이동
   function proceedToReview() {
     const ocr = window.ocrResultCache;
     if (!ocr?.bizNum || !ocr?.ocrKeyHash || !ocr?.visitDate) {
-      alert("정보가 누락되었습니다.");
+      showAlertModal("정보가 누락되었습니다.");
       return;
     }
 
@@ -193,6 +203,7 @@
 <!-- SPECIFIC SCRIPTS -->
 <script src="/js/sticky_sidebar.min.js"></script>
 <script src="/js/specific_listing.js"></script>
+<script src="/js/alertModal.js"></script>
 
 </body>
 </html>
