@@ -1,27 +1,86 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>내 매장 목록</title>
-    <link rel="stylesheet" href="/css/store-list.css">
+    <title>내 매장 리스트</title>
+    <div th:replace="~{fragments/head :: head}"></div>
+
+    <!-- SPECIFIC CSS -->
+    <link th:href="@{/css/submit.css}" rel="stylesheet">
+    <link th:href="@{/css/detail-page-delivery.css}" rel="stylesheet">
+    <link th:href="@{/css/booking-sign_up.css}" rel="stylesheet">
+    <link th:href="@{/css/store-regist.css}" rel="stylesheet">
 </head>
-<body>
-<h2>내 매장 목록</h2>
+<body class="margin_sticky">
 
-<div th:if="${#lists.isEmpty(storeList)}">
-    <p>등록한 매장이 없습니다.</p>
-</div>
+<!-- 헤더 -->
+<header th:replace="~{fragments/subHeader :: subHeader}"></header>
 
-<div th:each="store : ${storeList}" class="store-card">
-    <img th:src="@{${store.imageUrl}}" alt="대표 이미지" class="thumbnail">
-    <div class="info">
-        <h3 th:text="${store.name}">매장 이름</h3>
-        <p th:text="${store.address}">주소</p>
-        <p th:text="${store.phoneNumber}">전화번호</p>
-        <a th:href="@{/store/update/{id}(id=${store.id})}" class="btn">수정</a>
-        <form th:action="@{/store/delete/{id}(id=${store.id})}" method="post" style="display:inline">
-            <button type="submit" class="btn delete">삭제</button>
-        </form>
+<main class="bg_gray pattern">
+    <div class="container margin_60_40">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10">
+
+                <div class="box_booking_2 style_2">
+                    <div class="head">
+                        <div class="title">
+                            <h3>내가 등록한 매장</h3>
+                        </div>
+                    </div>
+
+                    <div class="main">
+
+                        <div th:if="${storeList.size() == 0}">
+                            <p class="text-center text-muted mt-4">등록된 매장이 없습니다.</p>
+                        </div>
+
+                        <div th:each="store : ${storeList}" class="card p-4 mb-4 shadow-sm">
+                            <h5 class="mb-2" th:text="${store.storeName}">매장명</h5>
+                            <p class="text-muted mb-3" th:text="${store.address}">주소</p>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a th:href="@{/store/update/{id}(id=${store.id})}" class="btn btn-sm btn-outline-primary">수정</a>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        th:onclick="'deleteStore(' + ${store.id} + ')'">
+                                    폐업
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
-</div>
+</main>
+
+<!-- 푸터 -->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<script>
+    function deleteStore(storeId) {
+        if (!confirm("정말로 이 매장을 폐업하시겠습니까?")) return;
+
+        fetch(`/store/${storeId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(res => {
+                if (res.ok) {
+                    alert("삭제 완료!");
+                    location.reload();
+                } else {
+                    alert("삭제에 실패했습니다.");
+                }
+            })
+            .catch(err => {
+                console.error("삭제 중 오류 발생:", err);
+                alert("오류가 발생했습니다.");
+            });
+    }
+</script>
 </body>
 </html>

@@ -208,20 +208,30 @@ public class StoreService {
         }
 
         // ⑤ 매장 단위 추가 토핑 저장
-        if (dto.getExtraToppings() != null && !dto.getExtraToppings().isEmpty()) {
-            for (ExtraToppingRequestDto toppingDto : dto.getExtraToppings()) {
-                Long toppingId = toppingDto.getToppingId();
-                Integer price = toppingDto.getPrice();
+        List<ExtraToppingRequestDto> extraToppingDtos = dto.getExtraToppings();
 
-                Topping topping = toppingRepository.findById(toppingId)
-                        .orElseThrow(() -> new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME));
+        if (extraToppingDtos == null || extraToppingDtos.isEmpty()) {
+            return savedStore.getId();
+        }
 
-                StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
-                storeExtraTopping.setStore(savedStore);
-                storeExtraTopping.setTopping(topping);
-                storeExtraTopping.setPrice(price);
-                storeExtraToppingRepository.save(storeExtraTopping);
+        for (ExtraToppingRequestDto toppingDto : extraToppingDtos) {
+            if (toppingDto == null || toppingDto.getToppingId() == null) {
+                continue;
             }
+
+            Long toppingId = toppingDto.getToppingId();
+            Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
+
+            // DB에서 topping 엔티티 조회
+            Topping topping = toppingRepository.findById(toppingId)
+                    .orElseThrow(() -> new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME));
+
+            StoreExtraTopping extraTopping = new StoreExtraTopping();
+            extraTopping.setStore(savedStore);
+            extraTopping.setTopping(topping);
+            extraTopping.setPrice(price);
+
+            storeExtraToppingRepository.save(extraTopping);
         }
 
         return savedStore.getId();

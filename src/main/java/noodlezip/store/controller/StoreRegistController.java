@@ -39,7 +39,11 @@ public class StoreRegistController {
 
     // 등록 폼 페이지 진입
     @GetMapping("/regist")
-    public String showRegistPage(Model model) {
+    public String showRegistPage(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) {
+        if (myUserDetails == null) {
+            return "redirect:/";
+        }
+
         StoreRequestDto dto = new StoreRequestDto();
 
         dto.setMenus(new ArrayList<>());
@@ -47,9 +51,6 @@ public class StoreRegistController {
         dto.setWeekSchedule(new ArrayList<>());
 
         model.addAttribute("storeRequestDto", dto);
-        model.addAttribute("categories", ramenService.getAllCategories());
-        model.addAttribute("toppings", ramenService.getAllToppings());
-        model.addAttribute("soups", ramenService.getAllSoups());
         // 카테고리와 토핑, 육수 목록을 서비스에서 가져와서 model에 담기
         model.addAttribute("toppings", storeService.getRamenToppings());
         model.addAttribute("categories", storeService.getRamenCategories());
