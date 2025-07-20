@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // 필터링된 매장 로드 함수
   function loadFilteredStores() {
     const urlParams = new URLSearchParams(window.location.search);
-    const page = urlParams.get('page') || 1;
+    const page = parseInt(urlParams.get('page')) || 1;
     
     const filterParams = new URLSearchParams({
       lat: currentLat,
@@ -220,6 +220,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 매장 로드 함수
   function loadStores(page = 1) {
+    // URL 파라미터에서 페이지 값을 가져오거나 기본값 사용
+    if (page === 1) {
+      const urlParams = new URLSearchParams(window.location.search);
+      page = parseInt(urlParams.get('page')) || 1;
+    }
+    
     currentPage = page;
     const url = isFilterMode ? 
       `/search/filter?lat=${currentLat}&lng=${currentLng}&page=${page}&size=${size}` :
