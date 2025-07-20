@@ -136,7 +136,7 @@
 		document.addEventListener("DOMContentLoaded", () => {
 			const tabC = document.getElementById("tab-C");
 			const paneC = document.getElementById("pane-C");
-			const storeId = document.getElementById("store-id").value; // storeId를 숨겨놓고 가져옴
+			const storeId = document.getElementById("store-id").value;
 
 			let menuLoaded = false; // 중복 요청 방지
 
@@ -376,9 +376,16 @@
 							const newCards = tempDiv.querySelectorAll(".review_card");
 							const newWrapper = tempDiv.querySelector("#load-more-review-wrapper");
 
+							// 새로운 리뷰 카드들을 컨테이너에 추가
 							newCards.forEach(card => container.appendChild(card));
-							loadMoreWrapper.remove(); // 기존 버튼 제거
-							if (newWrapper) container.after(newWrapper); // 새 버튼 삽입
+							
+							// 기존 더보기 버튼 제거
+							loadMoreWrapper.remove();
+							
+							// 새로운 더보기 버튼이 있으면 추가 (다음 페이지가 있을 때만)
+							if (newWrapper) {
+								container.parentNode.appendChild(newWrapper);
+							}
 
 							// 새로운 리뷰가 로드될 때마다 필터링 다시 적용
 							filterReviewsByMenu();
