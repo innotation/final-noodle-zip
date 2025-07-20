@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         })
         .catch(error => {
-          console.error('Error fetching badge detail:', error);
+          showErrorModal('failShowBadge', error.message);
           modal.classList.remove('show');
           document.body.style.overflow = '';
         });

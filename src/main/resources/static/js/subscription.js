@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
           btn.textContent = !isSubscribed ? "구독 취소" : "구독";
         })
         .catch(err => {
-          alert("구독 처리 중 오류가 발생했습니다.");
+          showErrorModal('failSubscription','구독 처리중 오류가 발생하였습니다.');
           console.error(err);
         });
     });
