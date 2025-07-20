@@ -49,12 +49,6 @@
           <span class="nav-link-text">매장등록요청</span>
         </a>
       </li>
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="신규매장추천">
-        <a class="nav-link" th:href="@{/admin/recommendList}">
-          <i class="fa fa-fw fa-folder-open"></i>
-          <span class="nav-link-text">추천매장목록</span>
-        </a>
-      </li>
     </ul>
     <ul class="navbar-nav sidenav-toggler">
       <li class="nav-item">
@@ -88,7 +82,7 @@
           <!--          조건변경 (상태에 따라 보기로 바꿀듯?)-->
           <div class="styled-select short">
             <form method="get" action="#" id="filterForm">
-              <select name="type" onchange="document.getElementById('filterForm').submit()">
+              <select name="type">
                 <option value="ALL" th:selected="${type == 'ALL'}">전체</option>
                 <option value="POST" th:selected="${type == 'POST'}">게시글</option>
                 <option value="COMMENT" th:selected="${type == 'COMMENT'}">댓글</option>
@@ -100,44 +94,11 @@
       </div>
       <div class="list_general">
         <ul id="storeListContainer">
-<!--          <li th:each="report : ${reportList}">-->
-<!--            <figure><img th:src="@{/admin_section/img/item_1.jpg}" alt=""></figure>-->
-<!--            <small>신고내역</small>-->
-<!--            <h4 th:text="|신고유형 : ${report.reportType}|"></h4>-->
-<!--            <p><strong th:text="|신고자 아이디 : ${report.loginId}|"></strong></p>-->
-<!--            <p><strong th:text="|신고 내용 : ${report.content}|"></strong></p>-->
-<!--            <p><strong th:text="|신고일시 : ${report.createdAt}|"></strong></p>-->
-<!--            <p>-->
-<!--              <a href="#" class="btn_1 gray btn-view-report"-->
-<!--                 th:attr=" data-type=${report.reportType},-->
-<!--                           data-target-id=${report.reportTargetId},-->
-<!--                           data-report-id=${report.id}-->
-<!--                          ">-->
-<!--                <i class="fa fa-fw fa-eye"></i> View item-->
-<!--              </a>-->
-<!--            </p>-->
-<!--          </li>-->
         </ul>
       </div>
       <!-- /box_general-->
       <nav aria-label="...">
         <ul class="pagination pagination-sm add_bottom_30" id="paginationArea">
-<!--          <li class="page-item" th:classappend="${isFirst} ? 'disabled'">-->
-<!--            <a class="page-link" href="#" th:onclick="${!isFirst} ? 'loadReportList(' + (${page - 1}) + '); return false;' : null">이전</a>-->
-<!--          </li>-->
-
-<!--          <li class="page-item"-->
-<!--              th:each="p : ${#numbers.sequence(beginPage, endPage)}"-->
-<!--              th:classappend="${p == page} ? 'active'">-->
-<!--            <a class="page-link"-->
-<!--               href="#"-->
-<!--               th:text="${p}"-->
-<!--               th:onclick="'loadReportList(' + ${p} + '); return false;'"></a>-->
-<!--          </li>-->
-
-<!--          <li class="page-item" th:classappend="${isLast} ? 'disabled'">-->
-<!--            <a class="page-link" href="#" th:onclick="${!isLast} ? 'loadReportList(' + (${page + 1}) + '); return false;' : null">다음</a>-->
-<!--          </li>-->
         </ul>
       </nav>
       <!-- /pagination-->
@@ -352,8 +313,8 @@
         });
     } else {
       let url = '';
-      if (reportType === '게시글') url = `/board/list/${targetId}`;
-      else if (reportType === '사용자') url = `/mypage/${targetId}`;
+      if (reportType === '게시글') url = `/board/detail/${targetId}`;
+      else if (reportType === '사용자') url = `/users/${targetId}/mypage`;
       else return;
 
       document.getElementById('reportDetailFrame').src = url;
