@@ -49,12 +49,6 @@
           <span class="nav-link-text">매장등록요청</span>
         </a>
       </li>
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="신규매장추천">
-        <a class="nav-link" th:href="@{/admin/recommendList}">
-          <i class="fa fa-fw fa-folder-open"></i>
-          <span class="nav-link-text">추천매장목록</span>
-        </a>
-      </li>
     </ul>
     <ul class="navbar-nav sidenav-toggler">
       <li class="nav-item">
@@ -97,39 +91,11 @@
       </div>
       <div class="list_general">
         <ul id="storeListContainer">
-<!--          <li th:each="store : ${registList}">-->
-<!--            <figure><img th:src="@{/admin_section/img/item_1.jpg}" alt=""></figure>-->
-<!--            <small>매장 등록 요청</small>-->
-<!--            <h4 th:text="|매장명 : ${store.storeName}|">매장 이름</h4>-->
-<!--            <p><strong th:text="|등록자 ID : ${store.loginId}|"></strong></p>-->
-<!--            <p><strong th:text="|등록일 : ${store.createdAt}|"></strong></p>-->
-<!--            <p>-->
-<!--              <a href="#" class="btn_1 gray">-->
-<!--                <i class="fa fa-fw fa-eye"></i> View item-->
-<!--              </a>-->
-<!--            </p>-->
-<!--          </li>-->
         </ul>
       </div>
     <!-- /box_general-->
       <nav aria-label="...">
         <ul class="pagination pagination-sm add_bottom_30" id="paginationArea">
-<!--          <li class="page-item" th:classappend="${isFirst} ? 'disabled'">-->
-<!--            <a class="page-link" href="#" th:onclick="${!isFirst} ? 'loadStoreList(' + (${page - 1}) + '); return false;' : null">이전</a>-->
-<!--          </li>-->
-
-<!--          <li class="page-item"-->
-<!--              th:each="p : ${#numbers.sequence(beginPage, endPage)}"-->
-<!--              th:classappend="${p == page} ? 'active'">-->
-<!--            <a class="page-link"-->
-<!--               href="#"-->
-<!--               th:text="${p}"-->
-<!--               th:onclick="'loadStoreList(' + ${p} + '); return false;'"></a>-->
-<!--          </li>-->
-
-<!--          <li class="page-item" th:classappend="${isLast} ? 'disabled'">-->
-<!--            <a class="page-link" href="#" th:onclick="${!isLast} ? 'loadStoreList(' + (${page + 1}) + '); return false;' : null">다음</a>-->
-<!--          </li>-->
         </ul>
       </nav>
     <!-- /pagination-->
@@ -293,7 +259,7 @@
     currentStoreId = button.getAttribute('data-id');
 
     let url = '';
-    url = `/store/storeDetail/${currentStoreId}`;
+    url = `/store/detail/${currentStoreId}`;
 
     document.getElementById('storeDetailFrame').src = url;
     $('#openStoreDetailModal').modal('show');
