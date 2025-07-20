@@ -87,7 +87,8 @@ public class StoreController {
         } else {
             model.addAttribute("reviewList", reviewPage.getContent());
             model.addAttribute("hasMore", reviewPage.hasNext());
-            return "store/fragments/tab-review :: moreReviews";
+            model.addAttribute("nextPage", page + 1);
+            return "store/fragments/tab-review :: moreReviews";  // 더보기 fragment
         }
     }
 
