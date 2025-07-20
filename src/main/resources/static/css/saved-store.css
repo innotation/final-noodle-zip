@@ -1,3 +1,7 @@
+main {
+    min-height: calc(100vh - 300px); /* header+footer 대략 합산 높이 고려 */
+}
+
 .memo-tooltip {
     display: inline-block;
     max-width: 250px;  /* 메모 글자수 */
