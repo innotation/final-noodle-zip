@@ -42,7 +42,6 @@ public class StoreControllerUnitTest {
         pageUtil = new PageUtil();
         StoreController storeController = new StoreController(
                 storeService,
-                pageUtil,
                 ramenService
         );  // 생성자 주입
         mockMvc = MockMvcBuilders.standaloneSetup(storeController).build();

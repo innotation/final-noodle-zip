@@ -49,7 +49,6 @@ import java.util.List;
 public class MyPageMainController extends MyBaseController {
     private final UserService userService;
     private final BoardService boardService;
-    private final ModelMapper modelMapper;
     private final noodlezip.ramen.service.RamenService ramenService;
     private final MyBadgeService myBadgeService;
     private final SubscribeService subscribeService;
@@ -160,6 +159,7 @@ public class MyPageMainController extends MyBaseController {
         return "mypage/main";
     }
 
+    // 방문 지역별 리뷰 수 집계
     private static Map<String, Integer> getStringIntegerMap(List<StoreReviewDto> myReviews) {
         Map<String, Integer> visitedRegionCountMap = new HashMap<>();
         for (StoreReviewDto review : myReviews) {
