@@ -25,11 +25,36 @@ document.addEventListener('DOMContentLoaded', function () {
       map.setCenter(new naver.maps.LatLng(currentLat, currentLng)); // 지도 중심 지정
       map.setZoom(15); // 줌 조정
 
+      // URL 파라미터 확인하여 필터 모드 설정
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasFilters = urlParams.has('ramenCategory') || urlParams.has('ramenSoup') || 
+                        urlParams.has('topping') || urlParams.has('region') || 
+                        urlParams.has('keyword') || urlParams.has('distance') || urlParams.has('sort');
+      
+      isFilterMode = hasFilters;
+      
       // 초기 매장 로드
-      loadStores();
+      if (isFilterMode) {
+        loadFilteredStores();
+      } else {
+        loadStores();
+      }
     }, function () { // 위치 정보 실패
       // console.warn('위치 정보를 가져오지 못했습니다.');
-      loadStores();
+      
+      // URL 파라미터 확인하여 필터 모드 설정
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasFilters = urlParams.has('ramenCategory') || urlParams.has('ramenSoup') || 
+                        urlParams.has('topping') || urlParams.has('region') || 
+                        urlParams.has('keyword') || urlParams.has('distance') || urlParams.has('sort');
+      
+      isFilterMode = hasFilters;
+      
+      if (isFilterMode) {
+        loadFilteredStores();
+      } else {
+        loadStores();
+      }
     }
   );
 
@@ -127,15 +152,70 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    // 검색 파라미터가 있으면 필터 모드로 전환하고 검색 실행
-    if ((searchKeyword && searchKeyword.trim() !== '') || 
-        (searchRegions && searchRegions.length > 0) ||
-        (searchCategories && searchCategories.length > 0) || 
-        (searchSoups && searchSoups.length > 0) || 
-        (searchToppings && searchToppings.length > 0)) {
-      isFilterMode = true;
-      applyFilters();
+    // 거리 필터 설정
+    if (searchDistance) {
+      const distanceElement = document.getElementById('distance-range');
+      const distanceValueElement = document.getElementById('distance-value');
+      if (distanceElement) {
+        distanceElement.value = searchDistance;
+      }
+      if (distanceValueElement) {
+        distanceValueElement.textContent = searchDistance;
+      }
     }
+
+    // 정렬 필터 설정
+    if (searchSort) {
+      const sortElement = document.getElementById('sort');
+      if (sortElement) {
+        sortElement.value = searchSort;
+      }
+    }
+  }
+
+  // 필터링된 매장 로드 함수
+  function loadFilteredStores() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page') || 1;
+    
+    const filterParams = new URLSearchParams({
+      lat: currentLat,
+      lng: currentLng,
+      page: page,
+      size: size
+    });
+    
+    // URL 파라미터에서 필터 조건들을 가져와서 추가
+    urlParams.getAll('ramenCategory').forEach(cat => filterParams.append('ramenCategory', cat));
+    urlParams.getAll('ramenSoup').forEach(soup => filterParams.append('ramenSoup', soup));
+    urlParams.getAll('topping').forEach(topping => filterParams.append('topping', topping));
+    
+    if (urlParams.has('region')) {
+      filterParams.append('region', urlParams.get('region'));
+    }
+    if (urlParams.has('keyword')) {
+      filterParams.append('keyword', urlParams.get('keyword'));
+      filterParams.append('searchType', urlParams.get('searchType') || 'ALL');
+    }
+    if (urlParams.has('distance')) {
+      filterParams.append('distance', urlParams.get('distance'));
+    }
+    if (urlParams.has('sort')) {
+      filterParams.append('sort', urlParams.get('sort'));
+    }
+
+    fetch(`/search/filter?${filterParams.toString()}`)
+      .then(response => response.json())
+      .then(data => {
+        renderStores(data.content);
+        renderPagination(data);
+        updateSearchResultCount(data);
+      })
+      .catch(error => {
+        console.error('필터링된 매장 검색 실패: ', error);
+        document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
+        document.getElementById('search-result-count').textContent = '검색 중 오류가 발생했습니다.';
+      });
   }
 
   // 매장 로드 함수
@@ -227,9 +307,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 페이지 변경 함수 (전역 함수로 등록)
   window.changePage = function(page) {
-    loadStores(page);
-    // 페이지 상단으로 스크롤
-    document.querySelector('.content-left').scrollTop = 0;
+    const url = new URL(window.location);
+    url.searchParams.set('page', page);
+    window.location.href = url.toString();
   };
 
   // 맵에서 확인 함수 (전역 함수로 등록)
@@ -267,66 +347,65 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedRegion = document.getElementById('region-filter').value;
     const keyword = document.getElementById('search-keyword').value.trim();
     const searchType = document.getElementById('search-type').value;
+    const distance = document.getElementById('distance-range').value;
+    const sort = document.getElementById('sort').value;
 
-    // 필터가 하나라도 선택되었거나 검색어가 있으면 필터 모드로 전환
-    isFilterMode = selectedCategories.length > 0 || selectedSoups.length > 0 || 
-                   selectedToppings.length > 0 || keyword.length > 0 || selectedRegion.length > 0;
-
-    if (isFilterMode) {
-      // 필터링된 검색
-      const filterParams = new URLSearchParams({
-        lat: currentLat,
-        lng: currentLng,
-        page: 1, // 필터 적용 시 첫 페이지로
-        size: size
-      });
-
-      if (selectedCategories.length > 0) {
-        selectedCategories.forEach(cat => filterParams.append('ramenCategory', cat));
-      }
-      if (selectedSoups.length > 0) {
-        selectedSoups.forEach(soup => filterParams.append('ramenSoup', soup));
-      }
-      if (selectedToppings.length > 0) {
-        selectedToppings.forEach(topping => filterParams.append('topping', topping));
-      }
-      if (selectedRegion.length > 0) {
-        filterParams.append('region', selectedRegion);
-      }
-      if (keyword.length > 0) {
-        filterParams.append('keyword', keyword);
-        filterParams.append('searchType', searchType);
-      }
-
-      fetch(`/search/filter?${filterParams.toString()}`)
-        .then(response => response.json())
-        .then(data => {
-          renderStores(data.content);
-          renderPagination(data);
-          updateSearchResultCount(data);
-        })
-        .catch(error => {
-          console.error('필터링된 매장 검색 실패: ', error);
-          document.getElementById('store-list').innerHTML = '<p>매장을 불러오는데 실패했습니다.</p>';
-          document.getElementById('search-result-count').textContent = '검색 중 오류가 발생했습니다.';
-        });
-    } else {
-      // 일반 검색
-      loadStores(1);
+    // URL 파라미터 구성
+    const url = new URL(window.location);
+    
+    // 기존 검색 파라미터 제거
+    url.searchParams.delete('ramenCategory');
+    url.searchParams.delete('ramenSoup');
+    url.searchParams.delete('topping');
+    url.searchParams.delete('region');
+    url.searchParams.delete('keyword');
+    url.searchParams.delete('searchType');
+    url.searchParams.delete('distance');
+    url.searchParams.delete('sort');
+    url.searchParams.delete('page');
+    
+    // 새로운 파라미터 추가
+    selectedCategories.forEach(cat => url.searchParams.append('ramenCategory', cat));
+    selectedSoups.forEach(soup => url.searchParams.append('ramenSoup', soup));
+    selectedToppings.forEach(topping => url.searchParams.append('topping', topping));
+    
+    if (selectedRegion.length > 0) {
+      url.searchParams.set('region', selectedRegion);
     }
+    
+    if (keyword.length > 0) {
+      url.searchParams.set('keyword', keyword);
+      url.searchParams.set('searchType', searchType);
+    }
+    
+    if (distance && distance !== '30') {
+      url.searchParams.set('distance', distance);
+    }
+
+    if (sort) {
+      url.searchParams.set('sort', sort);
+    }
+    
+    // 페이지를 새로고침하여 URL 파라미터로 검색 실행
+    window.location.href = url.toString();
   }
 
   // 필터 초기화 함수
   function clearFilters() {
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-    document.getElementById('search-keyword').value = '';
-    document.getElementById('search-type').value = 'ALL';
-    document.getElementById('region-filter').value = '';
-    document.getElementById('distance-range').value = 30;
-    document.getElementById('distance-value').textContent = 30;
+    // URL에서 검색 파라미터 제거
+    const url = new URL(window.location);
+    url.searchParams.delete('ramenCategory');
+    url.searchParams.delete('ramenSoup');
+    url.searchParams.delete('topping');
+    url.searchParams.delete('region');
+    url.searchParams.delete('keyword');
+    url.searchParams.delete('searchType');
+    url.searchParams.delete('distance');
+    url.searchParams.delete('sort');
+    url.searchParams.delete('page');
     
-    isFilterMode = false;
-    loadStores(1);
+    // 페이지를 새로고침하여 초기 상태로 복원
+    window.location.href = url.toString();
   }
 
   // 이벤트 리스너 등록
@@ -337,6 +416,24 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('distance-range').addEventListener('input', function() {
     document.getElementById('distance-value').textContent = this.value;
   });
+
+  // 정렬 이벤트
+  document.getElementById('sort').addEventListener('change', function() {
+    applySort();
+  });
+
+  // 정렬 적용 함수
+  function applySort() {
+    const sortValue = document.getElementById('sort').value;
+    
+    // URL 파라미터 구성
+    const url = new URL(window.location);
+    url.searchParams.set('sort', sortValue);
+    url.searchParams.delete('page'); // 정렬 변경 시 첫 페이지로
+    
+    // 페이지를 새로고침하여 정렬 적용
+    window.location.href = url.toString();
+  }
 
   // 매장 랜더링
   function renderStores(stores) {
