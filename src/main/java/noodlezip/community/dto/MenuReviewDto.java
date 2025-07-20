@@ -30,8 +30,8 @@ public class MenuReviewDto {
     private String imageUrl;
     private String soupFlavorKeywords;
 
-    @NotNull(message = "내용은 비어있을 수 없습니다", groups = {ValidationGroups.OnCreate.class, ValidationGroups.OnUpdate.class} )
-    @NotBlank(message = "내용은 비어있을 수 없습니다", groups = {ValidationGroups.OnCreate.class, ValidationGroups.OnUpdate.class} )
+    @NotNull(message = "내용은 비어있을 수 없습니다")
+    @NotBlank(message = "내용은 비어있을 수 없습니다")
     private String content;
 
     private List<Long> toppingIds;
