@@ -197,6 +197,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchAndRender(1, false); // 검색 시에는 false 전달
     collapseMap.hide();
+
+    const btnText = document.querySelector('.btn_map_txt');
+    if (btnText) {
+      btnText.textContent = btnText.dataset.textSwap;
+    }
   });
 
   bindPagination();
