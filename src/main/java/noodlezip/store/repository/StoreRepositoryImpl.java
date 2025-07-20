@@ -26,6 +26,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 import java.util.List;
+import com.querydsl.core.types.OrderSpecifier;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,7 +58,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         store.storeMainImageUrl,
                         store.storeLat,
                         store.storeLng,
-                        distanceExpr.as("distance")
+                        distanceExpr.as("distance"),
+                        store.createdAt
                 ))
                 .from(store)
                 .where(store.approvalStatus.eq(ApprovalStatus.APPROVED))
@@ -183,7 +185,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                         store.storeMainImageUrl,
                         store.storeLat,
                         store.storeLng,
-                        distanceExpr.as("distance")
+                        distanceExpr.as("distance"),
+                        store.createdAt
                 ))
                 .from(store)
                 .join(menu).on(menu.store.id.eq(store.id))
@@ -193,7 +196,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .leftJoin(topping).on(topping.id.eq(ramenTopping.topping.id))
                 .where(builder)
                 .distinct()
-                .orderBy(distanceExpr.asc())
+                .orderBy(getOrderByExpression(filter.getSort(), distanceExpr, store))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -311,4 +314,24 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .fetch();
     }
 
+    private OrderSpecifier<?> getOrderByExpression(String sort, NumberExpression<Double> distanceExpr, QStore store) {
+        if (sort == null || sort.isEmpty()) {
+            return distanceExpr.asc();
+        }
+
+        switch (sort) {
+            case "distance":
+                return distanceExpr.asc();
+            case "created-desc":
+                return store.createdAt.desc();
+            case "created-asc":
+                return store.createdAt.asc();
+            case "review-count":
+                // 리뷰 수로 정렬 (서브쿼리 사용)
+                return Expressions.numberTemplate(Long.class, 
+                    "(SELECT COUNT(r.id) FROM RamenReview r WHERE r.menu.store.id = {0})", store.id).desc();
+            default:
+                return distanceExpr.asc(); // 기본값
+        }
+    }
 }

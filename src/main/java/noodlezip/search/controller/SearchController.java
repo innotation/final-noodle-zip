@@ -43,6 +43,12 @@ public class SearchController {
         if (filter.getTopping() != null && !filter.getTopping().isEmpty()) {
             model.addAttribute("searchToppings", filter.getTopping());
         }
+        if (filter.getDistance() != null) {
+            model.addAttribute("searchDistance", filter.getDistance());
+        }
+        if (filter.getSort() != null) {
+            model.addAttribute("searchSort", filter.getSort());
+        }
         
         return "search/listing-map";
     }

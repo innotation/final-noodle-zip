@@ -2,6 +2,7 @@ package noodlezip.search.dto;
 
 import lombok.*;
 import noodlezip.store.status.ParkingType;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,5 +24,6 @@ public class SearchStoreDto {
     private Double storeLat;
     private Double storeLng;
     private Double distance;
+    private LocalDateTime createdAt;
 
 }
