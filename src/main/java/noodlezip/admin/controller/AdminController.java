@@ -86,8 +86,4 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/recommendList")
-    public void recommendList(){}
-
-
 }
