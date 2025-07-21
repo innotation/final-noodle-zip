@@ -4,13 +4,14 @@
 <head>
   <div th:replace="~{fragments/head :: head}"></div>
 
-  <!-- SPECIFIC CSS -->
-  <link href="/css/submit.css" rel="stylesheet">
-  <link href="/css/detail-page-delivery.css" rel="stylesheet">
-  <link href="/css/booking-sign_up.css" rel="stylesheet">
 
-  <!-- YOUR CUSTOM CSS -->
-  <link href="/css/store-regist.css" rel="stylesheet">
+    <!-- SPECIFIC CSS -->
+    <link href="/css/submit.css" rel="stylesheet">
+    <link href="/css/detail-page-delivery.css" rel="stylesheet">
+    <link href="/css/booking-sign_up.css" rel="stylesheet">
+
+    <!-- YOUR CUSTOM CSS -->
+    <link href="/css/store-regist.css" rel="stylesheet">
   <style>
     body {
         font-size: 15px;
@@ -316,16 +317,25 @@
         const priceInput = document.getElementById('extra-topping-price');
         const container = document.getElementById('store-extra-toppings-container');
         const toppingId = select.value;
-        const toppingName = select.options[select.selectedIndex].text;
         const price = priceInput.value;
 
-        if (!toppingId || !price) { alert("토핑과 가격을 모두 입력해주세요."); return; }
-        if (container.querySelector(`[data-id="${toppingId}"]`)) { alert("이미 추가된 토핑입니다."); return; }
+        const parsedPrice = Number(price);
+        const topping = allToppings.find(t => String(t.id) === String(toppingId));
+        const toppingName = topping ? topping.name : 'Unknown Topping';
+
+        if (!toppingId || isNaN(parsedPrice) || parsedPrice < 0) {
+            alert("토핑과 가격을 모두 입력해주세요.");
+            return;
+        }
+        if (container.querySelector(`[data-id="${toppingId}"]`)) {
+            alert("이미 추가된 토핑입니다.");
+            return;
+        }
 
         const div = document.createElement('div');
         div.className = "d-flex align-items-center justify-content-between p-2 border rounded";
         div.dataset.id = toppingId;
-        div.innerHTML = `<span>${toppingName} - ${price}원</span><button type="button" class="btn btn-sm btn-outline-danger remove-extra-topping">삭제</button>`;
+        div.innerHTML = `<span>${toppingName} - ${parsedPrice}원</span><button type="button" class="btn btn-sm btn-outline-danger remove-extra-topping">삭제</button>`;
         div.querySelector('.remove-extra-topping').addEventListener('click', () => div.remove());
         container.appendChild(div);
         priceInput.value = '';
@@ -501,7 +511,7 @@
           isLocalCard: document.getElementById("localCard").checked,
           isChildAllowed: document.getElementById("childAllowed").checked,
           hasParking: document.querySelector('input[name="hasParking"]:checked')?.value || 'NOT_AVAILABLE',
-          operationStatus: 'OPEN', // Default to OPEN for new registrations
+          operationStatus: 'OPEN', // 신규 등록 시 기본값은 OPEN
           weekSchedule: [],
           menus: [],
           extraToppings: []
@@ -516,12 +526,12 @@
 
           const isClosed = openingAt === 'CLOSED' || closingAt === 'CLOSED';
 
-          // If not a closed day, but times are empty, default them to "00:00:00"
+          // 휴무일이 아니지만 시간이 비어있으면 "00:00:00"으로 기본 설정
           if (!isClosed) {
-              if (!openingAt) openingAt = '00:00:00'; // Default to start of day if empty
-              if (!closingAt) closingAt = '00:00:00'; // Default to start of day if empty
+              if (!openingAt) openingAt = '00:00:00'; 
+              if (!closingAt) closingAt = '00:00:00'; 
           } else {
-              // If it's a closed day, ensure they are null for backend processing
+              // 휴무일인 경우 백엔드 처리를 위해 null로 설정
               openingAt = null;
               closingAt = null;
           }
@@ -578,4 +588,3 @@
 
 </body>
 </html>
-''

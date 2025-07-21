@@ -1,5 +1,7 @@
 package noodlezip.store.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.code.BaseErrorCode;
@@ -41,31 +43,7 @@ public class StoreController {
     private final StoreService storeService;
     private final PageUtil pageUtil;
     private final RamenService ramenService;
-
-    @PostMapping("/regist")
-    public ResponseEntity<?> registerStore(
-            @RequestPart("dto") StoreRequestDto dto,
-            @RequestPart(value = "storeMainImage", required = false) MultipartFile storeMainImage,
-            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles,
-            @AuthenticationPrincipal MyUserDetails userDetails
-    ) {
-        if (userDetails == null) {
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
-        }
-
-        // DTO에 이미지 파일 설정
-        dto.setStoreMainImage(storeMainImage);
-        if (menuImageFiles != null) {
-            for (int i = 0; i < dto.getMenus().size(); i++) {
-                if (i < menuImageFiles.size()) {
-                    dto.getMenus().get(i).setMenuImageFile(menuImageFiles.get(i));
-                }
-            }
-        }
-
-        Long storeId = storeService.registerStore(dto, userDetails.getUser());
-        return ResponseEntity.ok(Map.of("storeId", storeId));
-    }
+    private final ObjectMapper objectMapper;
 
     // 매장 상세페이지 진입
     @GetMapping("/detail/{no}")
@@ -199,7 +177,7 @@ public class StoreController {
     @GetMapping("/update/{storeId}")
     public String showUpdatePage(@PathVariable Long storeId,
                                  @AuthenticationPrincipal MyUserDetails userDetails,
-                                 Model model) {
+                                 Model model) throws JsonProcessingException {
         if (userDetails == null) {
             // 인증 안 됐을 때 권한 없음을 의미하는 예외 던짐
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
@@ -209,7 +187,10 @@ public class StoreController {
         List<CategoryResponseDto> categories = ramenService.getAllCategories();
         List<RamenSoupResponseDto> soups = ramenService.getAllSoups();
 
+        String storeRequestDtoJson = objectMapper.writeValueAsString(storeRequestDto);
+
         model.addAttribute("storeRequestDto", storeRequestDto);
+        model.addAttribute("storeRequestDtoJson", storeRequestDtoJson);
         model.addAttribute("categories", categories);
         model.addAttribute("soups", soups);
         model.addAttribute("toppings", ramenService.getAllToppings());
