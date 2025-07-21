@@ -11,7 +11,10 @@ var toolbarOptions = [
 ];
 var quill = new Quill('#editor', {
     modules: {
-        toolbar: toolbarOptions
+        toolbar: toolbarOptions,
+        imageResize: {
+            displaySize: true
+        }
     },
     placeholder: '내용을 작성해주세요.',
     theme: 'snow'  // or 'bubble'

@@ -315,10 +315,10 @@ public class BoardController {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, boardService.getBoardsByIds(recentBoardIds));
     }
 
-    @PostMapping(value = "/imageUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "{category}/imageUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     @Operation(summary = "이미지 업로드", description = "게시글 작성 시 사용되는 이미지 파일을 서버에 업로드하고, 업로드된 이미지들의 URL 목록을 반환합니다. 다중 파일 업로드를 지원합니다.")
-    public ResponseEntity<?> uploadImage(@RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
+    public ResponseEntity<?> uploadImage(@PathVariable(name = "category") String category, @RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED, boardService.uploadImages(uploadFiles));
     }
 
