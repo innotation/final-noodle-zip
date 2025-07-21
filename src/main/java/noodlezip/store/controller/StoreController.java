@@ -42,6 +42,31 @@ public class StoreController {
     private final PageUtil pageUtil;
     private final RamenService ramenService;
 
+    @PostMapping("/regist")
+    public ResponseEntity<?> registerStore(
+            @RequestPart("dto") StoreRequestDto dto,
+            @RequestPart(value = "storeMainImage", required = false) MultipartFile storeMainImage,
+            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles,
+            @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        if (userDetails == null) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // DTO에 이미지 파일 설정
+        dto.setStoreMainImage(storeMainImage);
+        if (menuImageFiles != null) {
+            for (int i = 0; i < dto.getMenus().size(); i++) {
+                if (i < menuImageFiles.size()) {
+                    dto.getMenus().get(i).setMenuImageFile(menuImageFiles.get(i));
+                }
+            }
+        }
+
+        Long storeId = storeService.registerStore(dto, userDetails.getUser());
+        return ResponseEntity.ok(Map.of("storeId", storeId));
+    }
+
     // 매장 상세페이지 진입
     @GetMapping("/detail/{no}")
     public String showDetailPage(@PathVariable Long no,
@@ -87,7 +112,8 @@ public class StoreController {
         } else {
             model.addAttribute("reviewList", reviewPage.getContent());
             model.addAttribute("hasMore", reviewPage.hasNext());
-            return "store/fragments/tab-review :: moreReviews";
+            model.addAttribute("nextPage", page + 1);
+            return "store/fragments/tab-review :: moreReviews";  // 더보기 fragment
         }
     }
 

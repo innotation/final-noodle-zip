@@ -11,1271 +11,571 @@
 
   <!-- YOUR CUSTOM CSS -->
   <link href="/css/store-regist.css" rel="stylesheet">
-
+  <style>
+    body {
+        font-size: 15px;
+    }
+    .menu-item {
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    .menu-preview-image, #preview-image {
+      max-width: 100%;
+      max-height: 350px;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    .topping-multiselect {
+      position: relative;
+    }
+    .topping-dropdown {
+      display: none;
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      max-height: 200px;
+      overflow-y: auto;
+      width: 100%;
+      z-index: 1000;
+    }
+    .topping-dropdown.show {
+      display: block;
+    }
+    .topping-dropdown div {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    .topping-dropdown div:hover {
+      background-color: #f1f1f1;
+    }
+    .selected-toppings {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .selected-topping-tag {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+    }
+    .selected-topping-tag .remove-tag {
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #owner-intro:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .disabled-input {
+        background-color: #e9ecef;
+        opacity: 1;
+    }
+  </style>
 </head>
 
 <body class="margin_sticky">
 
-
-  <!-- /header -->
   <header th:replace="~{fragments/subHeader :: subHeader}"></header>
 
   <main class="bg_gray pattern">
     <div class="container margin_60_40">
       <div class="row justify-content-center">
-        <div class="col-xl-6 col-lg-8">
+        <div class="col-xl-8 col-lg-10">
 
-          <!-- form 태그 시작 -->
           <form method="post" action="/store/regist" enctype="multipart/form-data" id="register" autocomplete="off">
 
             <div class="box_booking_2 style_2">
-
-              <div class="head">
-                <div class="title">
-                  <h3>가게 등록</h3>
-                </div>
-              </div>
-
+              <div class="head"><div class="title"><h3>가게 기본 정보</h3></div></div>
               <div class="main">
-
-                <!-- ① 이미지 업로드 -->
-                <label for="image-input" id="image-upload-area"
-                       style="border: 2px dashed #ccc; padding: 40px 30px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
-                  <span id="upload-text">Drop files here to upload</span>
-                  <img id="preview-image" src="" alt="업로드 미리보기 이미지"
-                       style="max-width: 100%; display: none; margin-top: 10px;"/>
-                </label>
-
-                <input type="file" id="image-input" name="storeMainImage" accept="image/*"
-                       style="opacity: 0; position: absolute; width: 0; height: 0;"/>
-
-                <!-- ② 가게명 / ③ 도로명 주소 API / ④ 전화번호 -->
-                <div class="row mb-3">
-                  <div class="row mb-3">
-                    <div class="col-md-6 position-relative">
-                      <!-- 가게명 -->
-                      <label for="storeName" class="form-label visually-hidden">가게명</label>
-                      <input type="text" id="storeName" name="storeName" class="form-control mb-3" placeholder="가게명"
-                             required/>
-                      <!-- 전화번호 -->
-                      <div class="form-group mb-0">
-                        <label for="phonePrefix" style="font-weight: normal;">전화번호</label>
-                        <div class="d-flex gap-2">
-                          <!-- 앞자리 선택 -->
-                          <select id="phonePrefix" name="phonePrefix" class="form-select" style="max-width: 100px;">
-                            <option value="" selected>선택</option>
-                            <option value="02">02</option>
-                            <option value="031">031</option>
-                            <option value="032">032</option>
-                            <option value="042">042</option>
-                            <option value="051">051</option>
-                            <option value="053">053</option>
-                            <option value="062">062</option>
-                            <option value="041">041</option>
-                            <option value="043">043</option>
-                            <option value="054">054</option>
-                            <option value="055">055</option>
-                            <option value="061">061</option>
-                            <option value="063">063</option>
-                            <option value="044">044</option>
-                            <option value="010">010</option>
-                            <option value="011">011</option>
-                            <!-- 필요한 번호 추가 -->
-                          </select>
-
-                          <!-- 나머지 번호 입력 -->
-                          <label for="phonePrefixInput" class="visually-hidden">전화번호 직접입력</label>
-                          <input type="text" id="phonePrefixInput" name="phonePrefixInput" class="form-control"
-                                 placeholder="직접입력" style="max-width: 100px;" maxlength="4"/>
-
-                          <label for="phoneRest" class="visually-hidden">전화번호 뒷자리</label>
-                          <input type="text" id="phoneRest" name="phoneRest" class="form-control"
-                                 placeholder="1234-5678" maxlength="9" required/>
-                        </div>
-                        <!-- 합친 전화번호를 form submit 시 hidden 필드로 만들기 -->
-                        <input type="hidden" id="phone" name="phone"/>
-                      </div>
+                <!-- ① 대표 이미지 업로드 -->
+                <div class="mb-3">
+                    <label class="form-label">대표 이미지</label>
+                    <div id="image-upload-area" style="border: 2px dashed #ccc; padding: 40px; text-align: center; cursor: pointer;">
+                        <span id="upload-text">Drop files here to upload</span>
+                        <img id="preview-image" src="" alt="대표 이미지 미리보기" style="display: none;" />
                     </div>
-
-                    <div class="col-md-6 position-relative">
-                      <!-- 주소 입력 영역 -->
-                      <div class="address-group">
-                        <!-- 도로명 주소 -->
-                        <label for="address-api" class="visually-hidden">도로명 주소</label>
-                        <input type="text" id="address-api" name="address" class="form-control" placeholder="도로명 주소"
-                               readonly/>
-                        <!-- 우편번호 (hidden) -->
-                        <input type="hidden" id="zipcode" name="zipcode"/>
-                        <!-- 상세주소 -->
-                        <label for="store_detail_input" class="visually-hidden">상세 주소 입력</label>
-                        <input
-                          type="text"
-                          id="store_detail_input"
-                          name="store_detail_input"
-                          class="form-control mt-2"
-                          placeholder="상세 주소 입력"
-                          autocomplete="off"
-                          spellcheck="false"
-                          inputmode="text"
-                        />
-                        <!-- 숨김 필드: 위도, 경도, 법정코드 -->
-                        <input type="hidden" id="storeLat" name="storeLat"/>
-                        <input type="hidden" id="storeLng" name="storeLng"/>
-                        <input type="hidden" id="storeLegalCode" name="storeLegalCode"/>
-
-                        <!-- 주소 검색 버튼 -->
-                        <button type="button" class="btn mt-2" id="searchAddressBtn"
-                                style="background-color: #f39c12; color: white; border: none;">
-                          주소 검색
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-
-                  <!-- 사업자등록번호 입력 -->
-                  <div class="mb-3">
-                    <label for="businessRegistrationNumber" class="form-label">사업자등록번호</label>
-                    <input type="text" id="businessRegistrationNumber" name="businessRegistrationNumber"
-                           class="form-control" placeholder="사업자등록번호 입력" maxlength="10" pattern="\d{10}"
-                           title="숫자 10자리 입력" required/>
-                  </div>
-
-                  <!-- ⑤ 요일별 영업시간 -->
-                  <div class="box_general padding_bottom">
-                    <div class="header_box version_2">
-                      <h2><i class="fa fa-clock-o"></i>영업 시간</h2>
-                    </div>
-                    <div id="opening-schedule"></div>
-                  </div>
-
-                  <!-- ⑥ 지역카드, 유아 동반, 주차 : 라디오 · 체크박스 -->
-                  <div class="mb-4">
-
-                    <!-- 지역카드 사용 가능 -->
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="localCard" name="isLocalCard">
-                      <label class="form-check-label" for="localCard">지역카드 사용 가능</label>
-                    </div>
-
-                    <!-- 유아 동반 가능 -->
-                    <div class="form-check">
-                      <input type="checkbox" class="form-check-input" id="childAllowed" name="isChildAllowed">
-                      <label class="form-check-label" for="childAllowed">유아 동반 가능</label>
-                    </div>
-
-
-                    <input type="hidden" name="isLocalCard" id="isLocalCardValue">
-                    <input type="hidden" name="isChildAllowed" id="isChildAllowedValue">
-
-                    <!-- 주차 -->
-                    <div class="mt-3">
-                      <label class="form-label me-3">주차</label>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="hasParking" id="parkingFree" value="FREE">
-                        <label class="form-check-label" for="parkingFree">무료</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="hasParking" id="parkingPaid" value="PAID">
-                        <label class="form-check-label" for="parkingPaid">유료</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="hasParking" id="parkingNone"
-                               value="NOT_AVAILABLE">
-                        <label class="form-check-label" for="parkingNone">불가</label>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <!-- ⑦ 사장님 한 줄 소개 -->
-                  <div class="owner-intro-wrapper" style="width: 100%;">
-                    <label for="owner-intro" style="font-weight: bold; color: #2c3e50;">
-                      사장님 한 줄 소개
-                    </label>
-                    <textarea
-                      id="owner-intro"
-                      name="ownerComment"
-                      class="form-control"
-                      rows="8"
-                      placeholder="매장 소개를 적어주세요.
-												• 주말/공휴일 영업 여부
-												• 유료 주차일 경우, 꼭! 적어주세요.(ex: 1시간당 2,000원)"
-									maxlength="200"
-                                    style="white-space: pre-line; line-height: 1.5; height: 140px;"
-                    ></textarea>
-
-							<small id="owner-intro-count" class="text-muted">0 / 200자</small>
-
-							<div id="owner-intro-hint"
-								 style="
-									margin-top: 8px;
-									color: #888;
-									font-size: 0.9em;
-									user-select: none;
-									white-space: pre-line;
-									line-height: 1.3;
-									transition: opacity 0.3s ease;
-									opacity: 1;
-								"
-                            >
-                    </div>
-                  </div>
+                    <input type="file" id="image-input" name="storeMainImage" accept="image/*" style="display: none;" />
+                    <small class="form-text text-muted">권장 사이즈: 500x500px, 파일 형식: JPG, PNG</small>
                 </div>
+
+                <!-- ② 가게명 -->
+                <div class="mb-3"><label for="storeName" class="form-label">가게명</label><input type="text" id="storeName" name="storeName" class="form-control" placeholder="가게명" required /></div>
+
+                <!-- ③ 주소 -->
+                <div class="mb-3"><label for="address-api" class="form-label">도로명 주소</label><input type="text" id="address-api" name="address" class="form-control" placeholder="도로명 주소" readonly /><input type="hidden" id="zipcode" name="zipcode" /></div>
+                <div class="mb-3"><label for="store_detail_input" class="form-label">상세 주소</label><input type="text" id="store_detail_input" name="store_detail_input" class="form-control" placeholder="상세 주소 입력" autocomplete="off" /><input type="hidden" id="storeLat" name="storeLat" /><input type="hidden" id="storeLng" name="storeLng" /><input type="hidden" id="storeLegalCode" name="storeLegalCode" /></div>
+
+                <!-- ④ 전화번호 -->
+                <div class="mb-3 form-group"><label class="form-label">전화번호</label><div class="d-flex gap-2"><select id="phonePrefix" name="phonePrefix" class="form-select" style="max-width: 100px;"><option value="" selected>선택</option><option value="02">02</option><option value="031">031</option><option value="032">032</option><option value="042">042</option><option value="051">051</option><option value="053">053</option><option value="062">062</option><option value="041">041</option><option value="043">043</option><option value="054">054</option><option value="055">055</option><option value="061">061</option><option value="063">063</option><option value="044">044</option><option value="010">010</option><option value="011">011</option></select><input type="text" id="phonePrefixInput" name="phonePrefixInput" class="form-control" placeholder="직접입력" style="max-width: 100px;" maxlength="4" /><input type="text" id="phoneMid" name="phoneMid" class="form-control" placeholder="1234" maxlength="4" required /><input type="text" id="phoneRest" name="phoneRest" class="form-control" placeholder="5678" maxlength="4" required /></div><input type="hidden" id="phone" name="phone" /></div>
+
+                <!-- ⑤ 사업자등록번호 -->
+                <div class="mb-3"><label for="businessRegistrationNumber" class="form-label">사업자등록번호</label><input type="text" id="businessRegistrationNumber" name="businessRegistrationNumber" class="form-control" placeholder="'-' 없이 10자리 숫자 입력" maxlength="10" required /><small id="brn-feedback" class="form-text text-danger"></small></div>
+
+                <!-- ⑥ 영업시간 -->
+                <div class="box_general padding_bottom"><div class="header_box version_2"><h2><i class="fa fa-clock-o"></i> 영업 시간</h2></div><div id="opening-schedule"></div></div>
+
+                <!-- ⑦ 편의정보 -->
+                <div class="mb-4"><div class="form-check"><input type="checkbox" class="form-check-input" id="localCard" name="isLocalCard"><label class="form-check-label" for="localCard">지역카드 사용 가능</label></div><div class="form-check"><input type="checkbox" class="form-check-input" id="childAllowed" name="isChildAllowed"><label class="form-check-label" for="childAllowed">유아 동반 가능</label></div><div class="mt-3"><label class="form-label me-3">주차</label><div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="hasParking" id="parkingFree" value="FREE"><label class="form-check-label" for="parkingFree">무료</label></div><div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="hasParking" id="parkingPaid" value="PAID"><label class="form-check-label" for="parkingPaid">유료</label></div><div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="hasParking" id="parkingNone" value="NOT_AVAILABLE"><label class="form-check-label" for="parkingNone">불가</label></div></div></div>
+
+                <!-- ⑧ 사장님 한 줄 소개 -->
+                <div class="mb-3"><label for="owner-intro" class="form-label">사장님 한 줄 소개</label><textarea id="owner-intro" name="ownerComment" class="form-control" rows="5" placeholder="가게에 대한 소개, 주차 정보, 특별한 안내사항 등을 자유롭게 작성해주세요." maxlength="200"></textarea><small id="owner-intro-count" class="form-text text-muted">0 / 200자</small></div>
               </div>
             </div>
 
-						<!-- 메뉴등록 -->
+            <!-- 메뉴 등록 -->
             <div class="box_booking_2 style_2">
-              <div class="head">
-                <div class="title">
-                  <h3>메뉴 등록</h3>
-                </div>
-              </div>
-
+              <div class="head"><div class="title"><h3>메뉴 등록</h3></div></div>
               <div class="main">
-                <!-- 메뉴 항목들이 추가될 컨테이너 -->
-                <div id="menu-items">
-                  <!-- 초기 메뉴 항목 하나 예시 -->
-                  <div class="menu-item row align-items-center mb-4">
-                    <!-- 이미지 업로드 영역 -->
-                    <div class="col-md-4">
-                      <div class="menu-image-upload"
-                           style="border: 2px dashed #ccc; padding: 30px 20px; text-align: center; cursor: pointer; height: 180px;">
-                        <p style="margin-top: 10px;">Drop files here to upload</p>
-                        <input type="file" name="menus[0].menuImageFile" class="menu-image-input"/>
-                        <img class="menu-preview-image" src="" alt="메뉴 이미지 미리보기"
-                             style="max-width: 100%; max-height: 120px; display: none; margin-top: 10px;"/>
-                      </div>
-                    </div>
-
-                    <!-- 메뉴 정보 -->
-                    <div class="col-md-8">
-                      <div class="row">
-                        <div class="col-md-4">
-                          <label for="menuName0" class="visually-hidden">메뉴 이름</label>
-                          <input type="text" id="menuName0" name="menus[0].menuName" class="form-control"
-                                 placeholder="메뉴 이름" required/>
-                        </div>
-
-                        <div class="col-md-6 mb-2">
-                          <div class="input-group">
-                            <label for="price0" class="visually-hidden">가격</label>
-                            <input type="number" id="price0" name="menus[0].price" class="form-control" placeholder="가격"
-                                   min="0" step="100" required/>
-                            <span class="input-group-text">원</span>
-                          </div>
-                        </div>
-
-                        <div class="col-md-8 mb-2 d-flex gap-2">
-                          <label for="ramenCategoryId0" class="visually-hidden">카테고리 선택</label>
-                          <select id="ramenCategoryId0" name="menus[0].ramenCategoryId"
-                                  class="form-select form-select-sm scrollable-select" style="flex: 1;">
-                            <option value="" disabled selected>카테고리 선택</option>
-                            <!-- 카테고리 옵션들 -->
-                          </select>
-                          <label for="ramenSoupId0" class="visually-hidden">육수 선택</label>
-                          <select id="ramenSoupId0" name="menus[0].ramenSoupId"
-                                  class="form-select form-select-sm scrollable-select" style="flex: 1;">
-                            <option value="" disabled selected>육수 선택</option>
-                            <!-- 육수 옵션들 -->
-                          </select>
-                        </div>
-
-                        <div class="col-md-12 mb-2 d-flex gap-3 align-items-start">
-                          <div class="col-md-6 mt-2">
-                            <label for="menuDescription0" class="visually-hidden">메뉴 설명</label>
-                              <textarea
-                                      id="menuDescription0"
-                                      name="menus[0].menuDescription"
-                                      class="form-control"
-                                      rows="2"
-                                      placeholder="설명"
-                                      maxlength="100"
-                              ></textarea>
-                              <small id="menuDescription-count-0" class="text-muted">0 / 100자</small>
-                          </div>
-                          <div>
-                            <label class="form-label d-block">기본 토핑 선택</label>
-                            <div class="topping-tags" data-menu-index="0"></div>
-                            <div class="default-toppings-container"></div>
-                          </div>
-                        </div>
-                        <div class="text-end mt-2">
-                          <button type="button" class="btn btn-sm btn-outline-danger remove-menu">메뉴 삭제</button>
-                        </div>
-                        <div id="extra-toppings-container-0" style="display:none;"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 메뉴 추가 버튼 -->
-                <div class="text-start mb-3">
-                  <button type="button" id="add-menu" class="btn btn-sm btn-outline-primary">+ 메뉴 추가</button>
-                </div>
-
-              </div>
-              <div class="main">
-
-                <div class="topping-item row align-items-center mb-4">
-
-                  <!-- 토핑 선택 영역 -->
-                  <div class="d-flex gap-2 align-items-center mb-2">
-                    <label for="topping-select" class="form-label mb-0">토핑 선택</label>
-                    <select id="topping-select" class="form-select" style="width: 200px;">
-                      <option value="">-- 토핑 선택 --</option>
-                      <th:block th:each="topping : ${toppings}">
-                        <option th:value="${topping.id}" th:text="${topping.name}"></option>
-                      </th:block>
-                    </select>
-                    <input type="number" id="topping-price" class="form-control" placeholder="가격 (원)" style="width: 120px;" min="0" step="100"/>
-                    <button type="button" class="btn btn-sm btn-outline-primary add-topping-btn">+ 토핑 추가</button>
-                  </div>
-
-                  <!-- 여기에 추가된 토핑들이 렌더링됨 -->
-                  <div id="store-extra-toppings-container" class="d-flex flex-column gap-2 mt-2"></div>
-                </div>
-
-              </div>
-
-                <!-- 등록 버튼 -->
-              <div class="text-center">
-                <button type="submit" class="btn btn-success btn-lg">등록하기</button>
+                <div id="menu-items"></div>
+                <div class="text-start mt-3"><button type="button" id="add-menu" class="btn btn-outline-primary">+ 메뉴 추가</button></div>
               </div>
             </div>
+
+            <!-- 추가 토핑 등록 -->
+            <div class="box_booking_2 style_2">
+                <div class="head"><div class="title"><h3>추가 토핑</h3></div></div>
+                <div class="main">
+                    <div class="d-flex gap-2 align-items-center mb-3">
+                        <select id="extra-topping-select" class="form-select" style="width: 200px;">
+                            <option value="">-- 토핑 선택 --</option>
+                        </select>
+                        <input type="number" id="extra-topping-price" class="form-control" placeholder="가격 (원)" style="width: 120px;" min="0" step="100"/>
+                        <button type="button" id="add-extra-topping-btn" class="btn btn-sm btn-outline-primary">+ 토핑 추가</button>
+                    </div>
+                    <div id="store-extra-toppings-container" class="d-flex flex-column gap-2"></div>
+                </div>
+            </div>
+
+            <div class="text-center"><button type="submit" class="btn btn-success btn-lg">가게 등록하기</button></div>
           </form>
-
-
         </div>
       </div>
     </div>
   </main>
-  <!--/footer-->
-	<footer th:replace="~{fragments/footer :: footer}"></footer>
 
-  <!-- ❗JS 스크립트 ❗ -->
-
+  <footer th:replace="~{fragments/footer :: footer}"></footer>
 
   <!-- COMMON SCRIPTS -->
   <script src="/js/common_scripts.min.js"></script>
   <script src="/js/common_func.js"></script>
   <script src="/assets/validate.js"></script>
 
-  <!-- 카카오 다음 우편번호 API 스크립트 -->
-  <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js" charset="utf-8"></script>
-  <script type="text/javascript"
-          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d8455fa8f84607ce70b0cd1184c74538&libraries=services"></script>
+  <!-- 카카오 다음 우편번호 API -->
+  <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d8455fa8f84607ce70b0cd1184c74538&libraries=services"></script>
 
   <script>
-    /* ========== 주소 검색 (카카오) ========== */
-    function openPostcode() {
-      new daum.Postcode({
-        oncomplete: function (data) {
-          const roadAddress = data.roadAddress;
-          const zonecode = data.zonecode;
+    // 전역 변수
+    let allToppings = [];
+    let allCategories = [];
+    let allSoups = [];
 
-          document.getElementById("address-api").value = roadAddress;
-          document.getElementById("zipcode").value = zonecode;
-          document.getElementById("store_detail_input").focus();
+    // 메뉴 아이템 HTML 템플릿
+    function getMenuItemTemplate(index) {
+      return `
+        <div class="menu-item" data-index="${index}">
+          <div class="text-end"><button type="button" class="btn btn-sm btn-outline-danger remove-menu">메뉴 삭제</button></div>
+          
+          <div class="mb-3">
+            <label class="form-label">메뉴 이미지</label>
+            <div class="menu-image-upload" style="border: 2px dashed #ccc; padding: 20px; text-align: center; cursor: pointer;">
+              <span>Drop files here to upload</span>
+              <img class="menu-preview-image" src="" alt="메뉴 이미지 미리보기" style="display:none;"/>
+            </div>
+            <input type="file" name="menus[${index}].menuImageFile" class="menu-image-input" style="display:none;" accept="image/*"/>
+            <small class="form-text text-muted">권장 사이즈: 300x300px, 파일 형식: JPG, PNG</small>
+          </div>
 
-          fetch("/location/info", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            credentials: 'include',
-            body: JSON.stringify({roadAddress})
-          })
-            .then(res => {
-              return res.json();
-            })
-            .then(data => {
-              document.getElementById("storeLat").value = data.storeLat || '';
-              document.getElementById("storeLng").value = data.storeLng || '';
-              document.getElementById("storeLegalCode").value = data.storeLegalCode || '';
-            })
-            .catch(err => console.error("주소 정보 조회 실패:", err));
-        }
-      }).open();
+          <div class="mb-3"><label for="menuName${index}" class="form-label">메뉴 이름</label><input type="text" id="menuName${index}" name="menus[${index}].menuName" class="form-control" placeholder="예: 돈코츠 라멘" required/></div>
+          <div class="mb-3"><label for="price${index}" class="form-label">가격</label><div class="input-group"><input type="number" id="price${index}" name="menus[${index}].price" class="form-control" placeholder="가격" min="0" step="100" required/><span class="input-group-text">원</span></div></div>
+          <div class="mb-3"><label for="ramenCategoryId${index}" class="form-label">카테고리</label><select id="ramenCategoryId${index}" name="menus[${index}].ramenCategoryId" class="form-select" required></select></div>
+          <div class="mb-3"><label for="ramenSoupId${index}" class="form-label">육수</label><select id="ramenSoupId${index}" name="menus[${index}].ramenSoupId" class="form-select" required></select></div>
+          <div class="mb-3"><label for="menuDescription${index}" class="form-label">메뉴 설명</label><textarea id="menuDescription${index}" name="menus[${index}].menuDescription" class="form-control" rows="3" placeholder="메뉴에 대한 설명을 입력하세요." maxlength="100"></textarea><small id="menuDescription-count-${index}" class="form-text text-muted">0 / 100자</small></div>
+          <div class="mb-3"><label class="form-label">기본 토핑</label><div class="topping-multiselect"><input type="text" class="form-control topping-search" placeholder="토핑 검색..."><div class="topping-dropdown"></div></div><div class="selected-toppings"></div><div class="default-toppings-container"></div></div>
+        </div>
+      `;
     }
 
-    document.getElementById("searchAddressBtn").addEventListener("click", openPostcode);
-    document.getElementById("address-api").addEventListener("click", openPostcode);
-
-
-    /* ========== 전화번호 입력 처리 ========== */
-    const phonePrefix = document.getElementById('phonePrefix');
-    const phonePrefixInput = document.getElementById('phonePrefixInput');
-    const phoneRest = document.getElementById('phoneRest');
-    const phoneHidden = document.getElementById('phone');
-
-    // 전화번호 입력 필드 활성/비활성 토글 함수
-    function togglePrefixInputs() {
-      if (phonePrefix.value && phonePrefix.value !== "") {
-        phonePrefixInput.value = '';
-        phonePrefixInput.disabled = true;
-        phonePrefix.disabled = false;
-      } else if (phonePrefixInput.value.trim() !== '') {
-        phonePrefix.value = '';
-        phonePrefix.disabled = true;
-        phonePrefixInput.disabled = false;
-      } else {
-        phonePrefix.disabled = false;
-        phonePrefixInput.disabled = false;
+    document.addEventListener("DOMContentLoaded", async function () {
+      try {
+        const [toppingsRes, categoriesRes, soupsRes] = await Promise.all([fetch('/ramen/toppings'), fetch('/ramen/categories'), fetch('/ramen/soups')]);
+        allToppings = await toppingsRes.json();
+        allCategories = await categoriesRes.json();
+        allSoups = await soupsRes.json();
+      } catch (error) {
+        console.error("데이터 로딩 실패:", error); alert("페이지 초기화에 필요한 데이터를 불러오는 데 실패했습니다."); return;
       }
-    }
-
-    phonePrefix.addEventListener('change', togglePrefixInputs);
-    phonePrefixInput.addEventListener('input', togglePrefixInputs);
-
-    togglePrefixInputs();
-
-    // 자동 하이픈 함수
-    phoneRest.addEventListener('input', function (e) {
-      const input = e.target;
-      let numbers = input.value.replace(/\D/g, '');
-
-      if (numbers.length <= 3) {
-        input.value = numbers;
-      } else if (numbers.length <= 7) {
-        input.value = numbers.replace(/(\d{3})(\d+)/, '$1-$2');
-      } else {
-        input.value = numbers.replace(/(\d{4})(\d{4})/, '$1-$2');
-      }
+      initializePage();
     });
 
-    function isMenuNameDuplicated() {
-      const nameInputs = Array.from(document.querySelectorAll('input[name$=".menuName"]'));
-      const names = nameInputs.map(input => input.value.trim()).filter(Boolean);
-
-      const nameCount = {};
-      for (let name of names) {
-        if (!nameCount[name]) nameCount[name] = 1;
-        else nameCount[name]++;
-      }
-
-      const duplicates = Object.entries(nameCount).filter(([name, count]) => count > 1);
-      if (duplicates.length > 0) {
-        alert(`메뉴 이름 "${duplicates[0][0]}" 이(가) 중복됩니다. 다른 이름으로 바꿔주세요.`);
-        return true;
-      }
-      return false;
+    function initializePage() {
+      renderOpeningSchedule();
+      populateExtraToppingSelect();
+      addMenu();
+      bindEventListeners();
     }
 
-    // SUBMIT 여기가 제출 버튼임!!
+    function bindEventListeners() {
+      document.getElementById("address-api").addEventListener("click", openPostcode);
+      document.getElementById('phonePrefix').addEventListener('change', togglePrefixInputs);
+      document.getElementById('phonePrefixInput').addEventListener('input', togglePrefixInputs);
+      autoMoveNext(document.getElementById('phonePrefixInput'), 4, document.getElementById('phoneMid'));
+      autoMoveNext(document.getElementById('phoneMid'), 4, document.getElementById('phoneRest'));
+      autoMoveNext(document.getElementById('phoneRest'), 4, null);
+      document.getElementById("businessRegistrationNumber").addEventListener('input', validateBusinessNumber);
+      document.getElementById('owner-intro').addEventListener('input', () => updateCharCount(document.getElementById('owner-intro'), 'owner-intro-count', 200));
+      
+      const imageUploadArea = document.getElementById('image-upload-area');
+      const imageInput = document.getElementById('image-input');
+      imageUploadArea.addEventListener('click', () => imageInput.click());
+      setupDragAndDrop(imageUploadArea, imageInput);
+      imageInput.addEventListener('change', handleImagePreview);
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const form = document.getElementById("register");
+      document.getElementById('add-extra-topping-btn').addEventListener('click', addExtraTopping);
+      document.getElementById('add-menu').addEventListener('click', addMenu);
+      
+      const menuItemsContainer = document.getElementById('menu-items');
+      menuItemsContainer.addEventListener('click', handleMenuEvents);
+      menuItemsContainer.addEventListener('input', handleMenuEvents);
 
-      form.addEventListener("submit", async function (e) {
-        e.preventDefault(); // 기본 제출 막기
+      document.getElementById('register').addEventListener('submit', handleFormSubmit);
+      
+      document.getElementById('opening-schedule').addEventListener('change', handleScheduleChange);
+    }
 
-        const formData = new FormData();
+    function handleMenuEvents(e) {
+      const target = e.target;
+      const menuItem = target.closest('.menu-item');
+      if (!menuItem) return;
 
-        // 1. 대표 이미지
-        const imageInput = document.getElementById("image-input");
-        if (imageInput && imageInput.files.length > 0) {
-          formData.append("storeMainImage", imageInput.files[0]);
-        }
+      if (target.classList.contains('remove-menu')) {
+        if (document.querySelectorAll('.menu-item').length > 1) { menuItem.remove(); updateMenuIndices(); } 
+        else { alert("최소 한 개의 메뉴는 등록되어야 합니다."); }
+      }
+      if (target.closest('.menu-image-upload')) { menuItem.querySelector('.menu-image-input').click(); }
+      if (target.classList.contains('menu-image-input')) { handleImagePreview(e); }
+      if (target.id.startsWith('menuDescription')) { updateCharCount(target, `menuDescription-count-${menuItem.dataset.index}`, 100); }
+      if (target.classList.contains('topping-search')) { filterToppings(menuItem, target.value); menuItem.querySelector('.topping-dropdown').classList.add('show'); }
+      if (target.parentElement && target.parentElement.classList.contains('topping-dropdown')) {
+        selectTopping(menuItem, target.dataset.id, target.textContent);
+        menuItem.querySelector('.topping-dropdown').classList.remove('show');
+        menuItem.querySelector('.topping-search').value = '';
+        filterToppings(menuItem, '');
+      }
+      if (target.classList.contains('remove-tag')) { removeSelectedTopping(menuItem, target.parentElement.dataset.id); }
+    }
+    
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.topping-multiselect')) { document.querySelectorAll('.topping-dropdown').forEach(d => d.classList.remove('show')); }
+    });
 
-        // 2. 메뉴 이미지들
-        document.querySelectorAll('.menu-item').forEach((item, idx) => {
-          const menuImgInput = item.querySelector('.menu-image-input');
-          if (menuImgInput && menuImgInput.files.length > 0) {
-            formData.append(`menus[${idx}].menuImageFile`, menuImgInput.files[0]);
-          }
-        });
+    function addMenu() {
+      const menuItemsContainer = document.getElementById('menu-items');
+      const newIndex = menuItemsContainer.children.length > 0 ? Math.max(...Array.from(menuItemsContainer.children).map(c => parseInt(c.dataset.index))) + 1 : 0;
+      const newMenuItemHtml = getMenuItemTemplate(newIndex);
+      menuItemsContainer.insertAdjacentHTML('beforeend', newMenuItemHtml);
+      const newMenuItem = menuItemsContainer.lastElementChild;
+      populateDropdowns(newMenuItem);
+      filterToppings(newMenuItem, '');
+      const menuImageUpload = newMenuItem.querySelector('.menu-image-upload');
+      const menuImageInput = newMenuItem.querySelector('.menu-image-input');
+      setupDragAndDrop(menuImageUpload, menuImageInput);
+    }
 
-        // 3. 나머지 입력값 (storeData 객체)
-        const storeData = {};
-
-        storeData.storeName = document.getElementById("storeName").value;
-        storeData.phone = document.getElementById("phone").value;
-        storeData.address = document.getElementById("address-api").value;
-        storeData.zipcode = document.getElementById("zipcode").value;
-        storeData.storeDetailInput = document.getElementById("store_detail_input").value;
-        storeData.storeLat = document.getElementById("storeLat").value;
-        storeData.storeLng = document.getElementById("storeLng").value;
-        storeData.storeLegalCode = document.getElementById("storeLegalCode").value;
-        storeData.businessRegistrationNumber = document.getElementById("businessRegistrationNumber").value;
-        storeData.ownerComment = document.getElementById("owner-intro").value;
-
-        // isLocalCard / isChildAllowed / parking
-        storeData.isLocalCard = document.getElementById("localCard").checked;
-        storeData.isChildAllowed = document.getElementById("childAllowed").checked;
-        storeData.hasParking = document.querySelector('input[name="hasParking"]:checked')?.value;
-
-        // 4. 영업시간 (요일별 스케줄)
-        storeData.weekSchedule = [];
-        for (let i = 0; i < 7; i++) {
-          storeData.weekSchedule.push({
-            dayOfWeek: document.querySelector(`[name="weekSchedule[${i}].dayOfWeek"]`).value,
-            openingAt: document.querySelector(`[name="weekSchedule[${i}].openingAt"]`).value,
-            closingAt: document.querySelector(`[name="weekSchedule[${i}].closingAt"]`).value,
-            isClosedDay: document.getElementById(`closed-day-${i}`).value === "true"
-          });
-        }
-
-        // 5. 메뉴 리스트
-        storeData.menus = [];
-        document.querySelectorAll('.menu-item').forEach((menu, idx) => {
-          const menuDto = {
-            menuName: menu.querySelector(`[name="menus[${idx}].menuName"]`).value,
-            price: menu.querySelector(`[name="menus[${idx}].price"]`).value,
-            menuDescription: menu.querySelector(`[name="menus[${idx}].menuDescription"]`).value,
-            ramenCategoryId: menu.querySelector(`[name="menus[${idx}].ramenCategoryId"]`).value,
-            ramenSoupId: menu.querySelector(`[name="menus[${idx}].ramenSoupId"]`).value,
-            defaultToppingIds: Array.from(
-                    menu.querySelectorAll(`input[name="menus[${idx}].defaultToppingIds"]`)
-            ).map(input => input.value)
-          };
-
-          storeData.menus.push(menuDto);
-        });
-
-        // 6. 추가 토핑 수집
-        storeData.extraToppings = [];
-        document.querySelectorAll(".store-topping-btn.btn-success").forEach(btn => {
-          const toppingId = parseInt(btn.dataset.id);
-          const priceInput = document.querySelector(`.topping-price-input[data-id="${toppingId}"]`);
-          const price = parseInt(priceInput?.value || '0', 10);
-
-          if (!isNaN(toppingId)) {
-            storeData.extraToppings.push({
-              toppingId: toppingId,
-              price: price
-            });
-          }
-        });
-
-        console.log("보낼 storeData:", storeData); // 확인용
-
-        // 7. JSON을 Blob으로 FormData에 담기
-        const dtoBlob = new Blob([JSON.stringify(storeData)], {
-          type: "application/json;charset=utf-8"
-        });
-        formData.append("dto", dtoBlob);
-
-        // 8. 서버로 전송
-        try {
-          const response = await fetch("/store/regist", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            alert("등록 성공!");
-            window.location.href = `/store/detail/${data.storeId}`;
-          } else {
-            const errorData = await response.json();
-            alert("등록 실패: " + (errorData?.message || `서버 오류 (${response.status})`));
-            console.error("서버 응답:", errorData);
-          }
-        } catch (err) {
-          console.error("등록 중 오류 발생:", err);
-          alert("서버 요청 중 오류가 발생했습니다.");
-        }
+    function updateMenuIndices() {
+      document.querySelectorAll('.menu-item').forEach((item, idx) => {
+        item.dataset.index = idx;
+        item.querySelectorAll('[name*="menus["]').forEach(el => { el.name = el.name.replace(/menus\[\d+\]/, `menus[${idx}]`); });
+        item.querySelectorAll('[id*="menu"], [id*="price"], [id*="ramen"], [id*="count"]').forEach(el => { el.id = el.id.replace(/\d+$/, idx); });
       });
-    });
+    }
 
-    /* ========== 대표 이미지 업로드 미리보기 ========== */
+    function populateDropdowns(menuItem) {
+      const categorySelect = menuItem.querySelector('select[name*="ramenCategoryId"]');
+      const soupSelect = menuItem.querySelector('select[name*="ramenSoupId"]');
+      categorySelect.innerHTML = '<option value="" disabled selected>카테고리 선택</option>' + allCategories.map(c => `<option value="${c.id}">${c.categoryName || c.name}</option>`).join('');
+      soupSelect.innerHTML = '<option value="" disabled selected>육수 선택</option>' + allSoups.map(s => `<option value="${s.id}">${s.soupName}</option>`).join('');
+    }
 
-    // 대표 이미지 선택 시 미리보기 띄우기
-    document.getElementById('image-input').addEventListener('change', (event) => {
-      const file = event.target.files[0];
+    function populateExtraToppingSelect() {
+        const select = document.getElementById('extra-topping-select');
+        select.innerHTML = '<option value="">-- 토핑 선택 --</option>' + allToppings.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+    }
+
+    function addExtraTopping() {
+        const select = document.getElementById('extra-topping-select');
+        const priceInput = document.getElementById('extra-topping-price');
+        const container = document.getElementById('store-extra-toppings-container');
+        const toppingId = select.value;
+        const toppingName = select.options[select.selectedIndex].text;
+        const price = priceInput.value;
+
+        if (!toppingId || !price) { alert("토핑과 가격을 모두 입력해주세요."); return; }
+        if (container.querySelector(`[data-id="${toppingId}"]`)) { alert("이미 추가된 토핑입니다."); return; }
+
+        const div = document.createElement('div');
+        div.className = "d-flex align-items-center justify-content-between p-2 border rounded";
+        div.dataset.id = toppingId;
+        div.innerHTML = `<span>${toppingName} - ${price}원</span><button type="button" class="btn btn-sm btn-outline-danger remove-extra-topping">삭제</button>`;
+        div.querySelector('.remove-extra-topping').addEventListener('click', () => div.remove());
+        container.appendChild(div);
+        priceInput.value = '';
+        select.selectedIndex = 0;
+    }
+
+    function filterToppings(menuItem, query) {
+      const dropdown = menuItem.querySelector('.topping-dropdown');
+      const selectedIds = Array.from(menuItem.querySelectorAll('.selected-topping-tag')).map(tag => tag.dataset.id);
+      const filtered = allToppings.filter(t => t.name.toLowerCase().includes(query.toLowerCase()) && !selectedIds.includes(String(t.id)));
+      dropdown.innerHTML = filtered.map(t => `<div data-id="${t.id}">${t.name}</div>`).join('');
+    }
+
+    function selectTopping(menuItem, id, name) {
+      const selectedContainer = menuItem.querySelector('.selected-toppings');
+      const hiddenContainer = menuItem.querySelector('.default-toppings-container');
+      const menuIndex = menuItem.dataset.index;
+      const tag = document.createElement('div');
+      tag.className = 'selected-topping-tag'; tag.dataset.id = id;
+      tag.innerHTML = `${name} <span class="remove-tag">x</span>`;
+      selectedContainer.appendChild(tag);
+      const input = document.createElement('input');
+      input.type = 'hidden'; input.name = `menus[${menuIndex}].defaultToppingIds`; input.value = id; input.dataset.id = id;
+      hiddenContainer.appendChild(input);
+      filterToppings(menuItem, menuItem.querySelector('.topping-search').value);
+    }
+
+    function removeSelectedTopping(menuItem, id) {
+      menuItem.querySelector(`.selected-topping-tag[data-id="${id}"]`).remove();
+      menuItem.querySelector(`.default-toppings-container input[data-id="${id}"]`).remove();
+      filterToppings(menuItem, menuItem.querySelector('.topping-search').value);
+    }
+
+    function updateCharCount(element, countElementId, maxLength) {
+      const counter = document.getElementById(countElementId);
+      if (counter) { counter.textContent = `${element.value.length} / ${maxLength}자`; }
+    }
+
+    function setupDragAndDrop(area, input) {
+        area.addEventListener('dragover', e => { e.preventDefault(); area.style.borderColor = '#007bff'; });
+        area.addEventListener('dragleave', e => { e.preventDefault(); area.style.borderColor = '#ccc'; });
+        area.addEventListener('drop', e => {
+            e.preventDefault(); area.style.borderColor = '#ccc';
+            if (e.dataTransfer.files.length > 0) { input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change')); }
+        });
+    }
+
+    function handleImagePreview(event) {
+      const input = event.target;
+      const file = input.files[0];
       if (file) {
-        const preview = document.getElementById('preview-image');
-        const uploadText = document.getElementById('upload-text');
         const reader = new FileReader();
         reader.onload = (e) => {
+          const preview = input.closest('.mb-3').querySelector('img');
+          const text = input.closest('.mb-3').querySelector('span');
           preview.src = e.target.result;
           preview.style.display = 'block';
-          uploadText.style.display = 'none';
+          if(text) text.style.display = 'none';
         };
         reader.readAsDataURL(file);
       }
-    });
+    }
 
-    let menuIndex = 1;
-    const menuList = document.getElementById('menu-items');
-    const template = document.querySelector('.menu-item');
-    const addButton = document.getElementById('add-menu');
+    function validateBusinessNumber() {
+      const input = document.getElementById('businessRegistrationNumber');
+      const feedback = document.getElementById('brn-feedback');
+      input.value = input.value.replace(/\D/g, '');
+      if (input.value.length > 0 && input.value.length !== 10) { feedback.textContent = '사업자등록번호는 10자리여야 합니다.'; } 
+      else { feedback.textContent = ''; }
+    }
 
-    /* ========== 영업시간 closed ========== */
+    function openPostcode() { new daum.Postcode({ oncomplete: (data) => { document.getElementById("address-api").value = data.roadAddress; document.getElementById("zipcode").value = data.zonecode; document.getElementById("store_detail_input").focus(); /* 좌표 변환 */ } }).open(); }
 
-    document.querySelectorAll('select[name^="weekSchedule"]').forEach(select => {
-      select.addEventListener('change', e => {
-        const name = e.target.name;
-        const match = name.match(/\[(\d+)\]/);
-        if (match) {
-          const idx = Number(match[1]);
-          checkClosed(idx);
-        }
-      });
-    });
-
-		/* ========== 메뉴 추가 버튼 클릭 시 ========== */
-
-    addButton.addEventListener('click', () => {
-      const clone = template.cloneNode(true);
-
-      // 메뉴 폼 초기화
-      clone.querySelectorAll('input, textarea').forEach(input => {
-        if (input.type === 'file') {
-          input.value = null;
+    function togglePrefixInputs() {
+        const prefixSelect = document.getElementById('phonePrefix');
+        const prefixInput = document.getElementById('phonePrefixInput');
+        if (prefixSelect.value) {
+            prefixInput.disabled = true; prefixInput.value = ''; prefixInput.classList.add('disabled-input');
         } else {
-          input.value = '';
+            prefixInput.disabled = false; prefixInput.classList.remove('disabled-input');
         }
-      });
-
-      clone.querySelectorAll('select').forEach(select => {
-        select.selectedIndex = 0;
-      });
-
-      // 이미지 미리보기 초기화
-      const preview = clone.querySelector('.menu-preview-image');
-      const uploadText = clone.querySelector('.menu-image-upload p');
-      if (preview && uploadText) {
-        preview.src = '';
-        preview.style.display = 'none';
-        uploadText.style.display = 'block';
-      }
-
-      // 토핑 초기화
-      clone.querySelectorAll('.topping-tag.selected').forEach(tag => tag.classList.remove('selected'));
-      const toppingContainer = clone.querySelector('.default-toppings-container');
-      if (toppingContainer) toppingContainer.innerHTML = '';
-
-      menuList.appendChild(clone);
-
-      // 인덱스 재정렬 & 각종 이벤트 재설정
-      updateMenuIndices();
-      setupToppingTags();
-      setupExtraToppingButtons();
-      setupMenuImageUpload(clone);
-    });
-
-    /* ========== 메뉴 삭제 버튼 클릭 시 ========== */
-
-    function updateMenuIndices() {
-      const menuItems = document.querySelectorAll('.menu-item');
-      menuItems.forEach((item, idx) => {
-        item.querySelectorAll('input, textarea, select').forEach(el => {
-          if (el.name) {
-            el.name = el.name.replace(/\d+/, idx);
-          }
-          if (el.id) {
-            el.id = el.id.replace(/\d+/, idx);
-          }
-        });
-
-        // 토핑 관련 인덱스도 재지정
-        const toppingTags = item.querySelector('.topping-tags');
-        if (toppingTags) {
-          toppingTags.dataset.menuIndex = idx;
-        }
-
-        const toppingInputs = item.querySelectorAll('input[name^="menus["][name$=".defaultToppingIds"]');
-        toppingInputs.forEach(input => {
-          input.name = `menus[${idx}].defaultToppingIds`;
-        });
-      });
-    }
-
-    // 메뉴 삭제 버튼 이벤트 위임 방식
-    document.getElementById('menu-items').addEventListener('click', function (e) {
-      if (e.target.classList.contains('remove-menu')) {
-        const allMenus = document.querySelectorAll('.menu-item');
-        if (allMenus.length > 1) {
-          e.target.closest('.menu-item').remove();
-          updateMenuIndices();
-          setupToppingTags();
-          setupExtraToppingButtons();
-          setupMenuImageUpload(document);
+        if (prefixInput.value) {
+            prefixSelect.disabled = true; prefixSelect.selectedIndex = 0; prefixSelect.classList.add('disabled-input');
         } else {
-          alert("최소 한 개의 메뉴는 등록되어 있어야 합니다.");
+            prefixSelect.disabled = false; prefixSelect.classList.remove('disabled-input');
         }
-      }
-    });
-
-    /* ========== 기본 토핑 선택 기능 ========== */
-    function setupToppingTags(context = document) {
-      const target = context === document ? document : context;
-      target.querySelectorAll('.topping-tag').forEach(tag => {
-        tag.onclick = () => {
-          tag.classList.toggle('selected');
-
-          const menuItem = tag.closest('.menu-item');
-          const menuIndex = menuItem.querySelector('.topping-tags').dataset.menuIndex;
-          const toppingId = tag.dataset.id;
-          const defaultContainer = menuItem.querySelector('.default-toppings-container');
-
-          const existing = defaultContainer.querySelector(`input[value="${toppingId}"]`);
-
-          if (tag.classList.contains('selected')) {
-            if (!existing) {
-              const input = document.createElement('input');
-              input.type = 'hidden';
-              input.name = `menus[${menuIndex}].defaultToppingIds`;
-              input.value = toppingId;
-              defaultContainer.appendChild(input);
-            }
-          } else {
-            if (existing) defaultContainer.removeChild(existing);
-          }
-        };
-      });
     }
-
-    /* ========== 메뉴 이미지 업로드 기능 ========== */
-    function setupMenuImageUpload(area) {
-      const uploadArea = area.querySelector('.menu-image-upload');
-      if (uploadArea.dataset.listenerAdded) {
-        return;
-      }
-      uploadArea.dataset.listenerAdded = 'true';
-
-      const input = uploadArea.querySelector('.menu-image-input');
-      input.setAttribute("accept", "image/*");
-      const preview = uploadArea.querySelector('.menu-preview-image');
-      const uploadText = uploadArea.querySelector('p');
-
-      // 파일 input 숨기기
-      input.style.display = 'none';
-
-      uploadArea.addEventListener('click', () => input.click());
-
-      ['dragover', 'dragleave'].forEach(evt =>
-        uploadArea.addEventListener(evt, e => {
-          e.preventDefault();
-          uploadArea.style.borderColor = evt === 'dragover' ? '#007bff' : '#ccc';
-        })
-      );
-
-      uploadArea.addEventListener('drop', e => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#ccc';
-        const file = e.dataTransfer.files[0];
-        if (file) {
-          input.files = e.dataTransfer.files;
-          preview.src = URL.createObjectURL(file);
-          preview.style.display = 'block';
-          uploadText.style.display = 'none';
-        }
-      });
-
-      input.addEventListener('change', () => {
-        const file = input.files[0];
-        if (file) {
-          preview.src = URL.createObjectURL(file);
-          preview.style.display = 'block';
-          uploadText.style.display = 'none';
-        } else {
-          // 파일 취소 시 미리보기와 텍스트 복원
-          preview.style.display = 'none';
-          uploadText.style.display = 'block';
-        }
-      });
-    }
-
-    /* ========== 한 줄 소개 ========== */
-    const textarea = document.getElementById('owner-intro');
-    const wrapper = textarea.closest('.owner-intro-wrapper');
-
-    function toggleHint() {
-      if (textarea.value.trim().length > 0) {
-        wrapper.classList.add('text-filled');
-      } else {
-        wrapper.classList.remove('text-filled');
-      }
-    }
-
-    textarea.addEventListener('input', toggleHint);
-    window.addEventListener('DOMContentLoaded', toggleHint);
-
-    /* ========== 요일별 영업시간 ========== */
-    const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-    const dayLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-    function generateTimeOptions() {
-      const options = [];
-      for (let h = 0; h < 24; h++) {
-        const hour = h % 12 === 0 ? 12 : h % 12;
-        const meridian = h < 12 ? "AM" : "PM";
-        const value = `${h.toString().padStart(2, '0')}:00`;
-        const label = `${hour} ${meridian}`;
-        options.push(`<option value="${value}">${label}</option>`);
-      }
-      return options.join("");
-    }
-
-    function checkClosed(event, index) {
-      const open = document.querySelector(`[name="weekSchedule[${index}].openingAt"]`);
-      const close = document.querySelector(`[name="weekSchedule[${index}].closingAt"]`);
-      const closedInput = document.getElementById(`closed-day-${index}`);
-
-      if (event.target.value === "CLOSED") {
-        open.dataset.prevValue = open.value;
-        close.dataset.prevValue = close.value;
-
-        open.value = "CLOSED";
-        close.value = "CLOSED";
-        closedInput.value = "true";
-      } else {
-        closedInput.value = "false";
-
-        if (event.target === open) {
-          if (close.value === "CLOSED" && close.dataset.prevValue) {
-            close.value = close.dataset.prevValue;
-          }
-        } else if (event.target === close) {
-          if (open.value === "CLOSED" && open.dataset.prevValue) {
-            open.value = open.dataset.prevValue;
-          }
-        }
-      }
-    }
+    function autoMoveNext(el, max, next) { el.addEventListener('input', () => { el.value = el.value.replace(/\D/g, ''); if (el.value.length >= max && next) { next.focus(); } }); }
 
     function renderOpeningSchedule() {
       const container = document.getElementById("opening-schedule");
+      if (!container) return;
+      const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+      const dayLabels = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"];
       let html = "";
       for (let i = 0; i < days.length; i++) {
         html += `
-		<div class="row mb-2 align-items-center">
-			<div class="col-md-2">
-				<label class="fix_spacing">${dayLabels[i]}</label>
-				<input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}">
-				<input type="hidden" name="weekSchedule[${i}].isClosedDay" value="false" id="closed-day-${i}">
-			</div>
-			<div class="col-md-5">
-				<select class="form-control"
-						name="weekSchedule[${i}].openingAt"
-						onchange="checkClosed(event, ${i})"
-						data-prev-value="">
-					<option value="">Opening Time</option>
-					<option value="CLOSED">Closed</option>
-					${generateTimeOptions()}
-				</select>
-			</div>
-			<div class="col-md-5">
-				<select class="form-control"
-						name="weekSchedule[${i}].closingAt"
-						onchange="checkClosed(event, ${i})"
-						data-prev-value="">
-					<option value="">Closing Time</option>
-					<option value="CLOSED">Closed</option>
-					${generateTimeOptions()}
-				</select>
-			</div>
-		</div>`;
+          <div class="row mb-2 align-items-center" data-day-index="${i}">
+            <div class="col-md-2"><label class="fix_spacing">${dayLabels[i]}</label><input type="hidden" name="weekSchedule[${i}].dayOfWeek" value="${days[i]}"></div>
+            <div class="col-md-5"><select class="form-select opening-time" name="weekSchedule[${i}].openingAt"><option value="">오픈 시간</option>${generateTimeOptions()}</select></div>
+            <div class="col-md-5"><select class="form-select closing-time" name="weekSchedule[${i}].closingAt"><option value="">마감 시간</option>${generateTimeOptions()}</select></div>
+          </div>`;
       }
       container.innerHTML = html;
     }
-  </script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", async function () {
-      // renderOpeningSchedule
-      renderOpeningSchedule();
-
-      // ① 메뉴 설명 글자 수 - 최초 1개
-      const firstDesc = document.getElementById("menuDescription0");
-      const firstCounter = document.getElementById("menuDescription-count-0");
-      if (firstDesc && firstCounter) {
-        updateMenuDescriptionCharCount(firstDesc, "menuDescription-count-0");
-      }
-
-      // ② 메뉴 추가 시 설명 글자 수 추가
-      const addMenuBtn = document.getElementById("add-menu");
-      if (addMenuBtn) {
-        addMenuBtn.addEventListener("click", () => {
-          setTimeout(() => {
-            const menuItems = document.querySelectorAll(".menu-item");
-            const lastIndex = menuItems.length - 1;
-            const newTextarea = document.getElementById(`menuDescription${lastIndex}`);
-            const counterId = `menuDescription-count-${lastIndex}`;
-
-            if (newTextarea && !document.getElementById(counterId)) {
-              const counter = document.createElement("small");
-              counter.id = counterId;
-              counter.className = "text-muted";
-              counter.textContent = "0 / 100자";
-              newTextarea.insertAdjacentElement("afterend", counter);
-
-              updateMenuDescriptionCharCount(newTextarea, counterId);
+    
+    function handleScheduleChange(e) {
+        const select = e.target;
+        if (select.value === 'CLOSED') {
+            const row = select.closest('.row');
+            const otherSelect = row.querySelector(select.classList.contains('opening-time') ? '.closing-time' : '.opening-time');
+            if(otherSelect.value !== 'CLOSED') {
+                otherSelect.value = 'CLOSED';
             }
-
-            setupToppingAddButton(); // 새 토핑 추가 버튼에도 이벤트 다시 연결
-          }, 100);
-        });
-      }
-
-      // ③ 사장님 한 줄 소개 글자 수
-      const introTextarea = document.getElementById("owner-intro");
-      const countDisplay = document.getElementById("owner-intro-count");
-      if (introTextarea && countDisplay) {
-        const updateIntroCount = () => {
-          countDisplay.textContent = `${introTextarea.value.length} / 200자`;
-        };
-        introTextarea.addEventListener("input", updateIntroCount);
-        updateIntroCount();
-      }
-
-      // ④ 메뉴 이미지 미리보기
-      document.querySelectorAll('.menu-image-input').forEach(input => {
-        input.addEventListener('change', e => {
-          const file = e.target.files[0];
-          if (file) {
-            const uploadArea = input.closest('.menu-image-upload');
-            const menuPreview = uploadArea.querySelector('.menu-preview-image');
-            const uploadText = uploadArea.querySelector('p');
-
-            menuPreview.src = URL.createObjectURL(file);
-            menuPreview.style.display = 'block';
-            uploadText.style.display = 'none';
-          }
-        });
-      });
-
-      // ⑤ 토핑 추가 버튼 이벤트 연결 (최초 1회)
-      setupToppingAddButton();
-
-      // ⑥ 메뉴 관련 초기화 함수들
-      setupToppingTags();
-      setupExtraToppingButtons();
-      setupMenuImageUpload(document);
-
-      // ⑦ 서버에서 카테고리, 육수, 토핑 가져오기
-      try {
-        const [toppingsRes, categoriesRes, soupsRes] = await Promise.all([
-          fetch('/ramen/toppings'),
-          fetch('/ramen/categories'),
-          fetch('/ramen/soups')
-        ]);
-        const toppings = await toppingsRes.json();
-        const categories = await categoriesRes.json();
-        const soups = await soupsRes.json();
-
-        renderAllMenus(categories, soups, toppings);
-        addExtraTopping(0); // 메뉴 인덱스 0으로 초기 렌더
-        setupToppingTagEvents();
-      } catch (error) {
-        console.error("데이터 불러오기 실패:", error);
-      }
-
-      // ⑧ extra 토핑 선택 시 가격 입력 및 form hidden 추가
-      document.querySelectorAll('.store-topping-btn').forEach(btn => {
-        btn.addEventListener("click", function () {
-          const id = btn.dataset.id;
-          btn.classList.toggle("btn-success");
-          btn.classList.toggle("btn-outline-secondary");
-
-          const priceInput = document.querySelector(`.topping-price-input[data-id="${id}"]`);
-          if (!priceInput) return;
-
-          if (btn.classList.contains("btn-success")) {
-            priceInput.style.display = "block";
-            priceInput.required = true;
-          } else {
-            priceInput.style.display = "none";
-            priceInput.value = "";
-            priceInput.required = false;
-          }
-        });
-      });
-
-      // ⑨ submit 시 선택된 토핑들 form에 추가
-      document.getElementById("register").addEventListener("submit", function () {
-        const form = this;
-        const selected = document.querySelectorAll(".store-topping-btn.btn-success");
-
-        selected.forEach((btn, idx) => {
-          const toppingId = btn.dataset.id;
-          const priceInput = document.querySelector(`.topping-price-input[data-id="${toppingId}"]`);
-          const price = priceInput ? priceInput.value : "";
-
-          const idInput = document.createElement("input");
-          idInput.type = "hidden";
-          idInput.name = `extraToppings[${idx}].toppingId`;
-          idInput.value = toppingId;
-
-          const priceHidden = document.createElement("input");
-          priceHidden.type = "hidden";
-          priceHidden.name = `extraToppings[${idx}].price`;
-          priceHidden.value = price;
-
-          form.appendChild(idInput);
-          form.appendChild(priceHidden);
-        });
-      });
-    });
-
-    // ------------------------
-    // 🔧 함수들 (DOM 밖으로 빼놓은 부분)
-    // ------------------------
-
-    function updateMenuDescriptionCharCount(textarea, counterId) {
-      const counter = document.getElementById(counterId);
-      if (!textarea || !counter) return;
-
-      counter.textContent = `${textarea.value.length} / 100자`;
-
-      textarea.addEventListener('input', () => {
-        counter.textContent = `${textarea.value.length} / 100자`;
-      });
+        }
     }
 
-    // ✅ 토핑 추가 버튼 이벤트 연결 함수
-    function setupToppingAddButton() {
-      const container = document.getElementById("store-extra-toppings-container");
-      const addButtons = document.querySelectorAll(".add-topping-btn");
+    function generateTimeOptions() {
+      let options = '<option value="CLOSED">휴무</option>';
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 30) {
+          const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`;
+          options += `<option value="${time}">${time.substring(0, 5)}</option>`;
+        }
+      }
+      return options;
+    }
 
-      addButtons.forEach(button => {
-        const newButton = button.cloneNode(true);
-        button.replaceWith(newButton);
+    async function handleFormSubmit(e) {
+      e.preventDefault();
 
-        newButton.addEventListener("click", function () {
-          const select = document.getElementById("topping-select");
-          const priceInput = document.getElementById("topping-price");
+      // 영업시간 유효성 검사
+      const scheduleRows = document.querySelectorAll('#opening-schedule .row');
+      let allClosed = true;
+      scheduleRows.forEach(row => {
+          const openingTime = row.querySelector('.opening-time').value;
+          const closingTime = row.querySelector('.closing-time').value;
+          if (openingTime !== 'CLOSED' || closingTime !== 'CLOSED') {
+              allClosed = false;
+          }
+      });
 
-          if (!select || !priceInput) {
-            alert("토핑 선택 영역이 없습니다.");
-            return;
+      if (allClosed) {
+          alert('적어도 하루는 영업해야 합니다. 모든 요일을 휴무로 설정할 수 없습니다.');
+          return;
+      }
+
+      const formData = new FormData();
+      
+      // 대표 이미지
+      const imageInput = document.getElementById("image-input");
+      if (imageInput.files.length > 0) formData.append("storeMainImage", imageInput.files[0]);
+
+      // 메뉴 이미지들
+      document.querySelectorAll('.menu-item').forEach(item => {
+          const menuImgInput = item.querySelector('.menu-image-input');
+          if (menuImgInput.files.length > 0) {
+            formData.append(`menuImageFiles`, menuImgInput.files[0]);
+          }
+      });
+
+      const storeData = {
+          storeName: document.getElementById("storeName").value,
+          phone: document.getElementById("phone").value, // 전화번호 조합 로직 필요
+          address: document.getElementById("address-api").value,
+          zipcode: document.getElementById("zipcode").value,
+          storeDetailInput: document.getElementById("store_detail_input").value,
+          storeLat: Number(document.getElementById("storeLat").value),
+          storeLng: Number(document.getElementById("storeLng").value),
+          storeLegalCode: Number(document.getElementById("storeLegalCode").value),
+          bizNum: Number(document.getElementById("businessRegistrationNumber").value),
+          ownerComment: document.getElementById("owner-intro").value,
+          isLocalCard: document.getElementById("localCard").checked,
+          isChildAllowed: document.getElementById("childAllowed").checked,
+          hasParking: document.querySelector('input[name="hasParking"]:checked')?.value || 'NOT_AVAILABLE',
+          operationStatus: 'OPEN', // Default to OPEN for new registrations
+          weekSchedule: [],
+          menus: [],
+          extraToppings: []
+      };
+      
+      const prefix = document.getElementById('phonePrefix').value || document.getElementById('phonePrefixInput').value;
+      storeData.phone = `${prefix}-${document.getElementById('phoneMid').value}-${document.getElementById('phoneRest').value}`;
+
+      document.querySelectorAll('#opening-schedule .row').forEach((row, i) => {
+          let openingAt = row.querySelector('.opening-time').value;
+          let closingAt = row.querySelector('.closing-time').value;
+
+          const isClosed = openingAt === 'CLOSED' || closingAt === 'CLOSED';
+
+          // If not a closed day, but times are empty, default them to "00:00:00"
+          if (!isClosed) {
+              if (!openingAt) openingAt = '00:00:00'; // Default to start of day if empty
+              if (!closingAt) closingAt = '00:00:00'; // Default to start of day if empty
+          } else {
+              // If it's a closed day, ensure they are null for backend processing
+              openingAt = null;
+              closingAt = null;
           }
 
-          const toppingId = select.value;
-          const toppingName = select.options[select.selectedIndex].text;
-          const price = priceInput.value;
-
-          if (!toppingId || !price) {
-            alert("토핑과 가격을 모두 입력해주세요.");
-            return;
-          }
-
-          const exists = container.querySelector(`input[name="extraToppings[].toppingId"][value="${toppingId}"]`);
-          if (exists) {
-            alert("이미 추가된 토핑입니다.");
-            return;
-          }
-
-          const div = document.createElement("div");
-          div.className = "d-flex align-items-center gap-3";
-          div.innerHTML = `
-          <span>${toppingName} (${price}원)</span>
-          <input type="hidden" name="extraToppings[].toppingId" value="${toppingId}"/>
-          <input type="hidden" name="extraToppings[].price" value="${price}"/>
-          <button type="button" class="btn btn-sm btn-outline-danger remove-topping">삭제</button>
-        `;
-
-          div.querySelector(".remove-topping").addEventListener("click", () => {
-            div.remove();
+          storeData.weekSchedule.push({
+              dayOfWeek: row.querySelector(`[name="weekSchedule[${i}].dayOfWeek"]`).value,
+              openingAt: openingAt,
+              closingAt: closingAt,
+              isClosedDay: isClosed
           });
-
-          container.appendChild(div);
-          priceInput.value = "";
-        });
       });
-    }
-  </script>
 
-  <script>
-    // 카테고리, 육수, 토핑 관련
-    document.addEventListener('DOMContentLoaded', async () => {
+      document.querySelectorAll('.menu-item').forEach((menu, idx) => {
+          storeData.menus.push({
+              menuName: menu.querySelector(`[name*="menuName"]`).value,
+              price: Number(menu.querySelector(`[name*="price"]`).value),
+              menuDescription: menu.querySelector(`[name*="menuDescription"]`).value,
+              ramenCategoryId: Number(menu.querySelector(`[name*="ramenCategoryId"]`).value),
+              ramenSoupId: Number(menu.querySelector(`[name*="ramenSoupId"]`).value),
+              defaultToppingIds: Array.from(menu.querySelectorAll('.default-toppings-container input')).map(input => Number(input.value))
+          });
+      });
+
+      document.querySelectorAll('#store-extra-toppings-container > div').forEach(topping => {
+          storeData.extraToppings.push({ 
+              toppingId: Number(topping.dataset.id), 
+              price: parseInt(topping.textContent.split(' - ')[1]) || 0
+          });
+      });
+
+      console.log("Submitting data:", JSON.stringify(storeData, null, 2));
+
+      const dtoBlob = new Blob([JSON.stringify(storeData)], { type: "application/json;charset=utf-8" });
+      formData.append("store", dtoBlob);
+
       try {
-        const [toppingsRes, categoriesRes, soupsRes] = await Promise.all([
-          fetch('/ramen/toppings'),
-          fetch('/ramen/categories'),
-          fetch('/ramen/soups')
-        ]);
-
-        const toppings = await toppingsRes.json();
-        const categories = await categoriesRes.json();
-        const soups = await soupsRes.json();
-
-        renderAllMenus(categories, soups, toppings);
-        addExtraTopping(menuIndex);
-        setupToppingTagEvents();
-
-      } catch (error) {
-        console.error("데이터 불러오기 실패:", error);
-      }
-    });
-
-    function setupExtraToppingButtons(context = document) {
-      context.querySelectorAll('.add-extra-topping').forEach(button => {
-        button.onclick = () => {
-          const menuItem = button.closest('.menu-item');
-          const menus = Array.from(document.querySelectorAll('.menu-item'));
-          const menuIndex = menus.indexOf(menuItem);
-          addExtraTopping(menuIndex);
-        };
-      });
-    }
-
-    function addExtraTopping(menuIndex) {
-      const menuItems = document.querySelectorAll('.menu-item');
-      const menuItem = menuItems[menuIndex];
-      if (!menuItem) return;
-
-      const container = menuItem.querySelector('.extra-topping-container');
-      if (!container) return;
-
-      const inputWrapper = document.createElement('div');
-      inputWrapper.className = 'input-group mb-2';
-
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.className = 'form-control';
-      input.name = `menus[${menuIndex}].extraToppings[]`;
-      input.placeholder = '추가 토핑 입력';
-
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.className = 'btn btn-outline-danger';
-      removeBtn.textContent = '삭제';
-      removeBtn.onclick = () => inputWrapper.remove();
-
-      inputWrapper.appendChild(input);
-      inputWrapper.appendChild(removeBtn);
-      container.appendChild(inputWrapper);
-    }
-
-
-    // 여러 메뉴에 옵션/토핑 렌더링
-    function renderAllMenus(categories, soups, toppings) {
-      document.querySelectorAll('.menu-item').forEach((menuEl, idx) => {
-        renderCategoryOptions(categories, menuEl.querySelector('select[name$=".ramenCategoryId"]'));
-        renderSoupOptions(soups, menuEl.querySelector('select[name$=".ramenSoupId"]'));
-        renderToppingTags(toppings, menuEl.querySelector('.topping-tags'), idx);
-      });
-    }
-
-    function renderCategoryOptions(categories, selectEl) {
-      if (!selectEl) return;
-      selectEl.innerHTML = '<option value="" disabled selected>카테고리 선택</option>';
-      categories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.id;
-        option.textContent = cat.categoryName || cat.name;
-        selectEl.appendChild(option);
-      });
-    }
-
-    function renderSoupOptions(soups, selectEl) {
-      if (!selectEl) return;
-      selectEl.innerHTML = '<option value="" disabled selected>육수 선택</option>';
-      soups.forEach(soup => {
-        const option = document.createElement('option');
-        option.value = soup.id;
-        option.textContent = soup.soupName;
-        selectEl.appendChild(option);
-      });
-    }
-
-    function renderToppingTags(toppings, container, menuIndex) {
-      if (!container) return;
-      container.innerHTML = '';
-      container.dataset.menuIndex = menuIndex;
-      toppings.forEach(top => {
-        const span = document.createElement('span');
-        span.className = 'topping-tag';
-        span.dataset.id = top.id;
-        span.textContent = top.name;
-        container.appendChild(span);
-      });
-      setupToppingTagEvents(container);
-    }
-
-    function setupToppingTagEvents(container) {
-      const containers = container ? [container] : document.querySelectorAll('.topping-tags');
-      containers.forEach(cont => {
-        cont.querySelectorAll('.topping-tag').forEach(tag => {
-          tag.onclick = () => tag.classList.toggle('selected');
-        });
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      setupToppingTags();
-      setupExtraToppingButtons();
-      setupMenuImageUpload(document);
-
-      const addStoreExtraToppingBtn = document.getElementById('add-store-extra-topping');
-      if (addStoreExtraToppingBtn) {
-        addStoreExtraToppingBtn.addEventListener('click', addStoreExtraTopping);
-      }
-
-      const imageInputs = document.querySelectorAll('.menu-image-input');
-      imageInputs.forEach(input => {
-        input.addEventListener('change', (event) => {
-          const file = event.target.files[0];
-          if (file) {
-            const uploadArea = input.closest('.menu-image-upload');
-            const menuPreview = uploadArea.querySelector('.menu-preview-image');
-            const uploadText = uploadArea.querySelector('p');
-
-            menuPreview.src = URL.createObjectURL(file);
-            menuPreview.style.display = 'block';
-            uploadText.style.display = 'none';
-          }
-        });
-      });
-    });
-  </script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // 토핑 버튼 클릭 → price 입력 표시 toggle
-      document.querySelectorAll(".store-topping-btn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          const id = btn.dataset.id;
-          btn.classList.toggle("btn-success");
-          btn.classList.toggle("btn-outline-secondary");
-
-          const priceInput = document.querySelector(`.topping-price-input[data-id="${id}"]`);
-          if (btn.classList.contains("btn-success")) {
-            priceInput.style.display = "block";
-            priceInput.required = true;
+          const response = await fetch("/store/regist", { method: "POST", body: formData });
+          if (response.ok) {
+              const result = await response.json();
+              alert("가게가 성공적으로 등록되었습니다!");
+              window.location.href = `/store/detail/${result.storeId}`;
           } else {
-            priceInput.style.display = "none";
-            priceInput.value = "";
-            priceInput.required = false;
+              const errorData = await response.json();
+              console.error("Server error response:", errorData);
+              alert("등록 실패: " + (errorData?.message || `서버 오류 (${response.status})`));
           }
-        });
-      });
+      } catch (err) {
+          console.error("등록 중 오류 발생:", err);
+          alert("서버 요청 중 오류가 발생했습니다.");
+      }
+    }
 
-      // submit 시 선택된 extra 토핑 + 가격 -> form에 hidden input으로 주입
-      document.getElementById("register").addEventListener("submit", function (e) {
-        const form = this;
-
-        // 기존에 추가된 hidden input 제거 (중복 방지)
-        form.querySelectorAll('input[name^="extraToppings"]').forEach(input => input.remove());
-
-        const selected = document.querySelectorAll(".store-topping-btn.btn-success");
-
-        selected.forEach((btn, idx) => {
-          const toppingId = btn.dataset.id;
-          const priceInput = document.querySelector(`.topping-price-input[data-id="${toppingId}"]`);
-          if (!priceInput) return; // priceInput 없으면 무시
-
-          const price = priceInput.value;
-
-          const idInput = document.createElement("input");
-          idInput.type = "hidden";
-          idInput.name = `extraToppings[${idx}].toppingId`;
-          idInput.value = toppingId;
-
-          const priceHidden = document.createElement("input");
-          priceHidden.type = "hidden";
-          priceHidden.name = `extraToppings[${idx}].price`;
-          priceHidden.value = price;
-
-          form.appendChild(idInput);
-          form.appendChild(priceHidden);
-        });
-      });
-    });
   </script>
 
 </body>
 </html>
+''

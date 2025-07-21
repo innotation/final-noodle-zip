@@ -62,9 +62,16 @@ public class StoreService {
     private final RamenReviewRepository ramenReviewRepository;
     private final ReviewToppingRepository reviewToppingRepository;
     private final StoreExtraToppingRepository storeExtraToppingRepository;
+    private final LocationService locationService;
 
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, User user) {
+
+        // 주소 정보를 기반으로 위도, 경도, 법정동 코드 가져오기
+        LocationInfoDto locationInfo = locationService.getLocationInfo(dto.getAddress());
+        dto.setStoreLat(locationInfo.getStoreLat());
+        dto.setStoreLng(locationInfo.getStoreLng());
+        dto.setStoreLegalCode(locationInfo.getStoreLegalCode());
 
         log.debug("DTO: {}", dto);
         log.debug("WeekSchedule: {}", dto.getWeekSchedule());
