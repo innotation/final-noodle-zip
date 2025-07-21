@@ -7,34 +7,7 @@
     <link href="/css/blog.css" rel="stylesheet">
     <!-- YOUR CUSTOM CSS -->
     <link href="/css/listing.css" rel="stylesheet">
-    <style>
-        main {
-            min-height: calc(100vh - 300px); /* header+footer 대략 합산 높이 고려 */
-        }
-
-        .community-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .community-tag {
-            display: inline-flex;
-            align-items: center;
-            font-size: 11px;
-            padding: 3px 6px;
-            border: 1px solid #ccc;
-            color: #666;
-            background-color: transparent;
-            border-radius: 10px;
-            line-height: 1;
-            text-decoration: none;
-        }
-        .community-tag-text {
-            font-family: inherit;
-            padding: 0 !important;
-        }
-    </style>
+    <link th:href="@{/css/my-comment.css}" rel="stylesheet">
 </head>
 
 <body class="margin_sticky">
@@ -177,34 +150,12 @@
     </form>
     <!--form -->
 </div>
-<!-- /Sign In Modal -->
-<script>
-    function deleteComment(id, boardId) {
-        showConfirmModal('confirmDeleteComment', () => {
-
-            fetch('/comments/' + id + '?boardId=' + boardId, {
-                method: 'DELETE'
-            })
-              .then(res => {
-                  if (res.ok) {
-                      location.reload();
-                  } else {
-                      return res.json().then(err => {
-                          let msg = err.message || err.reason || "삭제 실패";
-                          showErrorModal('failDeleteComment', msg);
-                      });
-                  }
-              })
-              .catch(() => showErrorModal('failDeleteComment', "삭제 실패"));
-        });
-    }
-</script>
-
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
 <script src="/js/alertModal.js"></script>
+<script src="/js/my-comment.js"></script>
 
 </body>
 </html>
