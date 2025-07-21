@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
@@ -100,21 +101,67 @@ public class BoardController {
         }
     }
 
-    @PostMapping("/registReviewJson")
-    public String registReview(@RequestBody ReviewReqDto dto,
-                                                            @AuthenticationPrincipal MyUserDetails userDetails) {
+    // ocr 임의 값 넘기기 위한 post get 동시 사용 베포시 삭제 예정
+    @RequestMapping(value = "/review/new", method = {RequestMethod.GET, RequestMethod.POST})
+    @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
+                    content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
+    })
+    public String review(@ModelAttribute ReviewInitDto reviewInitDto,
+                         Model model) {
+//      ==================테스트용 임시 값 확인작업 맘무리 후 삭제===========================
+        if (reviewInitDto.getBizNum() == null) {
+            reviewInitDto.setBizNum("4578502690");
+            reviewInitDto.setVisitDate("2025-07-07");
+            reviewInitDto.setOcrKeyHash("6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d");
+        }
+
+        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
+        model.addAttribute("storeId", ocrToReviewDto.getStoreId());
+        model.addAttribute("storeName",ocrToReviewDto.getStoreName());
+        model.addAttribute("menuList", ocrToReviewDto.getMenuList());
+        model.addAttribute("toppings", ocrToReviewDto.getToppingList());
+
+        model.addAttribute("reviewInitDto", reviewInitDto);
+        return "board/leave-review";
+    }
+
+    @PostMapping("/registReview")
+    @Operation(summary = "리뷰 등록", description = "OCR 기반의 리뷰를 등록합니다. 로그인한 사용자만 가능하며, 메뉴별 상세 리뷰를 포함합니다.")
+    @Parameters({
+            @Parameter(name = "userDetails", description = "현재 로그인된 사용자 정보", hidden = true),
+            @Parameter(name = "dto", description = "리뷰 등록 요청 DTO", required = true,
+                    schema = @Schema(implementation = ReviewReqDto.class)),
+            @Parameter(name = "bindingResult", description = "유효성 검사 결과", hidden = true)
+    })
+    public String registReview(
+            @AuthenticationPrincipal MyUserDetails userDetails,
+            @Valid @RequestBody ReviewReqDto dto,
+            BindingResult bindingResult) {
+
+
         if (userDetails == null || userDetails.getUser() == null) {
+            log.warn("비로그인 사용자가 리뷰 등록 시도.");
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
+            log.error("리뷰 등록 유효성 검사 실패: {}", errorMessage);
+            throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
         try {
             boardService.saveReviewJson(dto, userDetails.getUser());
             return "redirect:/board/list";
         } catch (CustomException e) {
-            log.error("리뷰 등록 중 비즈니스 오류: {}", e.getMessage(), e);
+            log.error("리뷰 등록 중 비즈니스 오류 발생: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
-            log.error("리뷰 등록 중 서버 오류: {}", e.getMessage(), e);
+            log.error("리뷰 등록 중 서버 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
         }
     }

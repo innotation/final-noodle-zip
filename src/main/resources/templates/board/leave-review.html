@@ -85,8 +85,8 @@
 						</div>
 
 						<div class="text-center" style="margin-top: 30px;">
-							<button type="button" class="btn btn-sm btn-info" id="openMenuModal" data-toggle="modal" data-target="#menuSelectModal">+ 메뉴 추가</button>
-							<button type="button" class="btn btn-success" id="submitReviewBtn">리뷰 작성</button>
+							<button type="button" class="btn_1 btn-sm" id="openMenuModal" data-toggle="modal" data-target="#menuSelectModal">+ 메뉴 추가</button>
+							<button type="button" class="btn_1 btn-sm" id="submitReviewBtn">리뷰 작성</button>
 						</div>
 
 <!--						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />-->
@@ -129,6 +129,8 @@
 	</div>
 </div>
 
+<div th:replace="~{fragments/alert-modal :: alertModal('simpleAlertModal', '알림', '', '확인', '')}"></div>
+
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
@@ -136,6 +138,8 @@
 
 <!-- SPECIFIC SCRIPTS -->
 <script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="//unpkg.com/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+<link href="https://unpkg.com/quill-image-resize-module@3.0.0/image-resize.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -290,6 +294,12 @@
 	});
 
 	$(document).on('click', '.remove-slide', function () {
+		const totalSlides = $('.review-slider .slick-item').length;
+		if (totalSlides <= 1) {
+			showAlertModal("최소 하나 이상의 메뉴에 대한 리뷰는 작성해야 합니다.");
+			return;
+		}
+
 		const $slide = $(this).closest('.slick-item');
 		const slickIndex = $slide.index();
 		const menuId = String($(this).data('menu-id'));
@@ -348,34 +358,70 @@
 		const formData = new FormData();
 		formData.append('uploadFiles', file);
 
-		fetch('/board/imageUpload', {
+		const slide = fileInput.closest('.slick-item');
+
+		fetch('/board/review/imageUpload', {
 			method: 'POST',
 			body: formData
 		})
-			.then(res => res.json())
-			.then(data => {
-				const imageUrl = data.payload[0].fileUrl;
-				const hiddenInput = document.querySelector(`input[name="reviews[${index}].imageUrl"]`);
-				if (hiddenInput) hiddenInput.value = imageUrl;
+				.then(res => res.json())
+				.then(data => {
+					const imageUrl = data.payload[0].fileUrl;
+					const hiddenInput = slide.querySelector('input[name$=".imageUrl"]');
+					if (hiddenInput) {
+						hiddenInput.value = imageUrl;
+						console.log("✅ 이미지 URL 저장됨:", hiddenInput.name, '→', imageUrl);
+					} else {
+						console.warn("❌ hidden input 못 찾음!");
+					}
 
-				const previewImg = fileInput.closest('.form-group').querySelector('img.preview');
-				if (previewImg) {
-					previewImg.src = imageUrl;
-					previewImg.style.display = 'block';
-				}
-			})
-			.catch(err => {
-				console.error("❌ 이미지 업로드 실패", err);
-				alert("이미지 업로드 중 오류 발생");
-			});
+					const previewImg = slide.querySelector('img.preview');
+					if (previewImg) {
+						previewImg.src = imageUrl;
+						previewImg.style.display = 'block';
+					}
+				})
+				.catch(err => {
+					console.error("❌ 이미지 업로드 실패", err);
+					showAlertModal("이미지 업로드 중 오류가 발생했습니다.");
+				});
 	});
 
 	document.getElementById('submitReviewBtn').addEventListener('click', function () {
-		document.getElementById('content').value = quill.root.innerHTML;
+		const slideItems = document.querySelectorAll('.slick-item[data-index]');
+		if (slideItems.length === 0) {
+			showAlertModal("최소 하나 이상의 메뉴에 대해 리뷰를 작성해야 합니다.");
+			return;
+		}
+
+		const title = document.getElementById('title').value.trim();
+		if (!title) {
+			showAlertModal("제목을 입력해주세요.");
+			return;
+		}
+
+		const quillHtml = quill.root.innerHTML;
+		const quillText = quill.getText().trim();
+		if (!quillText || quillText === "") {
+			showAlertModal("본문 내용을 입력해주세요.");
+			return;
+		}
+		document.getElementById('content').value = quillHtml;
+
+		for (const slide of slideItems) {
+			const index = slide.getAttribute('data-index');
+			const content = slide.querySelector(`textarea[name="reviews[${index}].content"]`)?.value.trim();
+			if (!content) {
+				const menuTitle = slide.querySelector("h4")?.innerText || "해당 메뉴";
+				showAlertModal(`"${menuTitle}" 메뉴에 대한 리뷰 내용을 입력해주세요.`);
+				return;
+			}
+		}
+
 		const form = document.getElementById('reviewForm');
 		const reviews = [];
 
-		document.querySelectorAll('.slick-item[data-index]').forEach(slide => {
+		slideItems.forEach(slide => {
 			const index = slide.getAttribute('data-index');
 			const safeVal = (name) => slide.querySelector(`[name="reviews[${index}].${name}"]`)?.value ?? null;
 
@@ -397,12 +443,12 @@
 		});
 
 		const payload = {
-			title: document.getElementById('title').value,
-			content: document.getElementById('content').value,
+			title,
+			content: quillHtml,
 			ocrKeyHash: form.querySelector('input[name="ocrKeyHash"]').value,
 			visitDate: form.querySelector('input[name="visitDate"]').value,
 			storeId: form.querySelector('input[name="storeId"]').value,
-			imageUrl: getFirstImageUrlFromHtml(quill.root.innerHTML),
+			imageUrl: getFirstImageUrlFromHtml(quillHtml),
 			isReceiptReview: true,
 			reviews
 		};
@@ -412,16 +458,23 @@
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
 		})
-			.then(response => {
-				if (!response.ok) throw new Error("리뷰 등록 실패");
-				alert("🎉 리뷰 등록 성공!");
-				location.href = "/";
-			})
-			.catch(err => {
-				console.error(err);
-				alert("제출 중 오류 발생");
-			});
+				.then(response => {
+					if (!response.ok) throw new Error("리뷰 등록 실패");
+					showAlertModal("리뷰 등록 성공!", "완료");
+					setTimeout(() => location.href = "/", 1000);
+				})
+				.catch(err => {
+					console.error(err);
+					showAlertModal("제출 중 오류가 발생했습니다.");
+				});
 	});
+
+	function showAlertModal(message, title = "알림") {
+		const $modal = $('#simpleAlertModal');
+		$modal.find('.modal-title').text(title);
+		$modal.find('.modal-body').html(message);
+		$modal.modal('show');
+	}
 
 </script>
 </body>
