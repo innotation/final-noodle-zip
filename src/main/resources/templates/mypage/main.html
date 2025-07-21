@@ -534,6 +534,7 @@
     </div>
     <!-- /container -->
   </main>
+  <div th:replace="fragments/reportModal::reportModalFragment"></div>
   <!-- /main -->
 
   <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -552,6 +553,10 @@
 
   <!-- SPECIFIC SCRIPTS -->
   <script th:src="@{/js/specific_detail.js}"></script>
+
+  <script th:src="@{/js/reportModal.js}"></script>
+  <script th:src="@{/admin_section/vendor/datatables/dataTables.bootstrap4.js}"></script>
+  <script th:src="@{/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
   <!-- Magnific Popup 이미지 확대 라이트박스 초기화 -->
   <script>

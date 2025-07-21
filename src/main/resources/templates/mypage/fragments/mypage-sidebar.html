@@ -1,4 +1,4 @@
-<aside th:fragment="mypage-sidebar">
+<aside th:fragment="mypage-sidebar" xmlns:sec="http://www.w3.org/1999/xhtml">
   <!-- 팔로우/팔로워 -->
   <div class="widget">
     <div class="widget-title"><h4>구독자/구독중</h4></div>
@@ -119,6 +119,19 @@
         </th:block>
       </div>
     </div>
+  </th:block>
+
+  <th:block th:unless="${isOwner}">
+    <div class="col-auto"> <button type="button"
+                                   class="btn btn-sm btn-outline-danger report-btn"
+                                   th:data-user-id="${#authentication.principal.getUser().getId()}"
+                                   th:data-type="'user'"
+                                   th:data-target-id="${myPage.id}"
+                                   data-toggle="modal"
+                                   data-target="#reportModal"
+                                   sec:authorize="isAuthenticated()">
+      사용자 신고
+    </button> </div>
   </th:block>
 
 </aside> 
