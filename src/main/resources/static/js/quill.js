@@ -103,6 +103,7 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
             body: formData // FormData 객체를 직접 body에 할당
         });
 
+        console.log(response);
         if (!response.ok) {
             const errorData = await response.json(); // 서버에서 에러 메시지를 JSON으로 보낼 경우
             throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || response.statusText}`);

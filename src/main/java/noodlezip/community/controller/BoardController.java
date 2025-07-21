@@ -32,7 +32,6 @@ import noodlezip.store.service.StoreService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -185,7 +184,7 @@ public class BoardController {
 
         if (user == null || user.getUser() == null) {
             log.warn("비로그인 사용자가 게시글 등록 시도.");
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._UNAUTHORIZED);
         }
 
         if (bindingResult.hasErrors()) {
@@ -193,13 +192,13 @@ public class BoardController {
                     .map(FieldError::getDefaultMessage)
                     .collect(Collectors.joining(", "));
             log.error("게시글 작성 유효성 검사 실패: {}", errorMessage);
-            throw new CustomException(ErrorStatus._BAD_REQUEST);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._BAD_REQUEST);
         }
 
         CommunityType communityType = CommunityType.fromValue(category);
 
         if (communityType == null) {
-            throw new CustomException(ErrorStatus._FORBIDDEN);
+            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._BAD_REQUEST);
         }
 
         try {
