@@ -54,7 +54,6 @@ public class StoreService {
     private final MenuRepository menuRepository;
     private final RamenToppingRepository ramenToppingRepository;
     private final RamenService ramenService;
-    private final ModelMapper modelMapper;
     private final PageUtil pageUtil;
     private final ToppingRepository toppingRepository;
     private final FileUtil fileUtil;
@@ -167,7 +166,7 @@ public class StoreService {
                 // 메뉴 이미지 업로드
                 if (menuImageFile != null && !menuImageFile.isEmpty()) {
                     try {
-                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", menuImageFile);
+                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist", menuImageFile);
                         menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
                     } catch (CustomException ce) {
                         throw ce;
