@@ -42,31 +42,6 @@ public class StoreController {
     private final StoreService storeService;
     private final RamenService ramenService;
 
-    @PostMapping("/regist")
-    public ResponseEntity<?> registerStore(
-            @RequestPart("dto") StoreRequestDto dto,
-            @RequestPart(value = "storeMainImage", required = false) MultipartFile storeMainImage,
-            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles,
-            @AuthenticationPrincipal MyUserDetails userDetails
-    ) {
-        if (userDetails == null) {
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
-        }
-
-        // DTO에 이미지 파일 설정
-        dto.setStoreMainImage(storeMainImage);
-        if (menuImageFiles != null) {
-            for (int i = 0; i < dto.getMenus().size(); i++) {
-                if (i < menuImageFiles.size()) {
-                    dto.getMenus().get(i).setMenuImageFile(menuImageFiles.get(i));
-                }
-            }
-        }
-
-        Long storeId = storeService.registerStore(dto, userDetails.getUser());
-        return ResponseEntity.ok(Map.of("storeId", storeId));
-    }
-
     // 매장 상세페이지 진입
     @GetMapping("/detail/{no}")
     @Operation(summary = "매장 상세페이지 진입", description = "매장 상세 정보를 조회하여 상세페이지를 반환합니다.")
