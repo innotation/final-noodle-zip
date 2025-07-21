@@ -30,7 +30,7 @@ public class QStoreWeekSchedule extends EntityPathBase<StoreWeekSchedule> {
 
     public final TimePath<java.time.LocalTime> openingAt = createTime("openingAt", java.time.LocalTime.class);
 
-    public final QStore storeId;
+    public final QStore store;
 
     public QStoreWeekSchedule(String variable) {
         this(StoreWeekSchedule.class, forVariable(variable), INITS);
@@ -51,7 +51,7 @@ public class QStoreWeekSchedule extends EntityPathBase<StoreWeekSchedule> {
     public QStoreWeekSchedule(Class<? extends StoreWeekSchedule> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.id = inits.isInitialized("id") ? new QStoreWeekScheduleId(forProperty("id")) : null;
-        this.storeId = inits.isInitialized("storeId") ? new QStore(forProperty("storeId")) : null;
+        this.store = inits.isInitialized("store") ? new QStore(forProperty("store")) : null;
     }
 
 }

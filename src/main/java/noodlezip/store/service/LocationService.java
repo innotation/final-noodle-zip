@@ -64,11 +64,15 @@ public class LocationService {
         if (responseBody == null) return null;
 
         List<?> docs = (List<?>) responseBody.get("documents");
-        if (docs == null || docs.isEmpty()) return null;
+        if (docs == null || docs.isEmpty()) {
+            log.warn("주소 검색 결과 없음: {}", address);
+            return null;
+        }
 
         Map<String, Object> firstDoc = (Map<String, Object>) docs.get(0);
         String x = (String) firstDoc.get("x");
         String y = (String) firstDoc.get("y");
+        log.info("주소 검색 결과 - x: {}, y: {}", x, y);
 
         return buildLocationDto(x, y);
     }
@@ -126,6 +130,7 @@ public class LocationService {
         Map<String, Object> firstDoc = (Map<String, Object>) docs.get(0);
         String x = (String) firstDoc.get("x");
         String y = (String) firstDoc.get("y");
+        log.info("키워드 검색 결과 - x: {}, y: {}", x, y);
 
         return buildLocationDto(x, y);
     }
@@ -140,6 +145,7 @@ public class LocationService {
     private LocationInfoDto buildLocationDto(String x, String y) {
         Double lat = Double.parseDouble(y);
         Double lng = Double.parseDouble(x);
+        log.info("buildLocationDto - lat: {}, lng: {}", lat, lng);
 
 
         String coordUrl = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=" + x + "&y=" + y;
@@ -166,6 +172,7 @@ public class LocationService {
             log.warn("법정동 코드 추출 실패 - x: {}, y: {}, 응답: {}", x, y, coordDocs);
             throw new IllegalArgumentException("법정동 코드가 존재하지 않습니다. 응답: " + coordDocs);
         }
+        log.info("법정동 코드 추출 성공 - legalCode: {}", legalCode); // 추가
 
         Long legalCodeLong;
         try {

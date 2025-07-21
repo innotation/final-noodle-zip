@@ -1,5 +1,6 @@
 package noodlezip.store.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import noodlezip.store.entity.Store;
 import noodlezip.store.status.ApprovalStatus;
@@ -26,6 +27,7 @@ public class StoreRequestDto {
     private Boolean isChildAllowed;
     private ParkingType hasParking;
 
+    @Size(max = 200, message = "사장님 한 줄 소개는 200자 이하로 작성해주세요.")
     private String ownerComment;
 
     private Double storeLat;
