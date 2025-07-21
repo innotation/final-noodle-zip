@@ -1,7 +1,7 @@
 <div th:fragment="mypage-review-tab(reviewList)">
 
-  <div th:if="${#lists.isEmpty(reviewList)}">
-    <p>리뷰가 없습니다.</p>
+  <div th:if="${#lists.isEmpty(reviewList)}" class="col-12 text-center" style="margin-top: 45px">
+    <p>작성한 리뷰가 없습니다.</p>
   </div>
   <div th:if="${!#lists.isEmpty(reviewList)}" class="reviews">
     <div class="mypage-review-list">
