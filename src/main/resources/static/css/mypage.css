@@ -1250,3 +1250,27 @@ a.show_hide:focus:hover {
   color: #174fa3;
   border-color: #174fa3;
 }
+
+
+.badge-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  /* 테두리 제거 */
+  border: none;
+  background-color: transparent; /* 혹시나 대비 */
+}
+
+/* 작을 때만 cover 적용 */
+@media (max-width: 576px) {
+  .badge-img {
+    object-fit: cover;
+  }
+}
+
+/* 평소에는 이미지 원본 비율로 보여주기 위해 contain 사용 (투명 png에 유리함) */
+@media (min-width: 577px) {
+  .badge-img {
+    object-fit: contain;
+  }
+}
