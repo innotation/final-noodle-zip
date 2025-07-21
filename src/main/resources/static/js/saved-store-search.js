@@ -94,6 +94,14 @@ function renderStoreList(storeList) {
   const container = document.querySelector("#store-list");
   container.innerHTML = '';
 
+  if (!storeList || storeList.length === 0) {
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = "col-12 text-center";
+    emptyDiv.innerHTML = `<p>저장한 가게가 없습니다.</p>`;
+    container.appendChild(emptyDiv);
+    return;
+  }
+
   storeList.forEach(store => {
     const div = document.createElement('div');
     div.className = "col-xl-4 col-lg-6 col-md-6 col-sm-6";
@@ -197,6 +205,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchAndRender(1, false); // 검색 시에는 false 전달
     collapseMap.hide();
+
+    const btnText = document.querySelector('.btn_map_txt');
+    if (btnText) {
+      btnText.textContent = btnText.dataset.textSwap;
+    }
   });
 
   bindPagination();

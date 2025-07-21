@@ -1,4 +1,4 @@
-<aside th:fragment="mypage-sidebar">
+<aside th:fragment="mypage-sidebar" xmlns:sec="http://www.w3.org/1999/xhtml">
   <!-- 팔로우/팔로워 -->
   <div class="widget">
     <div class="widget-title"><h4>구독자/구독중</h4></div>
@@ -22,28 +22,19 @@
   </div>
   <!-- 저장매장 이동 버튼 -->
   <div class="widget">
-    <div class="widget-title"><h4>저장매장</h4></div>
+    <div class="widget-title"><h4>나의 저장매장 리스트</h4></div>
     <div class="main" style="text-align:center;">
       <a th:href="@{'/users/' + ${myPage.id} + '/saved-stores'}" class="btn_1 full-width" style="margin-top: 8px;">
-        저장매장 이동
+        저장매장
       </a>
     </div>
   </div>
   <!-- 배지 리스트 -->
   <div class="widget">
-    <div class="widget-title"><h4>배지 리스트</h4></div>
+    <div class="widget-title"><h4>나의 배지 리스트</h4></div>
     <div class="main" style="text-align:center;">
       <a th:href="@{'/users/' + ${myPage.id} + '/badges'}" class="btn_1 full-width" style="margin-top: 8px;">
         배지 리스트
-      </a>
-    </div>
-  </div>
-  <!-- 내가 쓴 게시글 -->
-  <div class="widget">
-    <div class="widget-title"><h4>내가 쓴 게시글</h4></div>
-    <div class="main" style="text-align:center;">
-      <a th:href="@{'/users/' + ${myPage.id} + '/boards'}" class="btn_1 full-width" style="margin-top: 8px;">
-        내가 쓴 게시글
       </a>
     </div>
   </div>
@@ -56,12 +47,21 @@
       </a>
     </div>
   </div>
+  <!-- 내가 쓴 게시글 -->
+  <div class="widget">
+    <div class="widget-title"><h4>내가 작성한 게시글</h4></div>
+    <div class="main" style="text-align:center;">
+      <a th:href="@{'/users/' + ${myPage.id} + '/boards'}" class="btn_1 full-width" style="margin-top: 8px;">
+        작성한 게시글
+      </a>
+    </div>
+  </div>
   <!-- 내가 단 댓글 -->
   <div class="widget">
-    <div class="widget-title"><h4>내가 단 댓글</h4></div>
+    <div class="widget-title"><h4>내가 작성한 댓글</h4></div>
     <div class="main" style="text-align:center;">
       <a th:href="@{'/users/' + ${myPage.id} + '/comments'}" class="btn_1 full-width" style="margin-top: 8px;">
-        내가 단 댓글
+        작성한 댓글
       </a>
     </div>
   </div>
@@ -119,6 +119,19 @@
         </th:block>
       </div>
     </div>
+  </th:block>
+
+  <th:block th:unless="${isOwner}">
+    <div class="col-auto"> <button type="button"
+                                   class="btn btn-sm btn-outline-danger report-btn"
+                                   th:data-user-id="${#authentication.principal.getUser().getId()}"
+                                   th:data-type="'user'"
+                                   th:data-target-id="${myPage.id}"
+                                   data-toggle="modal"
+                                   data-target="#reportModal"
+                                   sec:authorize="isAuthenticated()">
+      사용자 신고
+    </button> </div>
   </th:block>
 
 </aside> 

@@ -80,7 +80,7 @@ public class CommentController {
             return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_COMMENT, map);
         } catch (CustomException e) {
             log.error("댓글 목록 조회 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
-            throw e; // CustomException은 바로 던져서 GlobalExceptionHandler가 처리하도록 함
+            throw e;
         } catch (Exception e) {
             log.error("댓글 목록 조회 중 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);

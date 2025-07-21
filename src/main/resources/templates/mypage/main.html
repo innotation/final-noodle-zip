@@ -26,20 +26,18 @@
           <div class="main_info">
             <div class="row">
               <div class="col-xl-4 col-lg-5 col-md-6">
-                <div style="display: flex; align-items: center; gap: 32px; height: 160px;">
+                <div class="profile-box">
                   <img th:src="${myPage.profileImageUrl}" alt="프로필 이미지"
-                       style="width:160px; height:160px; object-fit:cover; border-radius:16px; border:2px solid #eee;"/>
-                  <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
-                    <h1 th:text="${myPage.userName}"
-                        style="margin: 0 0 14px 0; font-size: 2.2rem;">유저닉네임</h1>
-                    <div class="badge-list"
-                         style="display: flex; gap: 12px;">
+                       class="profile-img"/>
+                  <div class="profile-meta">
+                    <h1 th:text="${myPage.userName}" class="profile-name">유저닉네임</h1>
+                    <div class="badge-list">
                       <a th:each="badge : ${userBadges}"
                          th:href="@{'/users/' + ${myPage.id} + '/badges'}"
                          style="display: inline-block;">
                         <img th:src="${badge.badgeImageUrl != null ? badge.badgeImageUrl : '/img/avatar6.jpg'}"
                              th:alt="${badge.badgeTitleName}"
-                             style="width:48px; height:48px; object-fit:cover; border-radius:8px; border:1.5px solid #eee;">
+                             class="badge-img">
                       </a>
                     </div>
                   </div>
@@ -483,7 +481,7 @@
                 </div>
                 <div id="collapse-C" class="collapse" role="tabpanel" aria-labelledby="heading-C">
                   <div class="card-body">
-                    <div th:if="${#lists.isEmpty(boards)}">
+                    <div th:if="${#lists.isEmpty(boards)}" class="col-12 text-center">
                       <p>작성한 게시글이 없습니다.</p>
                     </div>
                     <div th:if="${!#lists.isEmpty(boards)}">
@@ -534,6 +532,7 @@
     </div>
     <!-- /container -->
   </main>
+  <div th:replace="fragments/reportModal::reportModalFragment"></div>
   <!-- /main -->
 
   <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -552,6 +551,10 @@
 
   <!-- SPECIFIC SCRIPTS -->
   <script th:src="@{/js/specific_detail.js}"></script>
+
+  <script th:src="@{/js/reportModal.js}"></script>
+  <script th:src="@{/admin_section/vendor/datatables/dataTables.bootstrap4.js}"></script>
+  <script th:src="@{/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
   <!-- Magnific Popup 이미지 확대 라이트박스 초기화 -->
   <script>

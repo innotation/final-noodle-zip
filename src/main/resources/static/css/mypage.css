@@ -1250,3 +1250,77 @@ a.show_hide:focus:hover {
   color: #174fa3;
   border-color: #174fa3;
 }
+
+
+.badge-img {
+  width: 48px;
+  height: auto;
+  max-height: 48px;
+  object-fit: contain;
+  border: none;
+  background-color: transparent;
+}
+
+.profile-box {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 160px;
+}
+
+.profile-img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 2px solid #eee;
+  flex-shrink: 0;
+}
+
+.profile-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  height: 100%;
+}
+
+.profile-name {
+  margin: 0 0 14px 0;
+  font-size: 2.6rem;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+
+/* 📱 반응형: 화면 작아질 때 세로 정렬 */
+@media (max-width: 768px) {
+  .profile-box {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    text-align: center;
+  }
+
+  .profile-meta {
+    align-items: center;
+    justify-content: center;
+    height: auto;
+  }
+
+  .profile-name {
+    font-size: 2.2rem;
+    white-space: normal;
+  }
+
+  .badge-list {
+    justify-content: center;
+  }
+}

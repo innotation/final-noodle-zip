@@ -7,66 +7,22 @@
     <link href="/css/blog.css" rel="stylesheet">
     <!-- YOUR CUSTOM CSS -->
     <link href="/css/listing.css" rel="stylesheet">
-    <style>
-        .community-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .community-tag {
-            display: inline-flex;
-            align-items: center;
-            font-size: 11px;
-            padding: 3px 6px;
-            border: 1px solid #ccc;
-            color: #666;
-            background-color: transparent;
-            border-radius: 10px;
-            line-height: 1;
-            text-decoration: none;
-        }
-        .community-tag-text {
-            font-family: inherit;
-            padding: 0 !important;
-        }
-    </style>
+    <link th:href="@{/css/my-comment.css}" rel="stylesheet">
 </head>
 
 <body class="margin_sticky">
 <div th:replace="~{fragments/subHeader :: subHeader}"></div>
 
 <main>
-    <div class="page_header element_to_stick">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
-                    <div class="breadcrumbs blog">
-                        <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Category</a></li>
-                            <li>Page active</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-5 col-md-5">
-                    <div class="search_bar_list">
-                        <input id="searchInput" type="text" class="form-control" placeholder="Search in blog...">
-                        <input type="submit" value="Search" onclick="performSearch()">
-                    </div>
-                </div>
-            </div>
-            <!-- /row -->
-        </div>
-    </div>
-    <!-- /page_header -->
-
     <div class="container margin_30_40">
         <div class="row">
             <div class="col-lg-9">
 
                 <div id="comments" th:if="${commentList.commentList != null}">
                     <h5>Comments</h5>
+                    <div th:if="${#lists.isEmpty(commentList.commentList)}" class="col-12 text-center">
+                        <p>작성한 댓글이 없습니다.</p>
+                    </div>
                     <ul>
                         <li th:each="item : ${commentList.commentList}">
                             <div class="avatar">
@@ -194,34 +150,12 @@
     </form>
     <!--form -->
 </div>
-<!-- /Sign In Modal -->
-<script>
-    function deleteComment(id, boardId) {
-        showConfirmModal('confirmDeleteComment', () => {
-
-            fetch('/comments/' + id + '?boardId=' + boardId, {
-                method: 'DELETE'
-            })
-              .then(res => {
-                  if (res.ok) {
-                      location.reload();
-                  } else {
-                      return res.json().then(err => {
-                          let msg = err.message || err.reason || "삭제 실패";
-                          showErrorModal('failDeleteComment', msg);
-                      });
-                  }
-              })
-              .catch(() => showErrorModal('failDeleteComment', "삭제 실패"));
-        });
-    }
-</script>
-
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
 <script src="/js/alertModal.js"></script>
+<script src="/js/my-comment.js"></script>
 
 </body>
 </html>
