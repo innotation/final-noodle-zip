@@ -47,6 +47,9 @@
 
                 <div id="comments" th:if="${commentList.commentList != null}">
                     <h5>Comments</h5>
+                    <div th:if="${#lists.isEmpty(commentList.commentList)}" class="col-12 text-center">
+                        <p>작성한 댓글이 없습니다.</p>
+                    </div>
                     <ul>
                         <li th:each="item : ${commentList.commentList}">
                             <div class="avatar">
