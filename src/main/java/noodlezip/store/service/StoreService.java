@@ -54,7 +54,6 @@ public class StoreService {
     private final MenuRepository menuRepository;
     private final RamenToppingRepository ramenToppingRepository;
     private final RamenService ramenService;
-    private final ModelMapper modelMapper;
     private final PageUtil pageUtil;
     private final ToppingRepository toppingRepository;
     private final FileUtil fileUtil;
@@ -254,11 +253,6 @@ public class StoreService {
         if (!store.getUserId().equals(user.getId())) {
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
-
-//        // 최종적으로 설정된 이미지 URL이 없으면 에러
-//        if (storeMainImage == null || dto.getStoreMainImageUrl().isBlank()) {
-//            throw new CustomException(ErrorStatus._FILE_REQUIRED);
-//        }
 
         // 대표 이미지 처리
         String newStoreMainImageUrl = null;
