@@ -100,7 +100,8 @@ public class BoardController {
         }
     }
 
-    @RequestMapping(value = "/review", method = {RequestMethod.GET, RequestMethod.POST})
+    // ocr 임의 값 넘기기 위한 post get 동시 사용 베포시 삭제 예정
+    @RequestMapping(value = "/review/new", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",

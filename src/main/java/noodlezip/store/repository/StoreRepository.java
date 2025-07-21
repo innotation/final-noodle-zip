@@ -11,10 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-
 public interface StoreRepository extends JpaRepository<Store, Long>, StoreRepositoryCustom {
     List<Store> findByUserIdAndOperationStatusNot(Long userId, OperationStatus operationStatus);
 
     Long getStoreByBizNum(@NotNull Long bizNum);
+    List<Store> findAllByUserId(Long userId);
 
 }
