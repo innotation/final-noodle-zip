@@ -13,9 +13,9 @@ public class PerformanceAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(PerformanceAspect.class);
 
-    @Around("execution(* noodlezip.user.controller.*.*(..))")
+    @Around("execution(* noodlezip.*.controller.*.*(..))")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis(); // 메서드 실행 시작 시간 기록
+        long startTime = System.currentTimeMillis();
 
         Object result = null;
         try {
@@ -27,7 +27,7 @@ public class PerformanceAspect {
             String className = joinPoint.getTarget().getClass().getName();
             String methodName = joinPoint.getSignature().getName();
 
-            logger.info("메서드 {}.{}() 실행 시간: {}ms", className, methodName, executionTime);
+            logger.info("메서드 { }.{}() 실행 시간: {}ms", className, methodName, executionTime);
         }
         return result;
     }
