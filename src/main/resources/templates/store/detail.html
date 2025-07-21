@@ -113,7 +113,37 @@
                     <a th:href="@{/receipt}" class="btn_1 full-width mb_5 login-required" id="review-write-btn">
                       <i class="icon_location"></i> 리뷰 작성하러 가기
                     </a>
-                    <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
+
+                  <!-- 더미 작성 후 삭제 -->
+                    <form method="POST" action="/board/review/new">
+                      <input type="hidden" th:value="${store.bizNum}" name="bizNum">
+                      <input type="hidden" th:value="${#dates.format(#calendars.createNow(), 'yyyy-MM-dd')}" name="visitDate">
+                      <input type="hidden" name="isReceiptReview" value="true">
+                      <input type="submit" th:href="@{/board/review/new}"
+                             class="btn_1 full-width mb_5 login-required"
+                             id="dummy-review"
+                             value="더미 리뷰 작성">
+                    </form>
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      let isLogin = document.getElementById('is-logged-in').value === 'true';
+                      let dummyBtn = document.getElementById('dummy-review');
+
+                      // 리뷰 작성 버튼 로그인 상태 처리
+                      if (dummyBtn) {
+                        if (isLogin) {
+                          // 로그인된 경우 login-required 클래스 제거하고 href 복원
+                          dummyBtn.classList.remove('login-required');
+                          dummyBtn.href = '/receipt';
+                          // login-required 이벤트 리스너 제거 (jQuery off 사용)
+                          $(dummyBtn).off('click');
+                        }
+                      }
+                    });
+                  </script>
+                  <!-- /더미 작성 후 삭제 -->
+
+                  <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
                 </div>
             </div>
             <!-- /box_booking -->
