@@ -257,7 +257,7 @@ public class StoreService {
         // 대표 이미지 처리
         String newStoreMainImageUrl = null;
 
-        if (!storeMainImage.isEmpty()) {
+        if (storeMainImage != null && !storeMainImage.isEmpty()) {
             // 새로운 파일이 업로드된 경우
             Map<String, String> uploadResult = fileUtil.fileupload("storeUpdate", storeMainImage);
             newStoreMainImageUrl = uploadResult.get("fileUrl");
@@ -406,34 +406,21 @@ public class StoreService {
         storeExtraToppingRepository.deleteByStore(store);
 
         if (dto.getExtraToppings() != null && !dto.getExtraToppings().isEmpty()) {
-            List<String> defaultToppingNames = toppingRepository.findAll().stream()
-                    .filter(Topping::getIsActive)
-                    .map(Topping::getToppingName)
-                    .toList();
-
             for (ExtraToppingRequestDto toppingDto : dto.getExtraToppings()) {
-                if (toppingDto == null || toppingDto.getName() == null || toppingDto.getName().isBlank()) continue;
+                if (toppingDto == null || toppingDto.getToppingId() == null) continue;
 
-                String toppingName = toppingDto.getName();
+                Long toppingId = toppingDto.getToppingId();
                 Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
 
-                if (defaultToppingNames.contains(toppingName)) {
-                    throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
-                }
+                Topping topping = toppingRepository.findById(toppingId)
+                        .orElseThrow(() -> new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME));
 
-                Topping topping = toppingRepository.findByToppingName(toppingName)
-                        .orElseGet(() -> toppingRepository.save(
-                                Topping.builder()
-                                        .toppingName(toppingName)
-                                        .isActive(false)
-                                        .build()
-                        ));
+                StoreExtraTopping extraTopping = new StoreExtraTopping();
+                extraTopping.setStore(store);
+                extraTopping.setTopping(topping);
+                extraTopping.setPrice(price);
 
-                StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
-                storeExtraTopping.setStore(store);
-                storeExtraTopping.setTopping(topping);
-                storeExtraTopping.setPrice(price);
-                storeExtraToppingRepository.save(storeExtraTopping);
+                storeExtraToppingRepository.save(extraTopping);
             }
         }
 
@@ -620,11 +607,43 @@ public class StoreService {
         storeRepository.save(store);
     }
 
-    public StoreRequestDto findById(Long id) {
-        Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("해당 매장을 찾을 수 없습니다. id=" + id));
+    @Transactional(readOnly = true)
+    public StoreRequestDto findById(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 매장을 찾을 수 없습니다. id=" + storeId));
 
-        return StoreRequestDto.fromEntity(store);
+        List<Menu> menus = menuRepository.findByStore(store);
+        List<MenuRequestDto> menuDtos = convertMenusToDtos(menus);
+
+        List<StoreExtraTopping> extraToppings = storeExtraToppingRepository.findStoreExtraToppingByStore(store);
+        List<ExtraToppingRequestDto> extraToppingDtos = extraToppings.stream()
+                .map(ExtraToppingRequestDto::fromEntity)
+                .toList();
+
+        List<StoreWeekSchedule> schedules = scheduleRepository.findByStoreId(storeId);
+        List<StoreScheduleRequestDto> weekSchedules = schedules.stream()
+                .map(StoreScheduleRequestDto::fromEntity)
+                .toList();
+
+        return StoreRequestDto.fromEntity(store, menuDtos, extraToppingDtos, weekSchedules);
+    }
+
+    private List<MenuRequestDto> convertMenusToDtos(List<Menu> menus) {
+        List<Long> menuIds = menus.stream().map(Menu::getId).toList();
+        Map<Long, List<Long>> toppingMap = findToppingsMapByMenuIds(menuIds);
+
+        return menus.stream()
+                .map(menu -> MenuRequestDto.builder()
+                        .id(menu.getId())
+                        .menuName(menu.getMenuName())
+                        .price(menu.getPrice())
+                        .menuDescription(menu.getMenuDescription())
+                        .menuImageUrl(menu.getMenuImageUrl())
+                        .ramenCategoryId(menu.getCategory().getId())
+                        .ramenSoupId(menu.getRamenSoup().getId())
+                        .defaultToppingIds(toppingMap.getOrDefault(menu.getId(), List.of()))
+                        .build())
+                .toList();
     }
 
     // 메뉴별 토핑 ID 조회

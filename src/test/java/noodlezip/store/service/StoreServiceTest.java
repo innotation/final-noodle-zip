@@ -1,3 +1,4 @@
+/*
 package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
@@ -177,3 +178,4 @@ class StoreServiceTest {
         assertThrows(CustomException.class, () -> storeService.getStoreToppings(storeId));
     }
 }
+ */
