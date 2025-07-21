@@ -13,4 +13,4 @@ public class PopularTagDto {
     private String tagName;
     private String tagType; // "category" 또는 "soup"
     private Long count;
-} 
+}

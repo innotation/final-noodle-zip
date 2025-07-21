@@ -1,6 +1,8 @@
 package noodlezip.store.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import noodlezip.store.entity.Store;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.store.status.OperationStatus;
 import noodlezip.store.status.ParkingType;
@@ -14,6 +16,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class StoreRequestDto {
+    private Long id;
+    private Long userId;
 
     private String storeName;
     private String address;
@@ -23,6 +27,7 @@ public class StoreRequestDto {
     private Boolean isChildAllowed;
     private ParkingType hasParking;
 
+    @Size(max = 200, message = "사장님 한 줄 소개는 200자 이하로 작성해주세요.")
     private String ownerComment;
 
     private Double storeLat;
@@ -41,4 +46,43 @@ public class StoreRequestDto {
     private Long storeLegalCode;
 
     private Long bizNum;
+
+    private String phonePrefix;
+    private String phonePrefixInput;
+    private String phoneRest;
+    private String zipcode;
+    private String storeDetailInput;
+    private String businessRegistrationNumber;
+
+    public static StoreRequestDto fromEntity(Store store,
+                                             List<MenuRequestDto> menus,
+                                             List<ExtraToppingRequestDto> extraToppings,
+                                             List<StoreScheduleRequestDto> weekSchedule) {
+        String[] addressParts = store.getAddress().split(",", 2);
+        String mainAddress = addressParts[0];
+        String detailAddress = addressParts.length > 1 ? addressParts[1] : "";
+
+        return StoreRequestDto.builder()
+                .id(store.getId())
+                .userId(store.getUserId())
+                .storeName(store.getStoreName())
+                .address(mainAddress)
+                .storeDetailInput(detailAddress)
+                .phone(store.getPhone())
+                .isLocalCard(store.getIsLocalCard())
+                .isChildAllowed(store.getIsChildAllowed())
+                .hasParking(store.getHasParking())
+                .operationStatus(store.getOperationStatus())
+                .approvalStatus(store.getApprovalStatus())
+                .ownerComment(store.getOwnerComment())
+                .storeMainImageUrl(store.getStoreMainImageUrl())
+                .storeLat(store.getStoreLat())
+                .storeLng(store.getStoreLng())
+                .storeLegalCode(store.getStoreLegalCode())
+                .bizNum(store.getBizNum())
+                .menus(menus)
+                .extraToppings(extraToppings)
+                .weekSchedule(weekSchedule)
+                .build();
+    }
 }

@@ -2,6 +2,51 @@ let collapseMap;
 let lastSearchedCategories = []; // 마지막 검색 시점의 카테고리 상태 저장
 let isSearchPerformed = true; // 검색이 실행되었는지 확인
 
+// URL 파라미터에서 카테고리 상태 복원
+function restoreCheckboxStateFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoryIds = urlParams.getAll('categoryIdList');
+
+  // 모든 체크박스 초기화
+  document.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.checked = false;
+  });
+
+  // URL에서 가져온 카테고리들 체크
+  categoryIds.forEach(id => {
+    const checkbox = document.querySelector(`input[type=checkbox][value="${id}"]`);
+    if (checkbox) {
+      checkbox.checked = true;
+    }
+  });
+
+  // 검색이 실행된 상태로 설정
+  if (categoryIds.length > 0 || urlParams.has('allCategory')) {
+    isSearchPerformed = true;
+    lastSearchedCategories = categoryIds;
+  }
+}
+
+// URL 업데이트 함수
+function updateURLWithCategories(selectedCategories, page = 1) {
+  const url = new URL(window.location);
+
+  // 기존 categoryIdList 파라미터 제거
+  url.searchParams.delete('categoryIdList');
+  url.searchParams.delete('allCategory');
+  url.searchParams.delete('page');
+
+  // 새로운 파라미터 추가
+  selectedCategories.forEach(id => url.searchParams.append('categoryIdList', id));
+  url.searchParams.set('allCategory', selectedCategories.length === 0);
+  if (page > 1) {
+    url.searchParams.set('page', page);
+  }
+
+  // URL 업데이트 (페이지 리로드 없이)
+  window.history.replaceState({}, '', url);
+}
+
 function fetchAndRender(page, useLastSearchedCategories = false) {
   const userId = document.body.getAttribute('userId');
 
@@ -20,8 +65,11 @@ function fetchAndRender(page, useLastSearchedCategories = false) {
 
   const params = new URLSearchParams();
   selectedCategories.forEach(id => params.append('categoryIdList', id));
-  params.append('isAllCategory', isAllCategory);
+  params.append('allCategory', isAllCategory);
   params.append('page', page);
+
+  // URL 업데이트
+  updateURLWithCategories(selectedCategories, page);
 
   fetch(`/users/${userId}/saved-stores/category-filter-search?${params.toString()}`)
     .then(response => response.json())
@@ -35,7 +83,7 @@ function fetchAndRender(page, useLastSearchedCategories = false) {
       );
 
       window.scrollTo({
-        top: document.querySelector("#store-list").offsetTop,
+        top: 0,
         behavior: "smooth"
       });
     })
@@ -46,13 +94,21 @@ function renderStoreList(storeList) {
   const container = document.querySelector("#store-list");
   container.innerHTML = '';
 
+  if (!storeList || storeList.length === 0) {
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = "col-12 text-center";
+    emptyDiv.innerHTML = `<p>저장한 가게가 없습니다.</p>`;
+    container.appendChild(emptyDiv);
+    return;
+  }
+
   storeList.forEach(store => {
     const div = document.createElement('div');
     div.className = "col-xl-4 col-lg-6 col-md-6 col-sm-6";
     div.innerHTML = `
                       <div class="strip">
                           <figure>
-                              <img src="img/lazy-placeholder.png" data-src="${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
+                              <img src="${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
                               <a href="/store/detail/${store.storeId}" class="strip_info" target="_blank" rel="noopener noreferrer">
                                   <small>${store.saveStoreCategoryName}</small>
                                   <div class="item_title">
@@ -128,6 +184,16 @@ document.addEventListener("DOMContentLoaded", function () {
     toggle: false
   });
 
+  // URL에서 체크박스 상태 복원
+  restoreCheckboxStateFromURL();
+
+  // URL에 검색 파라미터가 있으면 자동으로 검색 실행
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('categoryIdList') || urlParams.has('allCategory')) {
+    const page = parseInt(urlParams.get('page')) || 1;
+    fetchAndRender(page, true);
+  }
+
   document.querySelector("#search").addEventListener("click", function (evt) {
     evt.preventDefault();
 
@@ -139,6 +205,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchAndRender(1, false); // 검색 시에는 false 전달
     collapseMap.hide();
+
+    const btnText = document.querySelector('.btn_map_txt');
+    if (btnText) {
+      btnText.textContent = btnText.dataset.textSwap;
+    }
   });
 
   bindPagination();

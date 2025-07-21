@@ -15,6 +15,7 @@ public class SubscriberResponse {
     private String loginId;
     private String name;
     private String profileImageUrl;
+    private String profileBannerImageUrl;
     private Boolean isSubscribed;
 
 }

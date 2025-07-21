@@ -21,4 +21,13 @@ public class StoreScheduleRequestDto {
         private LocalTime closingAt;
 
     private Boolean isClosedDay; // 휴무일
+
+    public static StoreScheduleRequestDto fromEntity(noodlezip.store.entity.StoreWeekSchedule schedule) {
+        return StoreScheduleRequestDto.builder()
+                .dayOfWeek(schedule.getId().getDayOfWeek())
+                .openingAt(schedule.getOpeningAt())
+                .closingAt(schedule.getClosingAt())
+                .isClosedDay(schedule.getIsClosedDay())
+                .build();
+    }
 }

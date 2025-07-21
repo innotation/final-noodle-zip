@@ -6,38 +6,22 @@ import org.springframework.http.HttpStatus;
 
 public enum StoreErrorCode implements BaseErrorCode {
 
-    _DUPLICATE_MENU_NAME(ErrorReasonDto.builder()
-            .httpStatus(HttpStatus.BAD_REQUEST)
-            .isSuccess(false)
-            .code("ST001")
-            .message("중복된 메뉴 이름입니다.")
-            .build()),
-
-    _STORE_NOT_FOUND(ErrorReasonDto.builder()
-            .httpStatus(HttpStatus.NOT_FOUND)
-            .isSuccess(false)
-            .code("ST002")
-            .message("해당 매장을 찾을 수 없습니다.")
-            .build()),
-
-    _CANNOT_USE_DEFAULT_TOPPING(ErrorReasonDto.builder()
-            .httpStatus(HttpStatus.BAD_REQUEST)
-            .isSuccess(false)
-            .code("ST003")
-            .message("기본 토핑은 추가 토핑으로 사용할 수 없습니다.")
-            .build()),
-
-    _UNKNOWN_TOPPING_NAME(ErrorReasonDto.builder()
-            .httpStatus(HttpStatus.BAD_REQUEST)
-            .isSuccess(false)
-            .code("ST004")
-            .message("존재하지 않는 토핑 이름입니다.")
-            .build());
+    _DUPLICATE_MENU_NAME(HttpStatus.BAD_REQUEST, false, "ST001", "중복된 메뉴 이름입니다."),
+    _STORE_NOT_FOUND(HttpStatus.NOT_FOUND, false, "ST002", "해당 매장을 찾을 수 없습니다."),
+    _CANNOT_USE_DEFAULT_TOPPING(HttpStatus.BAD_REQUEST, false, "ST003", "기본 토핑은 추가 토핑으로 사용할 수 없습니다."),
+    _UNKNOWN_TOPPING_NAME(HttpStatus.BAD_REQUEST, false, "ST004", "존재하지 않는 토핑 이름입니다."),
+    _FORBIDDEN(HttpStatus.FORBIDDEN, false, "ST005", "권한이 없습니다."),
+    _MENU_NOT_FOUND(HttpStatus.NOT_FOUND, false, "ST006", "해당 메뉴를 찾을 수 없습니다.");
 
     private final ErrorReasonDto errorReasonDto;
 
-    StoreErrorCode(ErrorReasonDto errorReasonDto) {
-        this.errorReasonDto = errorReasonDto;
+    StoreErrorCode(HttpStatus status, boolean isSuccess, String code, String message) {
+        this.errorReasonDto = ErrorReasonDto.builder()
+                .httpStatus(status)
+                .isSuccess(isSuccess)
+                .code(code)
+                .message(message)
+                .build();
     }
 
     @Override

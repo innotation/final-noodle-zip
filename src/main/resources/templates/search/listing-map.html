@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <th:block th:replace="~{fragments/head :: head}"></th:block>
@@ -30,11 +30,10 @@
           <div class="container">
             <div class="sort_select">
               <select name="sort" id="sort">
-                <option value="popularity" selected="selected">Sort by Popularity</option>
-                <option value="rating">Sort by Average rating</option>
-                <option value="date">Sort by newness</option>
-                <option value="price">Sort by Price: low to high</option>
-                <option value="price-desc">Sort by Price: high to low</option>
+                <option value="distance" selected="selected">거리순</option>
+                <option value="created-desc">최신등록순</option>
+                <option value="created-asc">오래된순</option>
+                <option value="review-count">리뷰 많은순</option>
               </select>
             </div>
             <a href="#collapseFilters" data-bs-toggle="collapse" class="btn_filters"><i
@@ -170,6 +169,8 @@
   const searchCategories = /*[[${searchCategories}]]*/ [];
   const searchSoups = /*[[${searchSoups}]]*/ [];
   const searchToppings = /*[[${searchToppings}]]*/ [];
+  const searchDistance = /*[[${searchDistance}]]*/ 30;
+  const searchSort = /*[[${searchSort}]]*/ 'distance';
 </script>
 
 <!-- COMMON SCRIPTS -->

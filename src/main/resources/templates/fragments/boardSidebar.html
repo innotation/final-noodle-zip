@@ -4,6 +4,16 @@
 <body>
     <!-- 게시판 사이드바 위젯들 -->
     <aside class="col-lg-3" th:fragment="boardSidebar">
+        <div class="widget">
+            <div class="widget-title">
+                <h4>게시판</h4>
+            </div>
+            <ul class="cats" id="category-widget">
+                <li><a href="/board/list"><strong>전체 게시글 보기</strong></a></li>
+                <li id="category-loading">로딩 중...</li>
+            </ul>
+        </div>
+        <!-- /widget -->
         <!-- 최근 본 게시글 위젯 -->
         <div class="widget">
             <div class="widget-title first">
@@ -17,21 +27,11 @@
         <!-- /widget -->
         
         <!-- 게시판 카테고리 위젯 -->
-        <div class="widget">
-            <div class="widget-title">
-                <h4>게시판</h4>
-            </div>
-            <ul class="cats" id="category-widget">
-                <li><a href="/board/list"><strong>전체 게시글 보기</strong></a></li>
-                <li id="category-loading">로딩 중...</li>
-            </ul>
-        </div>
-        <!-- /widget -->
         
-        <!-- Popular Tags 위젯 -->
+        <!-- 라멘 카테고리 위젯 -->
         <div class="widget">
             <div class="widget-title">
-                <h4>Popular Tags</h4>
+                <h4>인기 라멘 카테고리</h4>
             </div>
             <div class="tags" id="tags-widget">
                 <span id="tags-loading">로딩 중...</span>

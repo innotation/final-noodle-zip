@@ -48,7 +48,6 @@ class StoreServiceTest {
     @Mock private MenuRepository menuRepository;
     @Mock private RamenToppingRepository ramenToppingRepository;
     @Mock private RamenService ramenService;
-    @Mock private ModelMapper modelMapper;
     @Mock private PageUtil pageUtil;
     @Mock private ToppingRepository toppingRepository;
     @Mock private FileUtil fileUtil;
@@ -56,6 +55,7 @@ class StoreServiceTest {
     @Mock private RamenReviewRepository ramenReviewRepository;
     @Mock private ReviewToppingRepository reviewToppingRepository;
     @Mock private StoreExtraToppingRepository storeExtraToppingRepository;
+    @Mock private LocationService locationService;
 
     private StoreService storeService;
 
@@ -67,14 +67,14 @@ class StoreServiceTest {
                 menuRepository,
                 ramenToppingRepository,
                 ramenService,
-                modelMapper,
                 pageUtil,
                 toppingRepository,
                 fileUtil,
                 em,
                 ramenReviewRepository,
                 reviewToppingRepository,
-                storeExtraToppingRepository
+                storeExtraToppingRepository,
+                locationService
         );
     }
 

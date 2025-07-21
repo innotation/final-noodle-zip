@@ -32,18 +32,7 @@ public class MyBadgeServiceImpl implements MyBadgeService {
     private final BadgeService badgeService;
     private final UserBadgeService userBadgeService;
 
-    // TODO 마이페이지 메인페이지 배지 3개
 
-    /**
-     * ╔═════════════════════╗
-     * ║                     ║
-     * ║     badgeImageUrl   ║
-     * ║                     ║
-     * ╠═════════════════════╣
-     * ║    badgeTitleName   ║
-     * ║    badgeLevelName   ║
-     * ╚═════════════════════╝
-     */
     @Override
     @Transactional(readOnly = true)
     public List<UserBadgeResponse> getUserBadgeForMyPageProfile(Long userId) {
@@ -94,6 +83,7 @@ public class MyBadgeServiceImpl implements MyBadgeService {
         }
         throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -176,6 +166,7 @@ public class MyBadgeServiceImpl implements MyBadgeService {
         }
         throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
     }
+
 
     @Override
     @Transactional(readOnly = true)

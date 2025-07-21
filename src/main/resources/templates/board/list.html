@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <th:block th:replace="~{fragments/head :: head}"></th:block>
@@ -18,16 +18,17 @@
                 <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
                     <div class="breadcrumbs blog">
                         <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Category</a></li>
-                            <li>Page active</li>
+                            <li><a th:href="@{/}">Home</a></li>
+                            <li><a th:href="@{/board/list}">게시판</a></li>
+                            <li th:if="${category}"><a th:href="@{/board/{category}/list(category=${category})}"><span
+                                    th:text="${category}">카테고리</span></a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-5 col-md-5">
                     <div class="search_bar_list">
-                        <input id="searchInput" type="text" class="form-control" placeholder="Search in blog...">
-                        <input type="submit" value="Search" onclick="performSearch()">
+                        <input id="searchInput" type="text" class="form-control" placeholder="통합검색">
+                        <input type="submit" value="검색" onclick="performSearch()">
                     </div>
                 </div>
             </div>
@@ -43,7 +44,7 @@
                     <div class="col-md-6" th:each="item : ${board}">
                         <article class="blog">
                             <figure>
-                                <a th:href="@{/board/detail/{id}(id=${item.boardId})}">
+                                <a th:href="@{/board/{community}/detail/{id}(community=${item.communityType}, id=${item.boardId})}">
                                     <img th:src="${#strings.isEmpty(item.imageUrl) ? '/img/blog-1.jpg' : item.imageUrl}"
                                          alt="게시글 이미지">
                                     <div class="preview"><span>더 보기</span></div>
@@ -54,8 +55,10 @@
                                     <span th:text="${item.communityType}">카테고리</span> -
                                     <span th:text="${#temporals.format(item.createdAt, 'yyyy.MM.dd')}">2023.01.01</span>
                                 </small>
-                                <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
-                                    제목</a>
+                                <h2>
+                                    <a th:href="@{/board/{category}/detail/{id}(category=${item.communityType}, id=${item.boardId})}"
+                                       th:text="${item.title}">게시글
+                                        제목</a>
                                 </h2>
                                 <!--                                <p th:utext="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>-->
                                 <ul>
@@ -75,9 +78,10 @@
                     <!-- /col -->
                 </div>
                 <!-- /row -->
-
-                <div class="pagination_fg" th:if="${totalPage > 0}">
-                    <a th:href="${category != null and #strings.length(category) > 0} ?
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8 pagination_fg" th:if="${totalPage > 0}">
+                        <a th:href="${category != null and #strings.length(category) > 0} ?
         ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
             @{/board/{category}/list(page=${page - 1}, category=${category}, search=${searchKeyword})} :
             @{/board/{category}/list(page=${page - 1}, category=${category})}
@@ -86,10 +90,10 @@
             @{/board/list(page=${page - 1}, search=${searchKeyword})} :
             @{/board/list(page=${page - 1})}
         )"
-                       th:if="${!isFirst}">&laquo;</a>
+                           th:if="${!isFirst}">&laquo;</a>
 
-                    <th:block th:each="i : ${#numbers.sequence(beginPage, endPage)}">
-                        <a th:href="${category != null and #strings.length(category) > 0} ?
+                        <th:block th:each="i : ${#numbers.sequence(beginPage, endPage)}">
+                            <a th:href="${category != null and #strings.length(category) > 0} ?
             ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
                 @{/board/{category}/list(page=${i}, category=${category}, search=${searchKeyword})} :
                 @{/board/{category}/list(page=${i}, category=${category})}
@@ -98,12 +102,12 @@
                 @{/board/list(page=${i}, search=${searchKeyword})} :
                 @{/board/list(page=${i})}
             )"
-                           th:classappend="${i eq page} ? 'active' : ''">
-                            <span th:text="${i}"></span>
-                        </a>
-                    </th:block>
+                               th:classappend="${i eq page} ? 'active' : ''">
+                                <span th:text="${i}"></span>
+                            </a>
+                        </th:block>
 
-                    <a th:href="${category != null and #strings.length(category) > 0} ?
+                        <a th:href="${category != null and #strings.length(category) > 0} ?
         ( ${searchKeyword != null and #strings.length(searchKeyword) > 0} ?
             @{/board/{category}/list(page=${page + 1}, category=${category}, search=${searchKeyword})} :
             @{/board/{category}/list(page=${page + 1}, category=${category})}
@@ -112,9 +116,11 @@
             @{/board/list(page=${page + 1}, search=${searchKeyword})} :
             @{/board/list(page=${page + 1})}
         )"
-                       th:if="${!isLast}">&raquo;</a>
+                           th:if="${!isLast}">&raquo;</a>
+                    </div>
+                    <div class="col-md-2"> <a class="btn_1" th:href="@{/board/{category}/new(category=${category != null and #strings.length(category) > 0 ? category : 'community'})}">글쓰기</a>
+                    </div>
                 </div>
-
             </div>
             <!-- /col -->
 

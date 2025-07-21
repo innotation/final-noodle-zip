@@ -6,9 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ReportType {
-    POST("게시글"),
-    COMMENT( "댓글"),
-    USER( "사용자");
+    POST("post"),
+    COMMENT( "comment"),
+    USER( "user");
 
     private String value;
 

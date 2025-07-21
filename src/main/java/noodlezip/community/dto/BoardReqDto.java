@@ -13,12 +13,12 @@ import noodlezip.common.validation.ValidationGroups;
 @Builder
 public class BoardReqDto {
 
-    @NotNull(message = "제목은 비어있을 수 없습니다", groups = {ValidationGroups.OnCreate.class, ValidationGroups.OnUpdate.class} )
-    @NotBlank(message = "제목은 비어있을 수 없습니다", groups = {ValidationGroups.OnCreate.class, ValidationGroups.OnUpdate.class} )
+    @NotNull(message = "제목은 비어있을 수 없습니다")
+    @NotBlank(message = "제목은 비어있을 수 없습니다")
     private String title;
 
-    @NotNull(message = "내용은 비어있을 수 없습니다", groups = {ValidationGroups.OnCreate.class, ValidationGroups.OnUpdate.class} )
-    @NotBlank(message = "내용은 비어있을 수 없습니다", groups = {ValidationGroups.OnCreate.class, ValidationGroups.OnUpdate.class} )
+    @NotNull(message = "내용은 비어있을 수 없습니다")
+    @NotBlank(message = "내용은 비어있을 수 없습니다")
     private String content;
 
     private String imageUrl;

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <th:block th:replace="~{fragments/head :: head}"></th:block>
     <!-- SPECIFIC CSS -->
     <link href="/css/blog.css" rel="stylesheet">
+    <link th:href="@{/css/my-board.css}" rel="stylesheet">
+
 </head>
 
 <body class="margin_sticky">
@@ -17,18 +19,14 @@
             <div class="row">
                 <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
                     <div class="breadcrumbs blog">
-                        <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Category</a></li>
-                            <li>Page active</li>
-                        </ul>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-5 col-md-5">
                     <div class="search_bar_list">
-                        <input id="searchInput" type="text" class="form-control" placeholder="Search in blog...">
+                        <input id="searchInput" type="text" class="form-control" placeholder="커뮤니티 통합 검색">
                         <input type="submit" value="Search" onclick="performSearch()">
                     </div>
+                </div>
                 </div>
             </div>
             <!-- /row -->
@@ -40,10 +38,15 @@
         <div class="row">
             <div class="col-lg-9">
                 <div class="row">
+                    <div th:if="${#lists.isEmpty(boardList.boardList)}" class="col-12 text-center">
+                        <p>게시글이 없습니다.</p>
+                    </div>
                     <div class="col-md-6" th:each="item : ${boardList.boardList}">
                         <article class="blog">
                             <figure>
-                                <a th:href="@{/board/detail/{id}(id=${item.boardId})}">
+                                <a th:href="@{/board/{communityType}/detail/{id}
+                                            (communityType=${item.communityType},
+                                             id=${item.boardId})}">
                                     <img th:src="${#strings.isEmpty(item.imageUrl) ? '/img/blog-1.jpg' : item.imageUrl}"
                                          alt="게시글 이미지">
                                     <div class="preview"><span>더 보기</span></div>
@@ -54,8 +57,12 @@
                                     <span th:text="${item.communityType}">카테고리</span> -
                                     <span th:text="${#temporals.format(item.createdAt, 'yyyy.MM.dd')}">2023.01.01</span>
                                 </small>
-                                <h2><a th:href="@{/board/detail/{id}(id=${item.boardId})}" th:text="${item.title}">게시글
-                                    제목</a>
+                                <h2>
+                                    <a th:href="@{/board/{communityType}/detail/{id}
+                                                (communityType=${item.communityType},
+                                                 id=${item.boardId})}"
+                                       th:text="${item.title}">게시글 제목
+                                    </a>
                                 </h2>
                                 <ul>
                                     <li>
@@ -139,58 +146,20 @@
     </div>
     <!-- /container -->
 </main>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteBoard', '알림', '<p>정말 이 게시글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteLike', '알림', '<p>정말 이 게시글에 누른 좋아요를 취소하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('failDelete', '알림', '', '확인', null)}"></div>
 <!-- /main -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--/footer-->
 
 <div id="toTop"></div><!-- Back to top button -->
-<!-- /Sign In Modal -->
-<script>
-    function deleteBoard(boardId) {
-        if (!confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
-
-        fetch(`/users/my/${boardId}/delete`, {
-            method: 'POST'
-        })
-            .then(res => {
-                if (res.redirected) {
-                    window.location.href = res.url;
-                    return;
-                }
-                if (res.ok) {
-                    alert('삭제가 완료되었습니다.');
-                    location.reload();
-                } else {
-                    return res.json().then(err => {
-                        throw new Error(err.message || '삭제 실패');
-                    });
-                }
-            })
-            .catch(err => {
-                alert('삭제 실패: ' + err.message);
-            });
-    }
-
-    function cancelLike(boardId) {
-        if (!confirm('정말 이 게시글에 누른 좋아요를 취소하시겠습니까?')) return;
-
-        fetch(`/board/like/${boardId}`, { method: 'POST' })
-            .then(res => {
-                if (!res.ok) return res.json().then(err => { throw new Error(err.message || '좋아요 취소 실패'); });
-                return res.json();
-            })
-            .then(data => {
-                alert('좋아요를 취소했습니다.');
-                location.reload(); // 혹은 DOM만 업데이트
-            })
-            .catch(err => alert('좋아요 취소 오류: ' + err.message));
-    }
-</script>
-
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
+<script src="/js/alertModal.js"></script>
+<script src="/js/my-board.js"></script>
 
 </body>
 </html>

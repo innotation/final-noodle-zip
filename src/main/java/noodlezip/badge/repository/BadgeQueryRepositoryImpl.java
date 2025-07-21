@@ -21,6 +21,7 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+
     @Override
     public Optional<Badge> findInitLevelBadge(long badgeCategoryId) {
         QBadge badge = QBadge.badge;
@@ -34,6 +35,7 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
                         .fetchOne()
         );
     }
+
 
     @Override
     public Optional<Badge> findInitRamenCategoryLevelBadge(long badgeCategoryId, int ramenCategoryId) {
@@ -51,6 +53,7 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
                         .fetchOne()
         );
     }
+
 
     @Override
     public Optional<Badge> findInitSidoRegionLevelBadge(long badgeCategoryId, int sidoRegionCode) {
@@ -90,6 +93,7 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
                 .where(badge.badgeCategory.id.eq(badgeCategoryId))
                 .fetch();
     }
+
 
     @Override
     public List<LevelBadgeDetailResponse> findOptionBadgeDetails(long userId,

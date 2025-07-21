@@ -13,6 +13,6 @@ import java.util.List;
 public class SavedStoreCategoryFilterRequest {
 
     private List<Long> categoryIdList;
-    private boolean isAllCategory;
+    private boolean allCategory;
 
 }

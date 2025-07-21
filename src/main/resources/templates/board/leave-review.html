@@ -1,39 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Foogra - Discover & Book the best restaurants at the best price">
-	<meta name="author" content="Ansonika">
-	<title>Foogra - Discover & Book the best restaurants at the best price</title>
 
-	<!-- Favicons-->
-	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-	<link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
-	<link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
-	<link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
-	<link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
-
-	<!-- GOOGLE WEB FONT -->
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+	<th:block th:replace="~{fragments/head :: head}"></th:block>
 	<!-- Quill -->
 	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-
-	<!-- BASE CSS -->
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<link href="/css/style.css" rel="stylesheet">
 
 	<!-- SPECIFIC CSS -->
 	<link href="/css/review.css" rel="stylesheet">
 
 	<!-- YOUR CUSTOM CSS -->
 	<link href="/css/custom.css" rel="stylesheet">
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+
+	<!-- 외부 플러그인 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
 
 	<style>
 		.review-slider {
@@ -53,132 +35,22 @@
 		.slick-next:before {
 			color: #333;
 		}
+		img.preview {
+			max-width: 100%;
+			max-height: 200px;
+			height: auto;
+			border-radius: 8px;
+			margin-top: 10px;
+		}
 	</style>
 
 	<script th:inline="javascript">
 		let toppings = /*[[${toppings}]]*/ [];
-		console.log("🍜 토핑:", toppings);
 	</script>
 
 </head>
-<body>
-<header class="header_in clearfix">
-	<div class="container">
-		<div id="logo">
-			<a href="index.html">
-				<img src="img/logo_sticky.svg" width="140" height="35" alt="">
-			</a>
-		</div>
-		<ul id="top_menu">
-			<li><a href="#sign-in-dialog" id="sign-in" class="login">Sign In</a></li>
-			<li><a href="wishlist.html" class="wishlist_bt_top" title="Your wishlist">Your wishlist</a></li>
-		</ul>
-		<!-- /top_menu -->
-		<a href="#0" class="open_close">
-			<i class="icon_menu"></i><span>Menu</span>
-		</a>
-		<nav class="main-menu">
-			<div id="header_menu">
-				<a href="#0" class="open_close">
-					<i class="icon_close"></i><span>Menu</span>
-				</a>
-				<a href="index.html"><img src="img/logo.svg" width="140" height="35" alt=""></a>
-			</div>
-			<ul>
-				<li class="submenu">
-					<a href="#0" class="show-submenu">Home</a>
-					<ul>
-						<li><a href="index.html">Default</a></li>
-						<li class="third-level"><a href="#0">Sliders - Parallax <strong>New!</strong></a>
-							<ul>
-								<li><a href="index-16.html">Kenburns slider <strong>New!</strong></a></li>
-								<li><a href="index-8.html">Revolution Slider 1</a></li>
-								<li><a href="index-9.html">Revolution Slider 2</a></li>
-								<li><a href="index-3.html">Owl Carousel</a></li>
-								<li><a href="index-10.html">Parallax Youtube</a></li>
-								<li><a href="index-11.html">Parallax Vimeo</a></li>
-								<li><a href="index-12.html">Parallax Mp4 Video</a></li>
-								<li><a href="index-13.html">Parallax Video Fullscreen</a></li>
-								<li><a href="index-14.html">Parallax Image</a></li>
-							</ul>
-						</li>
-						<li><a href="index-15.html">Text Rotator</a></li>
-						<li><a href="index-5.html">Address Autocomplete</a></li>
-						<li><a href="index-6.html">Search Version 2</a></li>
-						<li><a href="index-7.html">Delivery/Takeaway version</a></li>
-						<li><a href="modal-advertise.html">Modal Advertise</a></li>
-						<li><a href="modal-newsletter.html">Modal Newsletter</a></li>
-						<li><a href="index-2.html">Video Bg Fallback Mobile</a></li>
-						<li><a href="index-4.html">GDPR Cookie Bar EU Law</a></li>
-					</ul>
-				</li>
-				<li class="submenu">
-					<a href="#0" class="show-submenu">Listing</a>
-					<ul>
-						<li class="third-level"><a href="#0">List pages</a>
-							<ul>
-								<li><a href="grid-listing-filterscol.html">List default</a></li>
-								<li><a href="grid-listing-filterscol-map.html">List with map</a></li>
-								<li><a href="listing-map.html">List side map</a></li>
-								<li><a href="grid-listing-filterscol-full-width.html">List full width</a></li>
-								<li><a href="grid-listing-filterscol-full-masonry.html">List Masonry Filter</a></li>
-								<li><a href="grid-listing-filterscol-delivery.html">List Delivery/Takeaway</a></li>
-							</ul>
-						</li>
-						<li class="third-level"><a href="#0">Detail pages</a>
-							<ul>
-								<li><a href="detail-restaurant.html">Detail page 1</a></li>
-								<li><a href="detail-restaurant-2.html">Detail page 2</a></li>
-								<li><a href="detail-restaurant-3.html">Mobile Fixed Booking</a></li>
-								<li><a href="detail-restaurant-delivery.html">Delivery/Takeaway</a></li>
-								<li><a href="detail-restaurant-4.html">Detail Menu Thumbs</a></li>
-								<li><a href="detail-restaurant-5.html">Detail Contact Form</a></li>
-							</ul>
-						</li>
-						<li class="third-level"><a href="#0">OpenStreetMap</a>
-							<ul>
-								<li><a href="grid-listing-filterscol-map-openstreetmap.html">List with map</a></li>
-								<li><a href="listing-map-openstreetmap.html">List side map</a></li>
-								<li><a href="grid-listing-filterscol-full-width-openstreetmap.html">List full width</a>
-								</li>
-								<li><a href="grid-listing-filterscol-full-masonry-openstreetmap.html">List Masonry
-									Filter</a></li>
-							</ul>
-						</li>
-						<li><a href="submit-restaurant.html">Submit Restaurant</a></li>
-						<li><a href="submit-rider.html">Submit Rider</a></li>
-						<li><a href="wishlist.html">Wishlist</a></li>
-						<li><a href="booking.html">Booking</a></li>
-						<li><a href="confirm.html">Confirm Booking</a></li>
-						<li><a href="confirm-delivery.html">Confirm Order</a></li>
-						<li><a href="booking-delivery-2.html">Order Delivery/Takeaway</a></li>
-						<li><a href="booking-delivery.html">Order Delivery/Takeaway 2</a></li>
-						<li><a href="admin_section/index.html" target="_blank">Admin Section</a></li>
-					</ul>
-				</li>
-				<li class="submenu">
-					<a href="#0" class="show-submenu">Other Pages</a>
-					<ul>
-						<li><a href="404.html">404 Error</a></li>
-						<li><a href="help.html">Help and Faq</a></li>
-						<li><a href="blog.html">Blog</a></li>
-						<li><a href="leave-review.html">Leave a review</a></li>
-						<li><a href="user-logged-1.html">User Logged 1</a></li>
-						<li><a href="user-logged-2.html">User Logged 2</a></li>
-						<li><a href="contacts.html">Contacts</a></li>
-						<li><a href="coming_soon/index.html">Coming Soon</a></li>
-						<li><a href="account.html">Sign Up</a></li>
-						<li><a href="icon-pack-1.html">Icon Pack 1</a></li>
-						<li><a href="icon-pack-2.html">Icon Pack 2</a></li>
-					</ul>
-				</li>
-				<li><a href="submit-restaurant.html">Submit</a></li>
-				<li><a href="#0">Buy this template</a></li>
-			</ul>
-		</nav>
-	</div>
-</header>
-<!-- /header -->
+<body class="margin_sticky">
+<header th:replace="~{fragments/subHeader :: subHeader}"></header>
 
 <main class="bg_gray pattern">
 
@@ -195,7 +67,7 @@
 								<span th:text="${menu.menuName}"></span>
 							</label>
 						</div>
-						<button id="startReviewBtn" class="btn btn-primary">리뷰 작성하기</button>
+						<button id="startReviewBtn" class="btn_1 btn-sm">리뷰 작성하기</button>
 					</div>
 					<form id="reviewForm"  method="POST" style="display:none;" enctype="multipart/form-data">
 
@@ -213,8 +85,8 @@
 						</div>
 
 						<div class="text-center" style="margin-top: 30px;">
-							<button type="button" class="btn btn-sm btn-info" id="openMenuModal" data-toggle="modal" data-target="#menuSelectModal">+ 메뉴 추가</button>
-							<button type="button" class="btn btn-success" id="submitReviewBtn">리뷰 제출</button>
+							<button type="button" class="btn_1 btn-sm" id="openMenuModal" data-toggle="modal" data-target="#menuSelectModal">+ 메뉴 추가</button>
+							<button type="button" class="btn_1 btn-sm" id="submitReviewBtn">리뷰 작성</button>
 						</div>
 
 <!--						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />-->
@@ -239,72 +111,25 @@
 
 <div class="layer"></div><!-- Opacity Mask Menu Mobile -->
 
-<!-- Sign In Modal -->
-<div id="sign-in-dialog" class="zoom-anim-dialog mfp-hide">
-	<div class="modal_header">
-		<h3>Sign In</h3>
-	</div>
-	<form>
-		<div class="sign-in-wrapper">
-			<a href="#0" class="social_bt facebook">Login with Facebook</a>
-			<a href="#0" class="social_bt google">Login with Google</a>
-			<div class="divider"><span>Or</span></div>
-			<div class="form-group">
-				<label>Email</label>
-				<input type="email" class="form-control" name="email" id="email">
-				<i class="icon_mail_alt"></i>
-			</div>
-			<div class="form-group">
-				<label>Password</label>
-				<input type="password" class="form-control" name="password" id="password" value="">
-				<i class="icon_lock_alt"></i>
-			</div>
-			<div class="clearfix add_bottom_15">
-				<div class="checkboxes float-start">
-					<label class="container_check">Remember me
-						<input type="checkbox">
-						<span class="checkmark"></span>
-					</label>
-				</div>
-				<div class="float-end"><a id="forgot" href="javascript:void(0);">Forgot Password?</a></div>
-			</div>
-			<div class="text-center">
-				<input type="submit" value="Log In" class="btn_1 full-width mb_5">
-				Don’t have an account? <a href="account.html">Sign up</a>
-			</div>
-			<div id="forgot_pw">
-				<div class="form-group">
-					<label>Please confirm login email below</label>
-					<input type="email" class="form-control" name="email_forgot" id="email_forgot">
-					<i class="icon_mail_alt"></i>
-				</div>
-				<p>You will receive an email containing a link allowing you to reset your password to a new preferred
-					one.</p>
-				<div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
-			</div>
-		</div>
-	</form>
-	<!--form -->
-</div>
-<!-- /Sign In Modal -->
-
 <!-- 메뉴 선택 모달 -->
-<div id="menuSelectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="menuModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+<div id="menuSelectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="menuModalLabel">메뉴 선택</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<ul id="menuListContainer"></ul>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+				<button type="button" class="btn_1 btn-sm" data-dismiss="modal">닫기</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<div th:replace="~{fragments/alert-modal :: alertModal('simpleAlertModal', '알림', '', '확인', '')}"></div>
 
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
@@ -313,6 +138,8 @@
 
 <!-- SPECIFIC SCRIPTS -->
 <script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
+<script src="//unpkg.com/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+<link href="https://unpkg.com/quill-image-resize-module@3.0.0/image-resize.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -341,38 +168,73 @@
 		});
 
 		return `
-    <div class="slick-item" data-index="${index}">
-      <div class="card p-3">
-        <h4>${menuName}에 대한 리뷰</h4>
-        <input type="hidden" name="reviews[${index}].menuId" value="${menuId}" />
-        <div class="row">
-          <div class="col-xs-6"><label>면 굵기</label><input type="range" name="reviews[${index}].noodleThickness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>면 식감</label><input type="range" name="reviews[${index}].noodleTexture" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>면 삶기</label><input type="range" name="reviews[${index}].noodleBoiledLevel" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>국물 농도</label><input type="range" name="reviews[${index}].soupThickness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>온도</label><input type="range" name="reviews[${index}].soupTemperature" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>염도</label><input type="range" name="reviews[${index}].soupSaltiness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>맵기</label><input type="range" name="reviews[${index}].soupSpiciness" min="0" max="10" value="5"/></div>
-          <div class="col-xs-6"><label>기름</label><input type="range" name="reviews[${index}].soupOiliness" min="0" max="10" value="5"/></div>
-        </div>
-        <div class="form-group">
-          <label>국물 키워드</label>
-          <input type="text" name="reviews[${index}].soupFlavorKeywords" class="form-control" maxlength="100" placeholder="예: 진한, 담백한 등 키워드를 입력하세요."/>
-          <label>먹은 토핑 선택</label><br/>
-          ${toppingOptions}
-        </div>
-        <div class="form-group">
-          <label>내용</label>
-          <textarea class="form-control" name="reviews[${index}].content" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label>사진 첨부</label>
-          <input type="file" name="reviews[${index}].imageFile" accept="image/*" class="form-control" data-max-size="5242880" />
-          <small class="text-muted">지원 형식: JPG, PNG, GIF, WebP (최대 5MB)</small>
-        </div>
-        <button type="button" class="btn btn-danger remove-slide" data-menu-id="${menuId}">삭제</button>
+<div class="slick-item" data-index="${index}">
+  <div class="box_general write_review">
+    <h4 class="add_bottom_15">"${menuName}"에 대한 리뷰</h4>
+    <input type="hidden" name="reviews[${index}].menuId" value="${menuId}" />
+
+    <div class="row">
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">면 굵기 <strong class="val-thickness"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleThickness" />
       </div>
-    </div>`;
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">면 식감 <strong class="val-texture"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleTexture" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">면 삶기 <strong class="val-boiled"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleBoiledLevel" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">국물 농도 <strong class="val-soup-thick"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupThickness" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">온도 <strong class="val-temp"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupTemperature" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">염도 <strong class="val-salt"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupSaltiness" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">맵기 <strong class="val-spicy"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupSpiciness" />
+      </div>
+      <div class="col-md-3 add_bottom_25">
+        <div class="add_bottom_15">기름 <strong class="val-oil"></strong></div>
+        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupOiliness" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>국물 키워드</label>
+      <input type="text" name="reviews[${index}].soupFlavorKeywords" class="form-control" maxlength="100" placeholder="예: 진한, 담백한 등 키워드를 입력하세요."/>
+    </div>
+
+    <div class="form-group">
+      <label>먹은 토핑 선택</label><br/>
+      ${toppingOptions}
+    </div>
+
+    <div class="form-group">
+      <label>내용</label>
+      <textarea class="form-control" name="reviews[${index}].content" rows="3" placeholder="이 메뉴에 대한 솔직한 후기를 남겨주세요."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>사진 첨부</label>
+  <input type="file" class="review-image-upload" data-index="${index}" accept="image/*">
+  <img class="preview" style="display:none;"  alt="미리보기"/>
+  <input type="hidden" name="reviews[${index}].imageUrl" />
+    </div>
+
+    <div class="text-end">
+      <button type="button" class="btn_1 btn-sm remove-slide mt-3" data-menu-id="${menuId}">삭제</button>
+    </div>
+  </div>
+</div>`;
 	}
 
 	function refreshMenuModalList() {
@@ -382,7 +244,7 @@
 			const id = String($(this).val());
 			const name = $(this).data('name');
 			if (!addedMenuIds.has(id)) {
-				const item = `<li class="mb-2"><button type="button" class="btn btn-info addMenuBtn" data-id="${id}" data-name="${name}">${name}</button></li>`;
+				const item = `<li class="mb-2"><button type="button" class="btn_1 btn-sm addMenuBtn" data-id="${id}" data-name="${name}">${name}</button></li>`;
 				$list.append(item);
 			}
 		});
@@ -410,7 +272,14 @@
 			const index = getNextReviewIndex();
 			const html = getReviewSlideHtml(menuId, menuName, index);
 			slider.append(html);
-			addedMenuIds.add(menuId);
+			addedMenuIds.add(String(menuId));
+		});
+
+		slider.find('input[type="range"]').rangeslider({
+			polyfill: false,
+			onSlide: function (position, value) {
+				$(this.$element).siblings('strong').text(value);
+			}
 		});
 
 		$('#menu-selection').hide();
@@ -425,9 +294,15 @@
 	});
 
 	$(document).on('click', '.remove-slide', function () {
+		const totalSlides = $('.review-slider .slick-item').length;
+		if (totalSlides <= 1) {
+			showAlertModal("최소 하나 이상의 메뉴에 대한 리뷰는 작성해야 합니다.");
+			return;
+		}
+
 		const $slide = $(this).closest('.slick-item');
 		const slickIndex = $slide.index();
-		const menuId = $(this).data('menu-id');
+		const menuId = String($(this).data('menu-id'));
 		$('.review-slider').slick('slickRemove', slickIndex);
 		addedMenuIds.delete(menuId);
 		$('.menu-checkbox[value="' + menuId + '"]').prop('checked', false);
@@ -461,16 +336,92 @@
 			$('.menu-checkbox[value="' + id + '"]').prop('checked', true);
 			refreshMenuModalList();
 			pendingMenuToAdd = null;
+
+			const newSlide = $('.review-slider .slick-item').last();
+			newSlide.find('input[type="range"]').rangeslider({
+				polyfill: false,
+				onSlide: function (position, value) {
+					$(this.$element).siblings('strong').text(value);
+				}
+			});
 		}
 	});
 
+	document.addEventListener('change', function (e) {
+		if (!e.target.matches('.review-image-upload')) return;
+
+		const fileInput = e.target;
+		const file = fileInput.files[0];
+		if (!file) return;
+
+		const index = fileInput.dataset.index;
+		const formData = new FormData();
+		formData.append('uploadFiles', file);
+
+		const slide = fileInput.closest('.slick-item');
+
+		fetch('/board/review/imageUpload', {
+			method: 'POST',
+			body: formData
+		})
+				.then(res => res.json())
+				.then(data => {
+					const imageUrl = data.payload[0].fileUrl;
+					const hiddenInput = slide.querySelector('input[name$=".imageUrl"]');
+					if (hiddenInput) {
+						hiddenInput.value = imageUrl;
+						console.log("✅ 이미지 URL 저장됨:", hiddenInput.name, '→', imageUrl);
+					} else {
+						console.warn("❌ hidden input 못 찾음!");
+					}
+
+					const previewImg = slide.querySelector('img.preview');
+					if (previewImg) {
+						previewImg.src = imageUrl;
+						previewImg.style.display = 'block';
+					}
+				})
+				.catch(err => {
+					console.error("❌ 이미지 업로드 실패", err);
+					showAlertModal("이미지 업로드 중 오류가 발생했습니다.");
+				});
+	});
+
 	document.getElementById('submitReviewBtn').addEventListener('click', function () {
-		document.getElementById('content').value = quill.root.innerHTML;
+		const slideItems = document.querySelectorAll('.slick-item[data-index]');
+		if (slideItems.length === 0) {
+			showAlertModal("최소 하나 이상의 메뉴에 대해 리뷰를 작성해야 합니다.");
+			return;
+		}
+
+		const title = document.getElementById('title').value.trim();
+		if (!title) {
+			showAlertModal("제목을 입력해주세요.");
+			return;
+		}
+
+		const quillHtml = quill.root.innerHTML;
+		const quillText = quill.getText().trim();
+		if (!quillText || quillText === "") {
+			showAlertModal("본문 내용을 입력해주세요.");
+			return;
+		}
+		document.getElementById('content').value = quillHtml;
+
+		for (const slide of slideItems) {
+			const index = slide.getAttribute('data-index');
+			const content = slide.querySelector(`textarea[name="reviews[${index}].content"]`)?.value.trim();
+			if (!content) {
+				const menuTitle = slide.querySelector("h4")?.innerText || "해당 메뉴";
+				showAlertModal(`"${menuTitle}" 메뉴에 대한 리뷰 내용을 입력해주세요.`);
+				return;
+			}
+		}
 
 		const form = document.getElementById('reviewForm');
 		const reviews = [];
 
-		document.querySelectorAll('.slick-item[data-index]').forEach(slide => {
+		slideItems.forEach(slide => {
 			const index = slide.getAttribute('data-index');
 			const safeVal = (name) => slide.querySelector(`[name="reviews[${index}].${name}"]`)?.value ?? null;
 
@@ -485,62 +436,45 @@
 				soupSpiciness: safeVal('soupSpiciness'),
 				soupOiliness: safeVal('soupOiliness'),
 				soupFlavorKeywords: safeVal('soupFlavorKeywords'),
+				imageUrl: safeVal('imageUrl'),
 				content: slide.querySelector(`textarea[name="reviews[${index}].content"]`)?.value ?? '',
 				toppingIds: Array.from(slide.querySelectorAll(`input[name="reviews[${index}].toppingIds"]:checked`)).map(i => i.value)
 			});
 		});
 
 		const payload = {
-			title: document.getElementById('title').value,
-			content: document.getElementById('content').value,
+			title,
+			content: quillHtml,
 			ocrKeyHash: form.querySelector('input[name="ocrKeyHash"]').value,
 			visitDate: form.querySelector('input[name="visitDate"]').value,
 			storeId: form.querySelector('input[name="storeId"]').value,
-			imageUrl: getFirstImageUrlFromHtml(quill.root.innerHTML),
+			imageUrl: getFirstImageUrlFromHtml(quillHtml),
 			isReceiptReview: true,
 			reviews
 		};
 
-		const fileData = new FormData();
-		document.querySelectorAll('.slick-item[data-index]').forEach((slide, idx) => {
-			const index = slide.getAttribute('data-index');
-			const fileInput = slide.querySelector(`input[name="reviews[${index}].imageFile"]`);
-			if (fileInput?.files?.length > 0) {
-				fileData.append(`images[${idx}]`, fileInput.files[0]); // 인덱스 순서로 매핑
-			}
-		});
-
-		fetch('/board/registReviewJson', {
+		fetch('/board/registReview', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
 		})
-			.then(response => response.json())
-			.then(data => {
-				// 매핑된 리뷰 ID에 따라 이미지 이름 재설정
-				data.reviewIds.forEach((reviewId, i) => {
-					const file = fileData.get(`images[${i}]`);
-					if (file) {
-						fileData.set(`image_${reviewId}`, file);
-						fileData.delete(`images[${i}]`);
-					}
+				.then(response => {
+					if (!response.ok) throw new Error("리뷰 등록 실패");
+					showAlertModal("리뷰 등록 성공!", "완료");
+					setTimeout(() => location.href = "/", 1000);
+				})
+				.catch(err => {
+					console.error(err);
+					showAlertModal("제출 중 오류가 발생했습니다.");
 				});
-
-				return fetch('/board/uploadReviewImages', {
-					method: 'POST',
-					body: fileData
-				});
-			})
-			.then(response => {
-				if (!response.ok) throw new Error("파일 업로드 실패");
-				alert("🎉 리뷰 등록 성공!");
-				location.href = "/";
-			})
-			.catch(err => {
-				console.error(err);
-				alert("제출 중 오류 발생");
-			});
 	});
+
+	function showAlertModal(message, title = "알림") {
+		const $modal = $('#simpleAlertModal');
+		$modal.find('.modal-title').text(title);
+		$modal.find('.modal-body').html(message);
+		$modal.modal('show');
+	}
 
 </script>
 </body>

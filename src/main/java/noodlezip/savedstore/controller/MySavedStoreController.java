@@ -30,6 +30,7 @@ public class MySavedStoreController extends MyBaseController {
     private final MySavedStoreService mySavedStoreService;
     private final SavedStoreService savedStoreService;
 
+
     @Operation(
             summary = "사용자 저장 가게 목록 조회",
             description = "특정 사용자의 저장 가게 목록을 조회합니다."
@@ -43,6 +44,7 @@ public class MySavedStoreController extends MyBaseController {
     @GetMapping("/{userId}/saved-stores")
     public String savedStoreList(@AuthenticationPrincipal MyUserDetails myUserDetails,
                                  @PathVariable Long userId,
+                                 @ModelAttribute SavedStoreCategoryFilterRequest filter,
                                  Model model
     ) {
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
@@ -50,10 +52,10 @@ public class MySavedStoreController extends MyBaseController {
         boolean isOwner = userAccessInfo.getIsOwner();
 
         if (isOwner) {
-            MySavedStorePageResponse mySavedStorePageInfo = mySavedStoreService.getMySavedStoreInitPage(targetUserId);
+            MySavedStorePageResponse mySavedStorePageInfo = mySavedStoreService.getMySavedStoreInitPage(targetUserId, filter);
             model.addAttribute("mySavedStorePageInfo", mySavedStorePageInfo);
         } else {
-            SavedStorePageResponse savedStorePageInfo = mySavedStoreService.getSavedStoreInitPage(targetUserId);
+            SavedStorePageResponse savedStorePageInfo = mySavedStoreService.getSavedStoreInitPage(targetUserId, filter);
             model.addAttribute("savedStorePageInfo", savedStorePageInfo);
         }
         model.addAttribute("userAccessInfo", userAccessInfo);
@@ -64,11 +66,11 @@ public class MySavedStoreController extends MyBaseController {
 
     @GetMapping("/{userId}/saved-stores/category-filter-search")
     @ResponseBody
-    public SavedStoreListWithPageInfoResponse getMySavedStoreListByCategory(@AuthenticationPrincipal MyUserDetails userDetails,
-                                                                            @PathVariable Long userId,
-                                                                            @ModelAttribute SavedStoreCategoryFilterRequest filter,
-                                                                            @RequestParam(defaultValue =
-                                                                                    SavedStorePagePolicy.DEFAULT_PAGE) int page
+    public SavedStoreListWithPageInfoResponse getMySavedStoreListByCategory(
+            @AuthenticationPrincipal MyUserDetails userDetails,
+            @PathVariable Long userId,
+            @ModelAttribute SavedStoreCategoryFilterRequest filter,
+            @RequestParam(defaultValue = SavedStorePagePolicy.DEFAULT_PAGE) int page
     ) {
         UserAccessInfo userAccessInfo = resolveUserAccess(userDetails, userId);
 

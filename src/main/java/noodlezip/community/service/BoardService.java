@@ -30,7 +30,8 @@ public interface BoardService {
     List<CategoryCountDto> getCategoryCountsByBoardIds(List<Long> boardIdList);
 
     BoardRespDto findBoardById(Long id, String userIdOrIp);
-    void registBoard(BoardReqDto boardReqDto, User user);
+    BoardRespDto findReviewBoardById(Long id, String userIdOrIp);
+    void registBoard(BoardReqDto boardReqDto, User user, String category);
     void deleteBoard(Long boardId, Long userId);
     boolean toggleLike(BoardUserId boardUserId);
     Integer getLikeCount(Long boardId);
@@ -42,7 +43,5 @@ public interface BoardService {
     Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable);
     List<Long> getBoardIdByUserLiked(Long userId);
 
-    List<Long> saveReviewJson(ReviewReqDto dto, User user);
-
-    void saveReviewImage(Long reviewId, MultipartFile file);
+    void saveReviewJson(ReviewReqDto dto, User user);
 }

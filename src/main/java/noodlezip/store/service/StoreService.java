@@ -1,6 +1,7 @@
 package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
@@ -27,6 +28,7 @@ import noodlezip.store.repository.StoreExtraToppingRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
+import noodlezip.store.status.OperationStatus;
 import noodlezip.user.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -37,11 +39,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import noodlezip.store.status.StoreErrorCode;
 
+import java.lang.reflect.Member;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,7 +54,6 @@ public class StoreService {
     private final MenuRepository menuRepository;
     private final RamenToppingRepository ramenToppingRepository;
     private final RamenService ramenService;
-    private final ModelMapper modelMapper;
     private final PageUtil pageUtil;
     private final ToppingRepository toppingRepository;
     private final FileUtil fileUtil;
@@ -62,9 +61,24 @@ public class StoreService {
     private final RamenReviewRepository ramenReviewRepository;
     private final ReviewToppingRepository reviewToppingRepository;
     private final StoreExtraToppingRepository storeExtraToppingRepository;
+    private final LocationService locationService;
 
     @Transactional(rollbackFor = Exception.class)
-    public Long registerStore(StoreRequestDto dto, MultipartFile storeMainImage, User user) {
+    public Long registerStore(StoreRequestDto dto, User user) {
+
+        // 주소 정보를 기반으로 위도, 경도, 법정동 코드 가져오기
+        LocationInfoDto locationInfo = locationService.getLocationInfo(dto.getAddress());
+        dto.setStoreLat(locationInfo.getStoreLat());
+        dto.setStoreLng(locationInfo.getStoreLng());
+        dto.setStoreLegalCode(locationInfo.getStoreLegalCode());
+
+        log.debug("DTO: {}", dto);
+        log.debug("WeekSchedule: {}", dto.getWeekSchedule());
+        if (dto.getWeekSchedule() != null) {
+            for (StoreScheduleRequestDto s : dto.getWeekSchedule()) {
+                log.debug(" - Day: {}, Open: {}, Close: {}, Closed: {}", s.getDayOfWeek(), s.getOpeningAt(), s.getClosingAt(), s.getIsClosedDay());
+            }
+        }
 
         List<String> defaultToppingNames = toppingRepository.findAll().stream()
                 .filter(Topping::getIsActive)
@@ -72,11 +86,12 @@ public class StoreService {
                 .toList();
 
         String storeMainImageUrl = null;
+        MultipartFile storeMainImage = dto.getStoreMainImage();
 
         // ① 대표 이미지 업로드 및 유효성 검사
         if (storeMainImage != null && !storeMainImage.isEmpty()) {
             try {
-                Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", storeMainImage);
+                Map<String, String> uploadResult = fileUtil.fileupload("storeRegist", storeMainImage);
                 storeMainImageUrl = uploadResult.get("fileUrl");
             } catch (CustomException ce) {
                 throw ce;
@@ -88,10 +103,15 @@ public class StoreService {
         }
 
         // ② Store 엔티티 생성 및 저장
+        String fullAddress = dto.getAddress();
+        if (dto.getStoreDetailInput() != null && !dto.getStoreDetailInput().isEmpty()) {
+            fullAddress += "," + dto.getStoreDetailInput();
+        }
+
         Store store = Store.builder()
                 .storeName(dto.getStoreName())
-                .address(dto.getAddress())
-                .phone(dto.getPhone())
+                .address(fullAddress)
+                .phone(formatPhoneNumber(dto.getPhone()))
                 .bizNum(dto.getBizNum())
                 .isLocalCard(dto.getIsLocalCard())
                 .isChildAllowed(dto.getIsChildAllowed())
@@ -124,7 +144,7 @@ public class StoreService {
                             schedule.setClosingAt(s.getClosingAt());
                         }
 
-                        schedule.setStoreId(savedStore);
+                        schedule.setStore(savedStore);
 
                         return schedule;
                     }).collect(Collectors.toList());
@@ -146,7 +166,7 @@ public class StoreService {
                 // 메뉴 이미지 업로드
                 if (menuImageFile != null && !menuImageFile.isEmpty()) {
                     try {
-                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", menuImageFile);
+                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist", menuImageFile);
                         menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
                     } catch (CustomException ce) {
                         throw ce;
@@ -193,39 +213,308 @@ public class StoreService {
             }
         }
 
-        // ⑤ 매장 단위 추가 토핑 저장 (dto.getExtraToppings)
-        if (dto.getExtraToppings() != null && !dto.getExtraToppings().isEmpty()) {
-            for (ExtraToppingRequestDto toppingDto : dto.getExtraToppings()) {
-                if (toppingDto == null || toppingDto.getName() == null || toppingDto.getName().isBlank()) continue;
+        // ⑤ 매장 단위 추가 토핑 저장
+        List<ExtraToppingRequestDto> extraToppingDtos = dto.getExtraToppings();
 
-                String toppingName = toppingDto.getName();
-                Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
+        if (extraToppingDtos == null || extraToppingDtos.isEmpty()) {
+            return savedStore.getId();
+        }
 
-                if (defaultToppingNames.contains(toppingName)) {
-                    throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
-                }
-
-                Topping topping = toppingRepository.findByToppingName(toppingName)
-                        .orElseGet(() -> toppingRepository.save(
-                                Topping.builder()
-                                        .toppingName(toppingName)
-                                        .isActive(false)
-                                        .build()
-                        ));
-
-                if (topping == null) {
-                    throw new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME);
-                }
-
-                StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
-                storeExtraTopping.setStore(savedStore);
-                storeExtraTopping.setTopping(topping);
-                storeExtraTopping.setPrice(price);
-                storeExtraToppingRepository.save(storeExtraTopping);
+        for (ExtraToppingRequestDto toppingDto : extraToppingDtos) {
+            if (toppingDto == null || toppingDto.getToppingId() == null) {
+                continue;
             }
+
+            Long toppingId = toppingDto.getToppingId();
+            Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
+
+            // DB에서 topping 엔티티 조회
+            Topping topping = toppingRepository.findById(toppingId)
+                    .orElseThrow(() -> new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME));
+
+            StoreExtraTopping extraTopping = new StoreExtraTopping();
+            extraTopping.setStore(savedStore);
+            extraTopping.setTopping(topping);
+            extraTopping.setPrice(price);
+
+            storeExtraToppingRepository.save(extraTopping);
         }
 
         return savedStore.getId();
+    }
+
+    // 매장 수정
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStore(Long storeId, StoreRequestDto dto, MultipartFile storeMainImage, List<MultipartFile> menuImageFiles, User user) {           Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+        log.debug("storemain: {}", storeMainImage);
+        log.debug("기존: {}", dto.getStoreMainImageUrl());
+        if (!store.getUserId().equals(user.getId())) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // 대표 이미지 처리
+        String newStoreMainImageUrl = null;
+
+        if (storeMainImage != null && !storeMainImage.isEmpty()) {
+            // 새로운 파일이 업로드된 경우
+            Map<String, String> uploadResult = fileUtil.fileupload("storeUpdate", storeMainImage);
+            newStoreMainImageUrl = uploadResult.get("fileUrl");
+        }
+
+        if (dto.getStoreMainImageUrl() != null
+                && !dto.getStoreMainImageUrl().isBlank()
+                && !dto.getStoreMainImageUrl().startsWith("data:image/")) {
+            // 기존 URL 사용 (base64 data URL이 아닌 경우만)
+            newStoreMainImageUrl = dto.getStoreMainImageUrl();
+        }
+
+        store.setStoreMainImageUrl(newStoreMainImageUrl);
+
+        // 필드 업데이트
+        String fullAddress = dto.getAddress();
+        if (dto.getStoreDetailInput() != null && !dto.getStoreDetailInput().isEmpty()) {
+            fullAddress += "," + dto.getStoreDetailInput();
+        }
+        store.setAddress(fullAddress);
+        store.setStoreName(dto.getStoreName());
+        store.setPhone(formatPhoneNumber(dto.getPhone()));
+        store.setBizNum(dto.getBizNum());
+        store.setIsLocalCard(dto.getIsLocalCard());
+        store.setIsChildAllowed(dto.getIsChildAllowed());
+        store.setHasParking(dto.getHasParking());
+        store.setOwnerComment(dto.getOwnerComment());
+        store.setStoreLat(dto.getStoreLat());
+        store.setStoreLng(dto.getStoreLng());
+        store.setOperationStatus(dto.getOperationStatus());
+        store.setStoreLegalCode(dto.getStoreLegalCode() != null ? dto.getStoreLegalCode().longValue() : null);
+
+        // 기존 스케줄 삭제 후 재저장
+        scheduleRepository.deleteByStore(store);
+        if (dto.getWeekSchedule() != null) {
+            List<StoreWeekSchedule> schedules = dto.getWeekSchedule().stream()
+                    .map(s -> {
+                        StoreWeekScheduleId id = new StoreWeekScheduleId(store.getId(), s.getDayOfWeek());
+                        StoreWeekSchedule schedule = new StoreWeekSchedule();
+                        schedule.setId(id);
+                        schedule.setIsClosedDay(s.getIsClosedDay());
+                        if (Boolean.TRUE.equals(s.getIsClosedDay())) {
+                            schedule.setOpeningAt(LocalTime.MIN);
+                            schedule.setClosingAt(LocalTime.MIN);
+                        } else {
+                            schedule.setOpeningAt(s.getOpeningAt());
+                            schedule.setClosingAt(s.getClosingAt());
+                        }
+                        schedule.setStore(store);
+                        return schedule;
+                    }).collect(Collectors.toList());
+            scheduleRepository.saveAll(schedules);
+        }
+
+        // 메뉴 처리
+        if (dto.getMenus() != null) {
+            List<Long> dtoMenuIds = dto.getMenus().stream()
+                    .map(MenuRequestDto::getId)
+                    .filter(id -> id != null && id != 0)
+                    .collect(Collectors.toList());
+
+            List<Menu> existingMenus = menuRepository.findByStore(store);
+            List<Menu> menusToRemove = existingMenus.stream()
+                    .filter(menu -> !dtoMenuIds.contains(menu.getId()))
+                    .collect(Collectors.toList());
+
+            for (Menu menu : menusToRemove) {
+                ramenToppingRepository.deleteByMenu(menu);
+                // 기존 메뉴 이미지 파일 삭제 (있으면)
+                if (menu.getMenuImageUrl() != null && !menu.getMenuImageUrl().isBlank()) {
+                    try {
+                        fileUtil.deleteFileFromS3(menu.getMenuImageUrl());
+                    } catch (Exception e) {
+                        log.warn("Failed to delete menu image file: " + menu.getMenuImageUrl(), e);
+                    }
+                }
+                menuRepository.delete(menu);
+            }
+
+            for (int i = 0; i < dto.getMenus().size(); i++) {
+                MenuRequestDto m = dto.getMenus().get(i);
+                MultipartFile menuImageFile = null;
+                if (menuImageFiles != null && i < menuImageFiles.size()) {
+                    menuImageFile = menuImageFiles.get(i);
+                }
+
+                Menu menu;
+                if (m.getId() != null && m.getId() != 0) {
+                    menu = menuRepository.findById(m.getId())
+                            .orElseThrow(() -> new CustomException(StoreErrorCode._MENU_NOT_FOUND));
+                } else {
+                    menu = new Menu();
+                    menu.setStore(store);
+                }
+
+                String finalMenuImageUrl = null;
+                String existingMenuImageUrl = m.getExistingMenuImageUrl();
+
+                if (menuImageFile != null && !menuImageFile.isEmpty()) {
+                    // 새 이미지가 있으면 기존 이미지 삭제 후 업로드
+                    if (menu.getMenuImageUrl() != null && !menu.getMenuImageUrl().isBlank()) {
+                        try {
+                            fileUtil.deleteFileFromS3(menu.getMenuImageUrl());
+                        } catch (Exception e) {
+                            log.warn("Failed to delete existing menu image: " + menu.getMenuImageUrl(), e);
+                        }
+                    }
+                    Map<String, String> uploadResult = fileUtil.fileupload("storeUpdate", menuImageFile);
+                    finalMenuImageUrl = uploadResult.get("fileUrl");
+                } else if (existingMenuImageUrl != null && !existingMenuImageUrl.isBlank()) {
+                    // 새 이미지 없으면 기존 URL 유지
+                    finalMenuImageUrl = existingMenuImageUrl;
+                } else {
+                    throw new CustomException(ErrorStatus._FILE_REQUIRED);
+                }
+
+                menu.setMenuName(m.getMenuName());
+                menu.setPrice(m.getPrice());
+                menu.setMenuDescription(m.getMenuDescription());
+                menu.setMenuImageUrl(finalMenuImageUrl);
+
+                Category category = new Category();
+                category.setId(m.getRamenCategoryId());
+                menu.setCategory(category);
+
+                RamenSoup soup = new RamenSoup();
+                soup.setId(m.getRamenSoupId());
+                menu.setRamenSoup(soup);
+
+                Menu savedMenu = menuRepository.save(menu);
+
+                ramenToppingRepository.deleteByMenu(savedMenu);
+                if (m.getDefaultToppingIds() != null) {
+                    for (Long toppingId : m.getDefaultToppingIds()) {
+                        Topping topping = toppingRepository.getReferenceById(toppingId);
+                        RamenTopping ramenTopping = new RamenTopping();
+                        ramenTopping.setMenu(savedMenu);
+                        ramenTopping.setTopping(topping);
+                        ramenToppingRepository.save(ramenTopping);
+                    }
+                }
+            }
+        }
+
+        // 기존 추가 토핑 삭제 후 재저장
+        storeExtraToppingRepository.deleteByStore(store);
+
+        if (dto.getExtraToppings() != null && !dto.getExtraToppings().isEmpty()) {
+            for (ExtraToppingRequestDto toppingDto : dto.getExtraToppings()) {
+                if (toppingDto == null || toppingDto.getToppingId() == null) continue;
+
+                Long toppingId = toppingDto.getToppingId();
+                Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
+
+                Topping topping = toppingRepository.findById(toppingId)
+                        .orElseThrow(() -> new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME));
+
+                StoreExtraTopping extraTopping = new StoreExtraTopping();
+                extraTopping.setStore(store);
+                extraTopping.setTopping(topping);
+                extraTopping.setPrice(price);
+
+                storeExtraToppingRepository.save(extraTopping);
+            }
+        }
+
+        storeRepository.save(store);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreRequestDto getStoreRequestDto(Long storeId, User user) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        if (!store.getUserId().equals(user.getId())) {
+            throw new CustomException(StoreErrorCode._FORBIDDEN);
+        }
+
+        List<StoreWeekSchedule> schedules = scheduleRepository.findByStoreId(storeId);
+        List<StoreScheduleRequestDto> weekSchedules = schedules.stream()
+                .map(StoreScheduleRequestDto::fromEntity)
+                .toList();
+
+        List<StoreExtraTopping> extraToppings = storeExtraToppingRepository.findStoreExtraToppingByStore(store);
+        List<ExtraToppingRequestDto> extraToppingDtos = extraToppings.stream()
+                .map(ExtraToppingRequestDto::fromEntity)
+                .toList();
+
+        // 메뉴 리스트 가져오기
+        List<Menu> menus = menuRepository.findByStore(store);
+
+        // 메뉴별 기본 토핑 ID 조회를 위한 메뉴 ID 리스트
+        List<Long> menuIds = menus.stream()
+                .map(Menu::getId)
+                .toList();
+
+        Map<Long, List<Long>> toppingMap = findToppingsMapByMenuIds(menuIds);
+
+        List<MenuRequestDto> menuDtos = menus.stream()
+                .map(menu -> MenuRequestDto.builder()
+                        .id(menu.getId())
+                        .menuName(menu.getMenuName())
+                        .price(menu.getPrice())
+                        .menuDescription(menu.getMenuDescription())
+                        .menuImageUrl(menu.getMenuImageUrl())
+                        .ramenCategoryId(menu.getCategory().getId())
+                        .ramenSoupId(menu.getRamenSoup().getId())
+                        .defaultToppingIds(toppingMap.getOrDefault(menu.getId(), List.of()))
+                        .build())
+                .toList();
+
+        String[] addressParts = store.getAddress().split(",", 2);
+        String mainAddress = addressParts[0];
+        String detailAddress = addressParts.length > 1 ? addressParts[1] : null;
+
+        return StoreRequestDto.builder()
+                .id(store.getId())
+                .userId(store.getUserId())
+                .storeName(store.getStoreName())
+                .address(mainAddress)
+                .storeDetailInput(detailAddress)
+                .phone(store.getPhone())
+                .bizNum(store.getBizNum())
+                .isLocalCard(store.getIsLocalCard())
+                .isChildAllowed(store.getIsChildAllowed())
+                .hasParking(store.getHasParking())
+                .ownerComment(store.getOwnerComment())
+                .storeMainImageUrl(store.getStoreMainImageUrl())
+                .storeLat(store.getStoreLat())
+                .storeLng(store.getStoreLng())
+                .approvalStatus(store.getApprovalStatus())
+                .operationStatus(store.getOperationStatus())
+                .storeLegalCode(store.getStoreLegalCode())
+                .menus(menuDtos)
+                .weekSchedule(weekSchedules)
+                .extraToppings(extraToppingDtos)
+                .build();
+    }
+
+    // 사용자 검증 + 삭제
+    @Transactional
+    public void deleteStore(Long storeId, User user) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        // 본인 확인
+        if (!store.getUserId().equals(user.getId())) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // 연관 엔티티 삭제
+        ramenToppingRepository.deleteByMenu_Store(store);
+        menuRepository.deleteByStore(store);
+        scheduleRepository.deleteByStore(store);
+        storeExtraToppingRepository.deleteByStore(store);
+
+        storeRepository.delete(store);
     }
 
     // 라멘 육수 목록 조회
@@ -261,12 +550,12 @@ public class StoreService {
     // ID로 활성화 된 매장 찾기
     public StoreDto getStore(Long storeId, Long requesterUserId) {
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new NoSuchElementException("해당 매장을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorStatus._NOT_FOUND_HANDLER));
 
         // 승인되지 않았고, 등록한 사용자가 아닐 경우만 막기
         if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus()) &&
                 (!store.getUserId().equals(requesterUserId))) {
-            throw new IllegalStateException("승인되지 않은 매장은 조회할 수 없습니다.");
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
 
         return StoreDto.toDto(store);
@@ -294,6 +583,83 @@ public class StoreService {
                 .soupNames(soups)
                 .toppingNames(toppings)
                 .build();
+    }
+
+    // 매장 삭제
+    public List<StoreDto> getStoresByUserId(Long userId) {
+        List<Store> stores = storeRepository.findByUserIdAndOperationStatusNot(userId, OperationStatus.CLOSED);
+        return stores.stream()
+                .map(StoreDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+
+    public void markStoreAsClosed(Long storeId, Long userId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        if (!store.getUserId().equals(userId)) {
+            throw new CustomException(StoreErrorCode._FORBIDDEN);
+        }
+
+        store.setOperationStatus(OperationStatus.CLOSED);
+
+        storeRepository.save(store);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreRequestDto findById(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 매장을 찾을 수 없습니다. id=" + storeId));
+
+        List<Menu> menus = menuRepository.findByStore(store);
+        List<MenuRequestDto> menuDtos = convertMenusToDtos(menus);
+
+        List<StoreExtraTopping> extraToppings = storeExtraToppingRepository.findStoreExtraToppingByStore(store);
+        List<ExtraToppingRequestDto> extraToppingDtos = extraToppings.stream()
+                .map(ExtraToppingRequestDto::fromEntity)
+                .toList();
+
+        List<StoreWeekSchedule> schedules = scheduleRepository.findByStoreId(storeId);
+        List<StoreScheduleRequestDto> weekSchedules = schedules.stream()
+                .map(StoreScheduleRequestDto::fromEntity)
+                .toList();
+
+        return StoreRequestDto.fromEntity(store, menuDtos, extraToppingDtos, weekSchedules);
+    }
+
+    private List<MenuRequestDto> convertMenusToDtos(List<Menu> menus) {
+        List<Long> menuIds = menus.stream().map(Menu::getId).toList();
+        Map<Long, List<Long>> toppingMap = findToppingsMapByMenuIds(menuIds);
+
+        return menus.stream()
+                .map(menu -> MenuRequestDto.builder()
+                        .id(menu.getId())
+                        .menuName(menu.getMenuName())
+                        .price(menu.getPrice())
+                        .menuDescription(menu.getMenuDescription())
+                        .menuImageUrl(menu.getMenuImageUrl())
+                        .ramenCategoryId(menu.getCategory().getId())
+                        .ramenSoupId(menu.getRamenSoup().getId())
+                        .defaultToppingIds(toppingMap.getOrDefault(menu.getId(), List.of()))
+                        .build())
+                .toList();
+    }
+
+    // 메뉴별 토핑 ID 조회
+    public Map<Long, List<Long>> findToppingsMapByMenuIds(List<Long> menuIds) {
+        List<Object[]> results = ramenToppingRepository.findMenuIdAndToppingIdByMenuIds(menuIds);
+
+        Map<Long, List<Long>> toppingMap = new HashMap<>();
+
+        for (Object[] row : results) {
+            Long menuId = (Long) row[0];
+            Long toppingId = (Long) row[1];
+
+            toppingMap.computeIfAbsent(menuId, k -> new ArrayList<>()).add(toppingId);
+        }
+
+        return toppingMap;
     }
 
     // 매장 리뷰 조회
@@ -352,5 +718,30 @@ public class StoreService {
 
     public Long findStoreIdByBizNum(Long bizNum) {
         return storeRepository.getStoreByBizNum(bizNum);
+    }
+
+    private String formatPhoneNumber(String rawPhone) {
+        if (rawPhone == null) return null;
+        String digits = rawPhone.replaceAll("[^\\d]", "");
+        if (digits.length() == 11) {
+            return digits.replaceFirst("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
+        } else if (digits.length() == 10) {
+            return digits.replaceFirst("(\\d{2,3})(\\d{3,4})(\\d{4})", "$1-$2-$3");
+        } else {
+            return rawPhone;
+        }
+    }
+
+    public Long getStoreLegalCodeById(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+
+        return store.getStoreLegalCode();
+    }
+
+
+    // 내가 등록한 매장
+    public List<Store> findStoresByUserId(Long userId) {
+        return storeRepository.findAllByUserId(userId);
     }
 }

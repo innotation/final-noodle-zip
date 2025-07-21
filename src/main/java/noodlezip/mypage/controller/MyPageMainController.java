@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.mypage.dto.response.MyPageResponse;
+import noodlezip.mypage.status.MyPageErrorStatus;
+import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.subscription.service.SubscribeService;
 import noodlezip.user.entity.User;
 import noodlezip.user.service.UserService;
@@ -17,6 +19,9 @@ import noodlezip.community.service.BoardService;
 import noodlezip.user.status.UserErrorStatus;
 import noodlezip.common.exception.CustomException;
 import org.modelmapper.ModelMapper;
+import noodlezip.store.dto.StoreDto;
+import noodlezip.store.service.StoreService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,19 +37,23 @@ import noodlezip.subscription.repository.UserSubscriptionRepository;
 import noodlezip.badge.constants.Region;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/mypage")
+@RequestMapping("/users")
 @Controller
 @Tag(name = "마이페이지", description = "미이페이지 연동 API")
 public class MyPageMainController extends MyBaseController {
     private final UserService userService;
     private final BoardService boardService;
-    private final ModelMapper modelMapper;
     private final noodlezip.ramen.service.RamenService ramenService;
     private final MyBadgeService myBadgeService;
     private final SubscribeService subscribeService;
+
+    private final StoreService storeService;
 
     @Operation(
             summary = "마이페이지 메인페이지 정보 조회",
@@ -55,7 +64,7 @@ public class MyPageMainController extends MyBaseController {
             @Parameter(name = "myUserDetails", hidden = true),
             @Parameter(name = "model", hidden = true)
     })
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/mypage")
     public String userMyPage(@AuthenticationPrincipal MyUserDetails myUserDetails,
                              @PathVariable Long userId,
                              Model model
@@ -63,7 +72,8 @@ public class MyPageMainController extends MyBaseController {
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
         // 유저 정보 조회
         User user = userService.findExistingUserByUserId(userId)
-            .orElseThrow(() -> new CustomException(UserErrorStatus._NOT_FOUND_USER));
+            .orElseThrow(() -> new CustomException(MyPageErrorStatus._NOT_FOUND_USER_MY_PAGE));
+
         MyPageResponse myPage = MyPageResponse.builder()
             .id(user.getId())
             .userName(user.getUserName())
@@ -75,7 +85,7 @@ public class MyPageMainController extends MyBaseController {
         @SuppressWarnings("unchecked")
         java.util.List<BoardRespDto> boards = (java.util.List<BoardRespDto>) boardService.findBoardByUser(userId, pageable).get("list");
         for (BoardRespDto board : boards) {
-            board.setPlainContent(org.jsoup.Jsoup.parse(board.getContent()).text());
+            board.setContent(org.jsoup.Jsoup.parse(board.getContent()).text());
         }
         // 내가 쓴 리뷰 리스트 조회
         java.util.List<noodlezip.store.dto.StoreReviewDto> myReviews = ramenService.findReviewsByUserId(userId, pageable).getContent();
@@ -84,16 +94,7 @@ public class MyPageMainController extends MyBaseController {
         int totalReviewCount = myReviews.size();
 
         // 방문 지역별 리뷰 수 집계
-        Map<String, Integer> visitedRegionCountMap = new HashMap<>();
-        for (noodlezip.store.dto.StoreReviewDto review : myReviews) {
-            Long legalCode = review.getStoreLegalCode();
-            if (legalCode != null) {
-                int regionCode = Integer.parseInt(legalCode.toString().substring(0, 2));
-                Region region = Region.getRegionBySidoCode(regionCode);
-                String regionName = (region != null) ? region.getName() : "기타";
-                visitedRegionCountMap.put(regionName, visitedRegionCountMap.getOrDefault(regionName, 0) + 1);
-            }
-        }
+        Map<String, Integer> visitedRegionCountMap = getStringIntegerMap(myReviews);
         // 방문횟수 내림차순 정렬
         Map<String, Integer> sortedRegionCountMap = visitedRegionCountMap.entrySet().stream()
             .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
@@ -146,7 +147,31 @@ public class MyPageMainController extends MyBaseController {
         // 구독 여부
         boolean isSubscribed = subscribeService.isSubscribed(userAccessInfo.getRequestUserId(),userAccessInfo.getTargetUserId());
         model.addAttribute("isSubscribed", isSubscribed);
+
+        List<StoreDto> myStores = null;
+        // 내가 등록한 매장 목록 조회
+        if (!(myUserDetails == null)) {
+            Long loginUserId = myUserDetails.getUser().getId();
+            myStores = storeService.getStoresByUserId(loginUserId);
+        }
+        model.addAttribute("myStores", myStores);
+
         return "mypage/main";
+    }
+
+    // 방문 지역별 리뷰 수 집계
+    private static Map<String, Integer> getStringIntegerMap(List<StoreReviewDto> myReviews) {
+        Map<String, Integer> visitedRegionCountMap = new HashMap<>();
+        for (StoreReviewDto review : myReviews) {
+            Long legalCode = review.getStoreLegalCode();
+            if (legalCode != null) {
+                int regionCode = Integer.parseInt(legalCode.toString().substring(0, 2));
+                Region region = Region.getRegionBySidoCode(regionCode);
+                String regionName = (region != null) ? region.getName() : "기타";
+                visitedRegionCountMap.put(regionName, visitedRegionCountMap.getOrDefault(regionName, 0) + 1);
+            }
+        }
+        return visitedRegionCountMap;
     }
 
     /**
@@ -158,5 +183,19 @@ public class MyPageMainController extends MyBaseController {
      * 내가 좋아요한 게시글 조회 :    /users/{userId}/liked-boards
      * 내가 단 댓글 조회 :          /users/{userId}/comments
      */
+    @DeleteMapping("/store/delete/{storeId}")
+    @ResponseBody
+    public ResponseEntity<?> deleteStore(@PathVariable Long storeId,
+                                         @AuthenticationPrincipal MyUserDetails userDetails) {
+        Long loginUserId = userDetails.getUser().getId();
+
+        try {
+            storeService.markStoreAsClosed(storeId, loginUserId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("폐업 처리 실패", e);
+            return ResponseEntity.status(500).body("폐업 처리 중 오류 발생");
+        }
+    }
 
 }

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (payload.length === 0) {
-      alert("수정할 카테고리를 선택하세요.");
+      showConfirmModal('noCheckUpdateCategory');
       return;
     }
 
@@ -34,21 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify(payload)
     })
       .then(res => {
-        if (!res.ok) {
-          return res.json().then(errorData => {
-            throw new Error(errorData.message);
-          });
-        }
-        return res.json();
-      })
-      .then(json => {
-        if (!json.success) throw new Error(json.message);
-        alert(json.message);
-        location.reload();
+        showConfirmModal('successUpdateCategory', () => {
+          location.reload();
+        });
       })
       .catch(err => {
-        alert(err.message || "저장 가게 카테고리 수정에 실패하였습니다.");
-        location.reload();
+        showErrorModal('failSavedStoreShow', err.message);
       });
   });
 
@@ -60,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .map(input => Number(input.value));
 
     if (selected.length === 0) {
-      alert("삭제할 카테고리를 선택하세요.");
+      showConfirmModal('noCheckDeleteCategory');
       return;
     }
 
@@ -70,21 +61,12 @@ document.addEventListener("DOMContentLoaded", function () {
       body: JSON.stringify(selected)
     })
       .then(res => {
-        if (!res.ok) {
-          return res.json().then(errorData => {
-            throw new Error(errorData.message);
-          });
-        }
-        return res.json();
-      })
-      .then(json => {
-        if (!json.success) throw new Error(json.message);
-        alert(json.message);
-        location.reload();
+        showConfirmModal('successDeleteCategory', () => {
+          location.reload();
+        });
       })
       .catch(err => {
-        alert(err.message);
-        location.reload();
+        showErrorModal('failSavedStoreShow', err.message);
       });
   });
 

@@ -25,7 +25,7 @@ public enum SavedStoreErrorStatus implements BaseErrorCode {
     _FAIL_SAVED_STORE_SAVE_PAGE_LOAD(HttpStatus.BAD_REQUEST,
             "MYPAGE-SAVED-STORE-006", "저장 가게 등록 페이지 로드에 실패했습니다."),
     _FAIL_SAVED_STORE_PAGE_LOAD(HttpStatus.BAD_REQUEST,
-            "MYPAGE-SAVED-STORE-007", "저장 가게 페이지 로드에 실패했습니다.");
+            "MYPAGE-SAVED-STORE-007", "존재하지 않는 저장 가게 페이지입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

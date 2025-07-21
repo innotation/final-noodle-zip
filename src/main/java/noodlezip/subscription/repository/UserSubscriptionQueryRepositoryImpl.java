@@ -38,6 +38,7 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
                         follower.loginId,
                         follower.userName,
                         follower.profileImageUrl,
+                        follower.profileBannerImageUrl,
                         requestUserSubscription.id.isNotNull()
                 ))
                 .from(subscription)
@@ -84,6 +85,7 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
                         followee.loginId,
                         followee.userName,
                         followee.profileImageUrl,
+                        followee.profileBannerImageUrl,
                         requestUserSubscription.id.isNotNull()
                 ))
                 .from(subscription)
@@ -126,6 +128,7 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
                         follower.loginId,
                         follower.userName,
                         follower.profileImageUrl,
+                        follower.profileBannerImageUrl,
                         Expressions.constant(false)
                 ))
                 .from(subscription)
@@ -165,6 +168,7 @@ public class UserSubscriptionQueryRepositoryImpl implements UserSubscriptionQuer
                         followee.loginId,
                         followee.userName,
                         followee.profileImageUrl,
+                        followee.profileBannerImageUrl,
                         Expressions.constant(false)
                 ))
                 .from(subscription)
