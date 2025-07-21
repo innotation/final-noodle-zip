@@ -1,4 +1,3 @@
-/*
 package noodlezip.store.service;
 
 import jakarta.persistence.EntityManager;
@@ -49,7 +48,6 @@ class StoreServiceTest {
     @Mock private MenuRepository menuRepository;
     @Mock private RamenToppingRepository ramenToppingRepository;
     @Mock private RamenService ramenService;
-    @Mock private ModelMapper modelMapper;
     @Mock private PageUtil pageUtil;
     @Mock private ToppingRepository toppingRepository;
     @Mock private FileUtil fileUtil;
@@ -178,4 +176,3 @@ class StoreServiceTest {
         assertThrows(CustomException.class, () -> storeService.getStoreToppings(storeId));
     }
 }
- */
