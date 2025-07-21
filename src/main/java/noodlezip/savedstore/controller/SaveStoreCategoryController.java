@@ -29,30 +29,20 @@ public class SaveStoreCategoryController {
 
 
     @PostMapping(value = "/my/saved-store/categories/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SavedStoreApiResponse updateCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
+    public void updateCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
                                                     @RequestBody @Valid List<@Valid SavedStoreCategoryUpdateRequest> requestList) {
         User user = myUserDetails.getUser();
-        saveStoreCategoryService.updateSavedCategoryList(user.getId(), requestList);
 
-        return SavedStoreApiResponse.builder()
-                .success(true)
-                .message(SavedStoreSuccessStatus._OK_UPDATE_SAVED_STORE_CATEGORY.getMessage())
-                .build();
+        saveStoreCategoryService.updateSavedCategoryList(user.getId(), requestList);
     }
 
 
     @PostMapping(value = "/my/saved-store/categories/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public SavedStoreApiResponse deleteCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
+    public void deleteCategoryList(@AuthenticationPrincipal MyUserDetails myUserDetails,
                                                     @RequestBody List<Long> categoryIdList) {
         User user = myUserDetails.getUser();
-        saveStoreCategoryService.deleteSavedCategoryList(user.getId(), categoryIdList);
 
-        return SavedStoreApiResponse.builder()
-                .success(true)
-                .message(SavedStoreSuccessStatus._OK_DELETED_SAVED_STORE_CATEGORY.getMessage())
-                .build();
+        saveStoreCategoryService.deleteSavedCategoryList(user.getId(), categoryIdList);
     }
 
 }

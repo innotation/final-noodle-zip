@@ -1,5 +1,6 @@
 package noodlezip.savedstore.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -16,6 +17,7 @@ public class AddCategoryRequest {
     @Size(max = 30, message = SavedStoreErrorStatus._DTO_INVALID_SAVED_STORE_CATEGORY_NAME)
     private String categoryName;
 
+    @JsonProperty("isPublic")
     @NotNull(message = SavedStoreErrorStatus._DTO_FAIL_SAVED_STORE)
     private boolean isPublic;
 
