@@ -11,7 +11,10 @@ var toolbarOptions = [
 ];
 var quill = new Quill('#editor', {
     modules: {
-        toolbar: toolbarOptions
+        toolbar: toolbarOptions,
+        imageResize: {
+            displaySize: true
+        }
     },
     placeholder: '내용을 작성해주세요.',
     theme: 'snow'  // or 'bubble'
@@ -94,6 +97,7 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
     formData.append('imageUrl', thumbnailUrl || '');
 
     try {
+        console.log(this.action, this.method);
         const response = await fetch(this.action, { // 폼의 action 속성 URL 사용
             method: this.method, // 폼의 method 속성 사용 (POST)
             body: formData // FormData 객체를 직접 body에 할당

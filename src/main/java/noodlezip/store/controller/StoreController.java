@@ -9,6 +9,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.code.BaseErrorCode;
+import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
+import noodlezip.common.util.PageUtil;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
@@ -16,6 +20,7 @@ import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
 import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
+import noodlezip.store.entity.Store;
 import noodlezip.store.service.StoreService;
 import noodlezip.store.status.StoreSuccessCode;
 import org.springframework.data.domain.Page;
@@ -27,9 +32,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,9 +45,35 @@ import java.util.Map;
 @Tag(name = "매장 관리", description = "매장 상세, 리뷰, 메뉴 등 매장 관련 API")
 public class StoreController {
     private final StoreService storeService;
-
+    private final PageUtil pageUtil;
     private final RamenService ramenService;
 
+    @PostMapping("/regist")
+    public ResponseEntity<?> registerStore(
+            @RequestPart("dto") StoreRequestDto dto,
+            @RequestPart(value = "storeMainImage", required = false) MultipartFile storeMainImage,
+            @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles,
+            @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        if (userDetails == null) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // DTO에 이미지 파일 설정
+        dto.setStoreMainImage(storeMainImage);
+        if (menuImageFiles != null) {
+            for (int i = 0; i < dto.getMenus().size(); i++) {
+                if (i < menuImageFiles.size()) {
+                    dto.getMenus().get(i).setMenuImageFile(menuImageFiles.get(i));
+                }
+            }
+        }
+
+        Long storeId = storeService.registerStore(dto, userDetails.getUser());
+        return ResponseEntity.ok(Map.of("storeId", storeId));
+    }
+
+    // 매장 상세페이지 진입
     @GetMapping("/detail/{no}")
     @Operation(summary = "매장 상세페이지 진입", description = "매장 상세 정보를 조회하여 상세페이지를 반환합니다.")
     @Parameters({
@@ -73,10 +106,8 @@ public class StoreController {
             content = @Content(mediaType = "text/html"))
     })
     public String showDetailMenuList(@PathVariable Long no, Model model) {
-
         MenuDetailResponseDto menuDetail = storeService.getMenuDetail(no);
         model.addAttribute("menuDetail", menuDetail);
-
         return "store/fragments/tab-menu :: menu-tab";
     }
 
@@ -114,7 +145,7 @@ public class StoreController {
             }
             model.addAttribute("reviewList", reviewPage.getContent());
             model.addAttribute("hasMore", reviewPage.hasNext());
-            return "store/fragments/tab-review :: review-tab";  // 전체 탭 fragment
+            return "store/fragments/tab-review :: review-tab";
         } else {
             // 2페이지 이상부터는 리뷰 카드 목록만 더보기 fragment 로 반환
             model.addAttribute("reviewList", reviewPage.getContent());
@@ -135,13 +166,12 @@ public class StoreController {
             content = @Content(mediaType = "application/json"))
     })
     @ResponseBody
-    public ReviewSummaryDto getReviewSummaryByMenuName(
-            @PathVariable Long storeId,
-            @RequestParam String menuName
-    ) {
+    public ReviewSummaryDto getReviewSummaryByMenuName(@PathVariable Long storeId,
+                                                       @RequestParam String menuName) {
         return ramenService.getSummaryByStoreIdAndMenuName(storeId, menuName);
     }
 
+    // 전체 메뉴 리뷰 평균 조회
     @GetMapping("/detail/{storeId}/reviews/summary/all")
     @Operation(summary = "전체 메뉴 리뷰 평균 조회", description = "매장 ID로 전체 메뉴의 리뷰 평균을 조회합니다.")
     @Parameters({
@@ -152,12 +182,11 @@ public class StoreController {
             content = @Content(mediaType = "application/json"))
     })
     @ResponseBody
-    public ReviewSummaryDto getReviewSummaryAll(
-            @PathVariable Long storeId
-    ) {
+    public ReviewSummaryDto getReviewSummaryAll(@PathVariable Long storeId) {
         return ramenService.getSummaryByStoreId(storeId);
     }
 
+    // 메뉴 토핑 조회
     @GetMapping("/detail/{storeId}/toppings")
     @Operation(summary = "매장 토핑 조회", description = "매장 ID로 토핑 목록을 조회합니다.")
     @Parameters({
@@ -168,10 +197,11 @@ public class StoreController {
             content = @Content(mediaType = "application/json"))
     })
     @ResponseBody
-    public List<ToppingResponseDto> getToppingByStoreId(@PathVariable Long storeId){
+    public List<ToppingResponseDto> getToppingByStoreId(@PathVariable Long storeId) {
         return storeService.getStoreToppings(storeId);
     }
 
+    // 매장 삭제
     @DeleteMapping("/{storeId}")
     @Operation(summary = "매장 삭제", description = "매장 ID로 매장을 삭제합니다. (로그인 필요)")
     @Parameters({
@@ -183,10 +213,28 @@ public class StoreController {
     })
     public ResponseEntity<?> deleteStore(@PathVariable Long storeId,
                                          @AuthenticationPrincipal MyUserDetails myUserDetails) {
+        if (myUserDetails == null) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
         storeService.deleteStore(storeId, myUserDetails.getUser());
         return ResponseEntity.ok(Map.of("message", "삭제 완료"));
     }
 
+    // 내가 등록한 매장 리스트
+    @GetMapping("/my-list")
+    public String myStoreList(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) {
+        if (myUserDetails == null) {
+            return "redirect:/"; // 메인 페이지로 리다이렉트
+        }
+
+        Long userId = myUserDetails.getUser().getId();
+        List<Store> storeList = storeService.findStoresByUserId(userId);
+
+        model.addAttribute("storeList", storeList);
+        return "store/my-stores";
+    }
+
+    // 매장 수정
     @PostMapping("/update/{storeId}")
     @Operation(summary = "매장 수정", description = "매장 정보를 수정합니다. (로그인 필요)")
     @Parameters({
@@ -204,12 +252,10 @@ public class StoreController {
             @RequestPart(value = "menuImageFiles", required = false) List<MultipartFile> menuImageFiles,
             @AuthenticationPrincipal MyUserDetails userDetails) {
         log.debug("처음 menuImage: {}", menuImageFiles);
-        // 대표 이미지가 새로 업로드 되지 않은 경우 기존 URL 유지
+
         if (dto.getStoreMainImage() == null && existingStoreMainImageUrl != null) {
             dto.setStoreMainImageUrl(existingStoreMainImageUrl);
-        }/* else {
-            dto.setStoreMainImage(storeMainImage);
-        }*/
+        }
 
         if (menuImageFiles != null) {
             for (int i = 0; i < dto.getMenus().size(); i++) {
@@ -224,6 +270,7 @@ public class StoreController {
         return ResponseEntity.ok(noodlezip.common.dto.ApiResponse.onSuccess(StoreSuccessCode._SUCCESS_STORE_UPDATE));
     }
 
+    // 매장 수정 페이지
     @GetMapping("/update/{storeId}")
     @Operation(summary = "매장 수정 페이지", description = "매장 수정 폼 페이지를 반환합니다. (로그인 필요)")
     @Parameters({
@@ -236,19 +283,24 @@ public class StoreController {
     public String showUpdatePage(@PathVariable Long storeId,
                                  @AuthenticationPrincipal MyUserDetails userDetails,
                                  Model model) {
-        // 매장 엔티티 → DTO로 변환
+        if (userDetails == null) {
+            // 인증 안 됐을 때 권한 없음을 의미하는 예외 던짐
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
+
         StoreRequestDto storeRequestDto = storeService.getStoreRequestDto(storeId, userDetails.getUser());
         List<CategoryResponseDto> categories = ramenService.getAllCategories();
         List<RamenSoupResponseDto> soups = ramenService.getAllSoups();
 
         model.addAttribute("storeRequestDto", storeRequestDto);
-        model.addAttribute("categories",categories);
+        model.addAttribute("categories", categories);
         model.addAttribute("soups", soups);
         model.addAttribute("toppings", ramenService.getAllToppings());
 
         return "store/update";
     }
 
+    // 매장 단일 조회 (JSON 응답)
     @GetMapping("/{storeId}")
     @Operation(summary = "매장 상세 조회 (API)", description = "매장 ID로 매장 정보를 JSON으로 반환합니다.")
     @Parameters({
@@ -263,5 +315,24 @@ public class StoreController {
                                                     @AuthenticationPrincipal MyUserDetails userDetails) {
         StoreRequestDto storeRequestDto = storeService.getStoreRequestDto(storeId, userDetails.getUser());
         return ResponseEntity.ok(storeRequestDto);
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public String handleCustomException(CustomException ex, RedirectAttributes redirectAttributes) {
+        BaseErrorCode code = ex.getErrorCode();
+
+        if (code == StoreErrorCode._FORBIDDEN || code == ErrorStatus._UNAUTHORIZED) {
+            redirectAttributes.addFlashAttribute("errorMessage", "권한이 없습니다.");
+            return "redirect:/";
+        }
+        if (code == StoreErrorCode._STORE_NOT_FOUND) {
+            return "error/404";
+        }
+        return "error/500";
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public String handleNoSuchElement(NoSuchElementException ex) {
+        return "error/404";
     }
 }

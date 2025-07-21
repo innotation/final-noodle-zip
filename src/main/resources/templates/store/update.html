@@ -412,7 +412,11 @@
 
         // 메뉴 삭제
         if (target.classList.contains('remove-menu')) {
-          // 삭제 로직 생략
+          const menuItem = target.closest('.menu-item');
+          if (menuItem) {
+            menuItem.remove();
+            updateMenuIndices();
+          }
         }
 
         // 메뉴 이미지 클릭 시 input[type=file] 열기

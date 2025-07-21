@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import noodlezip.store.status.StoreErrorCode;
 
+import java.lang.reflect.Member;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -61,9 +62,16 @@ public class StoreService {
     private final RamenReviewRepository ramenReviewRepository;
     private final ReviewToppingRepository reviewToppingRepository;
     private final StoreExtraToppingRepository storeExtraToppingRepository;
+    private final LocationService locationService;
 
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, User user) {
+
+        // 주소 정보를 기반으로 위도, 경도, 법정동 코드 가져오기
+        LocationInfoDto locationInfo = locationService.getLocationInfo(dto.getAddress());
+        dto.setStoreLat(locationInfo.getStoreLat());
+        dto.setStoreLng(locationInfo.getStoreLng());
+        dto.setStoreLegalCode(locationInfo.getStoreLegalCode());
 
         log.debug("DTO: {}", dto);
         log.debug("WeekSchedule: {}", dto.getWeekSchedule());
@@ -206,36 +214,31 @@ public class StoreService {
             }
         }
 
-        // ⑤ 매장 단위 추가 토핑 저장 (dto.getExtraToppings)
-        if (dto.getExtraToppings() != null && !dto.getExtraToppings().isEmpty()) {
-            for (ExtraToppingRequestDto toppingDto : dto.getExtraToppings()) {
-                if (toppingDto == null || toppingDto.getName() == null || toppingDto.getName().isBlank()) continue;
+        // ⑤ 매장 단위 추가 토핑 저장
+        List<ExtraToppingRequestDto> extraToppingDtos = dto.getExtraToppings();
 
-                String toppingName = toppingDto.getName();
-                Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
+        if (extraToppingDtos == null || extraToppingDtos.isEmpty()) {
+            return savedStore.getId();
+        }
 
-                if (defaultToppingNames.contains(toppingName)) {
-                    throw new CustomException(StoreErrorCode._CANNOT_USE_DEFAULT_TOPPING);
-                }
-
-                Topping topping = toppingRepository.findByToppingName(toppingName)
-                        .orElseGet(() -> toppingRepository.save(
-                                Topping.builder()
-                                        .toppingName(toppingName)
-                                        .isActive(false)
-                                        .build()
-                        ));
-
-                if (topping == null) {
-                    throw new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME);
-                }
-
-                StoreExtraTopping storeExtraTopping = new StoreExtraTopping();
-                storeExtraTopping.setStore(savedStore);
-                storeExtraTopping.setTopping(topping);
-                storeExtraTopping.setPrice(price);
-                storeExtraToppingRepository.save(storeExtraTopping);
+        for (ExtraToppingRequestDto toppingDto : extraToppingDtos) {
+            if (toppingDto == null || toppingDto.getToppingId() == null) {
+                continue;
             }
+
+            Long toppingId = toppingDto.getToppingId();
+            Integer price = toppingDto.getPrice() != null ? toppingDto.getPrice() : 0;
+
+            // DB에서 topping 엔티티 조회
+            Topping topping = toppingRepository.findById(toppingId)
+                    .orElseThrow(() -> new CustomException(StoreErrorCode._UNKNOWN_TOPPING_NAME));
+
+            StoreExtraTopping extraTopping = new StoreExtraTopping();
+            extraTopping.setStore(savedStore);
+            extraTopping.setTopping(topping);
+            extraTopping.setPrice(price);
+
+            storeExtraToppingRepository.save(extraTopping);
         }
 
         return savedStore.getId();
@@ -723,4 +726,9 @@ public class StoreService {
         return store.getStoreLegalCode();
     }
 
+
+    // 내가 등록한 매장
+    public List<Store> findStoresByUserId(Long userId) {
+        return storeRepository.findAllByUserId(userId);
+    }
 }
