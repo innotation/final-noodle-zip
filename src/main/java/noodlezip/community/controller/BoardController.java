@@ -101,13 +101,11 @@ public class BoardController {
     }
 
     @PostMapping("/registReviewJson")
-    public ResponseEntity<Map<String, Object>> registReview(@RequestBody ReviewReqDto dto,
+    public String registReview(@RequestBody ReviewReqDto dto,
                                                             @AuthenticationPrincipal MyUserDetails userDetails) {
-        List<Long> reviewIds = boardService.saveReviewJson(dto, userDetails.getUser());
-        Map<String, Object> response = new HashMap<>();
-        response.put("reviewIds", reviewIds);
-        return ResponseEntity.ok(response);
-    }
+        if (userDetails == null || userDetails.getUser() == null) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        }
 
         try {
             boardService.saveReviewJson(dto, userDetails.getUser());
@@ -122,7 +120,6 @@ public class BoardController {
     }
 
     @PostMapping("/{category}/new")
-    @ResponseBody
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
     @Parameters({
             @Parameter(name = "category", description = "등록할 게시판 정보", required = true),
@@ -225,7 +222,6 @@ public class BoardController {
     }
 
     @GetMapping("/popular/{category}")
-    @ResponseBody
     public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> getPopularBoards(@PathVariable String category) {
         List<BoardRespDto> popularBoards = boardService.getPopularBoards(category);
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_GET_BOARD, popularBoards);
@@ -292,7 +288,6 @@ public class BoardController {
             @Parameter(name = "boardId", description = "좋아요를 누를 게시글의 ID", required = true, example = "1"),
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
     })
-    @ResponseBody
     public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> toggleLike(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
 
         if (user == null || user.getUser() == null) {
@@ -309,7 +304,6 @@ public class BoardController {
     }
 
     @GetMapping("/recent")
-    @ResponseBody
     @Operation(summary = "최근 본 게시글 목록 조회", description = "사용자 쿠키에 저장된 최근 본 게시글 ID들을 기반으로 게시글 목록을 조회하여 반환합니다.")
     public ResponseEntity<?> getRecentViewedBoards(HttpServletRequest request) {
         List<Long> recentBoardIds = CookieUtil.getRecentViewedItemIds(request, RECENT_VIEWED_BOARDS);
@@ -317,14 +311,12 @@ public class BoardController {
     }
 
     @PostMapping(value = "{category}/imageUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseBody
     @Operation(summary = "이미지 업로드", description = "게시글 작성 시 사용되는 이미지 파일을 서버에 업로드하고, 업로드된 이미지들의 URL 목록을 반환합니다. 다중 파일 업로드를 지원합니다.")
     public ResponseEntity<?> uploadImage(@PathVariable(name = "category") String category, @RequestParam("uploadFiles") List<MultipartFile> uploadFiles) {
         return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_PHOTO_ADDED, boardService.uploadImages(uploadFiles));
     }
 
     @GetMapping("/sidebar/categories")
-    @ResponseBody
     @Operation(summary = "카테고리별 게시글 수 조회", description = "각 카테고리별 게시글 개수를 조회합니다.")
     public ResponseEntity<noodlezip.common.dto.ApiResponse<List<CategoryCountDto>>> getCategoryCounts() {
         try {
@@ -337,7 +329,6 @@ public class BoardController {
     }
 
     @GetMapping("/sidebar/popular-tags")
-    @ResponseBody
     @Operation(summary = "인기 태그 조회", description = "인기 태그 목록을 조회합니다.")
     public ResponseEntity<noodlezip.common.dto.ApiResponse<List<PopularTagDto>>> getPopularTags() {
         try {
@@ -350,7 +341,6 @@ public class BoardController {
     }
 
     @GetMapping("/sidebar/widgets")
-    @ResponseBody
     @Operation(summary = "사이드바 위젯 데이터 조회", description = "카테고리별 게시글 개수와 인기 태그 데이터를 조회합니다.")
     public ResponseEntity<noodlezip.common.dto.ApiResponse<Map<String, Object>>> getSidebarWidgets() {
         try {
