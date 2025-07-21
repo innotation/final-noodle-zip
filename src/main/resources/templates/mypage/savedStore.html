@@ -96,58 +96,60 @@
                     </div>
                 </div>
             </aside>
-            <div class="col-lg-9">
-                <div class="row" id="store-list">
-                    <div class="col-12 text-center"
-                         th:if="${#lists.isEmpty(userAccessInfo.isOwner
-                                      ? mySavedStorePageInfo.savedStoreList.savedStoreList
-                                      : savedStorePageInfo.savedStoreList.savedStoreList)}">
+            <div class="col-lg-9"
+                 th:with="storeList=${userAccessInfo.isOwner ? mySavedStorePageInfo.savedStoreList.savedStoreList : savedStorePageInfo.savedStoreList.savedStoreList},
+              pageInfo=${userAccessInfo.isOwner ? mySavedStorePageInfo.savedStoreList : savedStorePageInfo.savedStoreList}">
+
+                <div class="row" th:if="${#lists.isEmpty(storeList)}">
+                    <div class="col-12 text-center">
                         <p>저장한 가게가 없습니다.</p>
                     </div>
-                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6"
-                         th:each="store : ${(userAccessInfo.isOwner
-                                                       ? mySavedStorePageInfo.savedStoreList.savedStoreList
-                                                       : savedStorePageInfo.savedStoreList.savedStoreList)}">
-                        <div class="strip">
-                            <figure>
-                                <img th:src="${store.storeMainImageUrl}" class="img-fluid" alt="">
-                                <a th:href="@{'/store/detail/' + ${store.storeId}}" class="strip_info" target="_blank" rel="noopener noreferrer">
-                                    <small th:text="${store.saveStoreCategoryName}"></small>
-                                    <div class="item_title">
-                                        <h3 th:text="${store.storeName}">가게명</h3>
-                                        <small th:text="${store.address}">주소</small>
-                                    </div>
-                                </a>
-                            </figure>
-                            <ul>
-                                <li>
-                                    <span class="memo-tooltip" th:attr="title=${store.memo}"
-                                          th:text="${store.memo}">
-                                    </span>
-                                </li>
-                                <li>
-                                    <div class="score"></div>
-                                </li>
-                            </ul>
+                </div>
+                <div th:if="${not #lists.isEmpty(storeList)}">
+                    <div class="row" id="store-list">
+                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6"
+                             th:each="store : ${storeList}">
+                            <div class="strip">
+                                <figure>
+                                    <img th:src="${store.storeMainImageUrl}" class="img-fluid" alt="">
+                                    <a th:href="@{'/store/detail/' + ${store.storeId}}" class="strip_info" target="_blank" rel="noopener noreferrer">
+                                        <small th:text="${store.saveStoreCategoryName}"></small>
+                                        <div class="item_title">
+                                            <h3 th:text="${store.storeName}">가게명</h3>
+                                            <small th:text="${store.address}">주소</small>
+                                        </div>
+                                    </a>
+                                </figure>
+                                <ul>
+                                    <li>
+                            <span class="memo-tooltip" th:attr="title=${store.memo}"
+                                  th:text="${store.memo}">
+                            </span>
+                                    </li>
+                                    <li>
+                                        <div class="score"></div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div th:with="pageInfo=${userAccessInfo.isOwner } ? ${mySavedStorePageInfo.savedStoreList} : ${savedStorePageInfo.savedStoreList}">
-                    <div class="pagination_fg">
-                        <a href="#"
-                           th:attr="data-page=${pageInfo.page > 1 ? pageInfo.page - 1 : 1}"
-                           th:classappend="${pageInfo.page == 1} ? 'disabled'">&laquo;
-                        </a>
-                        <a href="#"
-                           th:each="i : ${#numbers.sequence(pageInfo.beginPage, pageInfo.endPage)}"
-                           th:attr="data-page=${i}"
-                           th:classappend="${pageInfo.page == i} ? 'active'">
-                            <span th:text="${i}">1</span>
-                        </a>
-                        <a href="#"
-                           th:attr="data-page=${pageInfo.page < pageInfo.totalPage ? pageInfo.page + 1 : pageInfo.totalPage}"
-                           th:classappend="${pageInfo.page == pageInfo.totalPage} ? 'disabled'">&raquo;
-                        </a>
+                    <div th:if="${pageInfo != null and pageInfo.totalPage > 1}">
+                        <div class="pagination_fg">
+                            <a href="#"
+                               th:attr="data-page=${pageInfo.page > 1 ? pageInfo.page - 1 : 1}"
+                               th:classappend="${pageInfo.page == 1} ? 'disabled'">&laquo;
+                            </a>
+                            <a href="#"
+                               th:each="i : ${#numbers.sequence(pageInfo.beginPage, pageInfo.endPage)}"
+                               th:attr="data-page=${i}"
+                               th:classappend="${pageInfo.page == i} ? 'active'">
+                                <span th:text="${i}">1</span>
+                            </a>
+                            <a href="#"
+                               th:attr="data-page=${pageInfo.page < pageInfo.totalPage ? pageInfo.page + 1 : pageInfo.totalPage}"
+                               th:classappend="${pageInfo.page == pageInfo.totalPage} ? 'disabled'">&raquo;
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
