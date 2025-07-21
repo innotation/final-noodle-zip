@@ -91,7 +91,7 @@ public class StoreService {
         // ① 대표 이미지 업로드 및 유효성 검사
         if (storeMainImage != null && !storeMainImage.isEmpty()) {
             try {
-                Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", storeMainImage);
+                Map<String, String> uploadResult = fileUtil.fileupload("storeRegist", storeMainImage);
                 storeMainImageUrl = uploadResult.get("fileUrl");
             } catch (CustomException ce) {
                 throw ce;
@@ -166,7 +166,7 @@ public class StoreService {
                 // 메뉴 이미지 업로드
                 if (menuImageFile != null && !menuImageFile.isEmpty()) {
                     try {
-                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist/0708", menuImageFile);
+                        Map<String, String> uploadResult = fileUtil.fileupload("storeRegist", menuImageFile);
                         menuImageUrl = uploadResult.get("fileUrl"); // 전체 URL 저장
                     } catch (CustomException ce) {
                         throw ce;

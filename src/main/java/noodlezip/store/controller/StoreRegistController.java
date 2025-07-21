@@ -3,6 +3,8 @@ package noodlezip.store.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
+import noodlezip.common.exception.CustomException;
+import noodlezip.common.status.ErrorStatus;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
@@ -41,7 +43,7 @@ public class StoreRegistController {
     @GetMapping("/regist")
     public String showRegistPage(@AuthenticationPrincipal MyUserDetails myUserDetails, Model model) {
         if (myUserDetails == null) {
-            return "redirect:/";
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
 
         StoreRequestDto dto = new StoreRequestDto();

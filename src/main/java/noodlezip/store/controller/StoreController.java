@@ -9,12 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.common.code.BaseErrorCode;
+import noodlezip.common.auth.MyUserDetails;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
-import noodlezip.common.util.PageUtil;
-import noodlezip.common.auth.MyUserDetails;
-import noodlezip.common.util.PageUtil;
 import noodlezip.ramen.dto.CategoryResponseDto;
 import noodlezip.ramen.dto.RamenSoupResponseDto;
 import noodlezip.ramen.dto.ToppingResponseDto;
@@ -22,7 +19,6 @@ import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
 import noodlezip.store.entity.Store;
 import noodlezip.store.service.StoreService;
-import noodlezip.store.status.StoreErrorCode;
 import noodlezip.store.status.StoreSuccessCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,11 +29,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -317,22 +311,4 @@ public class StoreController {
         return ResponseEntity.ok(storeRequestDto);
     }
 
-    @ExceptionHandler(CustomException.class)
-    public String handleCustomException(CustomException ex, RedirectAttributes redirectAttributes) {
-        BaseErrorCode code = ex.getErrorCode();
-
-        if (code == StoreErrorCode._FORBIDDEN || code == ErrorStatus._UNAUTHORIZED) {
-            redirectAttributes.addFlashAttribute("errorMessage", "권한이 없습니다.");
-            return "redirect:/";
-        }
-        if (code == StoreErrorCode._STORE_NOT_FOUND) {
-            return "error/404";
-        }
-        return "error/500";
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    public String handleNoSuchElement(NoSuchElementException ex) {
-        return "error/404";
-    }
 }
