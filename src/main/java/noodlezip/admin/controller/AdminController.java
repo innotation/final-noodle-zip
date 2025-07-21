@@ -55,7 +55,7 @@ public class AdminController {
     @GetMapping("/report/post-category/{id}")
     @ResponseBody
     public ResponseEntity<String> getPostCategory(@PathVariable Long id) {
-        String category = reportService.findPostCategoryById(id);  // 👈 이건 아래에서 구현
+        String category = reportService.findPostCategoryById(id);
         return ResponseEntity.ok(category);
     }
 
