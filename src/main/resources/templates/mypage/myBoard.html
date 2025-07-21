@@ -5,6 +5,11 @@
     <th:block th:replace="~{fragments/head :: head}"></th:block>
     <!-- SPECIFIC CSS -->
     <link href="/css/blog.css" rel="stylesheet">
+    <style>
+        main {
+            min-height: calc(100vh - 300px); /* header+footer 대략 합산 높이 고려 */
+        }
+    </style>
 </head>
 
 <body class="margin_sticky">
