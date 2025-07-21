@@ -52,6 +52,13 @@ public class AdminController {
         return reportService.findReportList(pageable, type);
     }
 
+    @GetMapping("/report/post-category/{id}")
+    @ResponseBody
+    public ResponseEntity<String> getPostCategory(@PathVariable Long id) {
+        String category = reportService.findPostCategoryById(id);  // 👈 이건 아래에서 구현
+        return ResponseEntity.ok(category);
+    }
+
     // 댓글 신고 상세 조회 (비동기, Modal용)
     @GetMapping("/report/comment/{id}")
     @ResponseBody

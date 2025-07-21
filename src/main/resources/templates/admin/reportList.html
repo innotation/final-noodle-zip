@@ -311,12 +311,23 @@
           document.getElementById('commentDate').textContent = comment.createdAt;
           $('#commentDetailModal').modal('show');
         });
-    } else {
-      let url = '';
-      if (reportType === '게시글') url = `/board/detail/${targetId}`;
-      else if (reportType === '사용자') url = `/users/${targetId}/mypage`;
-      else return;
 
+    } else if (reportType === '게시글') {
+      // ✅ 게시글 카테고리 조회 후 상세 URL 구성
+      fetch(`/admin/report/post-category/${targetId}`)
+        .then(res => res.text())
+        .then(category => {
+          const url = `/board/${category}/detail/${targetId}`;
+          document.getElementById('reportDetailFrame').src = url;
+          $('#reportDetailModal').modal('show');
+        })
+        .catch(err => {
+          console.error("카테고리 조회 실패:", err);
+          alert("게시글 정보를 불러오지 못했습니다.");
+        });
+
+    } else if (reportType === '사용자') {
+      const url = `/users/${targetId}/mypage`;
       document.getElementById('reportDetailFrame').src = url;
       $('#reportDetailModal').modal('show');
     }
