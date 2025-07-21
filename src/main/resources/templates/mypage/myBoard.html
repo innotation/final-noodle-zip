@@ -5,6 +5,8 @@
     <th:block th:replace="~{fragments/head :: head}"></th:block>
     <!-- SPECIFIC CSS -->
     <link href="/css/blog.css" rel="stylesheet">
+    <link th:href="@{/css/my-board.css}" rel="stylesheet">
+
 </head>
 
 <body class="margin_sticky">
@@ -17,18 +19,14 @@
             <div class="row">
                 <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
                     <div class="breadcrumbs blog">
-                        <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Category</a></li>
-                            <li>Page active</li>
-                        </ul>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-5 col-md-5">
                     <div class="search_bar_list">
-                        <input id="searchInput" type="text" class="form-control" placeholder="Search in blog...">
+                        <input id="searchInput" type="text" class="form-control" placeholder="커뮤니티 통합 검색">
                         <input type="submit" value="Search" onclick="performSearch()">
                     </div>
+                </div>
                 </div>
             </div>
             <!-- /row -->
@@ -40,6 +38,9 @@
         <div class="row">
             <div class="col-lg-9">
                 <div class="row">
+                    <div th:if="${#lists.isEmpty(boardList.boardList)}" class="col-12 text-center">
+                        <p>게시글이 없습니다.</p>
+                    </div>
                     <div class="col-md-6" th:each="item : ${boardList.boardList}">
                         <article class="blog">
                             <figure>
@@ -153,54 +154,12 @@
 <!--/footer-->
 
 <div id="toTop"></div><!-- Back to top button -->
-<!-- /Sign In Modal -->
-<script>
-    function deleteBoard(boardId) {
-        showConfirmModal('confirmDeleteBoard', () => {
-            fetch(`/users/my/${boardId}/delete`, {
-                method: 'POST'
-            })
-              .then(res => {
-                  if (res.redirected) {
-                      window.location.href = res.url;
-                      return;
-                  }
-                  if (res.ok) {
-                      location.reload();
-                  } else {
-                      return res.json().then(err => {
-                          throw new Error(err.message || '삭제 실패');
-                      });
-                  }
-              })
-              .catch(err => {
-                  showErrorModal('failDelete', err.message);
-              });
-        })
-    }
-
-    function cancelLike(boardId) {
-        showConfirmModal('confirmDeleteLike', () => {
-            fetch(`/board/like/${boardId}`, { method: 'POST' })
-              .then(res => {
-                  if (!res.ok) return res.json().then(err => { throw new Error(err.message || '좋아요 취소 실패'); });
-                  return res.json();
-              })
-              .then(data => {
-                  location.reload();
-              })
-              .catch(err =>  {
-                  showErrorModal('failDelete', err.message);
-              });
-        })
-    }
-</script>
-
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
 <script src="/js/alertModal.js"></script>
+<script src="/js/my-board.js"></script>
 
 </body>
 </html>

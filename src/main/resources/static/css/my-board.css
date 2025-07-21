@@ -1,0 +1,3 @@
+main {
+  min-height: calc(100vh - 300px); /* header+footer 대략 합산 높이 고려 */
+}
