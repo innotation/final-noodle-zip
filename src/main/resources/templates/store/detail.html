@@ -118,6 +118,7 @@
                     <form method="POST" action="/board/review/new">
                       <input type="hidden" th:value="${store.bizNum}" name="bizNum">
                       <input type="hidden" th:value="${#dates.format(#calendars.createNow(), 'yyyy-MM-dd')}" name="visitDate">
+                      <input type="hidden" th:value="${#strings.randomAlphanumeric(30)}" name="ocrKeyHash">
                       <input type="hidden" name="isReceiptReview" value="true">
                       <input type="submit" th:href="@{/board/review/new}"
                              class="btn_1 full-width mb_5 login-required"

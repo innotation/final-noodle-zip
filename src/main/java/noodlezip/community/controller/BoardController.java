@@ -127,6 +127,7 @@ public class BoardController {
     }
 
     @PostMapping("/registReview")
+    @ResponseBody
     @Operation(summary = "리뷰 등록", description = "OCR 기반의 리뷰를 등록합니다. 로그인한 사용자만 가능하며, 메뉴별 상세 리뷰를 포함합니다.")
     @Parameters({
             @Parameter(name = "userDetails", description = "현재 로그인된 사용자 정보", hidden = true),
@@ -134,7 +135,7 @@ public class BoardController {
                     schema = @Schema(implementation = ReviewReqDto.class)),
             @Parameter(name = "bindingResult", description = "유효성 검사 결과", hidden = true)
     })
-    public String registReview(
+    public ResponseEntity<Map<String, Object>> registReview(
             @AuthenticationPrincipal MyUserDetails userDetails,
             @Valid @RequestBody ReviewReqDto dto,
             BindingResult bindingResult) {
@@ -154,8 +155,10 @@ public class BoardController {
         }
 
         try {
-            boardService.saveReviewJson(dto, userDetails.getUser());
-            return "redirect:/board/list";
+            Long boardId = boardService.saveReviewJson(dto, userDetails.getUser());
+            Map<String, Object> response = new HashMap<>();
+            response.put("boardId", boardId);
+            return ResponseEntity.ok(response);
         } catch (CustomException e) {
             log.error("리뷰 등록 중 비즈니스 오류 발생: {}", e.getMessage(), e);
             throw e;
