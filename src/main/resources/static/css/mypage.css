@@ -1254,23 +1254,73 @@ a.show_hide:focus:hover {
 
 .badge-img {
   width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  /* 테두리 제거 */
+  height: auto;
+  max-height: 48px;
+  object-fit: contain;
   border: none;
-  background-color: transparent; /* 혹시나 대비 */
+  background-color: transparent;
 }
 
-/* 작을 때만 cover 적용 */
-@media (max-width: 576px) {
-  .badge-img {
-    object-fit: cover;
+.profile-box {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 160px;
+}
+
+.profile-img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 2px solid #eee;
+  flex-shrink: 0;
+}
+
+.profile-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  height: 100%;
+}
+
+.profile-name {
+  margin: 0 0 14px 0;
+  font-size: 2.6rem;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+
+/* 📱 반응형: 화면 작아질 때 세로 정렬 */
+@media (max-width: 768px) {
+  .profile-box {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    text-align: center;
   }
-}
 
-/* 평소에는 이미지 원본 비율로 보여주기 위해 contain 사용 (투명 png에 유리함) */
-@media (min-width: 577px) {
-  .badge-img {
-    object-fit: contain;
+  .profile-meta {
+    align-items: center;
+    justify-content: center;
+    height: auto;
+  }
+
+  .profile-name {
+    font-size: 2.2rem;
+    white-space: normal;
+  }
+
+  .badge-list {
+    justify-content: center;
   }
 }
