@@ -14,6 +14,7 @@ public class ExtraToppingRequestDto {
 
     public static ExtraToppingRequestDto fromEntity(noodlezip.store.entity.StoreExtraTopping extraTopping) {
         return ExtraToppingRequestDto.builder()
+                .toppingId(extraTopping.getTopping().getId())
                 .name(extraTopping.getTopping().getToppingName())
                 .price(extraTopping.getPrice())
                 .build();

@@ -54,7 +54,10 @@ public class StoreRequestDto {
     private String storeDetailInput;
     private String businessRegistrationNumber;
 
-    public static StoreRequestDto fromEntity(Store store) {
+    public static StoreRequestDto fromEntity(Store store,
+                                             List<MenuRequestDto> menus,
+                                             List<ExtraToppingRequestDto> extraToppings,
+                                             List<StoreScheduleRequestDto> weekSchedule) {
         String[] addressParts = store.getAddress().split(",", 2);
         String mainAddress = addressParts[0];
         String detailAddress = addressParts.length > 1 ? addressParts[1] : "";
@@ -77,6 +80,9 @@ public class StoreRequestDto {
                 .storeLng(store.getStoreLng())
                 .storeLegalCode(store.getStoreLegalCode())
                 .bizNum(store.getBizNum())
+                .menus(menus)
+                .extraToppings(extraToppings)
+                .weekSchedule(weekSchedule)
                 .build();
     }
 }
