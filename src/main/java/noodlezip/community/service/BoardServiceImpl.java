@@ -441,6 +441,7 @@ public class BoardServiceImpl implements BoardService {
             review.setSoupFlavorKeywords(r.getSoupFlavorKeywords());
             review.setContent(r.getContent());
             review.setIsReceiptReview(dto.getIsReceiptReview());
+            review.setReviewImageUrl(r.getImageUrl());
             ramenReviewRepository.save(review);
 
             // 토핑 처리
