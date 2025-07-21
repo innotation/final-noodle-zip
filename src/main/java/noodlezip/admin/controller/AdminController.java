@@ -35,6 +35,11 @@ public class AdminController {
     private final PageUtil pageUtil;
     private final ReportService reportService;
 
+    @GetMapping("/login")
+    public String showAdminLoginPage() {
+        return "admin/login";
+    }
+
     @GetMapping("/main")
     public void mainPage(){}
 
