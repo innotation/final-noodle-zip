@@ -22,6 +22,7 @@ import noodlezip.ramen.service.RamenService;
 import noodlezip.store.dto.*;
 import noodlezip.store.entity.Store;
 import noodlezip.store.service.StoreService;
+import noodlezip.store.status.StoreErrorCode;
 import noodlezip.store.status.StoreSuccessCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,7 +46,6 @@ import java.util.NoSuchElementException;
 @Tag(name = "매장 관리", description = "매장 상세, 리뷰, 메뉴 등 매장 관련 API")
 public class StoreController {
     private final StoreService storeService;
-    private final PageUtil pageUtil;
     private final RamenService ramenService;
 
     @PostMapping("/regist")
