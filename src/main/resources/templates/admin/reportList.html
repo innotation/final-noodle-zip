@@ -302,34 +302,86 @@
     const targetId = button.getAttribute('data-target-id');
     currentReportId = button.getAttribute('data-report-id');
 
-    if (reportType === '댓글') {
+    // iframe 초기화
+    const frame = document.getElementById('reportDetailFrame');
+    if (frame) frame.src = '';
+
+    // 공통 응답 유효성 검사 함수
+    const validateJsonResponse = (res) => {
+      const contentType = res.headers.get("content-type");
+      if (!res.ok) throw new Error(`서버 오류 (status: ${res.status})`);
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("JSON 형식의 응답이 아닙니다.");
+      }
+      return res.json();
+    };
+
+    if (reportType === 'comment') {
       fetch(`/admin/report/comment/${targetId}`)
-        .then(res => res.json())
+        .then(validateJsonResponse)
         .then(comment => {
           document.getElementById('commentUser').textContent = comment.loginId;
           document.getElementById('commentContent').textContent = comment.content;
           document.getElementById('commentDate').textContent = comment.createdAt;
           $('#commentDetailModal').modal('show');
+        })
+        .catch(err => {
+          alert(err.message);
+          currentReportId = null;
         });
 
-    } else if (reportType === '게시글') {
-      // ✅ 게시글 카테고리 조회 후 상세 URL 구성
+    } else if (reportType === 'post') {
+      const iframe = document.getElementById('reportDetailFrame');
+      iframe.onload = null;
+      iframe.src = '';
+
       fetch(`/admin/report/post-category/${targetId}`)
-        .then(res => res.text())
+        .then(res => {
+          if (!res.ok) throw new Error("삭제되었거나 존재하지 않는 게시글입니다.");
+          return res.text();
+        })
         .then(category => {
+          if (!category || category.trim() === "") {
+            throw new Error("게시글 카테고리가 유효하지 않습니다.");
+          }
           const url = `/board/${category}/detail/${targetId}`;
           document.getElementById('reportDetailFrame').src = url;
           $('#reportDetailModal').modal('show');
         })
         .catch(err => {
-          console.error("카테고리 조회 실패:", err);
-          alert("게시글 정보를 불러오지 못했습니다.");
+          alert(err.message);
+          currentReportId = null;
+          if (frame) frame.src = '';
         });
 
-    } else if (reportType === '사용자') {
+    } else if (reportType === 'user') {
+      const iframe = document.getElementById('reportDetailFrame');
+      iframe.onload = null;
+      iframe.src = '';
+
       const url = `/users/${targetId}/mypage`;
-      document.getElementById('reportDetailFrame').src = url;
-      $('#reportDetailModal').modal('show');
+      iframe.onload = function () {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          const title = iframeDoc.title;
+
+          if (!title || title.includes("404") || title.includes("오류") || title.includes("Error")) {
+            alert('존재하지 않는 사용자입니다.');
+            $('#reportDetailModal').modal('hide');
+            iframe.src = '';
+            currentReportId = null;
+          } else {
+            $('#reportDetailModal').modal('show');
+          }
+        } catch (e) {
+          alert('사용자 정보를 확인할 수 없습니다.');
+          $('#reportDetailModal').modal('hide');
+          iframe.src = '';
+          currentReportId = null;
+        }
+      };
+
+      iframe.src = url;
     }
   }
 
