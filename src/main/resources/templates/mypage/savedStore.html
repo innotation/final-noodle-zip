@@ -98,6 +98,12 @@
             </aside>
             <div class="col-lg-9">
                 <div class="row" id="store-list">
+                    <div class="col-12 text-center"
+                         th:if="${#lists.isEmpty(userAccessInfo.isOwner
+                                      ? mySavedStorePageInfo.savedStoreList.savedStoreList
+                                      : savedStorePageInfo.savedStoreList.savedStoreList)}">
+                        <p>저장한 가게가 없습니다.</p>
+                    </div>
                     <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6"
                          th:each="store : ${(userAccessInfo.isOwner
                                                        ? mySavedStorePageInfo.savedStoreList.savedStoreList
