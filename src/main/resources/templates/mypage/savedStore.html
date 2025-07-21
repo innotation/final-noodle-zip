@@ -104,8 +104,7 @@
                                                        : savedStorePageInfo.savedStoreList.savedStoreList)}">
                         <div class="strip">
                             <figure>
-                                <img src="/img/lazy-placeholder.png"
-                                     th:attr="data-src=${store.storeMainImageUrl}" class="img-fluid lazy" alt="">
+                                <img th:src="${store.storeMainImageUrl}" class="img-fluid" alt="">
                                 <a th:href="@{'/store/detail/' + ${store.storeId}}" class="strip_info" target="_blank" rel="noopener noreferrer">
                                     <small th:text="${store.saveStoreCategoryName}"></small>
                                     <div class="item_title">
@@ -151,6 +150,11 @@
     </div>
     <!-- /container -->
 </main>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteComment', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('noCheckCategory', '알림', '<p>조회할 카테고리를 선택하세요.</p>', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('failSavedStoreShow', '알림', '', '확인', null)}"></div>
+
+
 <!-- /main -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
@@ -166,6 +170,8 @@
 <script src="/js/specific_listing.js"></script>
 <script src="/js/saved-store-search.js"></script>
 <script src="/js/saved-store-category-update.js"></script>
+<script src="/js/alertModal.js"></script>
+
 <!-- Map -->
 <script type="text/javascript"
         th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId='

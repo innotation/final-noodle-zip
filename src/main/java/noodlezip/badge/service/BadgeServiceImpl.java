@@ -35,8 +35,7 @@ public class BadgeServiceImpl implements BadgeService {
                                                                 long badgeId,
                                                                 long badgeCategoryId
     ) {
-        List<LevelBadgeDetailResponse> result =
-                badgeRepository.findOptionBadgeDetails(userId, badgeId, badgeCategoryId);
+        List<LevelBadgeDetailResponse> result = badgeRepository.findOptionBadgeDetails(userId, badgeId, badgeCategoryId);
         if (result == null || result.isEmpty()) {
             throw new CustomException(BadgeErrorStatus._NOT_FOUNT_USER_BADGE);
         }

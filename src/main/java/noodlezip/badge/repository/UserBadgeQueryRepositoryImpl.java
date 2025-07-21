@@ -98,10 +98,9 @@ public class UserBadgeQueryRepositoryImpl implements UserBadgeQueryRepository {
         QBadgeCategory badgeCategory = QBadgeCategory.badgeCategory;
 
         return queryFactory
-                .select(userBadge)
-                .from(userBadge)
-                .join(userBadge.badge, badge)
-                .join(badge.badgeCategory, badgeCategory)
+                .selectFrom(userBadge)
+                .join(userBadge.badge, badge).fetchJoin()
+                .join(badge.badgeCategory, badgeCategory).fetchJoin()
                 .where(
                         userBadge.userId.eq(userId),
                         userBadge.obtainedAt.isNotNull()

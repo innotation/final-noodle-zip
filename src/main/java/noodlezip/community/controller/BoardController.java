@@ -109,15 +109,16 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/uploadReviewImages")
-    public ResponseEntity<Void> uploadReviewImages(@RequestParam Map<String, MultipartFile> files) {
-        files.forEach((key, file) -> {
-            if (key.startsWith("image_")) {
-                Long reviewId = Long.parseLong(key.substring("image_".length()));
-                boardService.saveReviewImage(reviewId, file); // 리뷰 ID 기준으로 이미지 저장
-            }
-        });
-        return ResponseEntity.ok().build();
+        try {
+            boardService.saveReviewJson(dto, userDetails.getUser());
+            return "redirect:/board/list";
+        } catch (CustomException e) {
+            log.error("리뷰 등록 중 비즈니스 오류: {}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("리뷰 등록 중 서버 오류: {}", e.getMessage(), e);
+            throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/{category}/new")

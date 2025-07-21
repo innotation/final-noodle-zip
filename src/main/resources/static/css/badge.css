@@ -32,6 +32,20 @@
   }
 }
 
+.badge-image {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.badge-detail-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
 
 /* 모달 오버레이 */
 .modal-overlay {
@@ -102,7 +116,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 40px 30px 30px;
+  padding: 60px 30px 5px;
   border-radius: 3px 3px 0 0;
   position: relative;
 }
