@@ -30,6 +30,8 @@ import noodlezip.store.repository.StoreWeekScheduleRepository;
 import noodlezip.store.status.ApprovalStatus;
 import noodlezip.store.status.OperationStatus;
 import noodlezip.user.entity.User;
+import noodlezip.user.entity.UserType;
+import noodlezip.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -62,6 +64,7 @@ public class StoreService {
     private final ReviewToppingRepository reviewToppingRepository;
     private final StoreExtraToppingRepository storeExtraToppingRepository;
     private final LocationService locationService;
+    private final UserRepository userRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public Long registerStore(StoreRequestDto dto, User user) {
@@ -247,7 +250,7 @@ public class StoreService {
 
     @Transactional(rollbackFor = Exception.class)
     public void updateStore(Long storeId, StoreRequestDto dto, MultipartFile storeMainImage, List<MultipartFile> menuImageFiles, User user) {           Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(StoreErrorCode._STORE_NOT_FOUND));
         log.debug("storemain: {}", storeMainImage);
         log.debug("기존: {}", dto.getStoreMainImageUrl());
         if (!store.getUserId().equals(user.getId())) {
@@ -362,7 +365,7 @@ public class StoreService {
                         try {
                             fileUtil.deleteFileFromS3(menu.getMenuImageUrl());
                         } catch (Exception e) {
-                            
+
                         }
                     }
                     Map<String, String> uploadResult = fileUtil.fileupload("storeUpdate", menuImageFile);
@@ -553,9 +556,12 @@ public class StoreService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new CustomException(ErrorStatus._NOT_FOUND_HANDLER));
 
-        // 승인되지 않았고, 등록한 사용자가 아닐 경우만 막기
+        User user = userRepository.findById(requesterUserId)
+                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+        // 승인되지 않았고, 관리자가 아니면서 등록한 사용자가 아닐 경우만 막기
         if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus()) &&
-                (!store.getUserId().equals(requesterUserId))) {
+                (!store.getUserId().equals(user.getId())) &&
+                (!user.getUserType().equals(UserType.ADMIN))) {
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
 
