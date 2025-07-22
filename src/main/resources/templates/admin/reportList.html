@@ -31,12 +31,6 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarResponsive">
     <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-        <a class="nav-link" th:href="@{/admin/main}">
-          <i class="fa fa-fw fa-dashboard"></i>
-          <span class="nav-link-text">Dashboard</span>
-        </a>
-      </li>
       <li class="nav-item" data-toggle="tooltip" data-placement="right" title="신고내역">
         <a class="nav-link" th:href="@{/admin/reportList}">
           <i class="fa fa-fw fa-exclamation-triangle"></i>
@@ -70,14 +64,11 @@
   <div class="container-fluid">
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <a href="#">Dashboard</a>
-      </li>
-      <li class="breadcrumb-item active">Listings</li>
+      <li class="breadcrumb-item active">신고내역</li>
     </ol>
     <div class="box_general">
       <div class="header_box">
-        <h2 class="d-inline-block">Listings</h2>
+        <h2 class="d-inline-block">신고리스트</h2>
         <div class="filter">
           <!--          조건변경 (상태에 따라 보기로 바꿀듯?)-->
           <div class="styled-select short">
@@ -109,7 +100,7 @@
   <footer class="sticky-footer">
     <div class="container">
       <div class="text-center">
-        <small>Copyright © FOOGRA 2021</small>
+        <small>누들집, 라멘검색 커뮤니티 사이트</small>
       </div>
     </div>
   </footer>
@@ -165,15 +156,15 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <h5 class="modal-title" id="exampleModalLabel">알림</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-body">로그아웃 하시겠습니까?</div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+          <a class="btn btn-primary" href="/logout">로그아웃</a>
         </div>
       </div>
     </div>
@@ -223,29 +214,37 @@
   });
 
   function loadReportList(page) {
+    const reportTypeKoreanMap = {
+      post: "게시글",
+      comment: "댓글",
+      user: "사용자"
+    };
     fetch(`/admin/reportList/data?page=${page}&type=${selectedType}`)
       .then(response => response.json())
       .then(data => {
         if (!Array.isArray(data.reportList)) return;
 
-        const listHtml = data.reportList.map(report => `
-          <li>
-            <figure><img src="/admin_section/img/item_1.jpg" alt=""></figure>
-            <small>신고내역</small>
-            <h4>신고유형 : ${report.reportType}</h4>
-            <p><strong>신고자 아이디: ${report.loginId}</strong></p>
-            <p><strong>신고 내용 : ${report.content}</strong></p>
-            <p><strong>신고일시 : ${report.createdAt}</strong></p>
-            <p>
-              <a href="#" class="btn_1 gray btn-view-report"
-         data-type="${report.reportType}"
-         data-target-id="${report.reportTargetId}"
-         data-report-id="${report.id}">
-        <i class="fa fa-fw fa-eye"></i> 상세보기
-      </a>
-            </p>
-          </li>
-        `).join('');
+        const listHtml = data.reportList.map(report => {
+          const koreanType = reportTypeKoreanMap[report.reportType] || report.reportType;
+
+          return `
+    <li>
+      <figure><img src="/admin_section/img/item_1.jpg" alt=""></figure>
+      <h4>신고유형 : ${koreanType}</h4>
+      <p><strong>신고자 아이디: ${report.loginId}</strong></p>
+      <p><strong>신고 내용 : ${report.content}</strong></p>
+      <p><strong>신고일시 : ${report.createdAt}</strong></p>
+      <p>
+        <a href="#" class="btn_1 gray btn-view-report"
+           data-type="${report.reportType}"
+           data-target-id="${report.reportTargetId}"
+           data-report-id="${report.id}">
+          <i class="fa fa-fw fa-eye"></i> 상세보기
+        </a>
+      </p>
+    </li>
+  `;
+        }).join('');
 
         document.getElementById("storeListContainer").innerHTML = listHtml;
 

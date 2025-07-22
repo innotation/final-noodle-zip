@@ -3,55 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <title>관리자 로그인</title>
-  <link rel="stylesheet" th:href="@{/css/admin.css}"> <!-- 기존 스타일 재활용 -->
+  <th:block th:replace="~{fragments/head :: head}"></th:block>
+
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <link href="/css/review.css" rel="stylesheet">
+  <link th:href="@{/css/home.css}" rel="stylesheet">
+
+  <style>
+    .box_general.write_review {
+      margin-top: 100px;
+    }
+
+    .main-title {
+      font-size: 35px;
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .main-title .main-logo {
+      height: 60px;
+      width: auto;
+      margin-bottom: 10px;
+    }
+
+    .main-title .logo-text {
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container" style="max-width: 400px; margin: 100px auto;">
-  <div class="modal_header">
-    <h3>로그인</h3>
+<header class="header_in is_sticky clearfix">
+  <div class="container">
+    <div id="logo">
+      <a th:href="@{/}">
+        <img th:src="@{/img/noodlezip-logo-stickhead-clear.svg}" width="140" height="35" alt="">
+      </a>
+    </div>
   </div>
+</header>
 
-  <form th:action="@{/admin/login}" method="post">
-    <div class="sign-in-wrapper">
-      <a href="#0" class="social_bt facebook">Facebook ID로 로그인</a>
-      <a href="#0" class="social_bt google">Google ID로 로그인</a>
-      <div class="divider"><span>Or</span></div>
-      <div class="form-group">
-        <label>아이디</label>
-        <input type="text" class="form-control" name="userId" id="userId">
-        <i class="icon_mail_alt"></i>
-      </div>
-      <div class="form-group">
-        <label>패스워드</label>
-        <input type="password" class="form-control" name="userPwd" id="userPwd">
-        <i class="icon_lock_alt"></i>
-      </div>
-      <div class="clearfix add_bottom_15">
-        <div class="checkboxes float-start">
-          <label class="container_check">회원정보 저장하기
-            <input type="checkbox" name="remember-me">
-            <span class="checkmark"></span>
-          </label>
+<main class="bg_gray pattern">
+  <div class="container margin_60_40">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="box_general write_review">
+          <div class="container" style="max-width: 400px; margin: 50px auto;">
+            <h4 class="main-title d-flex align-items-center justify-content-center">
+              <img th:src="@{/img/noodlezip-logo-stickhead-clear.svg}" alt="누들집 로고" class="main-logo mr-2"/>
+              <span class="logo-text">누들집, 라멘검색 커뮤니티 사이트</span>
+            </h4>
+            <form th:action="@{/login}" method="post">
+              <div class="sign-in-wrapper">
+                <div class="form-group">
+                  <label>아이디</label>
+                  <input type="text" class="form-control" name="userId" id="userId">
+                  <i class="icon_mail_alt"></i>
+                </div>
+                <div class="form-group">
+                  <label>패스워드</label>
+                  <input type="password" class="form-control" name="userPwd" id="userPwd">
+                  <i class="icon_lock_alt"></i>
+                </div>
+                <div class="clearfix add_bottom_15">
+                  <div class="checkboxes float-start">
+                    <label class="container_check">회원정보 저장하기
+                      <input type="checkbox" name="remember-me">
+                      <span class="checkmark"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <input type="submit" value="로그인" class="btn_1 full-width mb_5">
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
-        <div class="float-end"><a id="forgot" href="javascript:void(0);">비밀번호 재설정</a></div>
-      </div>
-      <div class="text-center">
-        <input type="submit" value="로그인" class="btn_1 full-width mb_5">
-        혹시 처음 방문하시나요? <a th:href="@{/signup}">회원가입</a>
-      </div>
-      <div id="forgot_pw">
-        <div class="form-group">
-          <label>Please confirm login email below</label>
-          <input type="email" class="form-control" name="email_forgot" id="email_forgot">
-          <i class="icon_mail_alt"></i>
-        </div>
-        <p>You will receive an email containing a link allowing you to reset your password to a new preferred one.</p>
-        <div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
       </div>
     </div>
-  </form>
-</div>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 </body>
 </html>
