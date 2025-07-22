@@ -2,9 +2,6 @@ package noodlezip.community.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import noodlezip.badge.constants.UserEventType;
-import noodlezip.badge.event.BasicBadgeEvent;
-import noodlezip.badge.event.RamenReviewBadgeEvent;
 import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
@@ -26,20 +23,16 @@ import noodlezip.community.repository.LikeRepository;
 import noodlezip.ramen.entity.*;
 import noodlezip.ramen.repository.RamenReviewRepository;
 import noodlezip.ramen.repository.ReviewToppingRepository;
-import noodlezip.ramen.repository.ToppingRepository;
-import noodlezip.store.dto.MenuRequestDto;
 import noodlezip.store.dto.StoreReviewDto;
 import noodlezip.store.entity.Menu;
 import noodlezip.store.entity.StoreExtraTopping;
 import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreExtraToppingRepository;
-import noodlezip.store.service.StoreService;
 import noodlezip.user.entity.User;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -402,7 +394,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public void saveReviewJson(ReviewReqDto dto, User user) {
+    public Long saveReviewJson(ReviewReqDto dto, User user) {
 
         if (dto == null) {
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
@@ -460,6 +452,8 @@ public class BoardServiceImpl implements BoardService {
         }
 
         eventPublisher.publishRamenReviewBadgeEvent(user, dto);
+
+        return board.getId();
     }
 
 }

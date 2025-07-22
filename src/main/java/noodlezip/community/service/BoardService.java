@@ -43,5 +43,5 @@ public interface BoardService {
     Map<String, Object> findReviewListByTag(String tag, String type, Pageable pageable);
     List<Long> getBoardIdByUserLiked(Long userId);
 
-    void saveReviewJson(ReviewReqDto dto, User user);
+    Long saveReviewJson(ReviewReqDto dto, User user);
 }
