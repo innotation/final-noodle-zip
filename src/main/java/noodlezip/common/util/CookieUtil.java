@@ -79,7 +79,7 @@ public class CookieUtil {
             recentIds.addAll(Arrays.asList(existingCookieValue.split(",")));
         }
 
-        // 2. 현재 항목 ID를 목록의 맨 앞에 추가 (LinkedHashSet은 삽입 순서를 유지)
+        // 2. 현재 항목 ID를 목록의 맨앞단 추가
         String currentIdStr = String.valueOf(itemId);
         recentIds.remove(currentIdStr); // 기존에 있다면 제거 (가장 최근으로 이동시키기 위해)
 
