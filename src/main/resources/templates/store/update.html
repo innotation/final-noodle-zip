@@ -23,18 +23,16 @@
       background-color: #f9f9f9;
     }
     #preview-image { /* Store Image Preview */
-      max-width: 800px;
-      max-height: 450px;
-      width: auto;
-      height: auto;
+      width: 800px;
+      height: 450px;
+      object-fit: cover;
       margin-top: 10px;
       border-radius: 4px;
     }
     .menu-preview-image { /* Menu Image Preview */
-      max-width: 160px;
-      max-height: 160px;
-      width: auto;
-      height: auto;
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
       margin-top: 10px;
       border-radius: 4px;
     }
@@ -109,7 +107,7 @@
                 <!-- ① 대표 이미지 업로드 -->
                 <div class="mb-3">
                     <label class="form-label">대표 이미지</label>
-                    <div id="image-upload-area" style="border: 2px dashed #ccc; padding: 40px; text-align: center; cursor: pointer;">
+                    <div id="image-upload-area" style="border: 2px dashed #ccc; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;">
                         <span id="upload-text" th:if="*{storeMainImageUrl == null or storeMainImageUrl.isEmpty()}">Drop files here to upload</span>
                         <img id="preview-image" th:src="*{storeMainImageUrl}" alt="대표 이미지 미리보기" th:style="*{storeMainImageUrl == null or storeMainImageUrl.isEmpty()} ? 'display: none;' : 'display: block;'" />
                     </div>
