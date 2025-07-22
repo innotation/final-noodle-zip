@@ -706,6 +706,10 @@ public class StoreService {
 
     public OcrToReviewDto findStoreWithMenusByBizNum(Long bizNum) {
         List<StoreIdNameDto> storeInfo = storeRepository.findIdNameByBizNum(bizNum);
+
+        if (storeInfo.isEmpty()) {
+            throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
+        }
         List<MenuDetailDto> menuList = menuRepository.findMenuDetailByStoreId(storeInfo.get(0).getId());
         List<ToppingResponseDto> toppingList = getStoreToppings(storeInfo.get(0).getId());
         return OcrToReviewDto.builder()
