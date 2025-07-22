@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <th:block th:replace="~{fragments/head :: head}"></th:block>
@@ -60,39 +60,34 @@
     <!-- /hero_single -->
 
   <!-- /bg_gray -->
-  <div class="container margin_60_40">
+  <div class="container margin_60_40" sec:authorize="isAuthenticated()">
     <div class="main_title">
       <span><em></em></span>
       <h2>내 추천 가게</h2>
       <p>방문하신 가게들을 기반으로 추천드립니다!</p>
-<!--      <a th:href="@{/search/list(sort=review-count)}">전체 보기</a>-->
     </div>
-    <!-- /main_title -->
-    <div class="owl-carousel owl-theme carousel_4">
-      <div class="item"> <!-- 각 아이템마다 루프 돌리면 됨-->
-        <div class="strip">
-          <figure>
-            <span class="ribbon off">-30%</span>
-            <img src="/img/lazy-placeholder.png" data-src="img/location_1.jpg" class="owl-lazy" alt="">
-            <a href="detail-restaurant.html" class="strip_info">
-              <small>Pizza</small>
-              <div class="item_title">
-                <h3>Da Alfredo</h3>
-                <small>27 Old Gloucester St</small>
-              </div>
-            </a>
-          </figure>
-          <ul>
-            <li><span class="loc_open">Now Open</span></li>
-            <li>
-              <div class="score"><span>Superb<em>350 Reviews</em></span><strong>8.9</strong></div>
-            </li>
-          </ul>
+    <!-- 추천 가게가 없을 때 -->
+    <div th:if="${#lists.isEmpty(recommendedStores)}">
+      <p class="text-center">리뷰를 작성해 가게를 추천받아 보세요!</p>
+    </div>
+    <!-- 추천 가게가 있을 때 -->
+    <div class="owl-carousel owl-theme carousel_4" th:if="${not #lists.isEmpty(recommendedStores)}">
+      <th:block th:each="store : ${recommendedStores}">
+        <div class="item">
+          <div class="strip">
+            <figure>
+              <img th:src="${store.storeMainImageUrl}" class="owl-lazy" alt="">
+              <a th:href="@{'/store/detail/' + ${store.id}}" class="strip_info">
+                <div class="item_title">
+                  <h3 th:text="${store.storeName}"></h3>
+                  <small th:text="${store.address}"></small>
+                </div>
+              </a>
+            </figure>
+          </div>
         </div>
-      </div>
-      <!-- item -->
+      </th:block>
     </div>
-    <!-- /carousel -->
   </div>
 
     <div class="bg_gray">

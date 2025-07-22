@@ -472,4 +472,48 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                 .execute();
 
     }
+
+    @Override
+    public List<StoreReviewDto> findAllReviewsByUserId(Long userId) {
+        QRamenReview review = QRamenReview.ramenReview;
+        QMenu menu = QMenu.menu;
+        QBoard board = QBoard.board;
+        noodlezip.store.entity.QStore store = noodlezip.store.entity.QStore.store;
+
+        return queryFactory
+                .select(Projections.fields(
+                        StoreReviewDto.class,
+                        review.id.as("id"),
+                        review.communityId.as("communityId"),
+                        menu.id.as("menuId"),
+                        menu.menuName.as("menuName"),
+                        review.noodleThickness.as("noodleThickness"),
+                        review.noodleTexture.as("noodleTexture"),
+                        review.noodleBoilLevel.as("noodleBoilLevel"),
+                        review.soupDensity.as("soupDensity"),
+                        review.soupTemperature.as("soupTemperature"),
+                        review.soupSaltiness.as("soupSaltiness"),
+                        review.soupSpicinessLevel.as("soupSpicinessLevel"),
+                        review.soupOiliness.as("soupOiliness"),
+                        review.soupFlavorKeywords.as("soupFlavorKeywords"),
+                        review.content.as("content"),
+                        review.reviewImageUrl.as("reviewImageUrl"),
+                        review.isReceiptReview.as("isReceiptReview"),
+                        board.user.userName.as("userName"),
+                        board.user.id.as("userId"),
+                        board.createdAt.as("createdAt"),
+                        board.updatedAt.as("updatedAt"),
+                        store.id.as("storeId"),
+                        store.storeName.as("storeName"),
+                        store.address.as("storeAddress"),
+                        store.storeLegalCode.as("storeLegalCode"),
+                        menu.category.categoryName.as("categoryName")
+                ))
+                .from(review)
+                .join(review.menu, menu)
+                .join(menu.store, store)
+                .join(board).on(review.communityId.eq(board.id))
+                .where(board.user.id.eq(userId))
+                .fetch();
+    }
 }

@@ -331,6 +331,43 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public List<Store> findRecommendedStores(
+            List<String> soupNames, List<String> categoryNames, List<Long> excludeStoreIds, int count
+    ) {
+        QStore store = QStore.store;
+        QMenu menu = QMenu.menu;
+        QCategory category = QCategory.category;
+        QRamenSoup soup = QRamenSoup.ramenSoup;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
+        if (soupNames != null && !soupNames.isEmpty()) {
+            builder.and(soup.soupName.in(soupNames));
+        }
+        if (categoryNames != null && !categoryNames.isEmpty()) {
+            builder.and(category.categoryName.in(categoryNames));
+        }
+        if (excludeStoreIds != null && !excludeStoreIds.isEmpty()) {
+            builder.and(store.id.notIn(excludeStoreIds));
+        }
+
+        // 조건이 모두 비어있으면 추천 불가 → 빈 리스트 반환
+        if ((soupNames == null || soupNames.isEmpty()) && (categoryNames == null || categoryNames.isEmpty())) {
+            return List.of();
+        }
+
+        return queryFactory
+                .selectDistinct(store)
+                .from(menu)
+                .join(menu.store, store)
+                .join(menu.category, category)
+                .join(menu.ramenSoup, soup)
+                .where(builder)
+                .limit(count)
+                .fetch();
+    }
+
     private OrderSpecifier<?> getOrderByExpression(String sort, NumberExpression<Double> distanceExpr, QStore store) {
         if (sort == null || sort.isEmpty()) {
             return distanceExpr.asc();
