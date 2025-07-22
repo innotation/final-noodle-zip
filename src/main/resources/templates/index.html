@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <th:block th:replace="~{fragments/head :: head}"></th:block>
@@ -58,6 +58,38 @@
         </div>
     </div>
     <!-- /hero_single -->
+
+  <!-- /bg_gray -->
+  <div class="container margin_60_40" sec:authorize="isAuthenticated()">
+    <div class="main_title">
+      <span><em></em></span>
+      <h2>내 추천 가게</h2>
+      <p>방문하신 가게들을 기반으로 추천드립니다!</p>
+    </div>
+    <!-- 추천 가게가 없을 때 -->
+    <div th:if="${#lists.isEmpty(recommendedStores)}">
+      <p class="text-center">리뷰를 작성해 가게를 추천받아 보세요!</p>
+    </div>
+    <!-- 추천 가게가 있을 때 -->
+    <div class="owl-carousel owl-theme carousel_4" th:if="${not #lists.isEmpty(recommendedStores)}">
+      <th:block th:each="store : ${recommendedStores}">
+        <div class="item">
+          <div class="strip">
+            <figure>
+              <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/location_1.jpg'}" alt="매장 이미지" class="owl-lazy">
+              <a th:href="@{'/store/detail/' + ${store.id}}" class="strip_info">
+                <div class="item_title">
+                  <h3 th:text="${store.storeName}"></h3>
+                  <small th:text="${store.address}"></small>
+                </div>
+              </a>
+            </figure>
+          </div>
+        </div>
+      </th:block>
+    </div>
+  </div>
+
     <div class="bg_gray">
         <div class="container margin_60_40">
             <div class="main_title center">
@@ -143,33 +175,26 @@
             <span><em></em></span>
             <h2>인기 가게</h2>
             <p>현재 인기있는 가게들을 소개해드립니다.</p>
-            <a href="#0">전체 보기</a>
+            <a th:href="@{/search/list(sort=review-count)}">전체 보기</a>
         </div>
         <!-- /main_title -->
-        <div class="owl-carousel owl-theme carousel_4">
-            <div class="item"> <!-- 각 아이템마다 루프 돌리면 됨-->
-                <div class="strip">
-                    <figure>
-                        <span class="ribbon off">-30%</span>
-                        <img src="/img/lazy-placeholder.png" data-src="img/location_1.jpg" class="owl-lazy" alt="">
-                        <a href="detail-restaurant.html" class="strip_info">
-                            <small>Pizza</small>
-                            <div class="item_title">
-                                <h3>Da Alfredo</h3>
-                                <small>27 Old Gloucester St</small>
-                            </div>
-                        </a>
-                    </figure>
-                    <ul>
-                        <li><span class="loc_open">Now Open</span></li>
-                        <li>
-                            <div class="score"><span>Superb<em>350 Reviews</em></span><strong>8.9</strong></div>
-                        </li>
-                    </ul>
-                </div>
+      <div class="owl-carousel owl-theme carousel_4">
+        <th:block th:each="store : ${popularStores}">
+          <div class="item">
+            <div class="strip">
+              <figure>
+                <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/location_1.jpg'}" alt="매장 이미지" class="owl-lazy">
+                <a th:href="@{'/store/detail/' + ${store.id}}" class="strip_info">
+                  <div class="item_title">
+                    <h3 th:text="${store.storeName}"></h3>
+                    <small th:text="${store.address}"></small>
+                  </div>
+                </a>
+              </figure>
             </div>
-            <!-- item -->
-        </div>
+          </div>
+        </th:block>
+      </div>
         <!-- /carousel -->
 
         <div class="banner lazy" data-bg="url(img/main-ramen-2.jpg)">
@@ -177,7 +202,7 @@
                 <div>
                     <small>Noodle-Zip</small>
                     <h3>3천여개 이상의 라멘 가게</h3>
-                    <a href="grid-listing-filterscol.html" class="btn_1">전체 보기</a>
+                    <a th:href="@{/search/list}" class="btn_1">전체 보기</a>
                 </div>
             </div>
             <!-- /wrapper -->
@@ -235,7 +260,22 @@
 
     </div>
     <!-- /container -->
+  <div class="call_section lazy" data-bg="url(img/ramen_rest.jpg)">
+    <div class="container clearfix">
+      <div class="col-lg-5 col-md-6 float-end wow">
+        <div class="box_1">
+          <h3>당신의 라멘, 더 많은 사람들에게 닿게 하세요!</h3>
+          <p>전국의 라멘 마니아들이 모이는 noodle.zip 에 매장을 등록해보세요.
+            지금 바로 온라인에서도 라멘을 알리고, 단골 손님을 늘릴 수 있습니다.</p>
+          <a th:href="@{/store/regist}" class="btn_1 login-required" id="store-regist">매장 등록하기</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="is-logged-in"
+         th:value="${#authentication.authenticated and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails)}" />
 
+  <!--/call_section-->
 </main>
 <!-- 검색모달 include -->
 <div th:replace="~{fragments/searchModal :: searchModal}"></div>
@@ -243,13 +283,15 @@
 
 <!-- COMMON SCRIPTS -->
 <script th:src="@{/js/common_scripts.min.js}"></script>
-<!--<script th:src="@{/js/slider.js}"></script>-->
 <script th:src="@{/js/common_func.js}"></script>
 <script th:src="@{/assets/validate.js}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const communityBoardListContainer = document.getElementById('community-board-list-container');
         const reviewBoardListContainer = document.getElementById('review-board-list-container');
+        const isLogin = document.getElementById('is-logged-in').value === 'true';
+        const storeRegist = document.getElementById('store-regist');
+
         async function loadBoardData(boardName) {
             console.log(boardName);
             try {
@@ -299,6 +341,7 @@
                     emElement.textContent = item.communityType;
                     h3Element.textContent = item.title;
                     smallElement.innerHTML = item.content;
+                    smallElement.classList.add('ellipsis-multiline');
                 });
             } catch (error) {
                 console.error(error);
@@ -307,6 +350,18 @@
 
         loadBoardData('community');
         loadBoardData('review');
+
+
+        if (storeRegist) {
+          if (isLogin) {
+            // 로그인된 경우 login-required 클래스 제거하고 href 복원
+            storeRegist.classList.remove('login-required');
+            storeRegist.href = '/store/regist';
+            // login-required 이벤트 리스너 제거 (jQuery off 사용)
+            $(storeRegist).off('click');
+          }
+        }
+
     });
 </script>
 </body>

@@ -189,7 +189,7 @@
                                     th:text="${board.communityType}">카테고리</span></a></li>
                             <li><i class="icon_calendar"></i> <span
                                     th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
-                            <li><a href="#"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
+                            <li><a th:href="@{/users/{userId}/mypage(userId=${board.userId})}"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
                             <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
                             <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
                         </ul>
