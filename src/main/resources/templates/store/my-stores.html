@@ -9,6 +9,134 @@
     <link th:href="@{/css/detail-page-delivery.css}" rel="stylesheet">
     <link th:href="@{/css/booking-sign_up.css}" rel="stylesheet">
     <link th:href="@{/css/store-regist.css}" rel="stylesheet">
+<style>
+    /* Custom Modal Overlay */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    /* Custom Modal Content */
+    .custom-modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+    }
+
+    /* Custom Modal Header */
+    .custom-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .custom-modal-header h4 {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
+    .custom-modal-close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #aaa;
+    }
+
+    .custom-modal-close-button:hover {
+        color: #333;
+    }
+
+    /* Custom Modal Body */
+    .custom-modal-body {
+        margin-bottom
+
+
+
+
+        : 20px;
+    }
+
+    /* Custom Modal Footer */
+    .custom-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .custom-modal-btn {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .custom-modal-btn-confirm {
+        background-color: #589442; /* Green color from style.css */
+        color: white;
+    }
+
+    .custom-modal-btn-confirm:hover {
+        background-color: #4a7a37; /* Darker green for hover */
+    }
+
+    .custom-modal-btn-cancel {
+        background-color: #6c757d; /* Keep grey for cancel or adjust if there's a specific cancel button style */
+        color: white;
+    }
+
+    .custom-modal-btn-cancel:hover {
+        background-color: #5a6268;
+    }
+
+    /* Apply base btn_1 styles to custom buttons */
+    .custom-modal-btn {
+        padding: 10px 20px; /* Match btn_1 padding */
+        border: none;
+        border-radius: 3px; /* Match btn_1 border-radius */
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600; /* Match btn_1 font-weight */
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .custom-modal-btn-confirm {
+        background-color: #589442; /* Green color from style.css */
+        color: white;
+    }
+
+    .custom-modal-btn-confirm:hover {
+        background-color: #4a7a37; /* Darker green for hover */
+    }
+
+    .custom-modal-btn-cancel {
+        background-color: #6c757d; /* Standard grey for cancel */
+        color: white;
+    }
+
+    .custom-modal-btn-cancel:hover {
+        background-color: #5a6268;
+    }
+</style>
 </head>
 <body class="margin_sticky">
 
@@ -40,8 +168,8 @@
                             <div class="d-flex justify-content-end gap-2">
                                 <a th:href="@{/store/update/{id}(id=${store.id})}" class="btn btn-sm btn-outline-primary">수정</a>
                                 <button type="button"
-                                        class="btn btn-sm btn-outline-danger"
-                                        th:onclick="'deleteStore(' + ${store.id} + ')'">
+                                        class="btn btn-sm btn-outline-danger delete-store-btn"
+                                        th:data-store-id="${store.id}">
                                     폐업
                                 </button>
                             </div>
@@ -55,38 +183,159 @@
     </div>
 </main>
 
+
+<!-- Custom Confirmation Modal -->
+<div id="customConfirmModal" class="custom-modal-overlay" style="display: none;">
+    <div class="custom-modal-content">
+        <div class="custom-modal-header">
+            <h4 id="customConfirmModalTitle"></h4>
+            <span class="custom-modal-close-button">&times;</span>
+        </div>
+        <div class="custom-modal-body">
+            <p id="customConfirmModalBody"></p>
+        </div>
+        <div class="custom-modal-footer">
+            <button id="customConfirmModalConfirmBtn" class="custom-modal-btn custom-modal-btn-confirm"></button>
+            <button id="customConfirmModalCancelBtn" class="custom-modal-btn custom-modal-btn-cancel"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Alert Modal -->
+<div id="customAlertModal" class="custom-modal-overlay" style="display: none;">
+    <div class="custom-modal-content">
+        <div class="custom-modal-header">
+            <h4 id="customAlertModalTitle"></h4>
+            <span class="custom-modal-close-button">&times;</span>
+        </div>
+        <div class="custom-modal-body">
+            <p id="customAlertModalBody"></p>
+        </div>
+        <div class="custom-modal-footer">
+            <button id="customAlertModalCloseBtn" class="custom-modal-btn custom-modal-btn-confirm"></button>
+        </div>
+    </div>
+</div>
+
 <!-- 푸터 -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <script>
-    function deleteStore(storeId) {
-        if (!confirm("정말로 이 매장을 폐업하시겠습니까?")) return;
+    function showCustomConfirmModal(title, body, confirmText, cancelText, onConfirm, onCancel) {
+        const modal = document.getElementById('customConfirmModal');
+        document.getElementById('customConfirmModalTitle').innerText = title;
+        document.getElementById('customConfirmModalBody').innerHTML = body;
+        
+        const confirmBtn = document.getElementById('customConfirmModalConfirmBtn');
+        const cancelBtn = document.getElementById('customConfirmModalCancelBtn');
+        const closeBtn = modal.querySelector('.custom-modal-close-button');
 
-        fetch(`/store/${storeId}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(res => {
-                if (res.ok) {
-                    alert("삭제 완료!");
-                    location.reload();
-                } else {
-                    alert("삭제에 실패했습니다.");
-                }
-            })
-            .catch(err => {
-                console.error("삭제 중 오류 발생:", err);
-                alert("오류가 발생했습니다.");
-            });
+        confirmBtn.innerText = confirmText;
+        cancelBtn.innerText = cancelText;
+
+        
+        confirmBtn.onclick = null;
+        cancelBtn.onclick = null;
+        closeBtn.onclick = null;
+
+        confirmBtn.onclick = () => {
+            if (onConfirm) onConfirm();
+            modal.style.display = 'none';
+        };
+        cancelBtn.onclick = () => {
+            if (onCancel) onCancel();
+            modal.style.display = 'none';
+        };
+        closeBtn.onclick = () => {
+            if (onCancel) onCancel();
+            modal.style.display = 'none';
+        };
+
+        modal.style.display = 'flex';
     }
+
+    function showCustomAlertModal(title, body, confirmText, onConfirm) {
+        const modal = document.getElementById('customAlertModal');
+        document.getElementById('customAlertModalTitle').innerText = title;
+        document.getElementById('customAlertModalBody').innerHTML = body;
+        
+        const closeBtn = document.getElementById('customAlertModalCloseBtn');
+        const headerCloseBtn = modal.querySelector('.custom-modal-close-button');
+
+        closeBtn.innerText = confirmText;
+
+        
+        closeBtn.onclick = null;
+        headerCloseBtn.onclick = null;
+
+        closeBtn.onclick = () => {
+            if (onConfirm) onConfirm();
+            modal.style.display = 'none';
+        };
+        headerCloseBtn.onclick = () => {
+            if (onConfirm) onConfirm();
+            modal.style.display = 'none';
+        };
+
+        modal.style.display = 'flex';
+    }
+
+    function deleteStore(storeId) {
+        showCustomConfirmModal(
+            '매장 폐업',
+            '정말로 이 매장을 폐업하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+            '폐업',
+            '취소',
+            () => {
+                fetch(`/store/${storeId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => {
+                    if (res.ok) {
+                        showCustomAlertModal('알림', '매장이 성공적으로 폐업 처리되었습니다!', '확인', () => {
+                            location.reload();
+                        });
+                    } else {
+                        res.json().then(errorData => {
+                            console.error('Fetch error data:', errorData);
+                            showCustomAlertModal('폐업 처리 실패', `폐업 처리 실패: ${errorData?.message || `서버 오류 (${res.status})`}`, '확인');
+                        }).catch(() => {
+                            
+                            showCustomAlertModal('폐업 처리 실패', `폐업 처리 실패: 서버 오류 (${res.status})`, '확인');
+                        });
+                    }
+                })
+                .catch(err => {
+                    
+                    showCustomAlertModal('오류 발생', "폐업 처리 중 오류가 발생했습니다.", '확in');
+                });
+            },
+            () => {
+                
+                
+            }
+        );
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('.delete-store-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const storeId = event.target.dataset.storeId;
+                if (storeId) {
+                    deleteStore(storeId);
+                }
+            });
+        });
+    });
 </script>
 <!-- COMMON SCRIPTS -->
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
-<script src="/js/alertModal.js"></script>
 
 </body>
 </html>

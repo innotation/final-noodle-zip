@@ -23,9 +23,17 @@
       border-radius: 8px;
       background-color: #f9f9f9;
     }
-    .menu-preview-image, #preview-image {
-      max-width: 100%;
-      max-height: 350px;
+    #preview-image { /* Store Image Preview */
+      width: 800px;
+      height: 450px;
+      object-fit: cover;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    .menu-preview-image { /* Menu Image Preview */
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
       margin-top: 10px;
       border-radius: 4px;
     }
@@ -100,12 +108,12 @@
                 <!-- ① 대표 이미지 업로드 -->
                 <div class="mb-3">
                     <label class="form-label">대표 이미지</label>
-                    <div id="image-upload-area" style="border: 2px dashed #ccc; padding: 40px; text-align: center; cursor: pointer;">
+                    <div id="image-upload-area" style="border: 2px dashed #ccc; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;">
                         <span id="upload-text">Drop files here to upload</span>
                         <img id="preview-image" src="" alt="대표 이미지 미리보기" style="display: none;" />
                     </div>
                     <input type="file" id="image-input" name="storeMainImage" accept="image/*" style="display: none;" />
-                    <small class="form-text text-muted">권장 사이즈: 500x500px, 파일 형식: JPG, PNG</small>
+                    <small class="form-text text-muted">권장 사이즈: 800x450px, 파일 형식: JPG, PNG (최대 100MB)</small>
                 </div>
 
                 <!-- ② 가게명 -->
@@ -116,7 +124,7 @@
                 <div class="mb-3"><label for="store_detail_input" class="form-label">상세 주소</label><input type="text" id="store_detail_input" name="store_detail_input" class="form-control" placeholder="상세 주소 입력" autocomplete="off" /><input type="hidden" id="storeLat" name="storeLat" /><input type="hidden" id="storeLng" name="storeLng" /><input type="hidden" id="storeLegalCode" name="storeLegalCode" /></div>
 
                 <!-- ④ 전화번호 -->
-                <div class="mb-3 form-group"><label class="form-label">전화번호</label><div class="d-flex gap-2"><select id="phonePrefix" name="phonePrefix" class="form-select" style="max-width: 100px;"><option value="" selected>선택</option><option value="02">02</option><option value="031">031</option><option value="032">032</option><option value="042">042</option><option value="051">051</option><option value="053">053</option><option value="062">062</option><option value="041">041</option><option value="043">043</option><option value="054">054</option><option value="055">055</option><option value="061">061</option><option value="063">063</option><option value="044">044</option><option value="010">010</option><option value="011">011</option></select><input type="text" id="phonePrefixInput" name="phonePrefixInput" class="form-control" placeholder="직접입력" style="max-width: 100px;" maxlength="4" /><input type="text" id="phoneMid" name="phoneMid" class="form-control" placeholder="1234" maxlength="4" required /><input type="text" id="phoneRest" name="phoneRest" class="form-control" placeholder="5678" maxlength="4" required /></div><input type="hidden" id="phone" name="phone" /></div>
+                  <div class="mb-3 form-group"><label class="form-label">전화번호</label><div class="d-flex gap-2"><select id="phonePrefix" name="phonePrefix" class="form-select" style="max-width: 100px;"><option value="" selected>선택</option><option value="02">02</option><option value="031">031</option><option value="0507">0507</option><option value="032">032</option><option value="042">042</option><option value="051">051</option><option value="053">053</option><option value="062">062</option><option value="041">041</option><option value="043">043</option><option value="054">054</option><option value="055">055</option><option value="061">061</option><option value="063">063</option><option value="044">044</option><option value="010">010</option><option value="011">011</option></select><input type="text" id="phonePrefixInput" name="phonePrefixInput" class="form-control" placeholder="직접입력" style="max-width: 100px;" maxlength="4" /><input type="text" id="phoneMid" name="phoneMid" class="form-control" placeholder="1234" maxlength="4" required /><input type="text" id="phoneRest" name="phoneRest" class="form-control" placeholder="5678" maxlength="4" required /></div><input type="hidden" id="phone" name="phone" /></div>
 
                 <!-- ⑤ 사업자등록번호 -->
                 <div class="mb-3"><label for="businessRegistrationNumber" class="form-label">사업자등록번호</label><input type="text" id="businessRegistrationNumber" name="businessRegistrationNumber" class="form-control" placeholder="'-' 없이 10자리 숫자 입력" maxlength="10" required /><small id="brn-feedback" class="form-text text-danger"></small></div>
@@ -196,7 +204,7 @@
               <img class="menu-preview-image" src="" alt="메뉴 이미지 미리보기" style="display:none;"/>
             </div>
             <input type="file" name="menus[${index}].menuImageFile" class="menu-image-input" style="display:none;" accept="image/*"/>
-            <small class="form-text text-muted">권장 사이즈: 300x300px, 파일 형식: JPG, PNG</small>
+            <small class="form-text text-muted">권장 사이즈: 160x160px, 파일 형식: JPG, PNG (최대 100MB)</small>
           </div>
 
           <div class="mb-3"><label for="menuName${index}" class="form-label">메뉴 이름</label><input type="text" id="menuName${index}" name="menus[${index}].menuName" class="form-control" placeholder="예: 돈코츠 라멘" required/></div>
@@ -387,20 +395,64 @@
         });
     }
 
-    function handleImagePreview(event) {
+    async function handleImagePreview(event) {
       const input = event.target;
       const file = input.files[0];
-      if (file) {
+      const MAX_FILE_SIZE_MB = 100; // 100MB
+      const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+      if (!file) return;
+
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        showErrorModal('failStoreRegister', `파일 크기가 너무 큽니다. ${MAX_FILE_SIZE_MB}MB 이하의 파일을 업로드해주세요.`);
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      const isStoreMainImage = input.id === 'image-input';
+      const maxWidth = isStoreMainImage ? 800 : 160;
+      const maxHeight = isStoreMainImage ? 450 : 160;
+
+      const resizedDataUrl = await resizeImage(file, maxWidth, maxHeight);
+
+      const preview = input.closest('.mb-3').querySelector('img');
+      const text = input.closest('.mb-3').querySelector('span');
+      preview.src = resizedDataUrl;
+      preview.style.display = 'block';
+      if(text) text.style.display = 'none';
+    }
+
+    function resizeImage(file, maxWidth, maxHeight) {
+      return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const preview = input.closest('.mb-3').querySelector('img');
-          const text = input.closest('.mb-3').querySelector('span');
-          preview.src = e.target.result;
-          preview.style.display = 'block';
-          if(text) text.style.display = 'none';
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth || height > maxHeight) {
+              const aspectRatio = width / height;
+              if (width > height) {
+                width = maxWidth;
+                height = width / aspectRatio;
+              } else {
+                height = maxHeight;
+                width = height * aspectRatio;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.9)); // Adjust quality as needed
+          };
+          img.src = e.target.result;
         };
         reader.readAsDataURL(file);
-      }
+      });
     }
 
     function validateBusinessNumber() {
