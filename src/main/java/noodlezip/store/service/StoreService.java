@@ -559,7 +559,19 @@ public class StoreService {
             throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
 
-        return StoreDto.toDto(store);
+        // 영업시간(week schedule) 조회 및 정렬
+        List<String> DAY_ORDER = List.of(
+            "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
+        );
+        List<StoreWeekSchedule> schedules = scheduleRepository.findByStoreId(storeId);
+        List<StoreScheduleRequestDto> weekSchedule = schedules.stream()
+                .map(StoreScheduleRequestDto::fromEntity)
+                .sorted(Comparator.comparingInt(s -> DAY_ORDER.indexOf(s.getDayOfWeek())))
+                .toList();
+
+        StoreDto dto = StoreDto.toDto(store);
+        dto.setWeekSchedule(weekSchedule);
+        return dto;
     }
 
     // 매장에서 메뉴 조회
