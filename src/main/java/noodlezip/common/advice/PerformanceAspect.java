@@ -27,7 +27,7 @@ public class PerformanceAspect {
             String className = joinPoint.getTarget().getClass().getName();
             String methodName = joinPoint.getSignature().getName();
 
-            logger.info("메서드 { }.{}() 실행 시간: {}ms", className, methodName, executionTime);
+            logger.info("메서드 {}.{}() 실행 시간: {}ms", className, methodName, executionTime);
         }
         return result;
     }

@@ -238,7 +238,7 @@ public class UserController {
 
         if (userDetails == null || userDetails.getUser() == null) {
             log.error("User entity is null within MyUserDetails.");
-            return "redirect:/login";
+            return "redirect:/";
         }
 
         User loggedInUser = userDetails.getUser();
@@ -320,7 +320,7 @@ public class UserController {
 
         if (userDetails == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "로그인이 필요합니다.");
-            return "redirect:/login";
+            return "redirect:/";
         }
 
         Long userId = userDetails.getUser().getId();
@@ -335,6 +335,6 @@ public class UserController {
         SecurityContextHolder.clearContext();
 
         redirectAttributes.addFlashAttribute("successMessage", "성공적으로 회원 탈퇴가 완료되었습니다.");
-        return "redirect:/login"; // 탈퇴 후 로그인 페이지로 리다이렉트
+        return "redirect:/";
     }
 }
