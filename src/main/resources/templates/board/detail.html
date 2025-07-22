@@ -10,7 +10,7 @@
             const keyword = searchInput.value.trim();
 
             if (keyword === "") {
-                alert("검색어를 입력해주세요.");
+                showConfirmModal('insertKeyword');
                 searchInput.focus();
                 return;
             }
@@ -208,8 +208,7 @@
                     </div>
                     <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"
                           th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
-                        <button type="submit" class="btn btn-sm btn-danger"
-                                onclick="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">게시글 삭제</button>
+                        <button type="submit" class="btn btn-sm btn-danger">게시글 삭제</button>
                     </form>
                 </div>
                 <div id="comments">
@@ -335,6 +334,7 @@
                         return;
                     }
 
+
                     try {
                         const response = await fetch(`/comments?boardId=${boardId}&page=${page}`);
                         if (!response.ok) {
@@ -354,19 +354,18 @@
                     const content = commentContentInput.value.trim();
 
                     if (content === '') {
-                        alert('댓글 내용을 입력해주세요.');
+                        showConfirmModal('exceptionModal', '댓글 내용을 입력해주세요.');
                         return;
                     }
 
                     if (currentLoggedInUserId === null) {
-                        alert('댓글을 작성하려면 로그인해야 합니다.');
+                        showConfirmModal('exceptionModal', '댓글을 작성하려면 로그인해야 합니다.');
                         window.location.href = '/';
                         return;
                     }
 
                     if (!boardId) {
-                        console.error('Board ID is null. Cannot register comment.');
-                        alert('게시글 정보를 찾을 수 없습니다.');
+                        showConfirmModal('errorModal', '게시글 정보를 찾을 수 없습니다.');
                         return;
                     }
 
@@ -387,28 +386,22 @@
 
                         if (response.ok) {
                             const data = await response.json();
-                            alert(data.message);
+                            showConfirmModal('commentRegistModal');
                             commentContentInput.value = '';
                             renderCommentsAndPagination(data.payload); // 댓글 등록 후 바로 렌더링
                         } else {
                             const errorData = await response.json();
-                            alert(`댓글 등록 실패: ${errorData.message || response.statusText}`);
+                            showConfirmModal('errorModal', errorData.message);
+
                         }
                     } catch (error) {
-                        console.error('Failed to register comment:', error);
-                        alert('댓글 등록 중 오류가 발생했습니다.');
+                        showConfirmModal('errorModal', error.message);
                     }
                 });
 
                 // 삭제 버튼 클릭 시 실행될 함수
                 function deleteComment(commentId) {
-                    if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
-                        if (!boardId) {
-                            console.error('Board ID is null. Cannot delete comment.');
-                            alert('게시글 정보를 찾을 수 없어 댓글을 삭제할 수 없습니다.');
-                            return;
-                        }
-
+                    showConfirmModal('confirmDeleteComment', () => {
                         // URLSearchParams를 사용하여 body에 boardId 추가
                         const formData = new URLSearchParams();
                         formData.append('boardId', boardId);
@@ -428,14 +421,14 @@
                                 throw new Error('댓글 삭제에 실패했습니다.');
                             })
                             .then(data => {
-                                alert('댓글이 삭제되었습니다.');
+                                showConfirmModal('commentDeleteModal');
                                 renderCommentsAndPagination(data.payload); // 삭제 후 바로 렌더링
                             })
                             .catch(error => {
                                 console.error('댓글 삭제 중 오류 발생:', error);
-                                alert(`댓글 삭제 중 오류가 발생했습니다: ${error.message}`);
+                                showConfirmModal('errorModal', error.message);
                             });
-                    }
+                    });
                 }
 
                 // 페이지 로드 시 댓글 가져오기
@@ -463,19 +456,19 @@
                         .then(response => {
                             if (!response.ok) {
                                 if (response.status === 401) {
-                                    alert('로그인이 필요합니다.');
+                                    showConfirmModal('exceptionModal', '로그인이 필요합니다.');
                                     window.location.href = '/';
                                 } else if (response.status === 404) {
-                                    alert('게시글을 찾을 수 없습니다.');
+                                    showConfirmModal('exceptionModal', '게시글을 찾을 수 없습니다.');
                                 } else {
-                                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                                    showConfirmModal('exceptionModal', '좋아요 처리 중 오류가 발생했습니다.');
                                 }
                                 throw new Error('Network response was not ok');
                             }
                             return response.json();
                         })
                         .then(data => {
-                            alert(data.message);
+                            showConfirmModal('infoModal', data.message);
                             if (data.payload.liked) {
                                 likeIcon.classList.remove('icon_heart_alt');
                                 likeIcon.classList.add('icon_heart');
@@ -505,7 +498,19 @@
 
 </main>
 <!-- /main -->
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteComment', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('commentRegistModal', '알림', '댓글이 등록되었습니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('commentDeleteModal', '알림', '댓글이 삭제되었습니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('likesStatusChangedModal', '좋아요 상태가 변경되었습니다.', '', '확인', '')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteBoard', '알림', '<p>정말 이 게시글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('errorModal', '알림', '', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('infoModal', '알림', '', '확인', null)}"></div>
 
+<div th:replace="~{fragments/alert-modal :: alertModal('insertKeyword', '알림', '검색어를 입력해주세요.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('exceptionModal', '알림', '', '확인', null)}"></div>
+
+<script src="/js/alertModal.js"></script>
+<script src="/js/board-detail.js"></script>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--/footer-->
 

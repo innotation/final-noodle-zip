@@ -3,6 +3,7 @@ package noodlezip.admin.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import noodlezip.admin.dto.RegistListDto;
+import noodlezip.common.exception.CustomException;
 import noodlezip.common.util.PageUtil;
 import noodlezip.report.dto.ReportResponseDto;
 import noodlezip.report.dto.ReportedCommentDto;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +35,11 @@ public class AdminController {
     private final PageUtil pageUtil;
     private final ReportService reportService;
 
+    @GetMapping("/login")
+    public String showAdminLoginPage() {
+        return "admin/login";
+    }
+
     @GetMapping("/main")
     public void mainPage(){}
 
@@ -50,6 +57,18 @@ public class AdminController {
             @RequestParam(defaultValue = "ALL") String type
     ) {
         return reportService.findReportList(pageable, type);
+    }
+
+    @GetMapping("/report/post-category/{id}")
+    @ResponseBody
+    public ResponseEntity<String> getPostCategory(@PathVariable Long id) {
+        try {
+            String category = reportService.findPostCategoryById(id);
+            return ResponseEntity.ok(category);
+        } catch (CustomException e) {
+            log.warn("게시글 카테고리 조회 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+        }
     }
 
     // 댓글 신고 상세 조회 (비동기, Modal용)
@@ -86,8 +105,6 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/recommendList")
-    public void recommendList(){}
 
 
 }

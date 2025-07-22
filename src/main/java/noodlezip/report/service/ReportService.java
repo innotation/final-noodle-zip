@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
 import noodlezip.common.util.PageUtil;
+import noodlezip.community.entity.Board;
 import noodlezip.community.entity.Comment;
+import noodlezip.community.repository.BoardRepository;
 import noodlezip.community.repository.CommentRepository;
 import noodlezip.report.dto.ReportRequestDto;
 import noodlezip.report.dto.ReportResponseDto;
@@ -35,6 +37,7 @@ public class ReportService {
     private final PageUtil pageUtil;
     private final EntityManager em;
     private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
 
     @Transactional
     public void save(ReportRequestDto dto) {
@@ -80,4 +83,9 @@ public class ReportService {
                 .build();
     }
 
+    public String findPostCategoryById(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+        return board.getCommunityType(); // 예: COMMUNITY → "community"
+    }
 }

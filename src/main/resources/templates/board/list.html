@@ -146,7 +146,7 @@
         const keyword = searchInput.value.trim();
 
         if (keyword === "") {
-            alert("검색어를 입력해주세요.");
+            showConfirmModal('insertKeyword');
             searchInput.focus();
             return;
         }
@@ -185,6 +185,7 @@
     });
 </script>
 <!-- COMMON SCRIPTS -->
+<div th:replace="~{fragments/alert-modal :: alertModal('insertKeyword', '알림', '검색어를 입력해주세요.', '확인', null)}"></div>
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>

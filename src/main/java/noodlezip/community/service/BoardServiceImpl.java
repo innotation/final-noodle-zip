@@ -245,9 +245,7 @@ public class BoardServiceImpl implements BoardService {
         board.setPostStatus(CommunityActiveStatus.POSTED);
         board.setUser(user);
         boardRepository.save(board);
-
         eventPublisher.publishCommunityPostBadgeEvent(user);
-        log.info("board save : {}", board);
     }
 
     @Override
