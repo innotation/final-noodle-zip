@@ -555,15 +555,21 @@ public class StoreService {
     public StoreDto getStore(Long storeId, Long requesterUserId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new CustomException(ErrorStatus._NOT_FOUND_HANDLER));
-
-        User user = userRepository.findById(requesterUserId)
-                .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
-        // 승인되지 않았고, 관리자가 아니면서 등록한 사용자가 아닐 경우만 막기
-        if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus()) &&
-                (!store.getUserId().equals(user.getId())) &&
-                (!user.getUserType().equals(UserType.ADMIN))) {
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
+        if(requesterUserId != null) {
+            User user = userRepository.findById(requesterUserId)
+                    .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
+            // 승인되지 않았고, 관리자가 아니면서 등록한 사용자가 아닐 경우만 막기
+            if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus()) &&
+                    (!store.getUserId().equals(user.getId())) &&
+                    (!UserType.ADMIN.equals(user.getUserType()))) {
+                throw new CustomException(ErrorStatus._NOT_FOUND_HANDLER);
+            }
+        } else {
+            if (!ApprovalStatus.APPROVED.equals(store.getApprovalStatus())) {
+                throw new CustomException(ErrorStatus._NOT_FOUND_HANDLER);
+            }
         }
+
 
         return StoreDto.toDto(store);
     }
