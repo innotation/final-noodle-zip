@@ -18,6 +18,7 @@ import noodlezip.store.repository.MenuRepository;
 import noodlezip.store.repository.StoreExtraToppingRepository;
 import noodlezip.store.repository.StoreRepository;
 import noodlezip.store.repository.StoreWeekScheduleRepository;
+import noodlezip.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,6 +57,7 @@ class StoreServiceTest {
     @Mock private ReviewToppingRepository reviewToppingRepository;
     @Mock private StoreExtraToppingRepository storeExtraToppingRepository;
     @Mock private LocationService locationService;
+    @Mock private UserRepository userRepository;
 
     private StoreService storeService;
 
@@ -74,7 +76,8 @@ class StoreServiceTest {
                 ramenReviewRepository,
                 reviewToppingRepository,
                 storeExtraToppingRepository,
-                locationService
+                locationService,
+                userRepository
         );
     }
 
