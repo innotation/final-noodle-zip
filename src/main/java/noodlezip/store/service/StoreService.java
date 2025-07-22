@@ -362,7 +362,7 @@ public class StoreService {
                         try {
                             fileUtil.deleteFileFromS3(menu.getMenuImageUrl());
                         } catch (Exception e) {
-                            log.warn("Failed to delete existing menu image: " + menu.getMenuImageUrl(), e);
+                            
                         }
                     }
                     Map<String, String> uploadResult = fileUtil.fileupload("storeUpdate", menuImageFile);
