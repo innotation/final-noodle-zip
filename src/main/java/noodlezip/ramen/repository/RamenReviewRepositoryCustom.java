@@ -34,4 +34,6 @@ public interface RamenReviewRepositoryCustom {
     List<StoreReviewDto> findReviewsByBoardId(Long boardId);
 
     void deleteByBoardId(Long boardId);
+
+    List<noodlezip.store.dto.StoreReviewDto> findAllReviewsByUserId(Long userId);
 }

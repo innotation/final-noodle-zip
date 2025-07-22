@@ -707,6 +707,14 @@ a.btn_explore:hover {
   min-height: 130px;
   display: block;
 }
+.ellipsis-multiline {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;   /* 2줄까지만 보임, 원하면 숫자 변경 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
 @media (max-width: 1199px) {
   .list_home ul li a {
     padding: 15px 15px 15px 145px;

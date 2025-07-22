@@ -171,6 +171,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             builder.and(keywordBuilder);
         }
 
+        if (filter.getDistance() != null) {
+            // km 단위 → m 단위로 변환
+            double maxDistance = filter.getDistance() * 1000;
+            builder.and(distanceExpr.loe(maxDistance));
+        }
+
         // 본 쿼리
         List<SearchStoreDto> content = queryFactory
                 .select(Projections.constructor(SearchStoreDto.class,
@@ -311,6 +317,54 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .from(store)
                 .where(store.bizNum.eq(bizNum))
                 .distinct()
+                .fetch();
+    }
+
+    @Override
+    public List<Store> findRandomApprovedStores(int count) {
+        QStore store = QStore.store;
+        return queryFactory
+                .selectFrom(store)
+                .where(store.approvalStatus.eq(noodlezip.store.status.ApprovalStatus.APPROVED))
+                .orderBy(com.querydsl.core.types.dsl.Expressions.numberTemplate(Double.class, "function('RAND')").asc())
+                .limit(count)
+                .fetch();
+    }
+
+    @Override
+    public List<Store> findRecommendedStores(
+            List<String> soupNames, List<String> categoryNames, List<Long> excludeStoreIds, int count
+    ) {
+        QStore store = QStore.store;
+        QMenu menu = QMenu.menu;
+        QCategory category = QCategory.category;
+        QRamenSoup soup = QRamenSoup.ramenSoup;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
+        if (soupNames != null && !soupNames.isEmpty()) {
+            builder.and(soup.soupName.in(soupNames));
+        }
+        if (categoryNames != null && !categoryNames.isEmpty()) {
+            builder.and(category.categoryName.in(categoryNames));
+        }
+        if (excludeStoreIds != null && !excludeStoreIds.isEmpty()) {
+            builder.and(store.id.notIn(excludeStoreIds));
+        }
+
+        // 조건이 모두 비어있으면 추천 불가 → 빈 리스트 반환
+        if ((soupNames == null || soupNames.isEmpty()) && (categoryNames == null || categoryNames.isEmpty())) {
+            return List.of();
+        }
+
+        return queryFactory
+                .selectDistinct(store)
+                .from(menu)
+                .join(menu.store, store)
+                .join(menu.category, category)
+                .join(menu.ramenSoup, soup)
+                .where(builder)
+                .limit(count)
                 .fetch();
     }
 
