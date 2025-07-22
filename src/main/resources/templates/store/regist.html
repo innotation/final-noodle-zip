@@ -23,9 +23,19 @@
       border-radius: 8px;
       background-color: #f9f9f9;
     }
-    .menu-preview-image, #preview-image {
-      max-width: 100%;
-      max-height: 350px;
+    #preview-image { /* Store Image Preview */
+      max-width: 800px;
+      max-height: 450px;
+      width: auto;
+      height: auto;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    .menu-preview-image { /* Menu Image Preview */
+      max-width: 160px;
+      max-height: 160px;
+      width: auto;
+      height: auto;
       margin-top: 10px;
       border-radius: 4px;
     }
@@ -105,7 +115,7 @@
                         <img id="preview-image" src="" alt="대표 이미지 미리보기" style="display: none;" />
                     </div>
                     <input type="file" id="image-input" name="storeMainImage" accept="image/*" style="display: none;" />
-                    <small class="form-text text-muted">권장 사이즈: 500x500px, 파일 형식: JPG, PNG</small>
+                    <small class="form-text text-muted">권장 사이즈: 800x450px, 파일 형식: JPG, PNG (최대 100MB)</small>
                 </div>
 
                 <!-- ② 가게명 -->
@@ -196,7 +206,7 @@
               <img class="menu-preview-image" src="" alt="메뉴 이미지 미리보기" style="display:none;"/>
             </div>
             <input type="file" name="menus[${index}].menuImageFile" class="menu-image-input" style="display:none;" accept="image/*"/>
-            <small class="form-text text-muted">권장 사이즈: 300x300px, 파일 형식: JPG, PNG</small>
+            <small class="form-text text-muted">권장 사이즈: 160x160px, 파일 형식: JPG, PNG (최대 100MB)</small>
           </div>
 
           <div class="mb-3"><label for="menuName${index}" class="form-label">메뉴 이름</label><input type="text" id="menuName${index}" name="menus[${index}].menuName" class="form-control" placeholder="예: 돈코츠 라멘" required/></div>
@@ -387,20 +397,64 @@
         });
     }
 
-    function handleImagePreview(event) {
+    async function handleImagePreview(event) {
       const input = event.target;
       const file = input.files[0];
-      if (file) {
+      const MAX_FILE_SIZE_MB = 100; // 100MB
+      const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+      if (!file) return;
+
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        showErrorModal('failStoreRegister', `파일 크기가 너무 큽니다. ${MAX_FILE_SIZE_MB}MB 이하의 파일을 업로드해주세요.`);
+        input.value = ''; // Clear the input
+        return;
+      }
+
+      const isStoreMainImage = input.id === 'image-input';
+      const maxWidth = isStoreMainImage ? 800 : 160;
+      const maxHeight = isStoreMainImage ? 450 : 160;
+
+      const resizedDataUrl = await resizeImage(file, maxWidth, maxHeight);
+
+      const preview = input.closest('.mb-3').querySelector('img');
+      const text = input.closest('.mb-3').querySelector('span');
+      preview.src = resizedDataUrl;
+      preview.style.display = 'block';
+      if(text) text.style.display = 'none';
+    }
+
+    function resizeImage(file, maxWidth, maxHeight) {
+      return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const preview = input.closest('.mb-3').querySelector('img');
-          const text = input.closest('.mb-3').querySelector('span');
-          preview.src = e.target.result;
-          preview.style.display = 'block';
-          if(text) text.style.display = 'none';
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth || height > maxHeight) {
+              const aspectRatio = width / height;
+              if (width > height) {
+                width = maxWidth;
+                height = width / aspectRatio;
+              } else {
+                height = maxHeight;
+                width = height * aspectRatio;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.9)); // Adjust quality as needed
+          };
+          img.src = e.target.result;
         };
         reader.readAsDataURL(file);
-      }
+      });
     }
 
     function validateBusinessNumber() {
