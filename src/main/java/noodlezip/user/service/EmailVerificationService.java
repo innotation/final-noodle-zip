@@ -5,6 +5,7 @@ import noodlezip.common.exception.CustomException;
 import noodlezip.common.mail.MailService;
 import noodlezip.common.redis.RedisRepository;
 import noodlezip.user.status.UserErrorStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,7 @@ public class EmailVerificationService {
     }
 
 
+    @Async
     public void sendVerificationCode(String email) {
         // 인증 코드 생성
         String verificationCode = generateVerificationCode();
