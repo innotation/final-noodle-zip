@@ -26,7 +26,7 @@ public class SecurityConfig {
         "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
         "/store/**", "/admin_section/**", "/admin/**", "/receipt/**", "/location/**", "/ramen/**",
         "/board/**", "/comments/**", "/users/**", "/mypage/**", "/favicon.ico", "/font/**", "error/**",
-            "/bs-icon-font/**", "**/icon_fonts/**"
+            "/bs-icon-font/**", "/icon_fonts/**"
     );
 
     @Bean

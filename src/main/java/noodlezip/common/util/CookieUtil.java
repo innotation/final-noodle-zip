@@ -3,6 +3,7 @@ package noodlezip.common.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.URLDecoder;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class CookieUtil {
 
     private static final String DEFAULT_PATH = "/";
@@ -33,7 +35,7 @@ public class CookieUtil {
     }
 
     /**
-     * 새로운 쿠키를 생성하여 응답에 추가합니다.
+     * 새로운 쿠키를 생성하여 응답에 추가
      *
      * @param response   HttpServletResponse 객체
      * @param name       쿠키 이름
@@ -58,8 +60,8 @@ public class CookieUtil {
     }
 
     /**
-     * 특정 ID를 최근 본 항목 목록 쿠키에 추가하거나 업데이트합니다.
-     * 이 메소드는 순서를 유지하고 중복을 제거하며, 최대 개수를 관리합니다.
+     * 특정 ID 최근 본 항목 목록 쿠키 추가 및 업데이트
+     * 이 메소드는 순서 유지, 중복을 제거, 최대 개수를 관리
      *
      * @param itemId      현재 본 항목의 ID (Long)
      * @param cookieName  쿠키 이름 (예: "recentViewedBoards")
@@ -83,8 +85,8 @@ public class CookieUtil {
 
         // 새로운 LinkedHashSet을 만들어 현재 ID를 맨 앞에 추가
         LinkedHashSet<String> updatedRecentIds = new LinkedHashSet<>();
-        updatedRecentIds.add(currentIdStr);
         updatedRecentIds.addAll(recentIds); // 기존 ID들 추가
+        updatedRecentIds.add(currentIdStr);
 
         // 3. 최대 개수 초과 시 오래된 것부터 제거
         while (updatedRecentIds.size() > maxItems) {
@@ -100,7 +102,7 @@ public class CookieUtil {
     }
 
     /**
-     * 특정 쿠키 이름으로 저장된 최근 본 항목 ID들을 Long 타입 List로 반환합니다.
+     * 특정 쿠키 이름으로 저장된 최근 본 항목 ID들을 Long 타입 List로 반환
      *
      * @param request    HttpServletRequest 객체
      * @param cookieName 읽어올 쿠키의 이름
