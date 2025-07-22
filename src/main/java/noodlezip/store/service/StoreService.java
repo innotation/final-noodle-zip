@@ -541,6 +541,7 @@ public class StoreService {
     }
 
     // 등록 요청 매장 상태 변경
+    @Transactional
     public void changeStatus(Long id, ApprovalStatus status) {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
