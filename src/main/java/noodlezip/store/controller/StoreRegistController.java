@@ -100,7 +100,7 @@ public class StoreRegistController {
             }
         }
 
-        System.out.println(dto);
+        
 
         Long storeId = storeService.registerStore(dto, user);
         return Map.of("storeId", storeId);

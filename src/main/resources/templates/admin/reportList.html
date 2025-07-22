@@ -6,10 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
-  <meta name="author" content="Ansonika">
-  <title>FOOGRA - Admin dashboard</title>
+  <meta name="author" content="zip.lab">
+  <title>누들집 - 관리자페이지</title>
   <!-- Favicons-->
-  <link rel="shortcut icon" th:href="@{/admin_section/img/favicon.ico}" type="image/x-icon">
+  <link rel="shortcut icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
   <!-- Bootstrap core CSS-->
   <link th:href="@{/admin_section/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <!-- Main styles -->
@@ -25,18 +25,12 @@
 <body class="fixed-nav sticky-footer" id="page-top">
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-default fixed-top" id="mainNav">
-  <a class="navbar-brand" th:href="@{/admin/main}"><img th:src="@{/admin_section/img/logo.svg}" alt="" width="142" height="36"></a>
+  <a class="navbar-brand" th:href="@{/admin/main}"><img th:src="@{/img/noodlezip-logo-stickhead-clear.svg}" alt="" width="142" height="36"></a>
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarResponsive">
     <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-        <a class="nav-link" th:href="@{/admin/main}">
-          <i class="fa fa-fw fa-dashboard"></i>
-          <span class="nav-link-text">Dashboard</span>
-        </a>
-      </li>
       <li class="nav-item" data-toggle="tooltip" data-placement="right" title="신고내역">
         <a class="nav-link" th:href="@{/admin/reportList}">
           <i class="fa fa-fw fa-exclamation-triangle"></i>
@@ -47,12 +41,6 @@
         <a class="nav-link" th:href="@{/admin/registList}">
           <i class="fa fa-fw fa-folder-open"></i>
           <span class="nav-link-text">매장등록요청</span>
-        </a>
-      </li>
-      <li class="nav-item" data-toggle="tooltip" data-placement="right" title="신규매장추천">
-        <a class="nav-link" th:href="@{/admin/recommendList}">
-          <i class="fa fa-fw fa-folder-open"></i>
-          <span class="nav-link-text">추천매장목록</span>
         </a>
       </li>
     </ul>
@@ -76,19 +64,16 @@
   <div class="container-fluid">
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <a href="#">Dashboard</a>
-      </li>
-      <li class="breadcrumb-item active">Listings</li>
+      <li class="breadcrumb-item active">신고내역</li>
     </ol>
     <div class="box_general">
       <div class="header_box">
-        <h2 class="d-inline-block">Listings</h2>
+        <h2 class="d-inline-block">신고리스트</h2>
         <div class="filter">
           <!--          조건변경 (상태에 따라 보기로 바꿀듯?)-->
           <div class="styled-select short">
             <form method="get" action="#" id="filterForm">
-              <select name="type" onchange="document.getElementById('filterForm').submit()">
+              <select name="type">
                 <option value="ALL" th:selected="${type == 'ALL'}">전체</option>
                 <option value="POST" th:selected="${type == 'POST'}">게시글</option>
                 <option value="COMMENT" th:selected="${type == 'COMMENT'}">댓글</option>
@@ -100,44 +85,11 @@
       </div>
       <div class="list_general">
         <ul id="storeListContainer">
-<!--          <li th:each="report : ${reportList}">-->
-<!--            <figure><img th:src="@{/admin_section/img/item_1.jpg}" alt=""></figure>-->
-<!--            <small>신고내역</small>-->
-<!--            <h4 th:text="|신고유형 : ${report.reportType}|"></h4>-->
-<!--            <p><strong th:text="|신고자 아이디 : ${report.loginId}|"></strong></p>-->
-<!--            <p><strong th:text="|신고 내용 : ${report.content}|"></strong></p>-->
-<!--            <p><strong th:text="|신고일시 : ${report.createdAt}|"></strong></p>-->
-<!--            <p>-->
-<!--              <a href="#" class="btn_1 gray btn-view-report"-->
-<!--                 th:attr=" data-type=${report.reportType},-->
-<!--                           data-target-id=${report.reportTargetId},-->
-<!--                           data-report-id=${report.id}-->
-<!--                          ">-->
-<!--                <i class="fa fa-fw fa-eye"></i> View item-->
-<!--              </a>-->
-<!--            </p>-->
-<!--          </li>-->
         </ul>
       </div>
       <!-- /box_general-->
       <nav aria-label="...">
         <ul class="pagination pagination-sm add_bottom_30" id="paginationArea">
-<!--          <li class="page-item" th:classappend="${isFirst} ? 'disabled'">-->
-<!--            <a class="page-link" href="#" th:onclick="${!isFirst} ? 'loadReportList(' + (${page - 1}) + '); return false;' : null">이전</a>-->
-<!--          </li>-->
-
-<!--          <li class="page-item"-->
-<!--              th:each="p : ${#numbers.sequence(beginPage, endPage)}"-->
-<!--              th:classappend="${p == page} ? 'active'">-->
-<!--            <a class="page-link"-->
-<!--               href="#"-->
-<!--               th:text="${p}"-->
-<!--               th:onclick="'loadReportList(' + ${p} + '); return false;'"></a>-->
-<!--          </li>-->
-
-<!--          <li class="page-item" th:classappend="${isLast} ? 'disabled'">-->
-<!--            <a class="page-link" href="#" th:onclick="${!isLast} ? 'loadReportList(' + (${page + 1}) + '); return false;' : null">다음</a>-->
-<!--          </li>-->
         </ul>
       </nav>
       <!-- /pagination-->
@@ -148,7 +100,7 @@
   <footer class="sticky-footer">
     <div class="container">
       <div class="text-center">
-        <small>Copyright © FOOGRA 2021</small>
+        <small>누들집, 라멘검색 커뮤니티 사이트</small>
       </div>
     </div>
   </footer>
@@ -204,15 +156,15 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <h5 class="modal-title" id="exampleModalLabel">알림</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-body">로그아웃 하시겠습니까?</div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+          <a class="btn btn-primary" href="/logout">로그아웃</a>
         </div>
       </div>
     </div>
@@ -262,29 +214,37 @@
   });
 
   function loadReportList(page) {
+    const reportTypeKoreanMap = {
+      post: "게시글",
+      comment: "댓글",
+      user: "사용자"
+    };
     fetch(`/admin/reportList/data?page=${page}&type=${selectedType}`)
       .then(response => response.json())
       .then(data => {
         if (!Array.isArray(data.reportList)) return;
 
-        const listHtml = data.reportList.map(report => `
-          <li>
-            <figure><img src="/admin_section/img/item_1.jpg" alt=""></figure>
-            <small>신고내역</small>
-            <h4>신고유형 : ${report.reportType}</h4>
-            <p><strong>신고자 아이디: ${report.loginId}</strong></p>
-            <p><strong>신고 내용 : ${report.content}</strong></p>
-            <p><strong>신고일시 : ${report.createdAt}</strong></p>
-            <p>
-              <a href="#" class="btn_1 gray btn-view-report"
-         data-type="${report.reportType}"
-         data-target-id="${report.reportTargetId}"
-         data-report-id="${report.id}">
-        <i class="fa fa-fw fa-eye"></i> 상세보기
-      </a>
-            </p>
-          </li>
-        `).join('');
+        const listHtml = data.reportList.map(report => {
+          const koreanType = reportTypeKoreanMap[report.reportType] || report.reportType;
+
+          return `
+    <li>
+      <figure><img src="/admin_section/img/item_1.jpg" alt=""></figure>
+      <h4>신고유형 : ${koreanType}</h4>
+      <p><strong>신고자 아이디: ${report.loginId}</strong></p>
+      <p><strong>신고 내용 : ${report.content}</strong></p>
+      <p><strong>신고일시 : ${report.createdAt}</strong></p>
+      <p>
+        <a href="#" class="btn_1 gray btn-view-report"
+           data-type="${report.reportType}"
+           data-target-id="${report.reportTargetId}"
+           data-report-id="${report.id}">
+          <i class="fa fa-fw fa-eye"></i> 상세보기
+        </a>
+      </p>
+    </li>
+  `;
+        }).join('');
 
         document.getElementById("storeListContainer").innerHTML = listHtml;
 
@@ -341,24 +301,83 @@
     const targetId = button.getAttribute('data-target-id');
     currentReportId = button.getAttribute('data-report-id');
 
-    if (reportType === '댓글') {
-      fetch(`/admin/report/comment/${targetId}`)
-        .then(res => res.json())
-        .then(comment => {
-          document.getElementById('commentUser').textContent = comment.loginId;
-          document.getElementById('commentContent').textContent = comment.content;
-          document.getElementById('commentDate').textContent = comment.createdAt;
-          $('#commentDetailModal').modal('show');
-        });
-    } else {
-      let url = '';
-      if (reportType === '게시글') url = `/board/list/${targetId}`;
-      else if (reportType === '사용자') url = `/mypage/${targetId}`;
-      else return;
-
-      document.getElementById('reportDetailFrame').src = url;
-      $('#reportDetailModal').modal('show');
+    if (reportType === 'comment') {
+      openCommentModal(targetId);
+    } else if (reportType === 'post') {
+      openPostIframe(targetId);
+    } else if (reportType === 'user') {
+      openUserIframe(targetId);
     }
+  }
+
+  function openCommentModal(commentId) {
+    fetch(`/admin/report/comment/${commentId}`)
+      .then(res => {
+        if (!res.ok) throw new Error("댓글 정보를 불러오지 못했습니다.");
+        return res.json();
+      })
+      .then(comment => {
+        document.getElementById('commentUser').textContent = comment.loginId;
+        document.getElementById('commentContent').textContent = comment.content;
+        document.getElementById('commentDate').textContent = comment.createdAt;
+        $('#commentDetailModal').modal('show');
+      })
+      .catch(err => {
+        alert(err.message || "댓글 정보를 불러올 수 없습니다.");
+        currentReportId = null;
+      });
+  }
+
+  function openPostIframe(postId) {
+    const iframe = document.getElementById('reportDetailFrame');
+    iframe.src = '';
+
+    fetch(`/admin/report/post-category/${postId}`)
+      .then(res => {
+        if (!res.ok) throw new Error("삭제되었거나 존재하지 않는 게시글입니다.");
+        return res.text();
+      })
+      .then(category => {
+        const url = `/board/${category}/detail/${postId}`;
+        iframe.src = url;
+        $('#reportDetailModal').modal('show');
+      })
+      .catch(err => {
+        alert(err.message);
+        iframe.src = '';
+        currentReportId = null;
+      });
+  }
+
+  function openUserIframe(userId) {
+    const iframe = document.getElementById('reportDetailFrame');
+    iframe.src = '';
+
+    const url = `/users/${userId}/mypage`;
+    iframe.onload = function () {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const title = iframeDoc.title;
+        iframe.onload = null;
+
+        if (!title || title.includes("404") || title.includes("오류") || title.includes("Error")) {
+          alert('존재하지 않는 사용자입니다.');
+          $('#reportDetailModal').modal('hide');
+          iframe.src = '';
+          currentReportId = null;
+        } else {
+          $('#reportDetailModal').modal('show');
+        }
+      } catch (e) {
+        iframe.onload = null;
+        alert('사용자 정보를 확인할 수 없습니다.');
+        $('#reportDetailModal').modal('hide');
+        iframe.src = '';
+        currentReportId = null;
+      }
+    };
+
+    iframe.src = url;
   }
 
   function changeReportStatus(status) {

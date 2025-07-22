@@ -362,7 +362,7 @@ public class StoreService {
                         try {
                             fileUtil.deleteFileFromS3(menu.getMenuImageUrl());
                         } catch (Exception e) {
-                            log.warn("Failed to delete existing menu image: " + menu.getMenuImageUrl(), e);
+                            
                         }
                     }
                     Map<String, String> uploadResult = fileUtil.fileupload("storeUpdate", menuImageFile);
@@ -541,6 +541,7 @@ public class StoreService {
     }
 
     // 등록 요청 매장 상태 변경
+    @Transactional
     public void changeStatus(Long id, ApprovalStatus status) {
         Store store = storeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorStatus._DATA_NOT_FOUND));
@@ -743,5 +744,48 @@ public class StoreService {
     // 내가 등록한 매장
     public List<Store> findStoresByUserId(Long userId) {
         return storeRepository.findAllByUserId(userId);
+    }
+
+    // 랜덤 매장 10개 조회 (메인페이지)
+    public List<Store> getRandomApprovedStores(int count) {
+        return storeRepository.findRandomApprovedStores(count);
+    }
+
+    // 유저 추천 매장 조회 (메인페이지)
+    public List<Store> getRecommendedStoresForUser(Long userId, int count) {
+        // 1. 유저가 쓴 리뷰 전체 가져오기 (페이징 없이)
+        List<StoreReviewDto> myReviews = ramenReviewRepository.findAllReviewsByUserId(userId);
+
+        // 2. 방문한 storeId 집계
+        Set<Long> visitedStoreIds = myReviews.stream()
+                .map(StoreReviewDto::getStoreId)
+                .collect(Collectors.toSet());
+
+        // 3. soup/category별 집계
+        Map<String, Long> soupCount = myReviews.stream()
+                .filter(r -> r.getMenuName() != null && !r.getMenuName().isEmpty())
+                .collect(Collectors.groupingBy(
+                        StoreReviewDto::getMenuName, Collectors.counting()
+                ));
+        Map<String, Long> categoryCount = myReviews.stream()
+                .filter(r -> r.getCategoryName() != null && !r.getCategoryName().isEmpty())
+                .collect(Collectors.groupingBy(
+                        StoreReviewDto::getCategoryName, Collectors.counting()
+                ));
+
+        // 4. 상위 1~2개만 추출
+        List<String> topSoups = soupCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(2)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        List<String> topCategories = categoryCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(2)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        // 5. 추천 가게 쿼리
+        return storeRepository.findRecommendedStores(topSoups, topCategories, new ArrayList<>(visitedStoreIds), count);
     }
 }

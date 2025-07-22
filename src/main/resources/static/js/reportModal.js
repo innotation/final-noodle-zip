@@ -12,6 +12,12 @@ $('#reportModal').on('show.bs.modal', function (event) {
 $('#reportForm').on('submit', function (e) {
   e.preventDefault();
 
+  const checkedReasons = $('input[name="reasons"]:checked');
+  if (checkedReasons.length === 0) {
+    alert('신고 사유를 한 가지 이상 선택해주세요.');
+    return;
+  }
+
   $.ajax({
     type: 'POST',
     url: '/report',

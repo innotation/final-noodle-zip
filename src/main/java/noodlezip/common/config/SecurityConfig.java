@@ -3,10 +3,13 @@ package noodlezip.common.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.AntPathMatcher;
@@ -17,6 +20,7 @@ import java.util.List;
 @EnableWebSecurity
 @Configuration
 @Slf4j
+@EnableMethodSecurity
 public class SecurityConfig {
 
     // permitAll 패턴을 상수로 분리
@@ -26,7 +30,7 @@ public class SecurityConfig {
         "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
         "/store/**", "/admin_section/**", "/admin/**", "/receipt/**", "/location/**", "/ramen/**",
         "/board/**", "/comments/**", "/users/**", "/mypage/**", "/favicon.ico", "/font/**", "error/**",
-            "/bs-icon-font/**", "**/icon_fonts/**"
+            "/bs-icon-font/**", "/icon_fonts/**"
     );
 
     @Bean

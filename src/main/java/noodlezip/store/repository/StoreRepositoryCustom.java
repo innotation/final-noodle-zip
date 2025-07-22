@@ -25,4 +25,11 @@ public interface StoreRepositoryCustom {
     List<String> findDistinctToppings();
 
     List<StoreIdNameDto> findIdNameByBizNum(Long bizNum);
+
+    List<Store> findRandomApprovedStores(int count);
+
+    List<Store> findRecommendedStores(
+            List<String> soupNames, List<String> categoryNames, List<Long> excludeStoreIds, int count
+    );
+
 }

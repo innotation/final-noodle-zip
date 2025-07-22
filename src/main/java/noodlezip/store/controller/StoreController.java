@@ -239,7 +239,7 @@ public class StoreController {
             }
         }
 
-        log.debug("메뉴imagefiles dto에 넣은거: {} ", dto.getMenus().toString());
+        
 
         storeService.updateStore(storeId, dto, storeMainImage, menuImageFiles, userDetails.getUser());
 

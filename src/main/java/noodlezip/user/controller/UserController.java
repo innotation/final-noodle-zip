@@ -25,6 +25,7 @@ import noodlezip.user.status.UserSuccessStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -226,6 +227,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/edit-profile")
     @Operation(summary = "프로필 수정 페이지", description = "로그인한 사용자의 프로필 수정 폼 페이지를 반환합니다. 현재 프로필 정보를 미리 채웁니다.")
     @ApiResponses(value = {
@@ -236,11 +238,6 @@ public class UserController {
     @Parameter(hidden = true, name = "userDetails", description = "현재 로그인된 사용자 정보 (Spring Security)")
     public String editProfilePage(@AuthenticationPrincipal MyUserDetails userDetails, Model model) {
 
-        if (userDetails == null || userDetails.getUser() == null) {
-            log.error("User entity is null within MyUserDetails.");
-            return "redirect:/";
-        }
-
         User loggedInUser = userDetails.getUser();
         UserDto userDto = modelMapper.map(loggedInUser, UserDto.class);
         model.addAttribute("userProfile", userDto);
@@ -248,6 +245,7 @@ public class UserController {
         return "user/edit-profile";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("user/profile/update")
     @Operation(summary = "프로필 업데이트 처리", description = "로그인한 사용자의 프로필 정보(닉네임, 프로필 이미지, 배너 이미지)를 업데이트합니다.")
     @ApiResponses(value = {
@@ -277,10 +275,6 @@ public class UserController {
             @RequestParam(value = "bannerImageFile", required = false) MultipartFile bannerImageFile,
             RedirectAttributes redirectAttributes) {
 
-        if (userDetails == null) {
-            return "redirect:/";
-        }
-
         if (bindingResult.hasErrors()) {
             log.error("유효성 검사 실패: {}", bindingResult.getAllErrors());
             throw new IllegalArgumentException("유효성 검사 실패");
@@ -299,6 +293,8 @@ public class UserController {
         return "redirect:/mypage/" + userDetails.getUser().getId();
     }
 
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("user/signout")
     @Operation(summary = "회원 탈퇴 처리", description = "로그인한 사용자의 계정을 탈퇴 처리합니다.")
     @ApiResponses(value = {
@@ -317,11 +313,6 @@ public class UserController {
             @AuthenticationPrincipal MyUserDetails userDetails,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
-
-        if (userDetails == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "로그인이 필요합니다.");
-            return "redirect:/";
-        }
 
         Long userId = userDetails.getUser().getId();
         userService.signoutUser(userId);

@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -87,6 +88,7 @@ public class CommentController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/regist")
     @Operation(summary = "댓글 등록", description = "새로운 댓글을 게시글에 등록합니다. 로그인한 사용자만 가능합니다.")
     @ApiResponses(value = {
@@ -112,10 +114,6 @@ public class CommentController {
             @Validated(ValidationGroups.OnCreate.class) @ModelAttribute CommentReqDto commentReqDto,
             BindingResult bindingResult) {
 
-        if (user == null || user.getUser() == null) {
-            log.warn("비로그인 사용자가 댓글 등록 시도");
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
-        }
         commentReqDto.setUserId(user.getUser().getId());
 
         if (bindingResult.hasErrors()) {
@@ -138,6 +136,7 @@ public class CommentController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     @Operation(summary = "댓글 삭제", description = "지정된 ID의 댓글을 삭제합니다. 작성자 본인만 삭제할 수 있습니다.")
     @ApiResponses(value = {
@@ -170,11 +169,6 @@ public class CommentController {
             @PathVariable("id") Long commentId,
             @RequestParam("boardId") Long boardId,
             @AuthenticationPrincipal MyUserDetails user) {
-
-        if (user == null || user.getUser() == null) {
-            log.warn("비로그인 사용자가 댓글 삭제 시도");
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
-        }
 
         if (commentId == null || boardId == null) {
             log.warn("댓글 ID 또는 게시글 ID 누락 (commentId: {}, boardId: {})", commentId, boardId);
