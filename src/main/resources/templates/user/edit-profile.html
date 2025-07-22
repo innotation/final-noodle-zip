@@ -12,12 +12,15 @@
             margin-top: 5px;
             margin-bottom: 5px;
         }
+
         .text-success {
             color: #28a745 !important; /* Bootstrap success green */
         }
+
         .text-danger {
             color: #dc3545 !important; /* Bootstrap danger red */
         }
+
         /* 이미지 미리보기 스타일 */
         .image-preview-container {
             display: flex;
@@ -25,6 +28,7 @@
             margin-bottom: 15px;
             gap: 15px; /* 이미지와 입력 필드 사이 간격 */
         }
+
         .image-preview {
             width: 80px; /* 미리보기 이미지 크기 조정 */
             height: 80px;
@@ -34,6 +38,7 @@
             background-color: #f8f8f8;
             flex-shrink: 0; /* 크기가 줄어들지 않도록 */
         }
+
         .banner-preview {
             width: 150px; /* 배너 이미지 크기 조정 */
             height: 80px;
@@ -42,14 +47,17 @@
             background-color: #f8f8f8;
             flex-shrink: 0;
         }
+
         .file-input-wrapper {
             flex-grow: 1; /* 남은 공간을 차지하도록 */
         }
+
         .file-input-wrapper label {
             display: block;
             margin-bottom: 5px;
             font-weight: 500;
         }
+
         .file-input-wrapper input[type="file"] {
             border: 1px solid #ced4da;
             padding: .375rem .75rem;
@@ -61,7 +69,7 @@
 
 <body class="margin_sticky">
 
-    <header th:replace="~{fragments/subHeader :: subHeader}"></header>
+<header th:replace="~{fragments/subHeader :: subHeader}"></header>
 
 <main class="bg_gray pattern">
 
@@ -76,11 +84,15 @@
                     </div>
                     <div class="main">
                         <h6>내 정보 수정</h6>
-                        <form id="profileUpdateForm" th:action="@{/user/profile/update}" th:object="${userProfile}" method="post" enctype="multipart/form-data">
+                        <form id="profileUpdateForm" th:action="@{/user/profile/update}" th:object="${userProfile}"
+                              method="post" enctype="multipart/form-data">
 
                             <div class="form-group">
-                                <input class="form-control" placeholder="이름" id="username" name="username" th:field="*{userName}">
-                                <i class="icon_id"></i> <div class="text-danger validation-message" id="nicknameError" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
+                                <input class="form-control" placeholder="이름" id="username" name="username"
+                                       th:field="*{userName}">
+                                <i class="icon_id"></i>
+                                <div class="text-danger validation-message" id="nicknameError"
+                                     th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
                             </div>
 
                             <div class="form-group">
@@ -94,7 +106,8 @@
                                         console.log(userProfile.profileImageUrl);
                                     </script>
                                     <div class="file-input-wrapper">
-                                        <input type="file" id="profileImageFile" name="profileImageFile" accept="image/*">
+                                        <input type="file" id="profileImageFile" name="profileImageFile"
+                                               accept="image/*">
                                     </div>
                                 </div>
                             </div>
@@ -121,10 +134,12 @@
 </main>
 
 <footer th:replace="~{fragments/footer :: footer}"></footer>
-<div id="toTop"></div><div class="layer"></div>
+<div id="toTop"></div>
+<div class="layer"></div>
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
+<div th:replace="~{fragments/alert-modal :: alertModal('infoModal', '알림', '', '확인', null)}"></div>
 
 <script>
     // --- HTML 요소 캐싱 ---
@@ -159,7 +174,7 @@
         const file = inputElement.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 previewElement.src = e.target.result;
             };
             reader.readAsDataURL(file);
@@ -215,17 +230,17 @@
         /*<![CDATA[*/
         const validationError = /*[[${validationError}]]*/ null;
         if (validationError) {
-            alert("유효성 검사 실패:\n" + validationError);
+            showConfirmModal('infoModal', validationError)
         }
 
         const successMessage = /*[[${successMessage}]]*/ null;
         if (successMessage) {
-            alert(successMessage);
+            showConfirmModal('infoModal', successMessage)
         }
 
         const errorMessage = /*[[${errorMessage}]]*/ null;
         if (errorMessage) {
-            alert("오류 발생:\n" + errorMessage);
+            showConfirmModal('infoModal', errorMessage)
         }
         /*]]>*/
 
