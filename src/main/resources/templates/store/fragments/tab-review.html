@@ -295,9 +295,12 @@
               </div>
               <!-- /row -->
             </div>
-            <ul class="tags mt-2" th:if="${not #lists.isEmpty(review.toppingNames)}">
-              <li th:each="t : ${review.toppingNames}"><a href="#0" th:text="${t}">토핑</a></li>
-            </ul>
+            <div class="tags mt-2 mb-2" th:if="${not #lists.isEmpty(review.toppingNames)}">
+              작성자가 추가한 토핑 :
+              <th:block th:each="t : ${review.toppingNames}">
+                <a th:text="${t}" class="active">토핑</a>
+              </th:block>
+            </div>
           </div>
         </div>
       </div>

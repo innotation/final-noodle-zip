@@ -1,6 +1,13 @@
 package noodlezip.common.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.common.dto.ApiResponse;
+import noodlezip.common.status.ErrorStatus;
+import org.apache.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,12 +22,24 @@ public class GlobalWebExceptionHandler {
      */
 
     @ExceptionHandler(CustomException.class)
-    public String handleCustomException(CustomException e, Model model) {
-        log.error("Web CustomException 발생: {}", e.getMessage(), e); // 로깅
+    public Object handleCustomException(CustomException e, Model model, HttpServletRequest request) { // HttpServletRequest 파라미터 추가
+        log.error("CustomException 발생: {}", e.getMessage(), e);
 
-        model.addAttribute("errorCode", e.getErrorCode().getReason().getCode());
-        model.addAttribute("errorMessage", e.getErrorCode().getReason().getMessage());
+        // 요청이 AJAX (Fetch/XMLHttpRequest) 요청인지 확인
+        String requestedWith = request.getHeader("X-Requested-With");
+        // Accept 헤더에 application/json이 포함되어 있는지 확인
+        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
+        boolean isAjaxRequest = "XMLHttpRequest".equals(requestedWith) || (acceptHeader != null && acceptHeader.contains(MediaType.APPLICATION_JSON_VALUE));
 
-        return "error/customError";
+
+        if (isAjaxRequest) {
+            // AJAX 요청인 경우 JSON 응답 반환
+            return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST);
+        } else {
+            // 일반 웹 요청인 경우 HTML 에러 페이지 반환
+            model.addAttribute("errorCode", e.getErrorCode().getReason().getCode());
+            model.addAttribute("errorMessage", e.getErrorCode().getReason().getMessage());
+            return "error/customError";
+        }
     }
 }
