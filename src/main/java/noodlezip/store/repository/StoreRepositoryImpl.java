@@ -171,6 +171,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
             builder.and(keywordBuilder);
         }
 
+        if (filter.getDistance() != null) {
+            // km 단위 → m 단위로 변환
+            double maxDistance = filter.getDistance() * 1000;
+            builder.and(distanceExpr.loe(maxDistance));
+        }
+
         // 본 쿼리
         List<SearchStoreDto> content = queryFactory
                 .select(Projections.constructor(SearchStoreDto.class,
