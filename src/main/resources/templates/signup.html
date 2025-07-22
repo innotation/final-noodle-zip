@@ -13,20 +13,25 @@
             align-items: center;
             gap: 10px; /* input과 버튼 사이 간격 */
         }
+
         .duplicate-check-wrapper .form-control {
             flex-grow: 1; /* input이 최대한 공간을 차지하도록 */
         }
+
         .duplicate-check-wrapper button {
             flex-shrink: 0; /* 버튼 크기가 줄어들지 않도록 */
         }
+
         .validation-message {
             font-size: 0.875em;
             margin-top: 5px;
             margin-bottom: 5px;
         }
+
         .text-success {
             color: #28a745 !important; /* Bootstrap success green */
         }
+
         .text-danger {
             color: #dc3545 !important; /* Bootstrap danger red */
         }
@@ -35,7 +40,7 @@
 
 <body class="margin_sticky">
 
-    <div th:replace="~{fragments/subHeader::subHeader}"></div>
+<div th:replace="~{fragments/subHeader::subHeader}"></div>
 
 <main class="bg_gray pattern">
 
@@ -49,56 +54,70 @@
                         </div>
                     </div>
                     <div class="main">
-<!--                        <a href="#0" class="social_bt facebook">Sign up with Facebook</a>-->
-<!--                        <a href="#0" class="social_bt google">Sign up with Google</a>-->
-<!--                        <div class="divider"><span>Or</span></div>-->
+                        <!--                        <a href="#0" class="social_bt facebook">Sign up with Facebook</a>-->
+                        <!--                        <a href="#0" class="social_bt google">Sign up with Google</a>-->
+                        <!--                        <div class="divider"><span>Or</span></div>-->
                         <h6>개인정보</h6>
                         <form id="signupForm" th:action="@{/signup}" th:object="${user}" method="post">
                             <div class="form-group">
                                 <div class="duplicate-check-wrapper">
-                                    <input class="form-control" placeholder="아이디" id="loginId" name="loginId" th:field="*{loginId}">
+                                    <input class="form-control" placeholder="아이디" id="loginId" name="loginId"
+                                           th:field="*{loginId}">
                                     <button type="button" class="btn_1" id="checkLoginIdBtn">중복 확인</button>
                                 </div>
-<!--                                <i class="icon_profile"></i>-->
-                                <div class="text-danger validation-message" id="loginIdError" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
+                                <!--                                <i class="icon_profile"></i>-->
+                                <div class="text-danger validation-message" id="loginIdError"
+                                     th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></div>
                                 <div class="text-success validation-message" id="loginIdCheckMessage"></div>
                             </div>
                             <div class="form-group add_bottom_15">
-                                <input class="form-control" placeholder="비밀번호" id="password_sign" name="password" th:field="*{password}">
+                                <input class="form-control" placeholder="비밀번호" id="password_sign" name="password"
+                                       th:field="*{password}">
                                 <i class="icon_lock"></i>
-                                <div class="text-danger validation-message" id="passwordError" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                <div class="text-danger validation-message" id="passwordError"
+                                     th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                                 <div class="text-success validation-message" id="passwordValidationMessage"></div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="이름" id="userName" name="userName" th:field="*{userName}">
+                                <input class="form-control" placeholder="이름" id="userName" name="userName"
+                                       th:field="*{userName}">
                                 <i class="icon_pencil"></i>
-                                <div class="text-danger validation-message" id="userNameError" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
+                                <div class="text-danger validation-message" id="userNameError"
+                                     th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></div>
                             </div>
                             <div class="form-group">
                                 <div class="duplicate-check-wrapper">
-                                    <input class="form-control" placeholder="이메일주소" id="email" name="email" th:field="*{email}">
+                                    <input class="form-control" placeholder="이메일주소" id="email" name="email"
+                                           th:field="*{email}">
                                     <button type="button" class="btn_1" id="checkEmailBtn">중복 확인</button>
                                 </div>
-<!--                                <i class="icon_mail"></i>-->
-                                <div class="text-danger validation-message" id="emailError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                <!--                                <i class="icon_mail"></i>-->
+                                <div class="text-danger validation-message" id="emailError"
+                                     th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                 <div class="text-success validation-message" id="emailCheckMessage"></div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="전화번호 (예: 010-1234-5678)" id="phone" name="phone" th:field="*{phone}">
+                                <input class="form-control" placeholder="전화번호 (예: 010-1234-5678)" id="phone"
+                                       name="phone" th:field="*{phone}">
                                 <i class="icon_phone"></i>
-                                <div class="text-danger validation-message" id="phoneError" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                                <div class="text-danger validation-message" id="phoneError"
+                                     th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="생년월일 8자리 (예: 19900101)" id="birth" name="birth" th:field="*{birth}">
+                                <input class="form-control" placeholder="생년월일 8자리 (예: 19900101)" id="birth" name="birth"
+                                       th:field="*{birth}">
                                 <i class="icon_calendar"></i>
-                                <div class="text-danger validation-message" id="birthError" th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}"></div>
+                                <div class="text-danger validation-message" id="birthError"
+                                     th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}"></div>
                             </div>
                             <div class="form-group">
                                 <select name="gender" id="gender" class="form-control" th:field="*{gender}">
-                                    <option value="">성별 선택</option> <option value="M">남</option>
+                                    <option value="">성별 선택</option>
+                                    <option value="M">남</option>
                                     <option value="F">여</option>
                                 </select>
-                                <div class="text-danger validation-message" id="genderError" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
+                                <div class="text-danger validation-message" id="genderError"
+                                     th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
                             </div>
                             <button type="submit" class="btn_1 full-width mb_5" id="signupBtn" disabled>회원가입</button>
                         </form>
@@ -113,6 +132,7 @@
 <script src="js/common_scripts.min.js"></script>
 <script src="js/common_func.js"></script>
 <script src="assets/validate.js"></script>
+<div th:replace="~{fragments/alert-modal :: alertModal('errorModal', '알림', '', '확인', null)}"></div>
 
 <script>
     // --- 회원가입 버튼 활성화를 위한 전역 상태 변수 ---
@@ -340,12 +360,12 @@
         /*<![CDATA[*/
         const validationError = /*[[${validationError}]]*/ null;
         if (validationError) {
-            alert(validationError);
+            showConfirmModal('errorModal', validationError);
         }
 
         const globalErrorMessage = /*[[${globalErrorMessage}]]*/ null;
         if (globalErrorMessage) {
-            alert(globalErrorMessage);
+            showConfirmModal('errorModal', globalErrorMessage);
         }
         /*]]>*/
     });
