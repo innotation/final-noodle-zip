@@ -177,7 +177,7 @@
                 <div>
                     <small>Noodle-Zip</small>
                     <h3>3천여개 이상의 라멘 가게</h3>
-                    <a href="grid-listing-filterscol.html" class="btn_1">전체 보기</a>
+                    <a th:href="@{/search/list}" class="btn_1">전체 보기</a>
                 </div>
             </div>
             <!-- /wrapper -->
@@ -299,6 +299,7 @@
                     emElement.textContent = item.communityType;
                     h3Element.textContent = item.title;
                     smallElement.innerHTML = item.content;
+                    smallElement.classList.add('ellipsis-multiline');
                 });
             } catch (error) {
                 console.error(error);
