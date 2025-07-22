@@ -34,6 +34,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,6 +64,7 @@ public class BoardController {
     private static final String RECENT_VIEWED_BOARDS = "recentViewedBoards";
     private static final int MAX_RECENT_BOARDS = 3;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/{category}/new")
     @Operation(summary = "게시글 작성 페이지", description = "사용자가 게시글 작성할 수 있는 HTML 폼 페이지 반환")
     @ApiResponses(value = {
@@ -77,8 +79,7 @@ public class BoardController {
         communityType = CommunityType.fromValue(category);
         if (communityType == null) {
             throw new CustomException(ErrorStatus._FORBIDDEN);
-        }
-        else if (communityType == CommunityType.REVIEW) {
+        } else if (communityType == CommunityType.REVIEW) {
             if (reviewInitDto.getBizNum() == null) {
                 reviewInitDto.setBizNum("4578502690");
                 reviewInitDto.setVisitDate("2025-07-07");
@@ -118,7 +119,7 @@ public class BoardController {
 
         OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
         model.addAttribute("storeId", ocrToReviewDto.getStoreId());
-        model.addAttribute("storeName",ocrToReviewDto.getStoreName());
+        model.addAttribute("storeName", ocrToReviewDto.getStoreName());
         model.addAttribute("menuList", ocrToReviewDto.getMenuList());
         model.addAttribute("toppings", ocrToReviewDto.getToppingList());
 
@@ -126,6 +127,7 @@ public class BoardController {
         return "board/leave-review";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/registReview")
     @ResponseBody
     @Operation(summary = "리뷰 등록", description = "OCR 기반의 리뷰를 등록합니다. 로그인한 사용자만 가능하며, 메뉴별 상세 리뷰를 포함합니다.")
@@ -139,12 +141,6 @@ public class BoardController {
             @AuthenticationPrincipal MyUserDetails userDetails,
             @Valid @RequestBody ReviewReqDto dto,
             BindingResult bindingResult) {
-
-
-        if (userDetails == null || userDetails.getUser() == null) {
-            log.warn("비로그인 사용자가 리뷰 등록 시도.");
-            throw new CustomException(ErrorStatus._UNAUTHORIZED);
-        }
 
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
@@ -168,6 +164,7 @@ public class BoardController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{category}/new")
     @Operation(summary = "게시글 등록 처리", description = "새로운 게시글을 등록합니다. 로그인한 사용자만 가능하며, 이미지 파일 첨부를 지원합니다.")
     @Parameters({
@@ -185,10 +182,6 @@ public class BoardController {
             @Validated(ValidationGroups.OnCreate.class) @ModelAttribute BoardReqDto boardReqDto,
             BindingResult bindingResult) {
 
-        if (user == null || user.getUser() == null) {
-            log.warn("비로그인 사용자가 게시글 등록 시도.");
-            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._UNAUTHORIZED);
-        }
 
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
@@ -204,16 +197,8 @@ public class BoardController {
             return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._BAD_REQUEST);
         }
 
-        try {
-            boardService.registBoard(boardReqDto, user.getUser(), category);
-            return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_BOARD_ADDED);
-        } catch (CustomException e) {
-            log.error("게시글 등록 중 비즈니스 로직 오류 발생: {}", e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("게시글 등록 중 예상치 못한 서버 오류 발생: {}", e.getMessage(), e);
-            throw new CustomException(ErrorStatus._INTERNAL_SERVER_ERROR);
-        }
+        boardService.registBoard(boardReqDto, user.getUser(), category);
+        return noodlezip.common.dto.ApiResponse.onSuccess(BoardSuccessStatus._OK_BOARD_ADDED);
     }
 
     @GetMapping({"/list", "/{category}/list"})
@@ -318,6 +303,7 @@ public class BoardController {
         return "board/detail";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/delete/{boardId}")
     @Operation(summary = "게시글 삭제", description = "지정된 ID의 게시글을 삭제합니다. 게시글 작성자만 삭제할 수 있습니다.",
             method = "POST")
@@ -338,10 +324,6 @@ public class BoardController {
             @Parameter(name = "user", description = "현재 로그인된 사용자 정보 (Spring Security에서 주입)", hidden = true)
     })
     public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> toggleLike(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
-
-        if (user == null || user.getUser() == null) {
-            return noodlezip.common.dto.ApiResponse.onFailure(ErrorStatus._UNAUTHORIZED);
-        }
 
         Long userId = user.getUser().getId();
         boolean isLiked = boardService.toggleLike(BoardUserId.builder().userId(userId).communityId(boardId).build());
