@@ -320,6 +320,17 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public List<Store> findRandomApprovedStores(int count) {
+        QStore store = QStore.store;
+        return queryFactory
+                .selectFrom(store)
+                .where(store.approvalStatus.eq(noodlezip.store.status.ApprovalStatus.APPROVED))
+                .orderBy(com.querydsl.core.types.dsl.Expressions.numberTemplate(Double.class, "function('RAND')").asc())
+                .limit(count)
+                .fetch();
+    }
+
     private OrderSpecifier<?> getOrderByExpression(String sort, NumberExpression<Double> distanceExpr, QStore store) {
         if (sort == null || sort.isEmpty()) {
             return distanceExpr.asc();

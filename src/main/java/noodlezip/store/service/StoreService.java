@@ -744,4 +744,9 @@ public class StoreService {
     public List<Store> findStoresByUserId(Long userId) {
         return storeRepository.findAllByUserId(userId);
     }
+
+    // 랜덤 매장 10개 조회 (메인페이지)
+    public List<Store> getRandomApprovedStores(int count) {
+        return storeRepository.findRandomApprovedStores(count);
+    }
 }
