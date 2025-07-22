@@ -206,12 +206,6 @@
                                 Ipsum.</p>
                         </div>
                     </div>
-                    <div
-                            th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
-                        <button type="button" class="btn btn-sm btn-danger"
-                                th:data-board-id="${board.boardId}"
-                                onclick="deleteBoardConfirm(this);">게시글 삭제</button>
-                    </div>
                     <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"
                           th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
                         <button type="submit" class="btn btn-sm btn-danger">게시글 삭제</button>
