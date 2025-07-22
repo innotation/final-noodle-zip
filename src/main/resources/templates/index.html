@@ -76,7 +76,7 @@
         <div class="item">
           <div class="strip">
             <figure>
-              <img th:src="${store.storeMainImageUrl}" class="owl-lazy" alt="">
+              <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/location_1.jpg'}" alt="매장 이미지" class="owl-lazy">
               <a th:href="@{'/store/detail/' + ${store.id}}" class="strip_info">
                 <div class="item_title">
                   <h3 th:text="${store.storeName}"></h3>
@@ -183,7 +183,7 @@
           <div class="item">
             <div class="strip">
               <figure>
-                <img th:src="${store.storeMainImageUrl}" class="owl-lazy" alt="">
+                <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/location_1.jpg'}" alt="매장 이미지" class="owl-lazy">
                 <a th:href="@{'/store/detail/' + ${store.id}}" class="strip_info">
                   <div class="item_title">
                     <h3 th:text="${store.storeName}"></h3>
@@ -260,7 +260,22 @@
 
     </div>
     <!-- /container -->
+  <div class="call_section lazy" data-bg="url(img/ramen_rest.jpg)">
+    <div class="container clearfix">
+      <div class="col-lg-5 col-md-6 float-end wow">
+        <div class="box_1">
+          <h3>당신의 라멘, 더 많은 사람들에게 닿게 하세요!</h3>
+          <p>전국의 라멘 마니아들이 모이는 noodle.zip 에 매장을 등록해보세요.
+            지금 바로 온라인에서도 라멘을 알리고, 단골 손님을 늘릴 수 있습니다.</p>
+          <a th:href="@{/store/regist}" class="btn_1 login-required" id="store-regist">매장 등록하기</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id="is-logged-in"
+         th:value="${#authentication.authenticated and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails)}" />
 
+  <!--/call_section-->
 </main>
 <!-- 검색모달 include -->
 <div th:replace="~{fragments/searchModal :: searchModal}"></div>
@@ -268,13 +283,15 @@
 
 <!-- COMMON SCRIPTS -->
 <script th:src="@{/js/common_scripts.min.js}"></script>
-<!--<script th:src="@{/js/slider.js}"></script>-->
 <script th:src="@{/js/common_func.js}"></script>
 <script th:src="@{/assets/validate.js}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const communityBoardListContainer = document.getElementById('community-board-list-container');
         const reviewBoardListContainer = document.getElementById('review-board-list-container');
+        const isLogin = document.getElementById('is-logged-in').value === 'true';
+        const storeRegist = document.getElementById('store-regist');
+
         async function loadBoardData(boardName) {
             console.log(boardName);
             try {
@@ -333,6 +350,18 @@
 
         loadBoardData('community');
         loadBoardData('review');
+
+
+        if (storeRegist) {
+          if (isLogin) {
+            // 로그인된 경우 login-required 클래스 제거하고 href 복원
+            storeRegist.classList.remove('login-required');
+            storeRegist.href = '/store/regist';
+            // login-required 이벤트 리스너 제거 (jQuery off 사용)
+            $(storeRegist).off('click');
+          }
+        }
+
     });
 </script>
 </body>
