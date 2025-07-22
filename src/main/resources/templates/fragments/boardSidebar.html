@@ -72,15 +72,14 @@
                             const li = document.createElement('li');
                             li.innerHTML = `
                             <div class="alignleft">
-                                <a href="/board/detail/${board.id}">
+                                <a href="/board/${board.communityType}/detail/${board.id}">
                                     <img src="${board.imageUrl ? board.imageUrl : '/img/blog-1.jpg'}" alt="게시글 이미지">
                                 </a>
                             </div>
                             <small>
-                                ${board.category ? board.category : 'General'} -
                                 ${board.createdAt ? new Date(board.createdAt).toLocaleDateString('ko-KR') : 'N/A'}
                             </small>
-                            <h3><a href="/board/detail/${board.id}" title="${board.title}">${board.title}</a></h3>
+                            <h3><a href="/board/${board.communityType}/detail/${board.id}" title="${board.title}">${board.title}</a></h3>
                         `;
                             listContainer.appendChild(li);
                         });

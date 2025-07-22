@@ -83,13 +83,21 @@
   <!-- 검색모달 필터 옵션 로드 스크립트 -->
   <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
+      // URL 파라미터에서 필터 값들 가져오기
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlDistance = urlParams.get('distance');
+      const urlRegions = urlParams.getAll('region');
+      const urlCategories = urlParams.getAll('ramenCategory');
+      const urlSoups = urlParams.getAll('ramenSoup');
+      const urlToppings = urlParams.getAll('topping');
+      
       // 선택된 옵션들을 저장할 객체
       let selectedOptions = {
-        region: [],
-        ramenCategory: [],
-        ramenSoup: [],
-        topping: [],
-        distance: 30
+        region: urlRegions,
+        ramenCategory: urlCategories,
+        ramenSoup: urlSoups,
+        topping: urlToppings,
+        distance: urlDistance ? parseInt(urlDistance) : 30
       };
 
       // 검색바 요소들
@@ -99,6 +107,21 @@
       const searchButton = document.getElementById('searchButton');
       const confirmSearchBtn = document.getElementById('confirmSearchBtn');
       const regionSelect = document.getElementById('modal-region-select');
+
+      // URL 파라미터에서 키워드와 검색 타입 복원
+      const urlKeyword = urlParams.get('keyword');
+      const urlSearchType = urlParams.get('searchType');
+      
+      if (keywordSearch && urlKeyword) {
+        keywordSearch.value = urlKeyword;
+      }
+      
+      if (searchCategory && urlSearchType) {
+        searchCategory.value = urlSearchType;
+      }
+      
+      // 초기 필터 표시 업데이트
+      updateFilterDisplay();
 
       // 검색모달이 열릴 때 필터 옵션 로드
       const searchModal = document.getElementById('searchModal');
@@ -196,7 +219,12 @@
         
         // 필터 옵션들 추가
         Object.keys(selectedOptions).forEach(key => {
-          if (Array.isArray(selectedOptions[key])) {
+          if (key === 'distance') {
+            // distance는 30이 아닐 때만 추가
+            if (selectedOptions[key] !== 30) {
+              params.append(key, selectedOptions[key]);
+            }
+          } else if (Array.isArray(selectedOptions[key])) {
             selectedOptions[key].forEach(value => {
               params.append(key, value);
             });

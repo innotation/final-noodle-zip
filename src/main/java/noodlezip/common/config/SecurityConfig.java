@@ -25,7 +25,8 @@ public class SecurityConfig {
         "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**",
         "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
         "/store/**", "/admin_section/**", "/admin/**", "/receipt/**", "/location/**", "/ramen/**",
-        "/board/**", "/comments/**", "/users/**", "/mypage/**", "/favicon.ico"
+        "/board/**", "/comments/**", "/users/**", "/mypage/**", "/favicon.ico", "/font/**", "error/**",
+            "/bs-icon-font/**", "/icon_fonts/**"
     );
 
     @Bean

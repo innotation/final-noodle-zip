@@ -93,7 +93,7 @@
 		        </div>
 		        <!-- /col -->
 
-          <div class="col-lg-4" id="sidebar_fixed">
+          <div class="col-lg-4">
           <div class="box_booking">
                 <div class="head">
                     <h3>매장 위치</h3>
@@ -110,10 +110,41 @@
                        target="_blank" class="btn_1 full-width mb_5">
                         <i class="icon_location"></i> 네이버 지도에서 보기
                     </a>
-                    <a th:href="@{/receipt}" class="btn_1 full-width mb_5">
+                    <a th:href="@{/receipt}" class="btn_1 full-width mb_5 login-required" id="review-write-btn">
                       <i class="icon_location"></i> 리뷰 작성하러 가기
                     </a>
-                    <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
+
+                  <!-- 더미 작성 후 삭제 -->
+                    <form method="POST" action="/board/review/new">
+                      <input type="hidden" th:value="${store.bizNum}" name="bizNum">
+                      <input type="hidden" th:value="${#dates.format(#calendars.createNow(), 'yyyy-MM-dd')}" name="visitDate">
+                      <input type="hidden" th:value="${#strings.randomAlphanumeric(30)}" name="ocrKeyHash">
+                      <input type="hidden" name="isReceiptReview" value="true">
+                      <input type="submit" th:href="@{/board/review/new}"
+                             class="btn_1 full-width mb_5 login-required"
+                             id="dummy-review"
+                             value="더미 리뷰 작성">
+                    </form>
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      let isLogin = document.getElementById('is-logged-in').value === 'true';
+                      let dummyBtn = document.getElementById('dummy-review');
+
+                      // 리뷰 작성 버튼 로그인 상태 처리
+                      if (dummyBtn) {
+                        if (isLogin) {
+                          // 로그인된 경우 login-required 클래스 제거하고 href 복원
+                          dummyBtn.classList.remove('login-required');
+                          dummyBtn.href = '/receipt';
+                          // login-required 이벤트 리스너 제거 (jQuery off 사용)
+                          $(dummyBtn).off('click');
+                        }
+                      }
+                    });
+                  </script>
+                  <!-- /더미 작성 후 삭제 -->
+
+                  <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
                 </div>
             </div>
             <!-- /box_booking -->
@@ -136,7 +167,7 @@
 		document.addEventListener("DOMContentLoaded", () => {
 			const tabC = document.getElementById("tab-C");
 			const paneC = document.getElementById("pane-C");
-			const storeId = document.getElementById("store-id").value; // storeId를 숨겨놓고 가져옴
+			const storeId = document.getElementById("store-id").value;
 
 			let menuLoaded = false; // 중복 요청 방지
 
@@ -376,9 +407,16 @@
 							const newCards = tempDiv.querySelectorAll(".review_card");
 							const newWrapper = tempDiv.querySelector("#load-more-review-wrapper");
 
+							// 새로운 리뷰 카드들을 컨테이너에 추가
 							newCards.forEach(card => container.appendChild(card));
-							loadMoreWrapper.remove(); // 기존 버튼 제거
-							if (newWrapper) container.after(newWrapper); // 새 버튼 삽입
+							
+							// 기존 더보기 버튼 제거
+							loadMoreWrapper.remove();
+							
+							// 새로운 더보기 버튼이 있으면 추가 (다음 페이지가 있을 때만)
+							if (newWrapper) {
+								container.parentNode.appendChild(newWrapper);
+							}
 
 							// 새로운 리뷰가 로드될 때마다 필터링 다시 적용
 							filterReviewsByMenu();
@@ -759,7 +797,19 @@
       var storeIdInput = document.getElementById('store-id');
       var storeId = storeIdInput ? storeIdInput.value : null;
       var wishlistBtn = document.querySelector('.wishlist');
+      var reviewWriteBtn = document.getElementById('review-write-btn');
       var lastSavedCategoryIds = [];
+
+      // 리뷰 작성 버튼 로그인 상태 처리
+      if (reviewWriteBtn) {
+        if (isLoggedIn) {
+          // 로그인된 경우 login-required 클래스 제거하고 href 복원
+          reviewWriteBtn.classList.remove('login-required');
+          reviewWriteBtn.href = '/receipt';
+          // login-required 이벤트 리스너 제거 (jQuery off 사용)
+          $(reviewWriteBtn).off('click');
+        }
+      }
 
       // 1. 페이지 진입 시 버튼 활성화 - isSavedStore API 사용
       if (isLoggedIn && storeId && wishlistBtn) {

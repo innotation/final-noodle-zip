@@ -13,28 +13,25 @@
 <header th:replace="fragments/subHeader :: subHeader"></header>
 
 <main>
-    <div id="error_page">
+    <div class="bg_gray pattern">
+        <div class="margin_60_40">
         <div class="container">
             <div class="row justify-content-center text-center">
-                <div class="col-xl-7 col-lg-9">
+                <div class="col-xl-9 col-lg-9">
                     <figure><img th:src="@{/img/noodlezip-Logo-stickhead-errorclear.svg}" alt="" class="img-fluid"></figure>
+                    <br><br>
                     <h1 th:text="${errorCode}"></h1>
+                    <br>
                     <h1 th:text="${errorMessage}"></h1>
-                    <p>존재하지 않는 페이지입니다.</p>
-
-                    <form>
-                        <div class="search_bar">
-                            <input type="text" class="form-control" placeholder="What are you looking for?">
-                            <input type="submit" value="Search">
-                        </div>
-                    </form>
                 </div>
+                <br><br>
             </div>
             <!-- /row -->
         </div>
         <!-- /container -->
     </div>
     <!-- /error -->
+    </div>
 </main>
 <!-- /main -->
 

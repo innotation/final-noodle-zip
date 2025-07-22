@@ -52,6 +52,7 @@ public class StoreDto implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long storeLegalCode;
+    private Long bizNum;
 
     // Store -> StoreDto
     public static StoreDto toDto(Store store) {
@@ -73,6 +74,7 @@ public class StoreDto implements Serializable {
                 .createdAt(store.getCreatedAt())
                 .updatedAt(store.getUpdatedAt())
                 .storeLegalCode(store.getStoreLegalCode())
+                .bizNum(store.getBizNum())
                 .build();
     }
 

@@ -80,7 +80,7 @@
 
 						<div class="form-group">
 							<label>내용</label>
-							<div id="editor"></div>
+							<div id="editor" style="min-height: 500px"></div>
 							<textarea style="display: none" class="form-control" id="content" name="content" rows="5" placeholder="리뷰 내용을 입력하세요."></textarea>
 						</div>
 
@@ -89,13 +89,13 @@
 							<button type="button" class="btn_1 btn-sm" id="submitReviewBtn">리뷰 작성</button>
 						</div>
 
-<!--						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />-->
-<!--						<input type="hidden" name="visitDate" th:value="${reviewInitDto.visitDate}" />-->
-<!--						<input type="hidden" name="storeId" th:value="${storeId}" />-->
+						<input type="hidden" name="ocrKeyHash" th:value="${reviewInitDto.ocrKeyHash}" />
+						<input type="hidden" name="visitDate" th:value="${reviewInitDto.visitDate}" />
+						<input type="hidden" name="storeId" th:value="${storeId}" />
 <!--						===================테스트용 임시 값 최종시 삭제 후 위 코드 주석 제거!!=================-->
-						<input type="hidden" name="ocrKeyHash" value="6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d" />
-						<input type="hidden" name="visitDate" value="2025-07-07" />
-						<input type="hidden" name="storeId" value="87" />
+<!--						<input type="hidden" name="ocrKeyHash" value="6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d" />-->
+<!--						<input type="hidden" name="visitDate" value="2025-07-07" />-->
+<!--						<input type="hidden" name="storeId" value="87" />-->
 
 					</form>
 				</div>
@@ -220,7 +220,7 @@
 
     <div class="form-group">
       <label>내용</label>
-      <textarea class="form-control" name="reviews[${index}].content" rows="3" placeholder="이 메뉴에 대한 솔직한 후기를 남겨주세요."></textarea>
+      <textarea class="form-control" style="min-height: 300px" name="reviews[${index}].content" rows="3" placeholder="이 메뉴에 대한 솔직한 후기를 남겨주세요."></textarea>
     </div>
 
     <div class="form-group">
@@ -457,12 +457,15 @@
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
-		})
-				.then(response => {
+		}).then(response => {
 					if (!response.ok) throw new Error("리뷰 등록 실패");
-					showAlertModal("리뷰 등록 성공!", "완료");
-					setTimeout(() => location.href = "/", 1000);
+					return response.json()
 				})
+			.then(data => {
+				const boardId = data.boardId;
+				showAlertModal("리뷰 등록 성공!", "완료");
+				setTimeout(() => location.href = `/board/review/detail/${boardId}`, 1000);
+			})
 				.catch(err => {
 					console.error(err);
 					showAlertModal("제출 중 오류가 발생했습니다.");

@@ -22,5 +22,11 @@ public class SearchFilterDto {
     // 검색어 필터
     private String searchType; // "STORE_NAME", "MENU_NAME", "ALL"
     private String keyword;    // 검색어
+    
+    // 거리 필터
+    private Integer distance;  // 검색 반경 (km)
+    
+    // 정렬 필터
+    private String sort;       // "distance", "created-desc", "created-asc", "review-count"
 
 }
