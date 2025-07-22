@@ -180,15 +180,6 @@
     </div>
   </main>
 
-  <!-- COMMON SCRIPTS -->
-  <script src="/js/common_scripts.min.js"></script>
-  <script src="/js/common_func.js"></script>
-  <script src="/assets/validate.js"></script>
-
-  <!-- 카카오 다음 우편번호 API -->
-  <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
-  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d8455fa8f84607ce70b0cd1184c74538&libraries=services"></script>
-
   <div th:replace="~{fragments/alert-modal :: alertModal('successStoreUpdate', '알림', '<p>가게 정보가 성공적으로 수정되었습니다!</p>', '확인', null)}"></div>
   <div th:replace="~{fragments/alert-modal :: alertModal('failStoreUpdate', '알림', '', '확인', null)}"></div>
 
@@ -894,11 +885,6 @@
       const storeRequestDto = JSON.parse(/*[[${storeRequestDtoJson}]]*/ '{}');
       /*]]>*/
   </script>
-
-</body>
-<footer th:replace="~{fragments/footer :: footer}"></footer>
-
-</html>
 
 </body>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
