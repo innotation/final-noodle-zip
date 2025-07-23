@@ -76,7 +76,9 @@
         <div class="item">
           <div class="strip">
             <figure>
-              <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/location_1.jpg'}" alt="매장 이미지" class="owl-lazy">
+              <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/460x310.jpg'}"
+                   onerror="this.src='/img/460x310.jpg'"
+                   alt="매장 이미지">
               <a th:href="@{'/store/detail/' + ${store.id}}" class="strip_info">
                 <div class="item_title">
                   <h3 th:text="${store.storeName}"></h3>
@@ -183,7 +185,9 @@
           <div class="item">
             <div class="strip">
               <figure>
-                <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/location_1.jpg'}" alt="매장 이미지" class="owl-lazy">
+                <img th:src="${store.storeMainImageUrl != null && !#strings.isEmpty(store.storeMainImageUrl) ? store.storeMainImageUrl : '/img/460x310.jpg'}"
+                     onerror="this.src='/img/460x310.jpg'"
+                     alt="매장 이미지" >
                 <a th:href="@{'/store/detail/' + ${store.id}}" class="strip_info">
                   <div class="item_title">
                     <h3 th:text="${store.storeName}"></h3>
@@ -329,14 +333,17 @@
                     htmlliElement.appendChild(aElement);
                     aElement.appendChild(figureElement);
                     figureElement.appendChild(imgElement);
-                    imgElement.classList.add('lazy');
+                    // 이미지 src 지정 시 null/빈값/에러 처리
+                    imgElement.src = item.imageUrl && item.imageUrl !== 'null' && item.imageUrl !== '' ? item.imageUrl : '/img/460x310.jpg';
+                    imgElement.onerror = function() {
+                      this.src = '/img/460x310.jpg';
+                    };
                     aElement.appendChild(divStrongElement);
                     divStrongElement.appendChild(strongElement);
                     aElement.appendChild(emElement);
                     aElement.appendChild(h3Element);
                     aElement.appendChild(smallElement);
                     aElement.href = `/board/${item.communityType}/detail/${item.boardId}`;
-                    imgElement.src = item.imageUrl;
                     strongElement.textContent = item.likesCount;
                     emElement.textContent = item.communityType;
                     h3Element.textContent = item.title;
