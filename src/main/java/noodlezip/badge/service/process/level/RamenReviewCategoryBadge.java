@@ -16,13 +16,14 @@ import noodlezip.common.exception.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class RamenReviewCategoryBadge {
 
-    private final static int invalidRamenCategoryId = 7; //기타
+    private final static List<Integer> validRamenCategoryIdList = List.of(1, 2, 3, 4, 5, 6, 12);
 
     private final BadgeCategoryRepository badgeCategoryRepository;
     private final BadgeRepository badgeRepository;
@@ -88,7 +89,7 @@ public class RamenReviewCategoryBadge {
     }
 
     private boolean isValidRamenCategory(int ramenCategoryId) {
-        return ramenCategoryId != invalidRamenCategoryId;
+        return validRamenCategoryIdList.contains(ramenCategoryId);
     }
 
 }

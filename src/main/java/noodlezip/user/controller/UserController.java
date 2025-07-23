@@ -26,6 +26,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -283,6 +285,17 @@ public class UserController {
         try {
             Long userId = userDetails.getUser().getId();
             userService.updateUser(userId, userDto, profileImageFile, bannerImageFile);
+
+            User updatedUser = userService.findExistingUserByUserId(userId)
+                    .orElseThrow(() -> new CustomException(UserErrorStatus._UNAUTHORIZED_ACCESS));
+
+            MyUserDetails updatedDetails = new MyUserDetails(updatedUser);
+
+            Authentication auth = new UsernamePasswordAuthenticationToken(
+                    updatedDetails, null, updatedDetails.getAuthorities()
+            );
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
             redirectAttributes.addFlashAttribute("successMessage", "프로필이 성공적으로 업데이트되었습니다!");
         } catch (Exception e) {
             log.error("프로필 업데이트 중 오류 발생: {}", e.getMessage(), e);
@@ -290,7 +303,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("userProfile", userDto);
         }
 
-        return "redirect:/mypage/" + userDetails.getUser().getId();
+        return "redirect:/users/" + userDetails.getUser().getId() + "/mypage";
     }
 
 

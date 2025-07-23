@@ -13,13 +13,13 @@
 
 </head>
 
-<body class="header_in">
+<body class="header_in margin_sticky">
   <div th:replace="~{fragments/subHeader :: subHeader}"></div>
 
   <main>
 
     <div class="hero_in detail_page background-image"
-         th:attr="data-background='url(' + ${myPage.profileBannerImageUrl} + ')'">
+         th:attr="data-background=${'url(' + (myPage.profileBannerImageUrl != null && !#strings.isEmpty(myPage.profileBannerImageUrl) ? myPage.profileBannerImageUrl : '/img/profile-banner-default.jpg') + ')'}">
       <div class="wrapper opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.5)">
 
         <div class="container">
@@ -27,8 +27,10 @@
             <div class="row">
               <div class="col-xl-4 col-lg-5 col-md-6">
                 <div class="profile-box">
-                  <img th:src="${myPage.profileImageUrl}" alt="프로필 이미지"
-                       class="profile-img"/>
+                  <img th:src="${myPage.profileImageUrl != null && !#strings.isEmpty(myPage.profileImageUrl) ? myPage.profileImageUrl : '/img/avatar.jpg'}"
+                       alt="프로필 이미지"
+                       class="profile-img"
+                       onerror="this.onerror=null;this.src='/img/avatar.jpg'"/>
                   <div class="profile-meta">
                     <h1 th:text="${myPage.userName}" class="profile-name">유저닉네임</h1>
                     <div class="badge-list">
@@ -47,14 +49,14 @@
                 <div class="buttons clearfix">
 <!--
 									<span class="magnific-gallery">
-										<a th:href="@{/img/detail_1.jpg}" class="btn_hero" title="Photo title" data-effect="mfp-zoom-in"><i
+										<a th:href="@{/img/800x533.jpg}" class="btn_hero" title="Photo title" data-effect="mfp-zoom-in"><i
                       class="icon_image"></i>View photos</a>
 										<a th:href="@{/img/detail_2.jpg}" title="Photo title" data-effect="mfp-zoom-in"></a>
 										<a th:href="@{/img/detail_3.jpg}" title="Photo title" data-effect="mfp-zoom-in"></a>
 									</span>
 -->
                   <th:block th:if="${isOwner}">
-                    <a th:href="@{/mypage/edit}" class="btn_hero edit-mypage-btn">
+                    <a th:href="@{/user/edit-profile}" class="btn_hero edit-mypage-btn">
                       <i class="icon_pencil"></i> 마이페이지 수정하기
                     </a>
                   </th:block>
@@ -120,9 +122,9 @@
                     <div class="add_bottom_25"></div>
                     <h2>Pictures from our users</h2>
                     <div class="pictures magnific-gallery clearfix">
-                      <figure><a th:href="@{/img/detail_gallery/detail_1.jpg}" title="Photo title"
+                      <figure><a th:href="@{/img/detail_gallery/800x533.jpg}" title="Photo title"
                                  data-effect="mfp-zoom-in"><img th:src="@{/img/thumb_detail_placeholder.jpg}"
-                                                                th:data-src="@{/img/thumb_detail_1.jpg}" class="lazy"
+                                                                th:data-src="@{/img/thumb_800x533.jpg}" class="lazy"
                                                                 alt=""></a></figure>
                       <figure><a th:href="@{/img/detail_gallery/detail_2.jpg}" title="Photo title"
                                  data-effect="mfp-zoom-in"><img th:src="@{/img/thumb_detail_placeholder.jpg}"
@@ -162,7 +164,7 @@
                       <div class="menu_item thumbs">
                         <figure>
                           <a th:href="@{/img/menu_item_large_2.jpg}" title="Photo title" data-effect="mfp-zoom-in">
-                            <img th:src="@{/img/menu-thumb-placeholder.jpg}" th:data-src="@{/img/menu-thumb-2.jpg}"
+                            <img th:src="@{/img/menu-thumb-placeholder.jpg}" th:data-src="@{/img/160x160.jpg}"
                                  alt="" class="lazy">
                           </a>
                         </figure>
@@ -490,10 +492,10 @@
                           <div class="row">
                             <div class="col-md-3 d-flex align-items-center justify-content-center">
                               <figure class="menu-image-thumb mb-0 magnific-gallery">
-                                <a th:href="${board.imageUrl != null ? board.imageUrl : '/img/blog-1.jpg'}"
+                                <a th:href="${board.imageUrl != null ? board.imageUrl : '/img/800x533.jpg'}"
                                    data-effect="mfp-zoom-in">
-                                  <img th:src="${board.imageUrl != null ? board.imageUrl : '/img/blog-1.jpg'}"
-                                       onerror="this.onerror=null;this.src='/img/blog-1.jpg'"
+                                  <img th:src="${board.imageUrl != null ? board.imageUrl : '/img/800x533.jpg'}"
+                                       onerror="this.onerror=null;this.src='/img/800x533.jpg'"
                                        alt="게시글 이미지"
                                        style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;">
                                 </a>

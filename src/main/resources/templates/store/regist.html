@@ -250,8 +250,8 @@
       const imageUploadArea = document.getElementById('image-upload-area');
       const imageInput = document.getElementById('image-input');
       imageUploadArea.addEventListener('click', () => imageInput.click());
-      setupDragAndDrop(imageUploadArea, imageInput);
-      imageInput.addEventListener('change', handleImagePreview);
+        imageInput.addEventListener('change', handleImagePreview);
+        setupDragAndDrop(imageUploadArea, imageInput);
 
       document.getElementById('add-extra-topping-btn').addEventListener('click', addExtraTopping);
       document.getElementById('add-menu').addEventListener('click', addMenu);
@@ -301,7 +301,8 @@
       filterToppings(newMenuItem, '');
       const menuImageUpload = newMenuItem.querySelector('.menu-image-upload');
       const menuImageInput = newMenuItem.querySelector('.menu-image-input');
-      setupDragAndDrop(menuImageUpload, menuImageInput);
+        menuImageInput.addEventListener('change', handleImagePreview);
+        setupDragAndDrop(menuImageUpload, menuImageInput);
     }
 
     function updateMenuIndices() {
@@ -557,7 +558,6 @@
       // 대표 이미지
       const imageInput = document.getElementById("image-input");
       if (imageInput.files.length > 0) formData.append("storeMainImage", imageInput.files[0]);
-
       // 메뉴 이미지들
       document.querySelectorAll('.menu-item').forEach(item => {
           const menuImgInput = item.querySelector('.menu-image-input');
@@ -565,8 +565,7 @@
             formData.append(`menuImageFiles`, menuImgInput.files[0]);
           }
       });
-
-      const storeData = {
+        const storeData = {
           storeName: document.getElementById("storeName").value,
           phone: document.getElementById("phone").value, // 전화번호 조합 로직 필요
           address: document.getElementById("address-api").value,

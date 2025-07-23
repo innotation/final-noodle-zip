@@ -41,10 +41,12 @@
                  th:each="item : ${list.subscriptionList}">
                 <div class="strip">
                     <figure>
-                        <img th:src="${item.profileBannerImageUrl}" alt="프로필 배너 이미지">
+                        <img th:src="${item.profileBannerImageUrl != null && !#strings.isEmpty(item.profileBannerImageUrl) ? item.profileBannerImageUrl : '/img/profile-banner-default.jpg'}"
+                             alt="프로필 배너 이미지">
                         <a th:href="@{/users/{userId}/mypage(userId=${item.userId})}" class="strip_info">
                             <div class="item_title">
-                                <img th:src="${item.profileImageUrl}" alt="프로필 이미지" class="profile-thumb">
+                                <img th:src="${item.profileImageUrl != null && !#strings.isEmpty(item.profileImageUrl) ? item.profileImageUrl : '/img/avatar.jpg'}"
+                                     alt="프로필 이미지" class="profile-thumb">
                                 <h3 th:text="${item.name}">이름</h3>
                                 <small th:text="'ID: ' + ${item.loginId}">아이디</small>
                             </div>

@@ -8,6 +8,9 @@
 	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
 	<!-- SPECIFIC CSS -->
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/style.css" rel="stylesheet">
+
 	<link href="/css/review.css" rel="stylesheet">
 
 	<!-- YOUR CUSTOM CSS -->
@@ -73,7 +76,7 @@
 
 						<div class="form-group">
 							<label>제목</label>
-							<input class="form-control" type="text" placeholder="제목을 작성해 주세요." id="title" name="title">
+							<input class="form-control" type="text" placeholder="제목을 작성해 주세요.(30자)" id="title" name="title" maxlength="30">
 						</div>
 
 						<div class="review-slider"></div>
@@ -176,35 +179,35 @@
     <div class="row">
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">면 굵기 <strong class="val-thickness"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleThickness" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].noodleThickness" />
       </div>
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">면 식감 <strong class="val-texture"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleTexture" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].noodleTexture" />
       </div>
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">면 삶기 <strong class="val-boiled"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].noodleBoiledLevel" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].noodleBoiledLevel" />
       </div>
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">국물 농도 <strong class="val-soup-thick"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupThickness" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].soupThickness" />
       </div>
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">온도 <strong class="val-temp"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupTemperature" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].soupTemperature" />
       </div>
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">염도 <strong class="val-salt"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupSaltiness" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].soupSaltiness" />
       </div>
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">맵기 <strong class="val-spicy"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupSpiciness" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].soupSpiciness" />
       </div>
       <div class="col-md-3 add_bottom_25">
         <div class="add_bottom_15">기름 <strong class="val-oil"></strong></div>
-        <input type="range" min="0" max="10" step="1" value="5" name="reviews[${index}].soupOiliness" />
+        <input type="range" min="0" max="10" step="1" value="0" data-orientation="horizontal" name="reviews[${index}].soupOiliness" />
       </div>
     </div>
 
@@ -332,6 +335,7 @@
 			const index = getNextReviewIndex();
 			const html = getReviewSlideHtml(id, name, index);
 			$('.review-slider').slick('slickAdd', html);
+			$('.review-slider input[type="range"]').rangeslider('update', true);
 			addedMenuIds.add(id);
 			$('.menu-checkbox[value="' + id + '"]').prop('checked', true);
 			refreshMenuModalList();

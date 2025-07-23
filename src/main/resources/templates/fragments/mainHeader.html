@@ -23,8 +23,12 @@
           <li>
             <div class="dropdown user clearfix">
               <a href="#" data-bs-toggle="dropdown">
-                <figure><img th:src="${#authentication.principal.user.profileImageUrl}" alt=""></figure>
-                <span th:text="${#authentication.principal.user.userName}"></span>
+                <figure>
+                  <img th:src="${#authentication.principal.user.profileImageUrl != null &&
+                                !#strings.isEmpty(#authentication.principal.user.profileImageUrl) ?
+                                #authentication.principal.user.profileImageUrl : '/img/avatar.jpg'}"
+                       alt="" onerror="this.onerror=null;this.src='/img/avatar.jpg'"/>
+                </figure>                <span th:text="${#authentication.principal.user.userName}"></span>
               </a>
               <div class="dropdown-menu">
                 <div class="dropdown-menu-content">
