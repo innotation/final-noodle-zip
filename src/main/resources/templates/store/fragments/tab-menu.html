@@ -43,12 +43,12 @@
             <div class="row">
                 <div class="col-md-3">
                     <figure>
-                        <a th:href="${menu.menuImageUrl != null ? menu.menuImageUrl : '/img/menu-thumb-1.jpg'}" 
+                        <a th:href="${menu.menuImageUrl != null ? menu.menuImageUrl : '/img/160x160.jpg'}" 
                            th:title="${menu.menuName}" 
                            data-effect="mfp-zoom-in">
-                            <img th:src="${menu.menuImageUrl != null ? menu.menuImageUrl : '/img/menu-thumb-1.jpg'}"
+                            <img th:src="${menu.menuImageUrl != null ? menu.menuImageUrl : '/img/160x160.jpg'}"
                                  th:alt="${menu.menuName}"
-                                 onerror="this.onerror=null;this.src='/img/menu-thumb-1.jpg';"
+                                 onerror="this.onerror=null;this.src='/img/160x160.jpg';"
                                  style="width: 100%; height: auto; border-radius: 5px; cursor: pointer;">
                         </a>
                     </figure>
