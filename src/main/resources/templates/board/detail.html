@@ -486,19 +486,20 @@
                 submitCommentBtn.addEventListener('click', async () => {
                     const content = commentContentInput.value.trim();
 
-                    if (content === '') {
-                        showConfirmModal('exceptionModal', '댓글 내용을 입력해주세요.');
+                    if (currentLoggedInUserId === null) {
+                        showConfirmModal('errorCommentLogin', () => {
+                            window.location.href = '/';
+                        });
                         return;
                     }
 
-                    if (currentLoggedInUserId === null) {
-                        showConfirmModal('exceptionModal', '댓글을 작성하려면 로그인해야 합니다.');
-                        window.location.href = '/';
+                    if (content === '') {
+                        showErrorModal('exceptionModal', '댓글 내용을 입력해주세요.');
                         return;
                     }
 
                     if (!boardId) {
-                        showConfirmModal('errorModal', '게시글 정보를 찾을 수 없습니다.');
+                        showErrorModal('errorModal', '게시글 정보를 찾을 수 없습니다.');
                         return;
                     }
 
@@ -524,11 +525,11 @@
                             renderCommentsAndPagination(data.payload); // 댓글 등록 후 바로 렌더링
                         } else {
                             const errorData = await response.json();
-                            showConfirmModal('errorModal', errorData.message);
+                            showErrorModal('errorModal', errorData.message);
 
                         }
                     } catch (error) {
-                        showConfirmModal('errorModal', error.message);
+                        showErrorModal('errorModal', error.message);
                     }
                 });
 
@@ -547,20 +548,20 @@
                             },
                             body: formData.toString()
                         })
-                          .then(response => {
-                              if (response.ok) {
-                                  return response.json(); // 삭제 성공 시 응답 본문을 JSON으로 파싱
-                              }
-                              throw new Error('댓글 삭제에 실패했습니다.');
-                          })
-                          .then(data => {
-                              showConfirmModal('commentDeleteModal');
-                              renderCommentsAndPagination(data.payload); // 삭제 후 바로 렌더링
-                          })
-                          .catch(error => {
-                              console.error('댓글 삭제 중 오류 발생:', error);
-                              showConfirmModal('errorModal', error.message);
-                          });
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json(); // 삭제 성공 시 응답 본문을 JSON으로 파싱
+                                }
+                                throw new Error('댓글 삭제에 실패했습니다.');
+                            })
+                            .then(data => {
+                                showConfirmModal('commentDeleteModal');
+                                renderCommentsAndPagination(data.payload); // 삭제 후 바로 렌더링
+                            })
+                            .catch(error => {
+                                console.error('댓글 삭제 중 오류 발생:', error);
+                                showErrorModal('errorModal', error.message);
+                            });
                     });
                 }
 
@@ -586,34 +587,35 @@
                             'Content-Type': 'application/json',
                         },
                     })
-                      .then(response => {
-                          if (!response.ok) {
-                              if (response.status === 401) {
-                                  showConfirmModal('exceptionModal', '로그인이 필요합니다.');
-                                  window.location.href = '/';
-                              } else if (response.status === 404) {
-                                  showConfirmModal('exceptionModal', '게시글을 찾을 수 없습니다.');
-                              } else {
-                                  showConfirmModal('exceptionModal', '좋아요 처리 중 오류가 발생했습니다.');
-                              }
-                              throw new Error('Network response was not ok');
-                          }
-                          return response.json();
-                      })
-                      .then(data => {
-                          showConfirmModal('infoModal', data.message);
-                          if (data.payload.liked) {
-                              likeIcon.classList.remove('icon_heart_alt');
-                              likeIcon.classList.add('icon_heart');
-                          } else {
-                              likeIcon.classList.remove('icon_heart');
-                              likeIcon.classList.add('icon_heart_alt');
-                          }
-                          likesCountSpan.textContent = data.payload.totalLikes;
-                      })
-                      .catch(error => {
-                          console.error('Fetch error:', error);
-                      });
+                        .then(response => {
+                            if (!response.ok) {
+                                if (response.status === 401) {
+                                    showConfirmModal('errorLikeLogin', () => {
+                                        window.location.href = '/';
+                                    });
+                                } else if (response.status === 404) {
+                                    showErrorModal('exceptionModal', '게시글을 찾을 수 없습니다.');
+                                } else {
+                                    showErrorModal('exceptionModal', '좋아요 처리 중 오류가 발생했습니다.');
+                                }
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            showErrorModal('infoModal', data.message);
+                            if (data.payload.liked) {
+                                likeIcon.classList.remove('icon_heart_alt');
+                                likeIcon.classList.add('icon_heart');
+                            } else {
+                                likeIcon.classList.remove('icon_heart');
+                                likeIcon.classList.add('icon_heart_alt');
+                            }
+                            likesCountSpan.textContent = data.payload.totalLikes;
+                        })
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                        });
                 });
 
                 /*]]>*/
@@ -634,12 +636,15 @@
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteComment', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('commentRegistModal', '알림', '댓글이 등록되었습니다.', '확인', null)}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('commentDeleteModal', '알림', '댓글이 삭제되었습니다.', '확인', null)}"></div>
-<div th:replace="~{fragments/alert-modal :: alertModal('likesStatusChangedModal', '좋아요 상태가 변경되었습니다.', '', '확인', '')}"></div>
+<!--<div th:replace="~{fragments/alert-modal :: alertModal('likesStatusChangedModal', '좋아요 상태가 변경되었습니다.', '', '확인', '')}"></div>-->
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteBoard', '알림', '<p>정말 이 게시글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('errorModal', '알림', '', '확인', null)}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('infoModal', '알림', '', '확인', null)}"></div>
 
 <div th:replace="~{fragments/alert-modal :: alertModal('insertKeyword', '알림', '검색어를 입력해주세요.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('errorCommentLogin', '알림', '댓글을 작성하려면 로그인해야 합니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('errorLikeLogin', '알림', '좋아요를 반영하려면 로그인해야 합니다.', '확인', null)}"></div>
+
 <div th:replace="~{fragments/alert-modal :: alertModal('exceptionModal', '알림', '', '확인', null)}"></div>
 
 <script src="/js/alertModal.js"></script>
