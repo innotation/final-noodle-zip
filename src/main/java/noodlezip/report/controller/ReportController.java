@@ -24,7 +24,6 @@ public class ReportController {
             @RequestParam(required = false) String content
     ) {
 
-        // 여러 체크박스 사유 + 추가 텍스트를 content로 합침
         StringBuilder finalContent = new StringBuilder();
 
         if (reasons != null && !reasons.isEmpty()) {
