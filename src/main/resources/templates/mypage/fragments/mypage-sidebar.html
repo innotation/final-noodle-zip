@@ -127,10 +127,10 @@
                                    th:data-user-id="${#authentication.principal.getUser().getId()}"
                                    th:data-type="'user'"
                                    th:data-target-id="${myPage.id}"
-                                   data-toggle="modal"
-                                   data-target="#reportModal"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#reportModal"
                                    sec:authorize="isAuthenticated()">
-      사용자 신고
+      신고
     </button> </div>
   </th:block>
 

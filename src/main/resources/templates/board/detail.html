@@ -92,7 +92,7 @@
                             <li><a th:href="@{/}">Home</a></li>
                             <li><a th:href="@{/board/list}">게시판</a></li>
                             <li><a th:href="@{/board/{communityType}/list(communityType=${board.communityType})}"><span
-                                    th:text="${board.communityType}">카테고리</span></a></li>
+                              th:text="${board.communityType}">카테고리</span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -119,8 +119,8 @@
                                                        th:data-user-id="${#authentication.principal.getUser().getId()}"
                                                        th:data-type="'post'"
                                                        th:data-target-id="${board.getBoardId()}"
-                                                       data-toggle="modal"
-                                                       data-target="#reportModal"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#reportModal"
                                                        sec:authorize="isAuthenticated()">
                             신고
                         </button> </div>
@@ -186,9 +186,9 @@
                     <div class="postmeta">
                         <ul>
                             <li><a th:href="@{/board/{communityType}/list(communityType=${board.communityType})}"><i class="icon_folder-alt"></i><span
-                                    th:text="${board.communityType}">카테고리</span></a></li>
+                              th:text="${board.communityType}">카테고리</span></a></li>
                             <li><i class="icon_calendar"></i> <span
-                                    th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
+                              th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
                             <li><a th:href="@{/users/{userId}/mypage(userId=${board.userId})}"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
                             <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
                             <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
@@ -263,8 +263,22 @@
             <a class="btn btn-sm btn-danger" role="button" onclick="deleteComment(${comment.id})">삭제</a>
             </span>
             `;
+                    } else if (currentLoggedInUserId) {
+                        actionButtonsHtml =`
+                      <span class="edit-delete-buttons ms-2">
+                            <button type="button"
+                                    class="btn btn-sm btn-danger report-btn"
+                                    data-user-id="${currentLoggedInUserId}"
+                                    data-type="comment"
+                                    data-target-id="${comment.id}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#reportModal"
+                                    >
+                                신고
+                            </button>
+                      </span>
+                        `;
                     }
-
                     li.innerHTML = `
             <div class="avatar">
                 <a href="#">
@@ -527,9 +541,8 @@
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
 <script src="/js/specific_review.js"></script>
+<!--<script th:src="@{/js/bootstrap.bundle.min.js}"></script>-->
 <script th:src="@{/js/reportModal.js}"></script>
-<!--<script th:src="@{/admin_section/vendor/datatables/dataTables.bootstrap4.js}"></script>-->
-<!--<script th:src="@{/admin_section/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>-->
 
 </body>
 </html>

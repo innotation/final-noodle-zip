@@ -340,14 +340,17 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom{
         QCategory category = QCategory.category;
         QRamenSoup soup = QRamenSoup.ramenSoup;
 
-        BooleanBuilder builder = new BooleanBuilder();
-        builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
+        BooleanBuilder orBuilder = new BooleanBuilder();
         if (soupNames != null && !soupNames.isEmpty()) {
-            builder.and(soup.soupName.in(soupNames));
+            orBuilder.or(soup.soupName.in(soupNames));
         }
         if (categoryNames != null && !categoryNames.isEmpty()) {
-            builder.and(category.categoryName.in(categoryNames));
+            orBuilder.or(category.categoryName.in(categoryNames));
         }
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(store.approvalStatus.eq(ApprovalStatus.APPROVED));
+        builder.and(orBuilder);
         if (excludeStoreIds != null && !excludeStoreIds.isEmpty()) {
             builder.and(store.id.notIn(excludeStoreIds));
         }
