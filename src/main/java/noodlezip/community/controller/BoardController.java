@@ -110,20 +110,25 @@ public class BoardController {
     })
     public String review(@ModelAttribute ReviewInitDto reviewInitDto,
                          Model model) {
-//      ==================테스트용 임시 값 확인작업 맘무리 후 삭제===========================
-        if (reviewInitDto.getBizNum() == null) {
-            reviewInitDto.setBizNum("4578502690");
-            reviewInitDto.setVisitDate("2025-07-07");
-            reviewInitDto.setOcrKeyHash("6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d");
+        if (reviewInitDto.getBizNum().isEmpty()){
+            throw new CustomException(ErrorStatus._BAD_REQUEST);
         }
 
-        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
+        Long bizNum;
+        try {
+            bizNum = Long.valueOf(reviewInitDto.getBizNum());
+        } catch (NumberFormatException e) {
+            throw new CustomException(ErrorStatus._BAD_REQUEST);
+        }
+
+        OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(bizNum);
+
         model.addAttribute("storeId", ocrToReviewDto.getStoreId());
         model.addAttribute("storeName", ocrToReviewDto.getStoreName());
         model.addAttribute("menuList", ocrToReviewDto.getMenuList());
         model.addAttribute("toppings", ocrToReviewDto.getToppingList());
-
         model.addAttribute("reviewInitDto", reviewInitDto);
+
         return "board/leave-review";
     }
 
