@@ -7,10 +7,12 @@ import noodlezip.store.status.ApprovalStatus;
 import noodlezip.store.status.OperationStatus;
 import noodlezip.store.status.ParkingType;
 import noodlezip.store.entity.Store;
+import noodlezip.store.dto.StoreScheduleRequestDto;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -53,6 +55,8 @@ public class StoreDto implements Serializable {
     private LocalDateTime updatedAt;
     private Long storeLegalCode;
     private Long bizNum;
+    private List<StoreScheduleRequestDto> weekSchedule;
+
 
     // Store -> StoreDto
     public static StoreDto toDto(Store store) {
