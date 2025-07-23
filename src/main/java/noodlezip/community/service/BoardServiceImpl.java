@@ -229,7 +229,6 @@ public class BoardServiceImpl implements BoardService {
         boardRespDto.setContent(sanitizedContentHtml);
 
         List<StoreReviewDto> list = ramenReviewRepository.findReviewsByBoardId(id);
-        log.info("list : {}", list);
         boardRespDto.setMenuReviews(list);
         boardRespDto.setIsLike(isLike);
 
