@@ -50,6 +50,8 @@
     </script>
     <!-- SPECIFIC CSS -->
     <link href="/css/blog.css" rel="stylesheet">
+    <link href="/css/detail-page.css" rel="stylesheet">
+    <link href="/css/detail-custom.css" rel="stylesheet">
 
     <!-- YOUR CUSTOM CSS -->
     <link href="/css/custom.css" rel="stylesheet">
@@ -125,41 +127,166 @@
                             신고
                         </button> </div>
                     </div>
+                    <div class="postmeta">
+                        <ul>
+                            <li><a th:href="@{/board/{communityType}/list(communityType=${board.communityType})}"><i class="icon_folder-alt"></i><span
+                              th:text="${board.communityType}">카테고리</span></a></li>
+                            <li><i class="icon_calendar"></i> <span
+                              th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
+                            <li><a th:href="@{/users/{userId}/mypage(userId=${board.userId})}"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
+                            <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
+                            <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
+                        </ul>
+                    </div>
                     <div th:if="${not #lists.isEmpty(board.menuReviews)}" class="menu-reviews-section mt-4">
-                        <h3>등록된 메뉴 리뷰</h3>
-                        <div id="review-slick-carousel" class="slick-carousel-container">
-                            <div th:each="review, status : ${board.menuReviews}" class="slick-item" th:data-index="${status.index}">
-                                <div class="card p-3">
-                                    <h4 th:text="${review.menuName + '에 대한 리뷰'}">메뉴 이름에 대한 리뷰</h4>
-                                    <input type="hidden" th:name="'reviews[' + ${status.index} + '].menuId'" th:value="${review.menuId}" />
-                                    <div class="row">
-                                        <div class="col-xs-6"><label>면 굵기</label><input type="range" th:name="'reviews[' + ${status.index} + '].noodleThickness'" min="0" max="10" th:value="${review.noodleThickness}" disabled/></div>
-                                        <div class="col-xs-6"><label>면 식감</label><input type="range" th:name="'reviews[' + ${status.index} + '].noodleTexture'" min="0" max="10" th:value="${review.noodleTexture}" disabled/></div>
-                                        <div class="col-xs-6"><label>면 삶기</label><input type="range" th:name="'reviews[' + ${status.index} + '].noodleBoilLevel'" min="0" max="10" th:value="${review.noodleBoilLevel}" disabled/></div>
-                                        <div class="col-xs-6"><label>국물 농도</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupDensity'" min="0" max="10" th:value="${review.soupDensity}" disabled/></div>
-                                        <div class="col-xs-6"><label>온도</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupTemperature'" min="0" max="10" th:value="${review.soupTemperature}" disabled/></div>
-                                        <div class="col-xs-6"><label>염도</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupSaltiness'" min="0" max="10" th:value="${review.soupSaltiness}" disabled/></div>
-                                        <div class="col-xs-6"><label>맵기</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupSpicinessLevel'" min="0" max="10" th:value="${review.soupSpicinessLevel}" disabled/></div>
-                                        <div class="col-xs-6"><label>기름</label><input type="range" th:name="'reviews[' + ${status.index} + '].soupOiliness'" min="0" max="10" th:value="${review.soupOiliness}" disabled/></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>국물 키워드</label>
-                                        <input type="text" th:name="'reviews[' + ${status.index} + '].soupFlavorKeywords'" class="form-control" th:value="${review.soupFlavorKeywords}" maxlength="100" placeholder="예: 진한, 담백한 등 키워드를 입력하세요." disabled/>
-                                        <label>먹은 토핑 선택</label><br/>
-                                        <div th:each="topping : ${toppings}" class="checkbox-inline">
-                                            <input type="checkbox" th:name="'reviews[' + ${status.index} + '].toppingIds'" th:value="${topping.id}" th:checked="${review.toppingIds != null and review.toppingIds.contains(topping.id)}" disabled> <span th:text="${topping.name}">토핑 이름</span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>내용</label>
-                                        <textarea class="form-control" th:name="'reviews[' + ${status.index} + '].content'" rows="3" th:text="${review.content}" disabled></textarea>
-                                    </div>
-                                    <div class="form-group" th:if="${review.reviewImageUrl != null and review.reviewImageUrl != ''}">
-                                        <label>첨부된 사진</label><br/>
-                                        <img th:src="${review.reviewImageUrl}" alt="Review Image" style="max-width: 200px; max-height: 200px; object-fit: contain;"/>
-                                    </div>
+<!--                        <h3>등록된 메뉴 리뷰</h3>-->
+                        <div class="reviews">
+                          <div id="reviews">
+                            <div class="review_card" th:each="review : ${board.menuReviews}" th:data-menu-name="${review.menuName}">
+                              <div class="row">
+                                <div class="col-md-3 d-flex align-items-center justify-content-center">
+                                  <figure class="menu-image-thumb mb-0">
+                                    <a th:href="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/160x160.jpg'}"
+                                       th:title="${review.menuName + ' 리뷰 이미지'}"
+                                       data-effect="mfp-zoom-in">
+                                      <img th:src="${review.reviewImageUrl != null ? review.reviewImageUrl : '/img/160x160.jpg'}"
+                                           onerror="this.onerror=null;this.src='/img/160x160.jpg'"
+                                           alt="menu image"
+                                           style="width: 100%; max-width: 200px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;">
+                                    </a>
+                                  </figure>
                                 </div>
+                                <div class="col-md-9 review_content">
+                                  <div class="clearfix add_bottom_15">
+                                    <span class="badge bg-light text-dark me-2" th:text="${review.menuName}">메뉴명</span>
+                                    <span th:if="${review.isReceiptReview}" class="badge bg-success ms-2">영수증 인증</span>
+                                  </div>
+                                      <h4 th:text="${review.soupFlavorKeywords}">맛 키워드</h4>
+                                      <p th:text="${review.content}">리뷰 본문</p>
+                                  <div class="reviews_sum_details mt-2">
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <h6>면 굵기</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.noodleThickness * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.noodleThickness * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.noodleThickness}"></strong></div>
+                                        </div>
+                                        <!-- /row -->
+                                        <h6>면 식감</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.noodleTexture * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.noodleTexture * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.noodleTexture}"></strong></div>
+                                        </div>
+                                        <!-- /row -->
+                                        <h6>면 삶기 정도</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.noodleBoilLevel * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.noodleBoilLevel * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.noodleBoilLevel}"></strong></div>
+                                        </div>
+                                        <!-- /row -->
+                                      </div>
+                                      <div class="col-md-6">
+                                        <h6>육수 온도</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.soupTemperature * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.soupTemperature * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupTemperature}"></strong></div>
+                                        </div>
+                                        <!-- /row -->
+                                        <h6>육수 농도</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.soupDensity * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.soupDensity * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupDensity}"></strong></div>
+                                        </div>
+                                        <!-- /row -->
+                                        <h6>육수 염도</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.soupSaltiness * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.soupSaltiness * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupSaltiness}"></strong></div>
+                                        </div>
+                                        <!-- /row -->
+                                        <h6>육수 매운맛</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.soupSpicinessLevel * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.soupSpicinessLevel * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupSpicinessLevel}"></strong>
+                                          </div>
+                                        </div>
+                                        <!-- /row -->
+                                        <h6>육수 기름진 정도</h6>
+                                        <div class="row">
+                                          <div class="col-xl-10 col-lg-9 col-9">
+                                            <div class="progress">
+                                              <div class="progress-bar" role="progressbar"
+                                                   th:style="'width:' + ${review.soupOiliness * 10} + '%'"
+                                                   th:attr="aria-valuenow=${review.soupOiliness * 10}" aria-valuemin="0"
+                                                   aria-valuemax="100"></div>
+                                            </div>
+                                          </div>
+                                          <div class="col-xl-2 col-lg-3 col-3"><strong th:text="${review.soupOiliness}"></strong></div>
+                                        </div>
+                                        <!-- /row -->
+                                      </div>
+                                    </div>
+                                    <!-- /row -->
+                                  </div>
+                                  <div class="tags mt-2 mb-2" th:if="${not #lists.isEmpty(review.toppingNames)}">
+                                    작성자가 추가한 토핑 :
+                                    <th:block th:each="t : ${review.toppingNames}">
+                                      <a th:text="${t}" class="active">토핑</a>
+                                    </th:block>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
+                          </div>
                         </div>
                     </div>
                     <div th:replace="fragments/reportModal::reportModalFragment"></div>
@@ -183,17 +310,7 @@
                         }
                         /*]]>*/
                     </script>
-                    <div class="postmeta">
-                        <ul>
-                            <li><a th:href="@{/board/{communityType}/list(communityType=${board.communityType})}"><i class="icon_folder-alt"></i><span
-                                    th:text="${board.communityType}">카테고리</span></a></li>
-                            <li><i class="icon_calendar"></i> <span
-                                    th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
-                            <li><a th:href="@{/users/{userId}/mypage(userId=${board.userId})}"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
-                            <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
-                            <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
-                        </ul>
-                    </div>
+
                     <div class="post-content">
                         <div class="dropcaps">
                             <p th:utext="${board.content}">Aorem Ipsum is simply dummy text of the printing and
@@ -267,13 +384,13 @@
 
                     li.innerHTML = `
             <div class="avatar">
-                <a href="#">
+                <a href="/users/${comment.userId}/mypage">
                     <img src="${avatarSrc}" alt="${comment.author}" class="comment-avatar">
                 </a>
             </div>
             <div class="comment_right clearfix">
                 <div class="comment_info">
-                    <a href="#">${comment.author}</a><span>|</span>${formattedDate}${actionButtonsHtml}
+                    <a href="/users/${comment.userId}/mypage">${comment.author}</a><span>|</span>${formattedDate}${actionButtonsHtml}
                 </div>
                 <p>${comment.content}</p>
             </div>

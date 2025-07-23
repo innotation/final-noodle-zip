@@ -5,6 +5,9 @@
     <th:block th:replace="~{fragments/head :: head}"></th:block>
     <!-- SPECIFIC CSS -->
     <link href="/css/blog.css" rel="stylesheet">
+    <link href="/css/detail-page.css" rel="stylesheet">
+    <link href="/css/detail-custom.css" rel="stylesheet">
+
 </head>
 
 <body class="margin_sticky">
@@ -63,12 +66,14 @@
                                 <!--                                <p th:utext="${#strings.abbreviate(item.content, 100)}">게시글 내용 요약...</p>-->
                                 <ul>
                                     <li>
-                                        <div class="thumb"><img
-                                                th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
-                                                alt="작성자 프로필 이미지"></div>
-                                        <span th:text="${item.userName}">작성자</span>
+                                        <a th:href="@{/users/{userId}/mypage(userId=${item.userId})}">
+                                            <div class="thumb"><img
+                                                    th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
+                                                    alt="작성자 프로필 이미지"></div>
+                                            <span th:text="${item.userName}">작성자</span>
+                                        </a>
                                     </li>
-                                    <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
+                                    <li><i class="icon_heart"></i>&#32;&#32;<span th:text="${item.likesCount}">0</span></li>
                                     <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
                                 </ul>
                             </div>
