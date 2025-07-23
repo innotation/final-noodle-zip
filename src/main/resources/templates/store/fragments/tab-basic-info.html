@@ -5,14 +5,49 @@
     <h2 th:text="${store.storeName} + ' 정보'">Store Info</h2>
     <h3>기본정보</h3>
     <div class="menu_item">
-        <em>전화번호</em>
+        <em>call</em>
         <h4>매장 전화번호</h4>
         <p th:text="${store.phone}">phone number</p>
     </div>
     <div class="menu_item">
-        <em>주소</em>
+        <em>address</em>
         <h4>매장 주소</h4>
         <p th:text="${store.address}">address</p>
+    </div>
+    <hr>
+    <h3>영업시간</h3>
+    <div class="menu_item">
+        <em>schedule</em>
+        <h4>요일별 영업시간</h4>
+        <table class="table table-sm" style="max-width:400px;">
+            <thead>
+                <tr>
+                    <th>요일</th>
+                    <th>오픈</th>
+                    <th>마감</th>
+                    <th>휴무</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="schedule : ${store.weekSchedule}">
+                    <td th:text="${{
+                        'MONDAY':'월요일',
+                        'TUESDAY':'화요일',
+                        'WEDNESDAY':'수요일',
+                        'THURSDAY':'목요일',
+                        'FRIDAY':'금요일',
+                        'SATURDAY':'토요일',
+                        'SUNDAY':'일요일'
+                    }[schedule.dayOfWeek]}">월요일</td>
+                    <td th:text="${schedule.isClosedDay} ? '-' : ${#temporals.format(schedule.openingAt, 'HH:mm')}">09:00</td>
+                    <td th:text="${schedule.isClosedDay} ? '-' : ${#temporals.format(schedule.closingAt, 'HH:mm')}">21:00</td>
+                    <td>
+                        <span th:if="${schedule.isClosedDay}" style="color:red;">휴무</span>
+                        <span th:unless="${schedule.isClosedDay}" style="color:green;">영업</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <hr>
     <h3>편의사항</h3>
