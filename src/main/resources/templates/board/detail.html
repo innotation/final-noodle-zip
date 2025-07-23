@@ -367,15 +367,15 @@
                 submitCommentBtn.addEventListener('click', async () => {
                     const content = commentContentInput.value.trim();
 
-                    if (content === '') {
-                        showErrorModal('exceptionModal', '댓글 내용을 입력해주세요.');
+                    if (currentLoggedInUserId === null) {
+                        showConfirmModal('errorCommentLogin', () => {
+                            window.location.href = '/';
+                        });
                         return;
                     }
 
-                    if (currentLoggedInUserId === null) {
-                        showConfirmModal('errorLogin', () => {
-                            window.location.href = '/';
-                        });
+                    if (content === '') {
+                        showErrorModal('exceptionModal', '댓글 내용을 입력해주세요.');
                         return;
                     }
 
@@ -471,7 +471,7 @@
                         .then(response => {
                             if (!response.ok) {
                                 if (response.status === 401) {
-                                    showConfirmModal('errorLogin', () => {
+                                    showConfirmModal('errorLikeLogin', () => {
                                         window.location.href = '/';
                                     });
                                 } else if (response.status === 404) {
@@ -523,7 +523,8 @@
 <div th:replace="~{fragments/alert-modal :: alertModal('infoModal', '알림', '', '확인', null)}"></div>
 
 <div th:replace="~{fragments/alert-modal :: alertModal('insertKeyword', '알림', '검색어를 입력해주세요.', '확인', null)}"></div>
-<div th:replace="~{fragments/alert-modal :: alertModal('errorLogin', '알림', '댓글을 작성하려면 로그인해야 합니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('errorCommentLogin', '알림', '댓글을 작성하려면 로그인해야 합니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('errorLikeLogin', '알림', '좋아요를 반영하려면 로그인해야 합니다.', '확인', null)}"></div>
 
 <div th:replace="~{fragments/alert-modal :: alertModal('exceptionModal', '알림', '', '확인', null)}"></div>
 
