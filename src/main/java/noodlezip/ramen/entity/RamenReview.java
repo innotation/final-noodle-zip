@@ -31,50 +31,49 @@ public class RamenReview {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    // 1 ~ 10 범위로 정수 저장
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "noodle_thickness", nullable = false)
     private Integer noodleThickness;
 
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "noodle_texture", nullable = false)
     private Integer noodleTexture;
 
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "noodle_boil_level", nullable = false)
     private Integer noodleBoilLevel;
 
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "soup_density", nullable = false)
     private Integer soupDensity;
 
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "soup_temperature", nullable = false)
     private Integer soupTemperature;
 
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "soup_saltiness", nullable = false)
     private Integer soupSaltiness;
 
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "soup_spiciness_level", nullable = false)
     private Integer soupSpicinessLevel;
 
-    @Min(1)
+    @Min(0)
     @Max(10)
     @NotNull
     @Column(name = "soup_oiliness", nullable = false)
