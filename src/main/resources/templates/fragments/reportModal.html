@@ -1,16 +1,16 @@
 <!-- 신고 모달 Fragment -->
 <div th:fragment="reportModalFragment">
-  <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+  <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="label-reportModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <form id="reportForm">
+          <!-- 모달 헤더 -->
           <div class="modal-header">
-            <h5 class="modal-title" id="reportModalLabel">신고하기</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="닫기">
-              <span>&times;</span>
-            </button>
+            <h4 class="modal-title" id="label-reportModal">신고하기</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
 
+          <!-- 모달 본문 -->
           <div class="modal-body">
             <input type="hidden" name="userId" id="reportUserId">
             <input type="hidden" name="reportType" id="reportType">
@@ -18,7 +18,7 @@
             <input type="hidden" name="reportStatus" value="PENDING">
 
             <div class="form-group">
-              <label class="font-weight-bold">신고 사유</label>
+              <label class="fw-bold">신고 사유</label>
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="reasons" value="욕설" id="reason1">
                 <label class="form-check-label" for="reason1">욕설</label>
@@ -39,12 +39,12 @@
             </div>
           </div>
 
+          <!-- 모달 푸터 -->
           <div class="modal-footer">
-            <button type="submit" class="btn btn-danger">신고하기</button>
+            <button type="submit" class="btn_1 btn-confirm">신고하기</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
-
