@@ -116,16 +116,27 @@
                 <div class="singlepost">
                     <div class="row align-items-center"> <div class="col"> <h1><span th:text="${board.title}"></span></h1>
                     </div>
-                        <div class="col-auto"> <button type="button"
-                                                       class="btn btn-sm btn-outline-danger report-btn"
-                                                       th:data-user-id="${#authentication.principal.getUser().getId()}"
-                                                       th:data-type="'post'"
-                                                       th:data-target-id="${board.getBoardId()}"
-                                                       data-bs-toggle="modal"
-                                                       data-bs-target="#reportModal"
-                                                       sec:authorize="isAuthenticated()">
-                            신고
-                        </button> </div>
+                      <div class="col-auto"
+                           th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
+                        <a href="#0"
+                           th:onclick="'deleteBoard(' + ${board.boardId} + '); return false;'"
+                           class="wish_bt"
+                           style="color: red;">
+                          <i class="icon_trash_alt"></i> 게시글 삭제
+                        </a>
+                      </div>
+                      <div class="col-auto">
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger report-btn"
+                                th:data-user-id="${#authentication.principal.getUser().getId()}"
+                                th:data-type="'post'"
+                                th:data-target-id="${board.getBoardId()}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reportModal"
+                                sec:authorize="isAuthenticated()">
+                          신고
+                        </button>
+                      </div>
                     </div>
                     <div class="postmeta">
                       <ul>
@@ -324,10 +335,18 @@
                                 Ipsum.</p>
                         </div>
                     </div>
-                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"
-                          th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
-                        <button type="submit" class="btn btn-sm btn-danger">게시글 삭제</button>
-                    </form>
+<!--                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"-->
+<!--                          th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">-->
+<!--                        <button type="submit" class="btn btn-sm btn-danger">게시글 삭제</button>-->
+<!--                    </form>-->
+<!--                  <li th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">-->
+<!--                    <a href="#0"-->
+<!--                       th:onclick="'deleteBoard(' + ${board.boardId} + '); return false;'"-->
+<!--                       class="wish_bt"-->
+<!--                       style="color: red;">-->
+<!--                      <i class="icon_trash_alt"> 게시글 삭제</i>-->
+<!--                    </a>-->
+<!--                  </li>-->
                 </div>
                 <div id="comments">
                     <h5>전체 댓글</h5>
@@ -623,6 +642,33 @@
 
                 /*]]>*/
             </script>
+          <script>
+            function deleteBoard(boardId) {
+              showConfirmModal('confirmDeleteBoard', () => {
+                fetch(`/board/delete/${boardId}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                  }
+                })
+                  .then(response => {
+                    if (response.ok) {
+                      showConfirmModal('boardDeleteModal', () => {
+                        window.location.href = "/board/list";
+                      })
+                    } else {
+                      response.text().then(msg => {
+                        alert("삭제 실패: " + msg);
+                      });
+                    }
+                  })
+                  .catch(error => {
+                    alert("서버 오류가 발생했습니다.");
+                    console.error("삭제 요청 실패:", error);
+                  });
+              })
+            }
+          </script>
 
             <!-- 최근 본 게시글 위젯 JavaScript -->
             <th:block th:replace="~{fragments/boardSidebar :: recentBoardsScript}"></th:block>
@@ -639,6 +685,7 @@
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteComment', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('commentRegistModal', '알림', '댓글이 등록되었습니다.', '확인', null)}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('commentDeleteModal', '알림', '댓글이 삭제되었습니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('boardDeleteModal', '알림', '게시글이 삭제되었습니다.', '확인', null)}"></div>
 <!--<div th:replace="~{fragments/alert-modal :: alertModal('likesStatusChangedModal', '좋아요 상태가 변경되었습니다.', '', '확인', '')}"></div>-->
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteBoard', '알림', '<p>정말 이 게시글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('errorModal', '알림', '', '확인', null)}"></div>
