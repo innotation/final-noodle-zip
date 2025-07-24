@@ -14,6 +14,28 @@
 <div th:replace="~{fragments/subHeader :: subHeader}"></div>
 
 <main>
+    <div class="page_header element_to_stick">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
+                    <div class="breadcrumbs blog">
+                        <ul>
+                            <li><a th:href="@{/}">메인</a></li>
+                            <li><a th:href="@{/users/{userId}/mypage(userId=${userAccessInfo.targetUserId})}">마이페이지</a></li>
+                            <li>
+                                <a th:href="@{/users/{userId}/comments(userId=${userAccessInfo.targetUserId})}">
+                                    <span th:text="${pathDisplayName}"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /row -->
+    </div>
+    </div>
+    <!-- /page_header -->
     <div class="container margin_30_40">
         <div class="row">
             <div class="col-lg-9">
