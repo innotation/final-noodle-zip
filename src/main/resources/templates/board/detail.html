@@ -436,9 +436,9 @@
                     commentsList.innerHTML = '';
                     if (payload.comments && payload.comments.length > 0) {
                         commentsCount.innerText = `(${payload.totalComments})`;
-                        payload.comments.forEach(comment => {
-                            commentsList.appendChild(createCommentItem(comment));
-                        });
+                      [...payload.comments].reverse().forEach(comment => {
+                        commentsList.appendChild(createCommentItem(comment));
+                      });
                     } else {
                         commentsCount.innerText = '(0)';
                         commentsList.innerHTML = '<p>아직 댓글이 없습니다. 첫 댓글을 작성해 보세요!</p>';
