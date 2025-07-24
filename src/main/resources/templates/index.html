@@ -102,7 +102,8 @@
             <!-- /main_title -->
             <div class="owl-carousel owl-theme categories_carousel">
                 <div class="item_version_2">
-                    <a th:href="@{/search/list(ramenSoup=Tonkotsu)}">
+                    <!--/*@thymesVar id="돈코츠" type=""*/-->
+                  <a th:href="@{/search/list(ramenCategory='돈코츠 라멘')}">
                         <figure>
 <!--                            <span>98</span>-->
                             <img src="/img/tonkotsu.jpg" data-src="/img/tonkotsu.jpg" alt=""
@@ -115,7 +116,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list(ramenCategory=Shoyu)}">
+                  <a th:href="@{/search/list(ramenCategory='쇼유 라멘')}">
                         <figure>
 <!--                            <span>87</span>-->
                             <img src="/img/shoyu.jpg" data-src="/img/shoyu.jpg" alt=""
@@ -128,7 +129,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list(ramenCategory=Miso)}">
+                  <a th:href="@{/search/list(ramenCategory='미소 라멘')}">
                         <figure>
 <!--                            <span>55</span>-->
                             <img src="/img/miso.jpg" data-src="img/miso.jpg" alt=""
@@ -141,7 +142,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list}">
+                  <a th:href="@{/search/list(ramenCategory='츠케멘')}">
                         <figure>
 <!--                            <span>55</span>-->
                             <img src="/img/tsukemen.jpg" data-src="img/tsukemen.jpg" alt=""
@@ -154,7 +155,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list}">
+                  <a href="/search/list?ramenCategory=마제소바&ramenCategory=아부라소바">
                         <figure>
 <!--                            <span>65</span>-->
                             <img src="/img/mazaesoba.jpg" data-src="img/mazaesoba.jpg" alt=""
