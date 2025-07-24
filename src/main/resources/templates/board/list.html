@@ -123,7 +123,12 @@
         )"
                            th:if="${!isLast}">&raquo;</a>
                     </div>
-                    <div class="col-md-2"> <a class="btn_1" th:href="@{/board/{category}/new(category=${category != null and #strings.length(category) > 0 ? category : 'community'})}">글쓰기</a>
+                    <div class="col-md-2">
+                        <a href="#" class="btn_1"
+                           th:attr="data-category=${category != null and #strings.length(category) > 0 ? category : 'community'}"
+                           id="writeButton">
+                            글쓰기
+                        </a>
                     </div>
                 </div>
             </div>
@@ -136,6 +141,8 @@
     </div>
     <!-- /container -->
 </main>
+<div th:replace="~{fragments/alert-modal :: alertModal('errorPostLogin', '알림', '글쓰기는 로그인 후 이용 가능합니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('error', '알림', '', '확인', null)}"></div>
 <!-- /main -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--/footer-->
@@ -144,6 +151,7 @@
 
 <!-- 최근 본 게시글 위젯 JavaScript -->
 <th:block th:replace="~{fragments/boardSidebar :: recentBoardsScript}"></th:block>
+
 
 <script>
     function performSearch() {
@@ -189,11 +197,39 @@
         }
     });
 </script>
+
+<script>
+    document.getElementById("writeButton").addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const category = e.target.getAttribute("data-category");
+        const url = `/board/${category}/new`;
+
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        }).then(response => {
+            if (response.status === 200) {
+                window.location.href = url;
+            } else if (response.status === 401 || response.status === 403 || response.status === 400) {
+                showConfirmModal('errorPostLogin', () => {
+                    window.location.href = '/';
+                });
+            }
+        }).catch(err => {
+            showErrorModal('error', err.message);
+        });
+    });
+</script>
 <!-- COMMON SCRIPTS -->
 <div th:replace="~{fragments/alert-modal :: alertModal('insertKeyword', '알림', '검색어를 입력해주세요.', '확인', null)}"></div>
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
+<script src="/js/alertModal.js"></script>
+
 
 </body>
 </html>
