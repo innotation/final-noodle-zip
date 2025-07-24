@@ -222,6 +222,10 @@ public class BoardController {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
+        CommunityType communityType = CommunityType.fromValue(pathCommunityType);
+        if(communityType == null) {
+            communityType = CommunityType.COMMUNITY;
+        }
         boolean hasSearchKeyword = searchKeyword != null && !searchKeyword.trim().isEmpty();
         boolean hasCommunityType = pathCommunityType != null && !pathCommunityType.trim().isEmpty();
         boolean hasTag = tag != null && !tag.trim().isEmpty();
@@ -242,6 +246,7 @@ public class BoardController {
         }
 
         model.addAttribute("category", pathCommunityType);
+        model.addAttribute("displayCategoryName", communityType.getDisplayName());
         model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("tag", tag);
         model.addAttribute("type", type);
