@@ -297,7 +297,6 @@
         const storeRegist = document.getElementById('store-regist');
 
         async function loadBoardData(boardName) {
-            console.log(boardName);
             try {
                 const response = await fetch(`/board/popular/${boardName}`);
                 if (!response.ok) {
