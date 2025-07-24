@@ -66,10 +66,12 @@
                                 </h2>
                                 <ul>
                                     <li>
-                                        <div class="thumb"><img
-                                                th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
-                                                alt="작성자 프로필 이미지"></div>
-                                        <span th:text="${item.userName}">작성자</span>
+                                        <a th:href="@{/users/{userId}/mypage(userId=${item.userId})}">
+                                            <div class="thumb"><img
+                                                    th:src="${#strings.isEmpty(item.userProfileImageUrl) ? '/img/avatar.jpg' : item.userProfileImageUrl}"
+                                                    alt="작성자 프로필 이미지"></div>
+                                            <span th:text="${item.userName}">작성자</span>
+                                        </a>
                                     </li>
                                     <li><i class="icon_heart"></i><span th:text="${item.likesCount}">0</span></li>
                                     <li><i class="icon_cursor"></i><span th:text="${item.viewsCount}">0</span></li>
