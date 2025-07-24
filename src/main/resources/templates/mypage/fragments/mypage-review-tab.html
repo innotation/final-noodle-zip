@@ -30,7 +30,7 @@
               <span th:if="${review.updatedAt != null}" th:text="'수정됨 ' + ${#temporals.format(review.updatedAt, 'yyyy-MM-dd')}"></span>
               <span th:if="${review.updatedAt == null}" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"></span>
             </div>
-            <a th:href="@{'/board/detail/' + ${review.communityId}}">
+            <a th:href="@{'/board/review/detail/' + ${review.communityId}}">
               <h4 th:text="${review.soupFlavorKeywords}">맛 키워드</h4>
             </a>
             <p th:text="${review.content}">리뷰 본문</p>

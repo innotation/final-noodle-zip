@@ -83,7 +83,7 @@
 
 <header th:replace="~{fragments/subHeader :: subHeader}"></header>
 <!-- /header -->
-
+<input type="hidden" id="is-logged-in" th:value="${#authorization.expression('isAuthenticated()')}" />
 <main>
     <div class="page_header element_to_stick">
         <div class="container">
@@ -116,16 +116,27 @@
                 <div class="singlepost">
                     <div class="row align-items-center"> <div class="col"> <h1><span th:text="${board.title}"></span></h1>
                     </div>
-                        <div class="col-auto"> <button type="button"
-                                                       class="btn btn-sm btn-outline-danger report-btn"
-                                                       th:data-user-id="${#authentication.principal.getUser().getId()}"
-                                                       th:data-type="'post'"
-                                                       th:data-target-id="${board.getBoardId()}"
-                                                       data-bs-toggle="modal"
-                                                       data-bs-target="#reportModal"
-                                                       sec:authorize="isAuthenticated()">
-                            신고
-                        </button> </div>
+                      <div class="col-auto"
+                           th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
+                        <a href="#0"
+                           th:onclick="'deleteBoard(' + ${board.boardId} + '); return false;'"
+                           class="wish_bt"
+                           style="color: red;">
+                          <i class="icon_trash_alt"></i> 게시글 삭제
+                        </a>
+                      </div>
+                      <div class="col-auto">
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger report-btn"
+                                th:data-user-id="${#authentication.principal.getUser().getId()}"
+                                th:data-type="'post'"
+                                th:data-target-id="${board.getBoardId()}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reportModal"
+                                sec:authorize="isAuthenticated()">
+                          신고
+                        </button>
+                      </div>
                     </div>
                     <div class="postmeta">
                       <ul>
@@ -135,7 +146,7 @@
                           th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
                         <li><a th:href="@{/users/{userId}/mypage(userId=${board.userId})}"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
                         <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
-                        <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
+                        <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart login-required' : 'icon_heart_alt login-required'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
                       </ul>
                     </div>
                     <div th:if="${not #lists.isEmpty(board.menuReviews)}" class="menu-reviews-section mt-4">
@@ -324,10 +335,18 @@
                                 Ipsum.</p>
                         </div>
                     </div>
-                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"
-                          th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">
-                        <button type="submit" class="btn btn-sm btn-danger">게시글 삭제</button>
-                    </form>
+<!--                    <form th:action="@{'/board/delete/' + ${board.boardId}}" method="post"-->
+<!--                          th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">-->
+<!--                        <button type="submit" class="btn btn-sm btn-danger">게시글 삭제</button>-->
+<!--                    </form>-->
+<!--                  <li th:if="${#authentication.isAuthenticated() and #authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails) and board.userId == #authentication.principal.user.id}">-->
+<!--                    <a href="#0"-->
+<!--                       th:onclick="'deleteBoard(' + ${board.boardId} + '); return false;'"-->
+<!--                       class="wish_bt"-->
+<!--                       style="color: red;">-->
+<!--                      <i class="icon_trash_alt"> 게시글 삭제</i>-->
+<!--                    </a>-->
+<!--                  </li>-->
                 </div>
                 <div id="comments">
                     <h5>전체 댓글</h5>
@@ -345,7 +364,7 @@
                   placeholder="댓글을 입력해 주세요."></textarea>
                     </div>
                     <div class="form-group">
-                        <button type="button" id="submitCommentBtn" class="btn_1 add_bottom_15">등록</button>
+                        <button type="button" id="submitCommentBtn" class="btn_1 add_bottom_15 login-required">등록</button>
                     </div>
                 </div>
             </div>
@@ -377,9 +396,12 @@
                     // 'writer' 필드가 백엔드에서 해당 댓글의 작성자인지 여부를 나타낸다고 가정
                     if (comment.writer) {
                         actionButtonsHtml = `
-            <span class="edit-delete-buttons ms-2">
-            <a class="btn btn-sm btn-danger" role="button" onclick="deleteComment(${comment.id})">삭제</a>
-            </span>
+                                        <a href="#0"
+                                           onclick="deleteComment(${comment.id})"
+                                           class="wish_bt"
+                                           style="color: red; margin-left: 8px;"">
+                                            <i class="icon_trash_alt"> 삭제</i>
+                                        </a>
             `;
                     } else if (currentLoggedInUserId) {
                         actionButtonsHtml =`
@@ -436,9 +458,9 @@
                     commentsList.innerHTML = '';
                     if (payload.comments && payload.comments.length > 0) {
                         commentsCount.innerText = `(${payload.totalComments})`;
-                        payload.comments.forEach(comment => {
-                            commentsList.appendChild(createCommentItem(comment));
-                        });
+                      [...payload.comments].reverse().forEach(comment => {
+                        commentsList.appendChild(createCommentItem(comment));
+                      });
                     } else {
                         commentsCount.innerText = '(0)';
                         commentsList.innerHTML = '<p>아직 댓글이 없습니다. 첫 댓글을 작성해 보세요!</p>';
@@ -484,14 +506,12 @@
 
                 // 댓글 등록 함수
                 submitCommentBtn.addEventListener('click', async () => {
+                  const isLoggedIn = document.getElementById('is-logged-in')?.value === 'true';
+                  if (!isLoggedIn) {
+                    openLoginModal();
+                    return;
+                  }
                     const content = commentContentInput.value.trim();
-
-                    if (currentLoggedInUserId === null) {
-                        showConfirmModal('errorCommentLogin', () => {
-                            window.location.href = '/';
-                        });
-                        return;
-                    }
 
                     if (content === '') {
                         showErrorModal('exceptionModal', '댓글 내용을 입력해주세요.');
@@ -579,6 +599,13 @@
                 const likesCountSpan = document.getElementById('likes-count');
 
                 likeButton.addEventListener('click', function(event) {
+                  const isLoggedIn = document.getElementById('is-logged-in')?.value === 'true';
+                  if (!isLoggedIn) {
+                    openLoginModal(); // 로그인 모달 함수는 이미 공통 JS에 정의되어 있음
+                    return;
+                  }
+
+
                     event.preventDefault(); // 기본 링크 동작 방지
 
                     fetch(`/board/like/${boardId}`, {
@@ -620,6 +647,33 @@
 
                 /*]]>*/
             </script>
+          <script>
+            function deleteBoard(boardId) {
+              showConfirmModal('confirmDeleteBoard', () => {
+                fetch(`/board/delete/${boardId}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                  }
+                })
+                  .then(response => {
+                    if (response.ok) {
+                      showConfirmModal('boardDeleteModal', () => {
+                        window.location.href = "/board/list";
+                      })
+                    } else {
+                      response.text().then(msg => {
+                        alert("삭제 실패: " + msg);
+                      });
+                    }
+                  })
+                  .catch(error => {
+                    alert("서버 오류가 발생했습니다.");
+                    console.error("삭제 요청 실패:", error);
+                  });
+              })
+            }
+          </script>
 
             <!-- 최근 본 게시글 위젯 JavaScript -->
             <th:block th:replace="~{fragments/boardSidebar :: recentBoardsScript}"></th:block>
@@ -636,6 +690,7 @@
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteComment', '알림', '<p>정말 이 댓글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('commentRegistModal', '알림', '댓글이 등록되었습니다.', '확인', null)}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('commentDeleteModal', '알림', '댓글이 삭제되었습니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('boardDeleteModal', '알림', '게시글이 삭제되었습니다.', '확인', null)}"></div>
 <!--<div th:replace="~{fragments/alert-modal :: alertModal('likesStatusChangedModal', '좋아요 상태가 변경되었습니다.', '', '확인', '')}"></div>-->
 <div th:replace="~{fragments/alert-modal :: alertModal('confirmDeleteBoard', '알림', '<p>정말 이 게시글을 삭제하시겠습니까?</p>', '확인', '취소')}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('errorModal', '알림', '', '확인', null)}"></div>

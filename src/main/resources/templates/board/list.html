@@ -21,10 +21,10 @@
                 <div class="col-xl-8 col-lg-7 col-md-7 d-none d-md-block">
                     <div class="breadcrumbs blog">
                         <ul>
-                            <li><a th:href="@{/}">Home</a></li>
+<!--                            <li><a th:href="@{/}">Home</a></li>-->
                             <li><a th:href="@{/board/list}">게시판</a></li>
                             <li th:if="${category}"><a th:href="@{/board/{category}/list(category=${category})}"><span
-                                    th:text="${category}">카테고리</span></a></li>
+                                    th:text="${displayCategoryName}">카테고리</span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -123,7 +123,13 @@
         )"
                            th:if="${!isLast}">&raquo;</a>
                     </div>
-                    <div class="col-md-2"> <a class="btn_1" th:href="@{/board/{category}/new(category=${category != null and #strings.length(category) > 0 ? category : 'community'})}">글쓰기</a>
+                    <div class="col-md-2">
+                        <a href="#"
+                           class="btn_1 login-required"
+                           th:attr="data-category=${category != null and #strings.length(category) > 0 ? category : 'community'}"
+                           id="writeButton">
+                            글쓰기
+                        </a>
                     </div>
                 </div>
             </div>
@@ -136,6 +142,9 @@
     </div>
     <!-- /container -->
 </main>
+<input type="hidden" id="is-logged-in" th:value="${#authorization.expression('isAuthenticated()')}" />
+<div th:replace="~{fragments/alert-modal :: alertModal('errorPostLogin', '알림', '글쓰기는 로그인 후 이용 가능합니다.', '확인', null)}"></div>
+<div th:replace="~{fragments/alert-modal :: alertModal('error', '알림', '', '확인', null)}"></div>
 <!-- /main -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--/footer-->
@@ -144,6 +153,7 @@
 
 <!-- 최근 본 게시글 위젯 JavaScript -->
 <th:block th:replace="~{fragments/boardSidebar :: recentBoardsScript}"></th:block>
+
 
 <script>
     function performSearch() {
@@ -189,11 +199,44 @@
         }
     });
 </script>
+
+<script>
+    document.getElementById("writeButton").addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const isLoggedIn = document.getElementById('is-logged-in')?.value === 'true';
+        if (!isLoggedIn) {
+            openLoginModal(); // 로그인 모달 함수는 이미 공통 JS에 정의되어 있음
+            return;
+        }
+
+        const category = e.target.getAttribute("data-category");
+        const url = `/board/${category}/new`;
+
+        // 로그인된 경우만 fetch 요청
+        fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        }).then(response => {
+            if (response.status === 200) {
+                window.location.href = url;
+            } else {
+                showErrorModal('errorPostLogin', '접근 권한이 없습니다.');
+            }
+        }).catch(err => {
+            showErrorModal('error', err.message);
+        });
+    });
+</script>
 <!-- COMMON SCRIPTS -->
 <div th:replace="~{fragments/alert-modal :: alertModal('insertKeyword', '알림', '검색어를 입력해주세요.', '확인', null)}"></div>
 <script src="/js/common_scripts.min.js"></script>
 <script src="/js/common_func.js"></script>
 <script src="/assets/validate.js"></script>
+<script src="/js/alertModal.js"></script>
+
 
 </body>
 </html>
