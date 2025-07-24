@@ -29,9 +29,11 @@ import noodlezip.community.status.BoardSuccessStatus;
 import noodlezip.community.status.CommunityType;
 import noodlezip.store.dto.OcrToReviewDto;
 import noodlezip.store.service.StoreService;
+import noodlezip.user.status.UserErrorStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -330,6 +332,9 @@ public class BoardController {
     })
     public ResponseEntity<noodlezip.common.dto.ApiResponse<Object>> toggleLike(@PathVariable("boardId") Long boardId, @AuthenticationPrincipal MyUserDetails user) {
 
+        if(user == null) {
+            return noodlezip.common.dto.ApiResponse.onFailure(UserErrorStatus._UNAUTHORIZED_ACCESS);
+        }
         Long userId = user.getUser().getId();
         boolean isLiked = boardService.toggleLike(BoardUserId.builder().userId(userId).communityId(boardId).build());
 
