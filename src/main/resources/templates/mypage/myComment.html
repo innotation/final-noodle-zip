@@ -27,7 +27,9 @@
                         <li th:each="item : ${commentList.commentList}">
                             <div class="avatar">
                                 <a href="#">
-                                    <img th:src="${item.authorProfileImageUrl != null} ? ${item.authorProfileImageUrl} : @{/img/default-avatar.jpg}" alt="profile">
+                                    <div class="thumb"><img
+                                            th:src="${#strings.isEmpty(item.authorProfileImageUrl) ? '/img/avatar.jpg' : item.authorProfileImageUrl}"
+                                            alt="작성자 프로필 이미지"></div>
                                 </a>
                             </div>
                             <div class="comment_right clearfix">
