@@ -1,161 +1,164 @@
 ![header](https://capsule-render.vercel.app/api?type=slice&color=auto&height=300&section=header&text=zip.lab&desc=noodle.zip&fontSize=90&fontAlign=60&fontAlignY=25&descSize=40&descAlign=70&descAlignY=40&rotate=20) 
 
+<p align="center">
+  <a href="#누들집소개">🍜 서비스 소개</a> <br>
+  <a href="#기술스택">🛠 기술 스택</a> <br>
+  <a href="#시스템구조">⚙️ 시스템 구조</a> <br>
+  <a href="#팀원소개">👥 팀 구성 및 역할</a> <br>
+  <a href="#개발일정">⏳ 개발 일정</a> <br>
+</p>
 
-# 🍜 noodle.zip
+<h1 align="center" id="누들집소개">🍜 noodle.zip 서비스 소개</h1>
 
-**위치 기반 + 영수증 기반 + 라멘 토핑 태그 기반 검색을 지원하는,  
-대한민국 최초의 라멘 전문 리뷰 커뮤니티 서비스입니다.**
+<div align="center">
+"나에게 딱 맞는 라멘 맛집, 어떻게 찾을 수 있을까?"<br>
+기존 맛집 서비스들이 제공하는 모호한 정보와 라멘 전문성에 대한 갈증에서 <b>noodle.zip</b>은 시작되었습니다.<br>
+대한민국 라멘 애호가들이 위치 기반으로 주변 라멘집을 쉽게 찾고,<br>
+영수증 인증을 통해 신뢰성 있는 리뷰를 작성하며,<br>
+다양한 토핑 태그로 취향에 맞는 라멘을 탐색할 수 있는 전문 커뮤니티를 목표로 합니다.
 
----
+## 📍 지도 기반 라멘 검색
+현재 위치를 기반으로 주변 라멘집을 찾고,지역, 토핑, 운영시간 등<br>
+상세한 조건으로 필터링하여 원하는 라멘집을 쉽게 발견할 수 있어요.
+![문서 작성과 연결 gif](https://)
+<br>
+## 🧾 영수증 OCR 리뷰 등록 
+영수증 자동 인식(OCR) 기능을 통해 간편하게 리뷰를 작성하고,<br>
+신뢰성 있는 정보를 공유할 수 있습니다.
+![문서 작성과 연결 gif](https://)
+## 🏆 뱃지 시스템
+활발한 활동을 통해 다양한 뱃지를 획득하고, <br>
+라멘 전문가로 성장하는 재미를 느껴보세요.
+![문서 작성과 연결 gif](https://)
+## 💬 커뮤니티 기능
+리뷰, 질문, 자유로운 소통을 위한 커뮤니티 탭에서 다른 라멘 애호가들과 정보를 교환하고 교류할 수 있어요.
+![문서 작성과 연결 gif](https://)
+## 🧑 마이페이지
+내가 작성한 글, 저장한 매장, 구독 정보, 좋아요 등을 한눈에 관리할 수 있습니다. 
+![문서 작성과 연결 gif](https://)
+## 🧑‍💼 관리자 페이지
+매장 승인, 사용자 신고 제재 등 서비스 운영에 필요한 다양한 관리 기능을 제공합니다.
+![문서 작성과 연결 gif](https://)
 
-## 📸 Preview (예정)
-
-<!-- ![preview](./preview.gif)--> <!-- 시연 GIF나 이미지 넣기 -->
-
----
-
-## 🗺️ 서비스 주요 기능
-
-| 기능 | 설명 |
-|------|------|
-| 📍 지도 기반 라멘 검색 | 지역, 토핑, 운영시간 등 상세 필터링 |
-| 🧾 영수증 OCR 리뷰 등록 | 자동 인식 기반 리뷰 작성 |
-| 🏆 뱃지 시스템 | 유저 활동 기반 뱃지 획득 |
-| 💬 커뮤니티 기능 | 리뷰, 질문, 소통 탭 제공 |
-| 🧑 마이페이지 | 내가 쓴 글/저장/구독/좋아요 관리 |
-| 🧑‍💼 관리자 페이지 | 매장 승인, 신고 제재 등 운영 기능 |
-
----
-
-## 🛠 기술 스택
-<!-- 아이콘 : https://github.com/Envoy-VC/awesome-badges?tab=readme-ov-file -->
-### Frontend
-- Tools:
-![](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white)
-- 템플릿: `Foogra – Directory Template` 기반 커스터마이징
-
-### Backend
-- Tools:
-![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![](https://img.shields.io/badge/spring_boot-boot?style=for-the-badge&logo=springboot&logoColor=white&logoSize=auto&labelColor=6DB33F&color=6DB33F&cacheSeconds=3600)
-- DB:
-![](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
-![](https://img.shields.io/badge/spring_data_jpa-spring?style=for-the-badge&logo=spring&logoColor=white&logoSize=auto&labelColor=6DB33F&color=6DB33F&cacheSeconds=3600)
-- TEST:
-![](https://img.shields.io/badge/junit5-test?style=for-the-badge&logo=junit5&logoColor=white&logoSize=auto&labelColor=25A162&color=DC524A&cacheSeconds=3600)
-
-
-### Infra & DevOps
-- 업무관리:
-![](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
-- CI/CD: 
-![](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-![](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
-- API:
-![](https://img.shields.io/badge/naver_cloud_platform-ncp?style=for-the-badge&logo=naver&logoColor=green&logoSize=auto&labelColor=white&color=03C75A&cacheSeconds=3600)
-- workspaces:
-  ![](https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
-  ![](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white) 
-### 협업
-- ![](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
-![](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white)
-![](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
-
-
----
-
-## 🔖 ERD & 시스템 아키텍처
-
-- 📄 [ERD 보기](https://www.erdcloud.com/d/3fXPuFYXD6sekZqTj)
-- 🧩 [아키텍처 다이어그램 보기]<!--(./docs/architecture.svg)-->
-
----
-
-## 👥 팀 구성 및 역할
-
+<h1 id="기술스택">🛠 기술 스택</h1>
 <table>
-  <tr>
-    <th>이름</th>
-    <th>역할</th>
-  </tr>
-  <tr>
-    <td rowspan="2" align="center">
-      <a href="https://github.com/kakaba-hub">
-        <img src="https://github.com/kakaba-hub.png" width="80"/><br/>
-        <sub><b>@kakaba-hub</b></sub>
-      </a>
-    </td>
-    <td rowspan="2" align="center">라멘 검색 페이지, 매장 상세 페이지 개발</td>
-  </tr>
-  <tr></tr>
-  
-  <tr>
-    <td rowspan="2" align="center">
-      <a href="https://github.com/sotogito">
-        <img src="https://github.com/sotogito.png" width="80"/><br/>
-        <sub><b>@sotogito</b></sub>
-      </a>
-    </td>
-    <td rowspan="2" align="center">마이페이지, 배지, 저장 매장 기능</td>
-  </tr>
-  <tr></tr>
-
-  <tr>
-    <td rowspan="2" align="center">
-      <a href="https://github.com/innotation">
-        <img src="https://github.com/innotation.png" width="80"/><br/>
-        <sub><b>@innotation</b></sub>
-      </a>
-    </td>
-    <td rowspan="2" align="center">커뮤니티, 로그인, 메인페이지 등 작성</td>
-  </tr>
-  <tr></tr>
-
-  <tr>
-    <td rowspan="2" align="center">
-      <a href="https://github.com/ssb7779">
-        <img src="https://github.com/ssb7779.png" width="80"/><br/>
-        <sub><b>@ssb7779</b></sub>
-      </a>
-    </td>
-    <td rowspan="2" align="center">관리자 기능, 헤더, 검색, OCR 리뷰 기능</td>
-  </tr>
-  <tr></tr>
-
-  <tr>
-    <td rowspan="2" align="center">
-      <a href="https://github.com/podoseee">
-        <img src="https://github.com/podoseee.png" width="80"/><br/>
-        <sub><b>@podoseee</b></sub>
-      </a>
-    </td>
-    <td rowspan="2" align="center">매장 등록 페이지</td>
-  </tr>
-  <tr></tr>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Stack</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+            <td>
+                <p align=center>View</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=Thymeleaf&logoColor=white">
+                <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+                <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white">
+                <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>Backend</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white">
+                <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white">
+                <img src="https://img.shields.io/badge/spring_boot-boot?style=for-the-badge&logo=springboot&logoColor=white&logoSize=auto&labelColor=6DB33F&color=6DB33F&cacheSeconds=3600">
+                <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>DB</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/ncp%20S3-569A31?style=for-the-badge&logo=Amazon%20S3&logoColor=white">
+                <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white">
+                <img src="https://img.shields.io/badge/spring_data_jpa-spring?style=for-the-badge&logo=spring&logoColor=white&logoSize=auto&labelColor=6DB33F&color=6DB33F&cacheSeconds=3600">
+                <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>형상 관리</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>CI/CD</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
+                <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white">
+                <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>API</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/naver_cloud_platform-ncp?style=for-the-badge&logo=naver&logoColor=green&logoSize=auto&labelColor=white&color=03C75A&cacheSeconds=3600">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>Test</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/junit5-test?style=for-the-badge&logo=junit5&logoColor=white&logoSize=auto&labelColor=25A162&color=DC524A&cacheSeconds=3600">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>Workspaces</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white">
+                <img src="https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p align=center>협업</p>
+            </td>
+            <td>
+                <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
+                <img src="https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white">
+                <img src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white">
+            </td>
+        </tr>
+    </tbody>
 </table>
 
+<h1 id="시스템구조">⚙️ 시스템 구조</h1>
 
----
+📄 [ERD 보기](https://www.erdcloud.com/d/3fXPuFYXD6sekZqTj)<br>
+<img width="1352" height="666" alt="Image" src="https://github.com/user-attachments/assets/f698eca5-67fe-41c8-bd56-2bbeca4a8008"/>
+🧩 [아키텍처 다이어그램 보기]<!--(./docs/architecture.svg)-->
 
-## ⏳ 개발 일정 (WBS 기반)
+<hr>
 
-- 총 8주 개발 일정
-- GitHub 마일스톤으로 주차별 관리
-- `Issues`와 `Projects`로 세부 작업 분담 및 트래킹
+<h1 id="팀원소개">👥 팀 구성 및 역할</h1>
 
----
 
-<!-- ## 📂 실행 방법 (예시)
-
-```bash
-# 1. clone
-git clone https://github.com/your-org/noodle.zip.git
-
-# 2. DB 세팅 (MySQL + 스키마 파일 실행)
-mysql -u root -p < schema.sql
-
-# 3. 빌드 & 실행
-./gradlew bootRun
--->
+|                                               [@kakaba-hub](https://github.com/kakaba-hub)                                                |                                                  [@sotogito](https://github.com/sotogito)                                                  |                                               [@innotation](https://github.com/innotation)                                                |                                                   [@ssb7779](https://github.com/ssb7779)                                                   |                                                   [@podoseee](https://github.com/podoseee)                                                   |
+| :--------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://github.com/kakaba-hub.png" width="80"> | <img src="https://github.com/sotogito.png" width="80"> | <img src="https://github.com/innotation.png" width="80"> | <img src="https://github.com/ssb7779.png" width="80"> | <img src="https://github.com/podoseee.png" width="80"> |
+|                                                                 **라멘 검색 페이지, 매장 상세 페이지 개발**                                                                 |                                                                    **마이페이지, 배지, 저장 매장 기능**                                                                     |                                                                    **게시판, 유저 도메인, 공통 모듈  개발**                                                                     |                                                                    **관리자 기능, 헤더, 검색, OCR 리뷰 기능**                                                                     |                                                                    **매장 등록 페이지**                                                                     |
+<hr>
+<h1 id="개발일정">⏳ 개발 일정 (WBS 기반)</h1>
+우리는 총 8주의 개발 일정으로 프로젝트를 진행하고 있어요.<br>
+GitHub의 마일스톤으로 주차별 진행 상황을 관리하고, Issues와 Projects를 활용해 세부 작업을 분담하고 추적하고 있습니다.<br>
+더 자세한 개발 일정은 아래 링크에서 확인하실 수 있어요!<br>
+<a href="https://docs.google.com/spreadsheets/d/1pQlDkWOhMYdiOyYTpTDqrHLObNjFpZxG6JRY0jxXw2w/edit?usp=sharing">
+➡️ 개발 일정 스프레드시트 보기
+</a>
+</div>
