@@ -124,7 +124,8 @@
                            th:if="${!isLast}">&raquo;</a>
                     </div>
                     <div class="col-md-2">
-                        <a href="#" class="btn_1"
+                        <a href="#"
+                           class="btn_1 login-required"
                            th:attr="data-category=${category != null and #strings.length(category) > 0 ? category : 'community'}"
                            id="writeButton">
                             글쓰기
@@ -141,6 +142,7 @@
     </div>
     <!-- /container -->
 </main>
+<input type="hidden" id="is-logged-in" th:value="${#authorization.expression('isAuthenticated()')}" />
 <div th:replace="~{fragments/alert-modal :: alertModal('errorPostLogin', '알림', '글쓰기는 로그인 후 이용 가능합니다.', '확인', null)}"></div>
 <div th:replace="~{fragments/alert-modal :: alertModal('error', '알림', '', '확인', null)}"></div>
 <!-- /main -->
@@ -202,9 +204,16 @@
     document.getElementById("writeButton").addEventListener("click", function (e) {
         e.preventDefault();
 
+        const isLoggedIn = document.getElementById('is-logged-in')?.value === 'true';
+        if (!isLoggedIn) {
+            openLoginModal(); // 로그인 모달 함수는 이미 공통 JS에 정의되어 있음
+            return;
+        }
+
         const category = e.target.getAttribute("data-category");
         const url = `/board/${category}/new`;
 
+        // 로그인된 경우만 fetch 요청
         fetch(url, {
             method: "GET",
             headers: {
@@ -213,10 +222,8 @@
         }).then(response => {
             if (response.status === 200) {
                 window.location.href = url;
-            } else if (response.status === 401 || response.status === 403 || response.status === 400) {
-                showConfirmModal('errorPostLogin', () => {
-                    window.location.href = '/';
-                });
+            } else {
+                showErrorModal('errorPostLogin', '접근 권한이 없습니다.');
             }
         }).catch(err => {
             showErrorModal('error', err.message);

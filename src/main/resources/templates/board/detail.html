@@ -83,7 +83,7 @@
 
 <header th:replace="~{fragments/subHeader :: subHeader}"></header>
 <!-- /header -->
-
+<input type="hidden" id="is-logged-in" th:value="${#authorization.expression('isAuthenticated()')}" />
 <main>
     <div class="page_header element_to_stick">
         <div class="container">
@@ -146,7 +146,7 @@
                           th:text="${#temporals.format(board.createdAt, 'yyyy.MM.dd')}">2023.01.01</span></li>
                         <li><a th:href="@{/users/{userId}/mypage(userId=${board.userId})}"><i class="icon_pencil-edit"></i><span th:text="${board.userName}"></span></a></li>
                         <li><a href="#"><i class="icon_comment_alt"></i><span id="comments-count"></span></a></li>
-                        <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart' : 'icon_heart_alt'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
+                        <li><a href="#" id="likeButton"><i th:class="${board.isLike} ? 'icon_heart login-required' : 'icon_heart_alt login-required'"></i> <span id="likes-count" th:text="${board.likesCount}"></span> </a></li>
                       </ul>
                     </div>
                     <div th:if="${not #lists.isEmpty(board.menuReviews)}" class="menu-reviews-section mt-4">
@@ -364,7 +364,7 @@
                   placeholder="댓글을 입력해 주세요."></textarea>
                     </div>
                     <div class="form-group">
-                        <button type="button" id="submitCommentBtn" class="btn_1 add_bottom_15">등록</button>
+                        <button type="button" id="submitCommentBtn" class="btn_1 add_bottom_15 login-required">등록</button>
                     </div>
                 </div>
             </div>
@@ -506,14 +506,12 @@
 
                 // 댓글 등록 함수
                 submitCommentBtn.addEventListener('click', async () => {
+                  const isLoggedIn = document.getElementById('is-logged-in')?.value === 'true';
+                  if (!isLoggedIn) {
+                    openLoginModal();
+                    return;
+                  }
                     const content = commentContentInput.value.trim();
-
-                    if (currentLoggedInUserId === null) {
-                        showConfirmModal('errorCommentLogin', () => {
-                            window.location.href = '/';
-                        });
-                        return;
-                    }
 
                     if (content === '') {
                         showErrorModal('exceptionModal', '댓글 내용을 입력해주세요.');
@@ -601,6 +599,13 @@
                 const likesCountSpan = document.getElementById('likes-count');
 
                 likeButton.addEventListener('click', function(event) {
+                  const isLoggedIn = document.getElementById('is-logged-in')?.value === 'true';
+                  if (!isLoggedIn) {
+                    openLoginModal(); // 로그인 모달 함수는 이미 공통 JS에 정의되어 있음
+                    return;
+                  }
+
+
                     event.preventDefault(); // 기본 링크 동작 방지
 
                     fetch(`/board/like/${boardId}`, {
