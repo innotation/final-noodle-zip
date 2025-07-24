@@ -77,7 +77,7 @@ public class SecurityConfig {
                     })
                     .failureHandler((req, resp, exce) -> {
                         log.info("exception : {}", exce.getMessage());
-                        resp.sendRedirect("/login?error");
+                        resp.sendRedirect("/?error=login");
                     });
         });
 

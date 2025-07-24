@@ -281,6 +281,9 @@
 
   <!--/call_section-->
 </main>
+<div th:replace="~{fragments/alert-Modal :: alertModal('loginErrorModal', '로그인 실패', '아이디 또는 비밀번호가 올바르지 않습니다.', '확인', '')}"></div>
+
+
 <!-- 검색모달 include -->
 <div th:replace="~{fragments/searchModal :: searchModal}"></div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -289,6 +292,8 @@
 <script th:src="@{/js/common_scripts.min.js}"></script>
 <script th:src="@{/js/common_func.js}"></script>
 <script th:src="@{/assets/validate.js}"></script>
+<script src="/js/alertModal.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const communityBoardListContainer = document.getElementById('community-board-list-container');
@@ -370,6 +375,17 @@
         }
 
     });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "login") {
+      showConfirmModal('loginErrorModal');
+      const newUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  });
 </script>
 </body>
 </html>
