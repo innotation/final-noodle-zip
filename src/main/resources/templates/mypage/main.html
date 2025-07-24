@@ -506,8 +506,8 @@
                                 <span class="mypage-board-date"
                                       th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}"></span>
                               </div>
-                              <a th:href="@{'/board/detail/' + ${board.boardId}}" class="mypage-board-title-link">
-                                <h4 class="mypage-board-title" th:text="${board.title}"></h4>
+                              <a th:href="@{/board/{communityType}/detail/{boardId}(communityType=${board.communityType}, boardId=${board.boardId})}" class="mypage-board-title-link">
+                              <h4 class="mypage-board-title" th:text="${board.title}"></h4>
                               </a>
                               <p class="mypage-board-content" th:text="${board.content}"></p>
                             </div>
