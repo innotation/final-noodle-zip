@@ -143,6 +143,7 @@
 📄 [ERD 보기](https://www.erdcloud.com/d/3fXPuFYXD6sekZqTj)<br>
 <img width="1352" height="666" alt="Image" src="https://github.com/user-attachments/assets/f698eca5-67fe-41c8-bd56-2bbeca4a8008"/>
 🧩 [아키텍처 다이어그램 보기]<!--(./docs/architecture.svg)-->
+<img width="1446" height="931" alt="서버구조도" src="https://github.com/user-attachments/assets/f87f0002-c3bf-4e23-9593-102cd7fbd332"/>
 
 <hr>
 
