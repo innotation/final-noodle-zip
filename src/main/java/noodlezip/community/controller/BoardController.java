@@ -304,8 +304,15 @@ public class BoardController {
             log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
         }
+
+        CommunityType communityType = CommunityType.fromValue(board.getCommunityType());
+        if(communityType == null) {
+            communityType = CommunityType.COMMUNITY;
+        }
+
         CookieUtil.updateRecentViewedItemsCookie(id, RECENT_VIEWED_BOARDS, MAX_RECENT_BOARDS, request, response);
         model.addAttribute("board", board);
+        model.addAttribute("categoryDisplayName", communityType.getDisplayName());
         return "board/detail";
     }
 
