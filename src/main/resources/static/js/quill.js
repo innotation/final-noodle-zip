@@ -83,6 +83,47 @@ function getFirstImageUrlFromHtml(htmlString) {
     return imgElements.length > 0 ? imgElements[0].getAttribute('src') : null;
 }
 
+function showPostConfirmModal(key, onConfirm, onCancelOrClose) {
+    const modal = document.getElementById(key);
+    if (!modal) {
+        console.error(`Modal with id "${key}" not found`);
+        return;
+    }
+
+    const confirmBtn = modal.querySelector('.btn-confirm');
+    const cancelBtn = modal.querySelector('.btn-cancel');
+    const closeBtn = modal.querySelector('.btn-close');
+
+    const handleConfirm = () => {
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) bsModal.hide();
+        onConfirm();
+    };
+
+    const handleCancelOrClose = () => {
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) bsModal.hide();
+        if (onCancelOrClose) onCancelOrClose();
+    };
+
+    if (confirmBtn) confirmBtn.onclick = handleConfirm;
+    if (cancelBtn) cancelBtn.onclick = handleCancelOrClose;
+    if (closeBtn) closeBtn.onclick = handleCancelOrClose;
+
+    // ✅ 바깥 영역 클릭 시에도 등록 처리
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) {
+            handleConfirm(); // 바깥 눌렀을 때도 등록
+        }
+    });
+
+    const bsModal = new bootstrap.Modal(modal, {
+        backdrop: true,
+        keyboard: true
+    });
+    bsModal.show();
+}
+
 document.getElementById('reviewForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // 기본 폼 제출 동작 방지
 
@@ -109,10 +150,15 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
             throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || response.statusText}`);
         }
 
-        alert('게시글이 성공적으로 작성되었습니다.');
-        location.href = '/board/list';
+        // alert('게시글이 성공적으로 작성되었습니다.');
+        showPostConfirmModal(
+          'postBoard',
+          () => { location.href = '/board/list'; },          // 확인
+          () => { location.href = '/board/list'; }           // 취소 or X
+        );
     } catch (error) {
         console.error('게시글 작성 실패:', error);
         alert('게시글 작성 중 오류가 발생했습니다: ' + error.message);
     }
 });
+
