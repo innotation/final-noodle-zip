@@ -113,8 +113,8 @@
                     <a th:href="@{/receipt}" class="btn_1 full-width mb_5 login-required" id="review-write-btn">
                       <i class="icon_location"></i> 리뷰 작성하러 가기
                     </a>
-
-                  <!-- 더미 작성 후 삭제 -->
+<!--
+                   더미 작성 후 삭제
                     <form method="POST" action="/board/receipt/review/new">
                       <input type="hidden" th:value="${store.bizNum}" name="bizNum">
                       <input type="hidden" th:value="${#dates.format(#calendars.createNow(), 'yyyy-MM-dd')}" name="visitDate">
@@ -142,7 +142,7 @@
                       }
                     });
                   </script>
-                  <!-- /더미 작성 후 삭제 -->
+                   /더미 작성 후 삭제 -->
 
                   <a href="#" class="btn_1 full-width outline wishlist login-required"><i class="icon_heart"></i> 위시리스트에 추가</a>
                 </div>
