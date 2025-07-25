@@ -66,6 +66,7 @@ public class RamenReviewRepositoryImpl implements RamenReviewRepositoryCustom {
                 .join(menu.store, store)
                 .join(board).on(review.communityId.eq(board.id))
                 .where(menu.store.id.eq(storeId))
+                .orderBy(board.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
