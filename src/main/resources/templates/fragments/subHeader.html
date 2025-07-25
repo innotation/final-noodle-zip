@@ -104,8 +104,11 @@
           <a th:href="@{/}"><img th:src="@{/img/noodlezip-logo-stickhead-clear.svg}" width="140" height="35" alt=""></a>
         </div>
         <ul>
-          <li><a th:href="@{/search/list}">검색페이지</a></li>
-          <li><a th:href="@{/board/list}">커뮤니티페이지</a></li>
+          <th:block sec:authorize="isAuthenticated()">
+            <li><a th:href="@{/receipt}">리뷰작성</a></li>
+          </th:block>
+          <li><a th:href="@{/search/list}">검색</a></li>
+          <li><a th:href="@{/board/list}">게시판</a></li>
         </ul>
       </nav>
     </div>
