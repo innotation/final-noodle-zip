@@ -650,7 +650,7 @@
           <script>
             function deleteBoard(boardId) {
               showConfirmModal('confirmDeleteBoard', () => {
-                fetch(`/board/delete/${boardId}`, {
+                fetch(`/users/my/${boardId}/delete`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
