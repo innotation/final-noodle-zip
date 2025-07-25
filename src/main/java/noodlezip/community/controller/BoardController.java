@@ -98,7 +98,7 @@ public class BoardController {
     }
 
     // ocr 임의 값 넘기기 위한 post get 동시 사용 베포시 삭제 예정
-    @RequestMapping(value = "/review/for-dummy", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/receipt/review/new", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
@@ -304,8 +304,15 @@ public class BoardController {
             log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
         }
+
+        CommunityType communityType = CommunityType.fromValue(board.getCommunityType());
+        if(communityType == null) {
+            communityType = CommunityType.COMMUNITY;
+        }
+
         CookieUtil.updateRecentViewedItemsCookie(id, RECENT_VIEWED_BOARDS, MAX_RECENT_BOARDS, request, response);
         model.addAttribute("board", board);
+        model.addAttribute("categoryDisplayName", communityType.getDisplayName());
         return "board/detail";
     }
 

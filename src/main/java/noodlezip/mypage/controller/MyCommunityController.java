@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.community.dto.CategoryCountDto;
 import noodlezip.community.service.BoardService;
+import noodlezip.community.status.CommunityType;
 import noodlezip.mypage.constant.MyCommunityType;
 import noodlezip.mypage.dto.UserAccessInfo;
 import noodlezip.mypage.dto.response.MyBoardListPageResponse;
@@ -53,14 +54,21 @@ public class MyCommunityController extends MyBaseController {
     ) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
+        CommunityType community = CommunityType.fromValue(communityType);
+        if (community == null) {
+            community = CommunityType.COMMUNITY;
+        }
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
         MyBoardListPageResponse boardList = myCommunityService.getMyPostBoardListPage(userId, communityType, pageable);
         List<CategoryCountDto> communityTypeList = boardList.getCommunityTypeList();
 
-        model.addAttribute("path", MyCommunityType.POST_BOARD.getPath());
         model.addAttribute("boardList", boardList);
         model.addAttribute("communityTypeList", communityTypeList);
         model.addAttribute("userAccessInfo", userAccessInfo);
+        model.addAttribute("path", MyCommunityType.POST_BOARD.getPath());
+        model.addAttribute("communityType", communityType);
+        model.addAttribute("pathDisplayName", MyCommunityType.POST_BOARD.getDisplayName());
+        model.addAttribute("communityTypeDisplayName", community.getDisplayName());
 
         return "mypage/myBoard";
     }
@@ -84,14 +92,21 @@ public class MyCommunityController extends MyBaseController {
     ) {
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
+        CommunityType community = CommunityType.fromValue(communityType);
+        if (community == null) {
+            community = CommunityType.COMMUNITY;
+        }
         UserAccessInfo userAccessInfo = resolveUserAccess(myUserDetails, userId);
         MyBoardListPageResponse boardList = myCommunityService.getMyLikedBoardListPage(userId, communityType, pageable);
         List<CategoryCountDto> communityTypeList = boardList.getCommunityTypeList();
 
-        model.addAttribute("path", MyCommunityType.LIKED_BOARD.getPath());
         model.addAttribute("boardList", boardList);
         model.addAttribute("communityTypeList", communityTypeList);
         model.addAttribute("userAccessInfo", userAccessInfo);
+        model.addAttribute("path", MyCommunityType.LIKED_BOARD.getPath());
+        model.addAttribute("communityType", communityType);
+        model.addAttribute("pathDisplayName", MyCommunityType.LIKED_BOARD.getDisplayName());
+        model.addAttribute("communityTypeDisplayName", community.getDisplayName());
 
         return "mypage/myBoard";
     }
@@ -114,6 +129,7 @@ public class MyCommunityController extends MyBaseController {
 
         model.addAttribute("commentList", commentList);
         model.addAttribute("userAccessInfo", userAccessInfo);
+        model.addAttribute("pathDisplayName", MyCommunityType.POST_COMMENT.getDisplayName());
 
         return "mypage/myComment";
     }

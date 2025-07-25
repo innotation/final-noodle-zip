@@ -115,7 +115,7 @@
                     </a>
 
                   <!-- 더미 작성 후 삭제 -->
-                    <form method="POST" action="/board/review/for-dummy">
+                    <form method="POST" action="/board/receipt/review/new">
                       <input type="hidden" th:value="${store.bizNum}" name="bizNum">
                       <input type="hidden" th:value="${#dates.format(#calendars.createNow(), 'yyyy-MM-dd')}" name="visitDate">
                       <input type="hidden" th:value="${#strings.randomAlphanumeric(30)}" name="ocrKeyHash">
