@@ -102,7 +102,8 @@
             <!-- /main_title -->
             <div class="owl-carousel owl-theme categories_carousel">
                 <div class="item_version_2">
-                    <a th:href="@{/search/list(ramenSoup=Tonkotsu)}">
+                    <!--/*@thymesVar id="돈코츠" type=""*/-->
+                  <a th:href="@{/search/list(ramenCategory='돈코츠 라멘')}">
                         <figure>
 <!--                            <span>98</span>-->
                             <img src="/img/tonkotsu.jpg" data-src="/img/tonkotsu.jpg" alt=""
@@ -115,7 +116,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list(ramenCategory=Shoyu)}">
+                  <a th:href="@{/search/list(ramenCategory='쇼유 라멘')}">
                         <figure>
 <!--                            <span>87</span>-->
                             <img src="/img/shoyu.jpg" data-src="/img/shoyu.jpg" alt=""
@@ -128,7 +129,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list(ramenCategory=Miso)}">
+                  <a th:href="@{/search/list(ramenCategory='미소 라멘')}">
                         <figure>
 <!--                            <span>55</span>-->
                             <img src="/img/miso.jpg" data-src="img/miso.jpg" alt=""
@@ -141,7 +142,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list}">
+                  <a th:href="@{/search/list(ramenCategory='츠케멘')}">
                         <figure>
 <!--                            <span>55</span>-->
                             <img src="/img/tsukemen.jpg" data-src="img/tsukemen.jpg" alt=""
@@ -154,7 +155,7 @@
                     </a>
                 </div>
                 <div class="item_version_2">
-                    <a th:href="@{/search/list}">
+                  <a href="/search/list?ramenCategory=마제소바&ramenCategory=아부라소바">
                         <figure>
 <!--                            <span>65</span>-->
                             <img src="/img/mazaesoba.jpg" data-src="img/mazaesoba.jpg" alt=""
@@ -281,6 +282,9 @@
 
   <!--/call_section-->
 </main>
+<div th:replace="~{fragments/alert-Modal :: alertModal('loginErrorModal', '로그인 실패', '아이디 또는 비밀번호가 올바르지 않습니다.', '확인', '')}"></div>
+
+
 <!-- 검색모달 include -->
 <div th:replace="~{fragments/searchModal :: searchModal}"></div>
 <footer th:replace="~{fragments/footer :: footer}"></footer>
@@ -289,6 +293,8 @@
 <script th:src="@{/js/common_scripts.min.js}"></script>
 <script th:src="@{/js/common_func.js}"></script>
 <script th:src="@{/assets/validate.js}"></script>
+<script src="/js/alertModal.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const communityBoardListContainer = document.getElementById('community-board-list-container');
@@ -297,7 +303,6 @@
         const storeRegist = document.getElementById('store-regist');
 
         async function loadBoardData(boardName) {
-            console.log(boardName);
             try {
                 const response = await fetch(`/board/popular/${boardName}`);
                 if (!response.ok) {
@@ -370,6 +375,17 @@
         }
 
     });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "login") {
+      showConfirmModal('loginErrorModal');
+      const newUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  });
 </script>
 </body>
 </html>

@@ -28,7 +28,7 @@ public class SecurityConfig {
         "/", "/check-login-id", "/check-email", "/verify-email", "/signup", "/login",
         "/images/**", "/css/**", "/img/**", "/js/**", "/assets/**", "/v3/api-docs/**",
         "/swagger-ui/**", "/send-verification-code", "/fragments/**", "/search/**",
-        "/store/**", "/admin_section/**", "/admin/**", "/receipt/**", "/location/**", "/ramen/**",
+        "/store/**", "/admin_section/**", "/admin/login", "/receipt/**", "/location/**", "/ramen/**",
         "/board/**", "/comments/**", "/users/**", "/mypage/**", "/favicon.ico", "/font/**", "error/**",
             "/bs-icon-font/**", "/icon_fonts/**"
     );
@@ -77,7 +77,7 @@ public class SecurityConfig {
                     })
                     .failureHandler((req, resp, exce) -> {
                         log.info("exception : {}", exce.getMessage());
-                        resp.sendRedirect("/login?error");
+                        resp.sendRedirect("/?error=login");
                     });
         });
 

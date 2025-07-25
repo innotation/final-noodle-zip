@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public Map<String, Object> findCommentListByUserId(Long userId, Pageable pageable) {
         Page<MyCommentResponse> commentDtoPage = commentRepository.findCommentByUserId(userId, pageable);
-        Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 10);
+        Map<String, Object> map = pageUtil.getPageInfo(commentDtoPage, 5);
         map.put("comments", commentDtoPage.getContent());
         map.put("totalComments", commentDtoPage.getTotalElements());
         return map;

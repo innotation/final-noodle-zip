@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import noodlezip.badge.entity.Badge;
+import noodlezip.badge.publisher.BadgeEventPublisher;
 import noodlezip.common.auth.MyUserDetails;
 import noodlezip.common.exception.CustomException;
 import noodlezip.common.status.ErrorStatus;
@@ -25,6 +27,7 @@ import noodlezip.community.dto.LikeResponseDto;
 import noodlezip.community.dto.*;
 import noodlezip.community.entity.BoardUserId;
 import noodlezip.community.service.BoardService;
+import noodlezip.community.status.BoardErrorStatus;
 import noodlezip.community.status.BoardSuccessStatus;
 import noodlezip.community.status.CommunityType;
 import noodlezip.store.dto.OcrToReviewDto;
@@ -66,45 +69,36 @@ public class BoardController {
     private static final String RECENT_VIEWED_BOARDS = "recentViewedBoards";
     private static final int MAX_RECENT_BOARDS = 3;
 
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/{category}/new")
     @Operation(summary = "게시글 작성 페이지", description = "사용자가 게시글 작성할 수 있는 HTML 폼 페이지 반환")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 작성 페이지 반환 성공",
                     content = @Content(mediaType = MediaType.TEXT_HTML_VALUE))
     })
-    public String registBoardView(@PathVariable(name = "category") String category,
+    public String registBoardView(@AuthenticationPrincipal MyUserDetails myUserDetails,
+                                  @PathVariable(name = "category") String category,
                                   @ModelAttribute ReviewInitDto reviewInitDto,
-                                  Model model) {
-//      ==================테스트용 임시 값 확인작업 맘무리 후 삭제===========================
-        CommunityType communityType;
-        communityType = CommunityType.fromValue(category);
-        if (communityType == null) {
-            throw new CustomException(ErrorStatus._FORBIDDEN);
-        } else if (communityType == CommunityType.REVIEW) {
-            if (reviewInitDto.getBizNum() == null) {
-                reviewInitDto.setBizNum("4578502690");
-                reviewInitDto.setVisitDate("2025-07-07");
-                reviewInitDto.setOcrKeyHash("6a45e2d28f11b953e9e5913b33ed9848f1d6bfa6112b1b5e5aa83ee7268a126d");
-            }
-
-            OcrToReviewDto ocrToReviewDto = storeService.findStoreWithMenusByBizNum(Long.valueOf(reviewInitDto.getBizNum()));
-            model.addAttribute("storeId", ocrToReviewDto.getStoreId());
-            model.addAttribute("storeName", ocrToReviewDto.getStoreName());
-            model.addAttribute("menuList", ocrToReviewDto.getMenuList());
-            model.addAttribute("toppings", ocrToReviewDto.getToppingList());
-
-            model.addAttribute("reviewInitDto", reviewInitDto);
-            model.addAttribute("category", category);
-            return "board/leave-review";
-        } else {
-            model.addAttribute("category", category);
-            return "board/registBoard";
+                                  Model model
+    ) {
+        if(myUserDetails == null) {
+            throw new CustomException(ErrorStatus._UNAUTHORIZED);
         }
+        CommunityType communityType = CommunityType.fromValue(category);
+        if(communityType == null) {
+            throw new CustomException(ErrorStatus._FORBIDDEN);
+        }
+
+        if(communityType == CommunityType.REVIEW) {
+            model.addAttribute("category", CommunityType.REVIEW.getValue());
+            return "receipt";
+        }
+        model.addAttribute("category", CommunityType.COMMUNITY.getValue());
+        return "board/registBoard";
     }
 
     // ocr 임의 값 넘기기 위한 post get 동시 사용 베포시 삭제 예정
-    @RequestMapping(value = "/review/new", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/receipt/review/new", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "리뷰 작성 페이지", description = "사용자가 리뷰를 작성할 수 있는 HTML 폼 페이지를 반환합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리뷰 작성 페이지 반환 성공",
@@ -228,6 +222,10 @@ public class BoardController {
 
         pageable = pageable.withPage(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1);
 
+        CommunityType communityType = CommunityType.fromValue(pathCommunityType);
+        if(communityType == null) {
+            communityType = CommunityType.COMMUNITY;
+        }
         boolean hasSearchKeyword = searchKeyword != null && !searchKeyword.trim().isEmpty();
         boolean hasCommunityType = pathCommunityType != null && !pathCommunityType.trim().isEmpty();
         boolean hasTag = tag != null && !tag.trim().isEmpty();
@@ -248,6 +246,7 @@ public class BoardController {
         }
 
         model.addAttribute("category", pathCommunityType);
+        model.addAttribute("displayCategoryName", communityType.getDisplayName());
         model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("tag", tag);
         model.addAttribute("type", type);
@@ -305,8 +304,15 @@ public class BoardController {
             log.warn("존재하지 않는 게시글 ID로 상세 조회 시도: {}", id);
             throw new CustomException(ErrorStatus._DATA_NOT_FOUND);
         }
+
+        CommunityType communityType = CommunityType.fromValue(board.getCommunityType());
+        if(communityType == null) {
+            communityType = CommunityType.COMMUNITY;
+        }
+
         CookieUtil.updateRecentViewedItemsCookie(id, RECENT_VIEWED_BOARDS, MAX_RECENT_BOARDS, request, response);
         model.addAttribute("board", board);
+        model.addAttribute("categoryDisplayName", communityType.getDisplayName());
         return "board/detail";
     }
 
