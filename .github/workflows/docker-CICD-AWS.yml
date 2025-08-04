@@ -25,9 +25,9 @@ jobs:
         run: ./gradlew clean build -x test
       - name: Docker build and publish
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }} ./
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
+          sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          sudo docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }} ./
+          sudo docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
 
   # 2. CD
   deploy:
@@ -42,11 +42,11 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           port: ${{ secrets.AWS_EC2_PORT }}
           script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker stop ${{ vars.APP_NAME }} || true
-            docker rm -f ${{ vars.APP_NAME }} || true
-            docker image rm -f ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }} || true
-            docker run -d -p 8080:8080 \
+            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            sudo docker stop ${{ vars.APP_NAME }} || true
+            sudo docker rm -f ${{ vars.APP_NAME }} || true
+            sudo docker image rm -f ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }} || true
+            sudo docker run -d -p 8080:8080 \
             -e SPRING_PROFILES_ACTIVE=prod \
             -e PROD_DB_URL=${{ secrets.DEV_AWS_DB_URL }} \
             -e PROD_DB_USERNAME=${{ secrets.PROD_DB_USERNAME }} \
