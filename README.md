@@ -116,12 +116,22 @@
 
 ### 부하 테스트 - nGrinder 성능 및 부하 테스트 진행
 
+게시판 페이지 조회 요청이 1분간 몰릴 때,  클라우드 인스턴스가 감당 가능한  접속자 측정 <br>
+측정 기준 - NCP s2-g3a(vCPU 2EA, Memory 8GB) 1대 <br>
+
 <img width="416" height="360" alt="동접자30명1분" src="https://github.com/user-attachments/assets/e81d1ed2-bff6-4890-b2a6-4f65b989446c" />
 
 <img width="437" height="364" alt="동접자100명1분" src="https://github.com/user-attachments/assets/1745899c-4976-4370-b3e8-f64efbf88143" />
 
 <img width="424" height="378" alt="동접자1000명 1분" src="https://github.com/user-attachments/assets/10f73489-d65f-46c6-982e-3eca8333e3c3" />
 
+게시판 페이지에 5분간 유저 1000명의 트래픽이 몰릴 때, 클라우드 인스턴스의 트래픽 확인 <br>
+
+중복 조회수 문제 해결을 통해 MTT 16% 감소 <br>
+
+<img width="981" height="658" alt="ngrinder_board_list_performance_test 오전 10 55 12" src="https://github.com/user-attachments/assets/5b8bf8ff-4f62-4985-9e4b-9a4b020ecdae"/><br>
+
+<img width="1298" height="816" alt="ngrinder_board_list_perform_test_improved" src="https://github.com/user-attachments/assets/db5c0a21-085d-448f-8acd-ce6871c7a2ef"/><br>
 
 <h1 id="기술스택">🛠 기술 스택</h1>
 <table>
@@ -234,6 +244,7 @@ GitHub의 마일스톤으로 주차별 진행 상황을 관리하고, Issues와 
 ➡️ 개발 일정 스프레드시트 보기
 </a>
 </div>
+
 
 
 
