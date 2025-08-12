@@ -66,7 +66,7 @@
                 <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white">
                 <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white">
                 <img src="https://img.shields.io/badge/spring_boot-boot?style=for-the-badge&logo=springboot&logoColor=white&logoSize=auto&labelColor=6DB33F&color=6DB33F&cacheSeconds=3600">
-                <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
+                <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring_Security&logoColor=white">
             </td>
         </tr>
         <tr>
@@ -161,3 +161,4 @@ GitHub의 마일스톤으로 주차별 진행 상황을 관리하고, Issues와 
 ➡️ 개발 일정 스프레드시트 보기
 </a>
 </div>
+
