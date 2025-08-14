@@ -110,9 +110,16 @@
 
 [소스 코드](https://github.com/innotation/final-noodle-zip/blob/main/.github/workflows/docker-CICD.yml)
 
+Github action을 이용한 통합/배포 자동화로<br>
+통합된 코드를 도커 이미지 로 만들어 도커허브에 업로드 후 클라우드 서버에서 이미지를 실행하는 형식으로 <br>
+배포 시간을 30분에서 2분으로 단축하였습니다.<br>
+
 ### Docker -  컨테이너 기반 배포 환경 구축
 
 [소스 코드](https://github.com/innotation/final-noodle-zip/blob/main/Dockerfile)
+
+Docker를 활용해 애플리케이션과 모든 종속성을 컨테이너로 패키징하여, <br>
+어떤 환경에서도 일관된 배포가 가능하도록 구축했습니다.<br>
 
 ### 부하 테스트 - nGrinder 성능 및 부하 테스트 진행
 
@@ -244,6 +251,7 @@ GitHub의 마일스톤으로 주차별 진행 상황을 관리하고, Issues와 
 ➡️ 개발 일정 스프레드시트 보기
 </a>
 </div>
+
 
 
 
