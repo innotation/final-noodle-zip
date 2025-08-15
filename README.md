@@ -85,31 +85,31 @@
 
 ### 공통 모듈 작성 및 모듈화: 소프트웨어 품질 및 개발 효율성을 극대화를 위한 SOLID 원칙 기반 모듈화
 
-### API 응답 표준화
+### 💡 API 응답 표준화
 
 성공유무, 코드, 메세지, 페이로드 필드를 포함한 응답용 객체로 <br>
 클라이언트 측에서의 표준화된 응답 구조 구현 <br>
 
-### 예외 처리 표준화
+### ⚠️ 예외 처리 표준화
 
 비즈니스 로릭에 맞는 커스텀 예외 정의 및 @ControllerAdvice 전역 예외 핸들러 예외 처리<br>
 
-### 인증 및 보안
+### 🔐 인증 및 보안
 
 auth와 config 패키지의 MyUserDetails, SecurityConfig를 활용하여 사용자 인증과 권한 부여 처리 <br>
 Spring Security를 기반으로 보안 설정을 구성하여 서비스의 안전성을 강화 <br>
 
-### 클라우드 파일 관리
+### ☁️ 클라우드 파일 관리
 
-FileUtil과 S3Config를 통한 NCP Object Storage(S3) 파일 업로드 및 관리 기능 모듈화로
-로컬 서버 부하 감소 및 대규모 이미지 파일 처리시의 안정성 증대
+FileUtil과 S3Config를 통한 NCP Object Storage(S3) 파일 업로드 및 관리 기능 모듈화로 <br>
+로컬 서버 부하 감소 및 대규모 이미지 파일 처리시의 안정성 증대 <br>
 
-### 이메일 및 Redis
+### ✉️ 이메일 및 Redis
 
 mail 패키지를 통한 이메일 발송 기능, <br>
-redis 패키지 내 RedisRepository 의 Redis 데이터 처리 로직 추상화로 재사용성 및 유지보수성 증대<br>
+redis 패키지 내 RedisRepository 의 Redis 데이터 처리 로직 추상화로 재사용성 및 유지보수성 증대 <br>
 
-### 유틸리티 및 기타 설정
+### ⚙️ 유틸리티 및 기타 설정
 util 패키지에 CookieUtil, PageUtil 등을 포함한 다양한 공통 로직 모듈화, <br>
 advice 패키지의 PerformanceAspect로 AOP 기반의 성능 로깅, <br>
 config 패키지 비동기 처리(AsyncConfig) 및 스케줄링(SchedulingConfig) 등 애플리케이션 핵심 설정 관리 <br>
@@ -265,6 +265,7 @@ GitHub의 마일스톤으로 주차별 진행 상황을 관리하고, Issues와 
 ➡️ 개발 일정 스프레드시트 보기
 </a>
 </div>
+
 
 
 
